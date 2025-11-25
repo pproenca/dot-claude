@@ -1,0 +1,47 @@
+# Claude Code local settings
+.claude/*.local.md
+**/.claude/*.local.md
+
+# Sensitive files - NEVER commit
+.env
+.env.*
+*.env
+.envrc
+
+# Secrets and credentials
+*secret*
+*credential*
+*password*
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*token*
+*api_key*
+*apikey*
+
+# Config files that may contain secrets
+.npmrc
+.pypirc
+config.local.*
+*.local.json
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Test scripts with credentials
+script.sh
