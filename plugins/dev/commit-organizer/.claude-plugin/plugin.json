@@ -1,0 +1,11 @@
+{
+  "name": "commit-organizer",
+  "version": "1.0.0",
+  "description": "Organize messy commits into clean, logical commits following Google and Anthropic best practices",
+  "author": {
+    "name": "Pedro Proenca",
+    "email": "pedro.proenca@example.com"
+  },
+  "keywords": ["git", "commits", "organization", "best-practices", "workflow"],
+  "license": "MIT"
+}
