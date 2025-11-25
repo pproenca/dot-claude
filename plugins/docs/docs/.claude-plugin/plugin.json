@@ -1,0 +1,11 @@
+{
+  "name": "docs",
+  "version": "1.0.0",
+  "description": "Generate comprehensive technical documentation from codebases including API docs, architecture diagrams, tutorials, and references",
+  "author": {
+    "name": "Pedro Proenca",
+    "email": "pedro.proenca@example.com"
+  },
+  "keywords": ["documentation", "api-docs", "tutorials", "mermaid", "architecture", "technical-writing"],
+  "license": "MIT"
+}
