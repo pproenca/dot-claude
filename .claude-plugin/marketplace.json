@@ -1,6 +1,6 @@
 {
   "name": "dot-claude",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "metadata": {
     "description": "Claude Code plugins for productivity workflows - skills, agents, commands, and hooks"
   },
@@ -10,12 +10,33 @@
   },
   "repository": "https://github.com/pedroproenca/dot-claude",
   "plugins": [
-    { "name": "super", "source": "./plugins/super" },
-    { "name": "commit", "source": "./plugins/commit" },
-    { "name": "shell", "source": "./plugins/shell" },
-    { "name": "dev", "source": "./plugins/dev" },
-    { "name": "doc", "source": "./plugins/doc" },
-    { "name": "debug", "source": "./plugins/debug" },
-    { "name": "agent", "source": "./plugins/agent" }
+    {
+      "name": "super",
+      "source": "./plugins/super"
+    },
+    {
+      "name": "commit",
+      "source": "./plugins/commit"
+    },
+    {
+      "name": "shell",
+      "source": "./plugins/shell"
+    },
+    {
+      "name": "dev",
+      "source": "./plugins/dev"
+    },
+    {
+      "name": "doc",
+      "source": "./plugins/doc"
+    },
+    {
+      "name": "debug",
+      "source": "./plugins/debug"
+    },
+    {
+      "name": "agent",
+      "source": "./plugins/agent"
+    }
   ]
 }

@@ -1,11 +1,20 @@
 {
   "name": "shell",
-  "version": "1.2.0",
+  "version": "3.0.0",
   "description": "Shell scripting toolkit with Google Style Guide refactoring and Unix man page expertise",
   "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/shell",
   "repository": "https://github.com/pedroproenca/dot-claude",
   "license": "MIT",
-  "keywords": ["shell", "bash", "style", "refactor", "google", "man", "unix", "manual"],
+  "keywords": [
+    "shell",
+    "bash",
+    "style",
+    "refactor",
+    "google",
+    "man",
+    "unix",
+    "manual"
+  ],
   "author": {
     "name": "Pedro Proenca"
   }
