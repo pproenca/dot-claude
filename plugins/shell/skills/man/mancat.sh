@@ -7,7 +7,7 @@
 set -euo pipefail
 
 err() {
-  echo "mancat: ${*}" >&2
+  echo "mancat: $*" >&2
 }
 
 usage() {
@@ -41,7 +41,7 @@ main() {
   local search=""
   local cmd
   local man_section
-  declare -a man_cmd
+  local -a man_cmd
 
   while getopts "s:k:h" opt; do
     case "${opt}" in
@@ -54,7 +54,8 @@ main() {
   shift $((OPTIND - 1))
 
   if [[ -n "${search}" ]]; then
-    man -k "${search}" 2>/dev/null || echo "No matches for: ${search}"
+    man -k "${search}" 2>/dev/null \
+      || echo "No matches for: ${search}"
     exit 0
   fi
 

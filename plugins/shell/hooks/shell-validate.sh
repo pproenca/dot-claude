@@ -14,8 +14,9 @@ main() {
   local warnings=()
 
   input="$(cat)"
-  file_path="$(echo "${input}" | jq -r '.tool_input.file_path // .tool_input.path // ""')"
-  content="$(echo "${input}" | jq -r '.tool_input.content // ""')"
+  file_path="$(jq -r '.tool_input.file_path // .tool_input.path // ""' \
+    <<< "${input}")"
+  content="$(jq -r '.tool_input.content // ""' <<< "${input}")"
 
   # Skip non-shell files
   if [[ ! "${file_path}" =~ \.sh$ ]]; then
@@ -25,7 +26,7 @@ main() {
   # Write content to temp file for validation
   temp_file="$(mktemp)"
   trap 'rm -f "${temp_file}"' EXIT
-  echo "${content}" > "${temp_file}"
+  echo "${content}" >"${temp_file}"
 
   # Check for shebang
   if ! head -1 "${temp_file}" | grep -q '^#!'; then
@@ -39,7 +40,7 @@ main() {
   fi
 
   # Run shellcheck if available (non-blocking)
-  if command -v shellcheck &>/dev/null; then
+  if command -v shellcheck &> /dev/null; then
     sc_output="$(shellcheck -f gcc "${temp_file}" 2>&1 || true)"
     if [[ -n "${sc_output}" ]]; then
       warnings+=("shellcheck: ${sc_output}")

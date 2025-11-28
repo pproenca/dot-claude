@@ -74,6 +74,16 @@ You MUST complete each phase before proceeding to the next.
 
    **WHEN system has multiple components (CI → build → signing, API → service → database):**
 
+   **Context Management:** Use Explore subagent to map component boundaries before instrumenting:
+   - Prevents main conversation pollution during investigation
+   - Produces clean summary of architecture for focused debugging
+   - Essential for large codebases with many layers
+
+   **Parallel Investigation:** For independent components, consider `super:dispatching-parallel-agents`:
+   - Investigate multiple components simultaneously
+   - Converge findings to identify root cause
+   - Reduces total investigation time for complex systems
+
    **BEFORE proposing fixes, add diagnostic instrumentation:**
    ```
    For EACH component boundary:

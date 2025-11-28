@@ -25,8 +25,8 @@ description: |
   <commentary>Portability questions trigger POSIX mode</commentary>
   </example>
 
-model: haiku
-color: green
+model: opus
+color: yellow
 tools: ["Read", "Bash", "Glob", "Grep"]
 ---
 
