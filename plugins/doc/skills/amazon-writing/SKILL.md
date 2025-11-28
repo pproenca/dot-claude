@@ -1,6 +1,7 @@
 ---
 name: amazon-writing
 description: Use when writing narrative memos, 6-pagers, 1-pagers, press releases, or PRFAQs in Amazon style. Applies Amazon's no-PowerPoint writing standards with data over adjectives, active voice, and the "so what" test.
+allowed-tools: Read, Write, Edit
 ---
 
 # Amazon Writing Standards

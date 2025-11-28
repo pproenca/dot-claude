@@ -1,6 +1,7 @@
 ---
 name: async-python-patterns
 description: Use when building async APIs, concurrent systems, or I/O-bound applications requiring non-blocking operations. Covers asyncio, concurrent programming, and async/await patterns.
+allowed-tools: Bash(python:*), Read, Write
 ---
 
 # Async Python Patterns

@@ -18,15 +18,18 @@ echo "Searching for test that creates: ${POLLUTION_CHECK}"
 echo "Test pattern: ${TEST_PATTERN}"
 echo ""
 
-# Get list of test files
-TEST_FILES="$(find . -path "${TEST_PATTERN}" | sort)"
-TOTAL="$(echo "${TEST_FILES}" | wc -l | tr -d ' ')"
+# Get list of test files into array (macOS compatible - no mapfile)
+TEST_FILES=()
+while IFS= read -r file; do
+  [[ -n "${file}" ]] && TEST_FILES+=("${file}")
+done < <(find . -path "${TEST_PATTERN}" | sort)
+TOTAL="${#TEST_FILES[@]}"
 
 echo "Found ${TOTAL} test files"
 echo ""
 
 COUNT=0
-for TEST_FILE in ${TEST_FILES}; do
+for TEST_FILE in "${TEST_FILES[@]}"; do
     COUNT="$((COUNT + 1))"
 
     # Skip if pollution already exists
