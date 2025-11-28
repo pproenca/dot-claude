@@ -1,14 +1,14 @@
 ---
-description: Reset and reorganize commits following Google's practices
+description: Reset and reorganize commits following Conventional Commits
 argument-hint: ""
 allowed-tools: [Bash, Read, Task, AskUserQuestion, TodoWrite]
 ---
 
 # Commit History Reset and Organization
 
-Reorganize git commits following Google's Engineering Practices.
+Reorganize git commits following Conventional Commits specification.
 
-**Note**: Google commit guidelines are injected via SessionStart hook. Commit message validation runs automatically via hooks.
+Commit message validation runs automatically via hooks.
 
 ## Workflow
 
@@ -46,12 +46,12 @@ The agent will:
 - Run `${CLAUDE_PLUGIN_ROOT}/scripts/analyze-branch.sh` to get full diffs
 - Read ALL diffs holistically (cumulative change, not individual commits)
 - Classify changes (refactoring/fix/feature/config)
-- Apply Google's CL rules (separation, size limits, self-containment)
+- Apply Conventional Commits rules (separation, size limits, self-containment)
 - Propose commit organization with draft messages
 
 **Prompt for the agent:**
 ```
-Analyze this branch and propose a commit organization following Google's Engineering Practices.
+Analyze this branch and propose a commit organization following Conventional Commits specification.
 
 For each proposed commit, provide:
 - Files and line count
@@ -143,4 +143,4 @@ git reset --hard $BACKUP_BRANCH
 - **Do not push automatically** - let user review first
 - **Safety hooks** block dangerous operations without backup
 - **Commit validation** happens automatically via PostToolUse hooks
-- **Guidelines** are injected at session start - refer to cheatsheet for details
+- **Guidelines** - refer to cheatsheet for Conventional Commits details

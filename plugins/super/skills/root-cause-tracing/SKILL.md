@@ -35,6 +35,15 @@ digraph when_to_use {
 - Unclear where invalid data originated
 - Need to find which test/code triggers the problem
 
+## Large Codebase Optimization
+
+Use Explore subagent to trace call chains:
+- Delegates investigation to subagent
+- Returns focused summary without context bloat
+- Essential for codebases with deep call stacks
+
+This prevents main conversation pollution during investigation. The Explore agent can navigate through multiple files and return a clean summary of the call chain.
+
 ## The Tracing Process
 
 ### 1. Observe the Symptom
