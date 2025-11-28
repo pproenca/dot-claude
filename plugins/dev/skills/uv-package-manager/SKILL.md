@@ -1,6 +1,7 @@
 ---
 name: uv-package-manager
 description: Use when setting up Python projects, managing dependencies, or optimizing Python development workflows with uv. Covers fast dependency management, virtual environments, and modern project workflows.
+allowed-tools: Bash(uv:*), Read
 ---
 
 # UV Package Manager

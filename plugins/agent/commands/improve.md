@@ -1,3 +1,8 @@
+---
+description: Agent performance optimization workflow
+allowed-tools: Read, Bash(git:*), AskUserQuestion, Glob, Grep
+---
+
 # Agent Performance Optimization Workflow
 
 Systematic improvement of existing agents through performance analysis, prompt engineering, and continuous iteration.

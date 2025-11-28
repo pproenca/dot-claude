@@ -140,6 +140,7 @@ When writing shell scripts (.sh files):
 3. **Quote all variables:** `"${var}"` not `$var`
 4. **Use modern syntax:** `$(command)` not backticks, `[[ ]]` not `[ ]`
 5. **PreToolUse hooks validate:** syntax (bash -n) and shellcheck if available
+6. **Avoid Bash 4+ features:** Don't use `mapfile`/`readarray` (macOS has Bash 3.2). Use `while read` loops instead.
 
 ## Testing
 

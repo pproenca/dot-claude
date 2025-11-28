@@ -15,8 +15,8 @@ if ! echo "${input}" | grep -q '"git '; then
 fi
 
 # Skip validation on WIP/temp branches (subagents need flexible commits)
-current_branch=$(git branch --show-current 2>/dev/null || echo "")
-if [[ "$current_branch" =~ ^(wip|temp|backup)/ ]]; then
+current_branch="$(git branch --show-current 2>/dev/null || echo "")"
+if [[ "${current_branch}" =~ ^(wip|temp|backup)/ ]]; then
     echo '{}'
     exit 0
 fi
