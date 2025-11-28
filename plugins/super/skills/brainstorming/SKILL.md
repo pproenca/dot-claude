@@ -14,6 +14,16 @@ Start by understanding the current project context, then ask questions one at a 
 
 **Announce at start:** "I'm using the brainstorming skill to refine this idea into a design."
 
+## Progress Tracking
+
+Create TodoWrite todos for each phase:
+- Understanding: Clarify the problem space
+- Exploring: Investigate alternative approaches
+- Presenting: Document proposed design
+- Handoff: Transition to implementation
+
+Mark each phase as `in_progress` when starting, `completed` when done. This makes progress visible and prevents skipping phases.
+
 ## Using AskUserQuestion
 
 Use the AskUserQuestion tool for structured decision points:

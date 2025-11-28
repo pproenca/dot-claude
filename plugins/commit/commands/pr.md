@@ -1,19 +1,20 @@
 ---
-description: Generate PR title and description following Google's practices
+description: Generate PR title and description following Conventional Commits
 argument-hint: "[base-branch]"
 allowed-tools: [Bash, Read, AskUserQuestion]
 ---
 
 # Generate PR Description
 
-Create a PR title and description from branch commits following Google's CL description guidelines.
+Create a PR title and description from branch commits following Conventional Commits format.
 
 ## Workflow
 
 1. Analyze branch commits
-2. Generate PR title
-3. Generate PR description
-4. Present for review
+2. Determine dominant commit type
+3. Generate PR title
+4. Generate PR description
+5. Present for review
 
 ---
 
@@ -57,26 +58,60 @@ git log --format='%B---' $BRANCH_POINT..HEAD
 
 ---
 
-## Step 2: Generate PR Title
+## Step 2: Determine Dominant Commit Type
 
-The PR title should:
-- **Summarize the primary change** in imperative mood
-- **Be searchable** - future developers can find this PR
-- **Stand alone** - understandable without reading the description
-- **50-72 chars** ideal
+Analyze the commits to determine the primary type for the PR title.
 
-**Single commit**: Use the commit subject as PR title.
+**Type priority** (use the most significant):
+1. `feat` - Any new feature makes this a feature PR
+2. `fix` - Bug fixes if no features
+3. `refactor` - Restructuring if no features/fixes
+4. `perf` - Performance improvements
+5. `docs` - Documentation changes
+6. `test` - Test additions
+7. `build`/`ci` - Build/CI changes
+8. `chore` - Maintenance
 
-**Multiple commits**: Identify the main theme/feature:
-- "Add rate limiting to auth endpoint"
-- "Fix authentication edge cases"
-- "Refactor validation into separate service"
+**Breaking change**: If ANY commit has `!` or `BREAKING CHANGE:`, the PR title should include `!`.
+
+**Single commit**: Use that commit's type and subject directly.
+
+**Multiple commits with same type**: Use that type, summarize the changes.
+
+**Multiple commits with different types**: Use the highest priority type, describe the overall change.
 
 ---
 
-## Step 3: Generate PR Description
+## Step 3: Generate PR Title
 
-Structure the description following Google's guidelines:
+The PR title should follow Conventional Commits format:
+
+```
+<type>[!]: <summary of changes>
+```
+
+**Rules:**
+- Use dominant type from Step 2
+- Include `!` if any commit is a breaking change
+- Imperative mood ("add", not "adding")
+- 50-72 chars ideal
+- No period at end
+
+**Examples:**
+
+| Commits | PR Title |
+|---------|----------|
+| Single `feat: add user preferences` | `feat: add user preferences` |
+| `feat: add auth`, `feat: add sessions` | `feat: add authentication system` |
+| `feat: add API`, `fix: handle errors` | `feat: add API with error handling` |
+| `refactor: extract service`, `test: add tests` | `refactor: extract service with tests` |
+| `feat!: remove v1 API` | `feat!: remove v1 API` |
+
+---
+
+## Step 4: Generate PR Description
+
+Structure the description following this template:
 
 ```markdown
 ## Summary
@@ -85,11 +120,16 @@ Structure the description following Google's guidelines:
 
 ## Changes
 
-[Bullet list of commits/changes, grouped logically]
+[Bullet list of commits/changes, grouped logically by type]
 
-- [Change 1]
-- [Change 2]
-- [Change 3]
+### Features
+- [feat commits]
+
+### Bug Fixes
+- [fix commits]
+
+### Other Changes
+- [refactor/chore/etc commits]
 
 ## Context
 
@@ -98,6 +138,12 @@ Structure the description following Google's guidelines:
 - Problem being solved
 - Why this approach was chosen
 - Any tradeoffs or limitations
+
+## Breaking Changes
+
+[If any commits have breaking changes, list them here]
+
+- [Description of breaking change and migration path]
 
 ## Test Plan
 
@@ -108,9 +154,11 @@ Structure the description following Google's guidelines:
 - [ ] Manual testing: [steps if applicable]
 ```
 
+**Note:** Omit empty sections (e.g., if no breaking changes, omit that section).
+
 ---
 
-## Step 4: Present for Review
+## Step 5: Present for Review
 
 Present the generated title and description, then validate with AskUserQuestion:
 
@@ -139,5 +187,6 @@ Output the final PR content formatted for copy-paste:
 
 - This command generates PR content but does NOT create the PR
 - Use `gh pr create --title "..." --body "..."` to create the PR
-- If branch has unorganized commits, suggest running `/commits:reset` first
+- If branch has unorganized commits, suggest running `/commit:reset` first
 - The description should provide enough context that links may become inaccessible
+- PR title must follow Conventional Commits format for release-please compatibility

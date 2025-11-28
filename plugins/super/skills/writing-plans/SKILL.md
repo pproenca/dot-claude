@@ -14,6 +14,16 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
+## Optional: Track Plan Writing Phases
+
+For complex plans (5+ tasks), use TodoWrite to track progress:
+- Research existing architecture
+- Define high-level approach
+- Break down into tasks
+- Add code examples
+- Generate diagrams (if applicable)
+- Execution handoff
+
 **Context:** This should be run in a dedicated worktree (created by brainstorming skill).
 
 **Save plans to:** `docs/plans/YYYY-MM-DD-<feature-name>.md`

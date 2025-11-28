@@ -3,5 +3,10 @@
 # Context injection removed - guidelines available via skill lookup when needed
 # This reduces SessionStart context pollution per Claude Code best practices
 
-echo '{}'
-exit 0
+set -euo pipefail
+
+main() {
+  echo '{}'
+}
+
+main "$@"

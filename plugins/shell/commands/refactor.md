@@ -8,6 +8,22 @@ allowed-tools: [Bash, Read, Edit, Glob, AskUserQuestion, Task]
 
 Refactor the specified shell script to follow Google Shell Style Guide.
 
+## Progress Tracking
+
+Create TodoWrite with each step as a todo item:
+1. Identify target script
+2. Read script and analyze
+3. Run shellcheck analysis
+4. Load style guide knowledge
+5. Identify all violations
+6. Propose changes
+7. Apply refactoring
+8. Verify refactored script
+9. Dispatch shell expert agent
+10. Final report
+
+Mark each step `in_progress` when starting, `completed` when done.
+
 ## Step 1: Identify Target Script
 
 If `$ARGUMENTS` is provided, use it as the target script path. Store this path for use in all subsequent steps.
