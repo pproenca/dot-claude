@@ -1,0 +1,12 @@
+{
+  "name": "shell",
+  "version": "1.2.0",
+  "description": "Shell scripting toolkit with Google Style Guide refactoring",
+  "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/shell",
+  "repository": "https://github.com/pedroproenca/dot-claude",
+  "license": "MIT",
+  "keywords": ["shell", "bash", "style", "refactor", "google"],
+  "author": {
+    "name": "Pedro Proenca"
+  }
+}
