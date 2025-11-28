@@ -1,11 +1,19 @@
 {
   "name": "doc",
-  "version": "0.3.0",
+  "version": "3.0.0",
   "description": "Documentation: API docs, tutorials, memos, architecture guides, Mermaid diagrams",
   "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/doc",
   "repository": "https://github.com/pedroproenca/dot-claude",
   "license": "MIT",
-  "keywords": ["documentation", "api-docs", "tutorials", "mermaid", "architecture", "memos", "amazon-style"],
+  "keywords": [
+    "documentation",
+    "api-docs",
+    "tutorials",
+    "mermaid",
+    "architecture",
+    "memos",
+    "amazon-style"
+  ],
   "author": {
     "name": "Pedro Proenca"
   }
