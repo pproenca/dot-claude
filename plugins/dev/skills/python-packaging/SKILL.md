@@ -1,6 +1,7 @@
 ---
 name: python-packaging
 description: Use when packaging Python libraries, creating CLI tools, or distributing Python code. Covers proper project structure, pyproject.toml, and publishing to PyPI.
+allowed-tools: Bash(uv:*), Bash(python:*), Read, Write
 ---
 
 # Python Packaging

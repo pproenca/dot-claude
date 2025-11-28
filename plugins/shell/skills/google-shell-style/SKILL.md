@@ -1,6 +1,7 @@
 ---
 name: google-shell-style
 description: Use when the user asks to "refactor shell script", "fix bash style", "apply Google style guide to shell", "review shell script style", "format bash script", or when writing, reviewing, or refactoring shell/bash scripts. Provides Google Shell Style Guide rules for formatting, quoting, naming, control flow, and common anti-patterns.
+allowed-tools: Bash(shellcheck:*), Bash(bash -n:*), Read, Write, Edit
 ---
 
 # Google Shell Style Guide
@@ -275,6 +276,21 @@ Use process substitution to preserve variables:
 while read -r line; do
   last_line="${line}"
 done < <(your_command)
+```
+
+### Avoid mapfile/readarray (macOS Incompatible)
+
+`mapfile` and `readarray` are Bash 4+ builtins not available on macOS (Bash 3.2). Use `while read` loop instead:
+
+```bash
+# AVOID - fails on macOS
+mapfile -t files < <(find . -name "*.txt")
+
+# USE - portable
+files=()
+while IFS= read -r file; do
+  files+=("$file")
+done < <(find . -name "*.txt")
 ```
 
 ### Wildcard Safety

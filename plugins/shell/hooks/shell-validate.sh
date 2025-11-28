@@ -4,47 +4,57 @@
 
 set -euo pipefail
 
-input=$(cat)
-file_path=$(echo "$input" | jq -r '.tool_input.file_path // .tool_input.path // ""')
-content=$(echo "$input" | jq -r '.tool_input.content // ""')
+main() {
+  local input
+  local file_path
+  local content
+  local temp_file
+  local error
+  local sc_output
+  local warnings=()
 
-# Skip non-shell files
-if [[ ! "$file_path" =~ \.sh$ ]]; then
-  exit 0
-fi
+  input="$(cat)"
+  file_path="$(echo "${input}" | jq -r '.tool_input.file_path // .tool_input.path // ""')"
+  content="$(echo "${input}" | jq -r '.tool_input.content // ""')"
 
-# Write content to temp file for validation
-temp_file=$(mktemp)
-trap "rm -f $temp_file" EXIT
-echo "$content" > "$temp_file"
-
-warnings=()
-
-# Check for shebang
-if ! head -1 "$temp_file" | grep -q '^#!'; then
-  warnings+=("Missing shebang (add #!/bin/bash or #!/bin/sh)")
-fi
-
-# Syntax check with bash -n
-if ! bash -n "$temp_file" 2>/dev/null; then
-  error=$(bash -n "$temp_file" 2>&1 || true)
-  warnings+=("Syntax error: $error")
-fi
-
-# Run shellcheck if available (non-blocking)
-if command -v shellcheck &>/dev/null; then
-  sc_output=$(shellcheck -f gcc "$temp_file" 2>&1 || true)
-  if [[ -n "$sc_output" ]]; then
-    warnings+=("shellcheck: $sc_output")
+  # Skip non-shell files
+  if [[ ! "${file_path}" =~ \.sh$ ]]; then
+    exit 0
   fi
-fi
 
-# Output warnings if any
-if [[ ${#warnings[@]} -gt 0 ]]; then
-  printf "Shell script warnings for %s:\n" "$file_path"
-  for w in "${warnings[@]}"; do
-    printf "  - %s\n" "$w"
-  done
-fi
+  # Write content to temp file for validation
+  temp_file="$(mktemp)"
+  trap 'rm -f "${temp_file}"' EXIT
+  echo "${content}" > "${temp_file}"
 
-exit 0
+  # Check for shebang
+  if ! head -1 "${temp_file}" | grep -q '^#!'; then
+    warnings+=("Missing shebang (add #!/bin/bash or #!/bin/sh)")
+  fi
+
+  # Syntax check with bash -n
+  if ! bash -n "${temp_file}" 2>/dev/null; then
+    error="$(bash -n "${temp_file}" 2>&1 || true)"
+    warnings+=("Syntax error: ${error}")
+  fi
+
+  # Run shellcheck if available (non-blocking)
+  if command -v shellcheck &>/dev/null; then
+    sc_output="$(shellcheck -f gcc "${temp_file}" 2>&1 || true)"
+    if [[ -n "${sc_output}" ]]; then
+      warnings+=("shellcheck: ${sc_output}")
+    fi
+  fi
+
+  # Output warnings if any
+  if [[ ${#warnings[@]} -gt 0 ]]; then
+    printf "Shell script warnings for %s:\n" "${file_path}"
+    for w in "${warnings[@]}"; do
+      printf "  - %s\n" "${w}"
+    done
+  fi
+
+  exit 0
+}
+
+main "$@"

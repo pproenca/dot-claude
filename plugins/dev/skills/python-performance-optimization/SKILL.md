@@ -1,6 +1,7 @@
 ---
 name: python-performance-optimization
 description: Use when debugging slow Python code, optimizing bottlenecks, or improving application performance. Covers cProfile, memory profilers, and performance best practices.
+allowed-tools: Bash(python:*), Bash(cProfile:*), Read
 ---
 
 # Python Performance Optimization

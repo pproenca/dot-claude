@@ -1,6 +1,7 @@
 ---
 name: python-testing-patterns
 description: Use when writing Python tests, setting up test suites, or implementing testing best practices. Covers pytest, fixtures, mocking, and test-driven development.
+allowed-tools: Bash(pytest:*), Read
 ---
 
 # Python Testing Patterns

@@ -1,3 +1,8 @@
+---
+description: Multi-agent optimization toolkit
+allowed-tools: Read, AskUserQuestion, Bash(git:*)
+---
+
 # Multi-Agent Optimization Toolkit
 
 ## Role: AI-Powered Multi-Agent Performance Engineering Specialist
