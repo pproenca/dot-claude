@@ -115,6 +115,69 @@ def test_atomic_store_deduplicates():
 
     assert first_stat.st_mtime == second_stat.st_mtime, "Should not rewrite existing blob"
 
+def test_atomic_store_verifies_hash_on_write():
+    """Test TOCTOU protection: atomic_store verifies content hash during write."""
+    from blackbox import atomic_store, OBJECTS_DIR, DATA_DIR
+    import shutil
+
+    if os.path.exists(DATA_DIR):
+        shutil.rmtree(DATA_DIR)
+
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+        f.write("original content")
+        temp_path = f.name
+
+    try:
+        fake_hash = "0" * 40
+        result = atomic_store(temp_path, fake_hash)
+        blob_path = os.path.join(OBJECTS_DIR, fake_hash[:2], fake_hash[2:])
+        assert not os.path.exists(blob_path), "Should NOT store when hash mismatches content"
+        assert result is False, "Should return False on hash mismatch"
+    finally:
+        os.unlink(temp_path)
+
+def test_atomic_store_blobs_are_immutable():
+    """Test that CAS blobs are read-only (0o444) after creation."""
+    from blackbox import atomic_store, fast_hash_mmap, OBJECTS_DIR, DATA_DIR
+    import shutil
+    import stat
+
+    fixtures_dir = os.path.join(os.path.dirname(__file__), 'fixtures')
+    sample_path = os.path.join(fixtures_dir, 'sample.txt')
+
+    if os.path.exists(DATA_DIR):
+        shutil.rmtree(DATA_DIR)
+
+    file_hash, _ = fast_hash_mmap(sample_path)
+    atomic_store(sample_path, file_hash)
+
+    blob_path = os.path.join(OBJECTS_DIR, file_hash[:2], file_hash[2:])
+    blob_mode = os.stat(blob_path).st_mode & 0o777
+
+    assert blob_mode == 0o444, f"Blob should be read-only (0o444), got {oct(blob_mode)}"
+
+def test_atomic_store_content_matches_hash():
+    """Test that stored blob content actually matches its hash address."""
+    from blackbox import atomic_store, fast_hash_mmap, OBJECTS_DIR, DATA_DIR
+    import shutil
+    import hashlib
+
+    fixtures_dir = os.path.join(os.path.dirname(__file__), 'fixtures')
+    sample_path = os.path.join(fixtures_dir, 'sample.txt')
+
+    if os.path.exists(DATA_DIR):
+        shutil.rmtree(DATA_DIR)
+
+    file_hash, _ = fast_hash_mmap(sample_path)
+    atomic_store(sample_path, file_hash)
+
+    blob_path = os.path.join(OBJECTS_DIR, file_hash[:2], file_hash[2:])
+    with open(blob_path, 'rb') as f:
+        stored_content = f.read()
+
+    actual_hash = hashlib.sha1(stored_content).hexdigest()
+    assert actual_hash == file_hash, "Stored content hash must match address"
+
 def test_main_pretooluse_write_creates_snapshot(monkeypatch):
     """Test PreToolUse for Write tool creates snapshot."""
     from blackbox import main, BUFFER_PATH, OBJECTS_DIR, DATA_DIR
