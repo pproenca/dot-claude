@@ -1,5 +1,12 @@
 #!/usr/bin/env python3 -S
-"""Blackbox Flight Recorder - CAS Storage with mmap hashing."""
+"""
+Blackbox Flight Recorder (V5)
+
+Zero-dependency telemetry plugin for Claude Code.
+Design: CAS Storage, mmap hashing, Atomic Writes.
+
+Reference: docs/plans/2025-11-29-blackbox-flight-recorder.md
+"""
 import hashlib
 import json
 import mmap
