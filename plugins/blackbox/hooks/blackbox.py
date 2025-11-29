@@ -1,9 +1,14 @@
 #!/usr/bin/env python3 -S
 """
-Blackbox Flight Recorder (V5)
+Blackbox Flight Recorder (V6 - Decade-Proof)
 
 Zero-dependency telemetry plugin for Claude Code.
 Design: CAS Storage, mmap hashing, Atomic Writes.
+
+Critical properties:
+- TOCTOU-safe: Hash verified during write, not before
+- Immutable: CAS blobs are chmod 0o444 after creation
+- Durable: fsync before rename prevents 0-byte files on power loss
 
 Reference: docs/plans/2025-11-29-blackbox-flight-recorder.md
 """
@@ -16,6 +21,7 @@ import time
 
 MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
 MAX_STDIN_SIZE = 256 * 1024  # 256KB
+CHUNK_SIZE = 64 * 1024  # 64KB chunks for streaming hash
 PLUGIN_ROOT = os.environ.get("CLAUDE_PLUGIN_ROOT", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DATA_DIR = os.path.join(PLUGIN_ROOT, "data")
 BUFFER_PATH = os.path.join(DATA_DIR, "buffer.jsonl")
@@ -45,26 +51,61 @@ def fast_hash_mmap(filepath):
     except OSError:
         return None, False
 
-def atomic_store(filepath, file_hash):
-    """Store file to CAS using write-tmp-rename pattern."""
-    prefix = file_hash[:2]
-    suffix = file_hash[2:]
+def atomic_store(filepath, expected_hash):
+    """
+    Store file to CAS with TOCTOU protection.
+    
+    Returns True if stored successfully, False if hash mismatch or error.
+    
+    Critical properties:
+    - Verify-on-write: Hash calculated during copy, abort if mismatch
+    - Immutable: Blob set to 0o444 after creation
+    - Durable: fsync before rename
+    """
+    prefix = expected_hash[:2]
+    suffix = expected_hash[2:]
     target_dir = os.path.join(OBJECTS_DIR, prefix)
     target_path = os.path.join(target_dir, suffix)
 
     if os.path.exists(target_path):
-        return
+        return True
+
+    tmp_path = target_path + ".tmp"
+    hasher = hashlib.sha1()
 
     try:
         os.makedirs(target_dir, exist_ok=True)
-        tmp_path = target_path + ".tmp"
-
-        with open(filepath, 'rb') as src, open(tmp_path, 'wb') as dst:
-            dst.write(src.read())
-
+        
+        with open(filepath, 'rb') as src:
+            fd = os.open(tmp_path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o644)
+            try:
+                while True:
+                    chunk = src.read(CHUNK_SIZE)
+                    if not chunk:
+                        break
+                    hasher.update(chunk)
+                    os.write(fd, chunk)
+                
+                actual_hash = hasher.hexdigest()
+                if actual_hash != expected_hash:
+                    os.close(fd)
+                    os.unlink(tmp_path)
+                    return False
+                
+                os.fsync(fd)
+            finally:
+                os.close(fd)
+        
+        os.chmod(tmp_path, 0o444)
         os.rename(tmp_path, target_path)
+        return True
+        
     except OSError:
-        pass
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        return False
 
 def main():
     """Process hook event from stdin."""
