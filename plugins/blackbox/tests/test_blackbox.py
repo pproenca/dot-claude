@@ -65,6 +65,54 @@ def test_fast_hash_mmap_nonexistent_file():
     assert file_hash is None, "Should return None for nonexistent file"
     assert is_binary is False
 
+def test_atomic_store_creates_blob():
+    """Test that atomic_store creates blob in CAS."""
+    from blackbox import atomic_store, fast_hash_mmap, OBJECTS_DIR, DATA_DIR
+    import shutil
+
+    fixtures_dir = os.path.join(os.path.dirname(__file__), 'fixtures')
+    sample_path = os.path.join(fixtures_dir, 'sample.txt')
+
+    if os.path.exists(DATA_DIR):
+        shutil.rmtree(DATA_DIR)
+
+    file_hash, _ = fast_hash_mmap(sample_path)
+    atomic_store(sample_path, file_hash)
+
+    prefix = file_hash[:2]
+    suffix = file_hash[2:]
+    blob_path = os.path.join(OBJECTS_DIR, prefix, suffix)
+
+    assert os.path.exists(blob_path), f"Blob should exist at {blob_path}"
+
+    with open(blob_path, 'rb') as f:
+        blob_content = f.read()
+    with open(sample_path, 'rb') as f:
+        original_content = f.read()
+
+    assert blob_content == original_content, "Blob content should match original"
+
+def test_atomic_store_deduplicates():
+    """Test that atomic_store skips existing blobs."""
+    from blackbox import atomic_store, fast_hash_mmap, OBJECTS_DIR, DATA_DIR
+    import shutil
+
+    fixtures_dir = os.path.join(os.path.dirname(__file__), 'fixtures')
+    sample_path = os.path.join(fixtures_dir, 'sample.txt')
+
+    if os.path.exists(DATA_DIR):
+        shutil.rmtree(DATA_DIR)
+
+    file_hash, _ = fast_hash_mmap(sample_path)
+
+    atomic_store(sample_path, file_hash)
+    first_stat = os.stat(os.path.join(OBJECTS_DIR, file_hash[:2], file_hash[2:]))
+
+    atomic_store(sample_path, file_hash)
+    second_stat = os.stat(os.path.join(OBJECTS_DIR, file_hash[:2], file_hash[2:]))
+
+    assert first_stat.st_mtime == second_stat.st_mtime, "Should not rewrite existing blob"
+
 if __name__ == '__main__':
     import pytest
     pytest.main([__file__, '-v'])
