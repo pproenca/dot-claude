@@ -40,7 +40,8 @@ We use [release-please](https://github.com/googleapis/release-please) for automa
    - Version bump based on commit types (`feat:` = minor, `fix:` = patch)
    - Generated CHANGELOG.md entries
    - Updated version in all plugin.json files
-3. **Release**: Merging the Release PR triggers:
+3. **Manual Approval**: Release PRs require human approval (same as feature PRs)
+4. **Release**: Merging the Release PR triggers:
    - Git tag creation
    - GitHub Release with release notes
 
@@ -63,51 +64,35 @@ We use [release-please](https://github.com/googleapis/release-please) for automa
 | `.release-please-manifest.json` | Current version tracking |
 | `.github/workflows/release-please.yml` | GitHub Actions workflow |
 
-## GitHub App Authentication
+## Authentication
 
-The release-please workflow uses a GitHub App for authentication, enabling it to bypass branch protection rulesets.
+The release-please workflow uses the built-in `GITHUB_TOKEN` for authentication.
 
-### Why a GitHub App?
+### Why GITHUB_TOKEN?
 
-- `GITHUB_TOKEN` cannot bypass repository rulesets
-- GitHub Apps can be granted bypass permissions for specific rulesets
-- Provides audit trail of automated actions
+- **Zero maintenance**: No secrets to rotate, no apps to manage
+- **Built-in security**: Token automatically scoped to repository
+- **Standard workflow**: Release PRs go through normal approval process
 
-### App Configuration
+### Workflow Permissions
 
-| Setting | Value |
-|---------|-------|
-| App Name | `release-please-dot-claude` |
-| App ID | Stored in `vars.RELEASE_PLEASE_APP_ID` |
-| Private Key | Stored in `secrets.RELEASE_PLEASE_PRIVATE_KEY` |
-| Permissions | Contents (R/W), Pull requests (R/W), Metadata (R) |
-
-### Workflow Authentication Flow
-
-```mermaid
-sequenceDiagram
-    participant GHA as GitHub Actions
-    participant TOKEN as create-github-app-token
-    participant APP as GitHub App
-    participant RP as release-please
-    participant REPO as Repository
-
-    GHA->>TOKEN: Request token
-    TOKEN->>APP: Authenticate with App ID + Private Key
-    APP-->>TOKEN: Installation token
-    TOKEN-->>GHA: Token output
-    GHA->>RP: Run with app token
-    RP->>REPO: Create PR / Push commits
-    Note over REPO: Bypasses rulesets<br/>(app is exempt)
+```yaml
+permissions:
+  contents: write      # Create releases, tags, update files
+  pull-requests: write # Create and update Release PRs
 ```
+
+### Trade-off
+
+Release PRs require manual approval like any other PR. This adds a small manual step but eliminates maintenance overhead of managing a GitHub App.
 
 ## Branch Protection Rulesets
 
-The `master` branch is protected by three rulesets following the 3-ruleset pattern:
+The `master` branch is protected by three rulesets:
 
-### Ruleset 1: Base Protection (No Bypass)
+### Ruleset 1: Base Protection
 
-Applies to **everyone**, including the release-please bot.
+Applies to **everyone**, no exceptions.
 
 | Rule | Purpose |
 |------|---------|
@@ -115,9 +100,9 @@ Applies to **everyone**, including the release-please bot.
 | Restrict force pushes | Cannot force push |
 | Require linear history | No merge commits |
 
-### Ruleset 2: PR Requirements (Bot Exempt)
+### Ruleset 2: PR Requirements
 
-Applies to developers; release-please bot can bypass.
+Applies to **everyone**, no exceptions.
 
 | Rule | Purpose |
 |------|---------|
@@ -126,9 +111,9 @@ Applies to developers; release-please bot can bypass.
 | Dismiss stale reviews | Re-review after push |
 | Require status checks | `validate` must pass |
 
-### Ruleset 3: Push Restrictions (Bot Exempt)
+### Ruleset 3: Push Restrictions
 
-Applies to developers; release-please bot can bypass.
+Applies to **everyone**, no exceptions.
 
 | Rule | Purpose |
 |------|---------|
@@ -140,22 +125,21 @@ Applies to developers; release-please bot can bypass.
 +-----------------------------------------------------------+
 |                    MASTER BRANCH                          |
 +-----------------------------------------------------------+
-|  Ruleset 1: Base Protection (NO BYPASS)                   |
+|  Ruleset 1: Base Protection                               |
 |  - No force push                                          |
 |  - No deletion                                            |
 |  - Linear history                                         |
 +-----------------------------------------------------------+
-|  Ruleset 2: PR Requirements (release-please EXEMPT)       |
+|  Ruleset 2: PR Requirements                               |
 |  - Require PR with 1+ approval                            |
 |  - Require status checks (validate)                       |
 |  - Dismiss stale reviews                                  |
 +-----------------------------------------------------------+
-|  Ruleset 3: Push Restrictions (release-please EXEMPT)     |
+|  Ruleset 3: Push Restrictions                             |
 |  - Block direct pushes                                    |
 +-----------------------------------------------------------+
 
-Developers: Must create PR -> Pass checks -> Get approval -> Merge
-Bot:        Can push directly (version bumps, tags, changelog)
+All PRs (feature + release): Create PR -> Pass checks -> Get approval -> Merge
 ```
 
 ## Validation Workflow
@@ -187,22 +171,8 @@ This ensures:
 2. Verify commits follow Conventional Commits format
 3. Check for existing Release PR: `gh pr list --label "autorelease: pending"`
 
-### Bot Cannot Push
-
-1. Verify app is installed on repository
-2. Check app has correct permissions (Contents, Pull requests)
-3. Verify rulesets have app in bypass list:
-   ```bash
-   gh api repos/OWNER/REPO/rulesets/ID --jq '.bypass_actors'
-   ```
-
 ### Status Checks Failing
 
 1. Check `validate` job output in workflow run
 2. Verify JSON syntax: `jq empty plugins/*/.claude-plugin/plugin.json`
 3. Check required fields: `jq '.name, .version' plugins/*/.claude-plugin/plugin.json`
-
-## Setup Reference
-
-To replicate this setup on another repository, see the implementation plan:
-[2025-11-29-github-app-rulesets-release-please.md](plans/2025-11-29-github-app-rulesets-release-please.md)
