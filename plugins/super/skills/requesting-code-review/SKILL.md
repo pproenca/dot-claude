@@ -104,3 +104,17 @@ You: [Fix progress indicators]
 - Request clarification
 
 See template at: requesting-code-review/code-reviewer.md
+
+## Integration
+
+**Tool usage:**
+- Uses `Task` tool with `super:code-reviewer` subagent type
+- Template at `code-reviewer.md` provides structured review prompt
+
+**Called by:**
+- **subagent-driven-development** - Review after each task (Step 3)
+- **executing-plans** - Review after each batch (Step 3)
+
+**Pairs with:**
+- **receiving-code-review** - How to handle and respond to review feedback
+- **verification-before-completion** - Verify claims before requesting final review

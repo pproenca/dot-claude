@@ -386,3 +386,18 @@ From applying TDD to TDD skill itself (2025-10-03):
 - Each REFACTOR closed specific loopholes
 - Final VERIFY GREEN: 100% compliance under maximum pressure
 - Same process works for any discipline-enforcing skill
+
+## Integration
+
+**Tool usage:**
+- Uses `Task` tool to dispatch test subagents with pressure scenarios
+- Uses `Read` to examine skill content and examples
+
+**REQUIRED BACKGROUND:**
+- **test-driven-development** - Foundational skill defining RED-GREEN-REFACTOR cycle
+
+**Called by:**
+- **writing-skills** - REQUIRED sub-skill for testing before deployment (Step 5)
+
+**Pairs with:**
+- **writing-skills** - This skill provides testing methodology; writing-skills provides creation structure

@@ -179,3 +179,13 @@ From debugging session (2025-10-03):
 - All investigations completed concurrently
 - All fixes integrated successfully
 - Zero conflicts between agent changes
+
+## Integration
+
+**Tool usage:**
+- Uses `Task` tool to dispatch parallel subagents
+- Each Task call creates an independent agent with its own context
+
+**Pairs with:**
+- **systematic-debugging** - Use for initial problem identification before parallel dispatch
+- **requesting-code-review** - Review combined changes after all agents complete
