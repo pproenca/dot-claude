@@ -4,6 +4,7 @@ import json
 import os
 import sys
 import tempfile
+import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'hooks'))
 
@@ -193,6 +194,40 @@ def test_main_sessionstart_logs_event(monkeypatch):
         log_entry = json.loads(f.readline())
 
     assert log_entry['e'] == 'SessionStart', "Event should be SessionStart"
+
+def test_performance_under_20ms(monkeypatch):
+    """Test that hook execution completes in under 20ms."""
+    from blackbox import main, DATA_DIR
+    import shutil
+    import io
+
+    fixtures_dir = os.path.join(os.path.dirname(__file__), 'fixtures')
+    sample_path = os.path.join(fixtures_dir, 'sample.txt')
+
+    if os.path.exists(DATA_DIR):
+        shutil.rmtree(DATA_DIR)
+
+    event_data = {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+            "file_path": sample_path
+        }
+    }
+
+    monkeypatch.setattr('sys.stdin', io.StringIO(json.dumps(event_data)))
+    main()
+
+    times = []
+    for _ in range(10):
+        monkeypatch.setattr('sys.stdin', io.StringIO(json.dumps(event_data)))
+        start = time.perf_counter()
+        main()
+        elapsed = (time.perf_counter() - start) * 1000
+        times.append(elapsed)
+
+    avg_time = sum(times) / len(times)
+    assert avg_time < 20, f"Average execution time {avg_time:.2f}ms exceeds 20ms target"
 
 if __name__ == '__main__':
     import pytest
