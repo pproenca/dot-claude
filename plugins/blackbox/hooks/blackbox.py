@@ -1,8 +1,11 @@
 #!/usr/bin/env python3 -S
 """Blackbox Flight Recorder - CAS Storage with mmap hashing."""
-import os
 import hashlib
+import json
 import mmap
+import os
+import sys
+import time
 
 MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
 MAX_STDIN_SIZE = 256 * 1024  # 256KB
@@ -56,5 +59,54 @@ def atomic_store(filepath, file_hash):
     except OSError:
         pass
 
+def main():
+    """Process hook event from stdin."""
+    try:
+        if not os.path.exists(DATA_DIR):
+            os.makedirs(DATA_DIR, exist_ok=True)
+
+        raw_input = sys.stdin.read(MAX_STDIN_SIZE)
+        if not raw_input:
+            return
+
+        try:
+            data = json.loads(raw_input)
+        except json.JSONDecodeError:
+            return
+
+        event = data.get("hook_event_name")
+        file_hash = None
+        is_skipped = False
+
+        if event == "PreToolUse":
+            tool = data.get("tool_name")
+            if tool in ("Write", "Edit", "MultiEdit"):
+                fpath = data.get("tool_input", {}).get("file_path")
+
+                if fpath and os.path.exists(fpath):
+                    file_hash, is_binary = fast_hash_mmap(fpath)
+
+                    if is_binary:
+                        is_skipped = True
+                    elif file_hash:
+                        atomic_store(fpath, file_hash)
+
+        log_entry = {
+            "t": time.time(),
+            "e": event,
+            "h": file_hash
+        }
+
+        if is_skipped:
+            log_entry["skipped"] = "binary_or_oversize"
+
+        log_entry["d"] = data
+
+        with open(BUFFER_PATH, "a", buffering=1) as f:
+            f.write(json.dumps(log_entry) + "\n")
+
+    except Exception:
+        sys.exit(0)
+
 if __name__ == "__main__":
-    pass
+    main()
