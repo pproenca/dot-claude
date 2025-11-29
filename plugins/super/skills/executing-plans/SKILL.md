@@ -1,7 +1,7 @@
 ---
 name: executing-plans
 description: Use when partner provides a complete implementation plan to execute in controlled batches with review checkpoints - loads plan, reviews critically, executes tasks in batches, reports for review between batches
-allowed-tools: Bash, Read, Write, Edit, AskUserQuestion, TodoWrite
+allowed-tools: Bash, Read, Write, Edit, AskUserQuestion, TodoWrite, Skill, Task
 ---
 
 # Executing Plans
@@ -15,6 +15,30 @@ Load plan, review critically, execute tasks in batches, report for review betwee
 **Announce at start:** "I'm using the executing-plans skill to implement this plan."
 
 ## The Process
+
+### Step 0: Verify Isolation Context
+
+Before loading plan:
+
+1. Check current git context:
+   ```bash
+   git branch --show-current
+   git worktree list
+   ```
+
+2. **If on main/master without worktree:**
+   Use AskUserQuestion:
+   ```
+   Question: "You're on the main branch. Plans should execute in isolated worktrees to protect main."
+   Header: "Isolation"
+   Options:
+   - "Set up worktree": Create isolated workspace first (recommended)
+   - "Continue on main": I understand the risk, proceed anyway
+   ```
+
+3. **If "Set up worktree":** Use super:using-git-worktrees skill first
+4. **If "Continue on main":** Proceed with warning logged
+5. **If already in worktree or feature branch:** Proceed normally
 
 ### Step 1: Load and Review Plan
 1. Read plan file
