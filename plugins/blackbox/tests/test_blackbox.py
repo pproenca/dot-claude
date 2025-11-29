@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Tests for blackbox flight recorder."""
+import json
 import os
 import sys
 import tempfile
@@ -112,6 +113,86 @@ def test_atomic_store_deduplicates():
     second_stat = os.stat(os.path.join(OBJECTS_DIR, file_hash[:2], file_hash[2:]))
 
     assert first_stat.st_mtime == second_stat.st_mtime, "Should not rewrite existing blob"
+
+def test_main_pretooluse_write_creates_snapshot(monkeypatch):
+    """Test PreToolUse for Write tool creates snapshot."""
+    from blackbox import main, BUFFER_PATH, OBJECTS_DIR, DATA_DIR
+    import shutil
+    import io
+
+    fixtures_dir = os.path.join(os.path.dirname(__file__), 'fixtures')
+    sample_path = os.path.join(fixtures_dir, 'sample.txt')
+
+    if os.path.exists(DATA_DIR):
+        shutil.rmtree(DATA_DIR)
+
+    event_data = {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+            "file_path": sample_path
+        }
+    }
+    monkeypatch.setattr('sys.stdin', io.StringIO(json.dumps(event_data)))
+
+    main()
+
+    assert os.path.exists(BUFFER_PATH), "buffer.jsonl should be created"
+
+    with open(BUFFER_PATH, 'r') as f:
+        log_entry = json.loads(f.readline())
+
+    assert log_entry['e'] == 'PreToolUse', "Event should be PreToolUse"
+    assert log_entry['h'] is not None, "Hash should be recorded"
+
+def test_main_pretooluse_binary_skipped(monkeypatch):
+    """Test PreToolUse for binary file marks as skipped."""
+    from blackbox import main, BUFFER_PATH, DATA_DIR
+    import shutil
+    import io
+
+    fixtures_dir = os.path.join(os.path.dirname(__file__), 'fixtures')
+    binary_path = os.path.join(fixtures_dir, 'binary.png')
+
+    if os.path.exists(DATA_DIR):
+        shutil.rmtree(DATA_DIR)
+
+    event_data = {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Edit",
+        "tool_input": {
+            "file_path": binary_path
+        }
+    }
+    monkeypatch.setattr('sys.stdin', io.StringIO(json.dumps(event_data)))
+
+    main()
+
+    with open(BUFFER_PATH, 'r') as f:
+        log_entry = json.loads(f.readline())
+
+    assert log_entry.get('skipped') == 'binary_or_oversize', "Should mark binary as skipped"
+
+def test_main_sessionstart_logs_event(monkeypatch):
+    """Test SessionStart event is logged."""
+    from blackbox import main, BUFFER_PATH, DATA_DIR
+    import shutil
+    import io
+
+    if os.path.exists(DATA_DIR):
+        shutil.rmtree(DATA_DIR)
+
+    event_data = {
+        "hook_event_name": "SessionStart"
+    }
+    monkeypatch.setattr('sys.stdin', io.StringIO(json.dumps(event_data)))
+
+    main()
+
+    with open(BUFFER_PATH, 'r') as f:
+        log_entry = json.loads(f.readline())
+
+    assert log_entry['e'] == 'SessionStart', "Event should be SessionStart"
 
 if __name__ == '__main__':
     import pytest
