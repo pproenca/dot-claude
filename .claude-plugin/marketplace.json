@@ -37,6 +37,10 @@
     {
       "name": "agent",
       "source": "./plugins/agent"
+    },
+    {
+      "name": "skill",
+      "source": "./plugins/skill"
     }
   ]
 }
