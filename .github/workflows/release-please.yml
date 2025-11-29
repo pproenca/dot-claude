@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
 
 permissions:
   contents: read
@@ -24,6 +27,7 @@ jobs:
           echo "All validations passed"
 
   release-please:
+    if: github.event_name == 'push'
     needs: validate
     runs-on: ubuntu-latest
     steps:
