@@ -157,7 +157,8 @@ main() {
   input="$(cat)"
 
   # Fast-path: exit immediately if input doesn't contain git (avoid jq parsing overhead)
-  if ! grep -q '"git ' <<< "${input}"; then
+  # Check for both direct git commands ("git ...) and piped commands (| git ...)
+  if ! grep -qE '("git |[|] *git )' <<< "${input}"; then
     echo '{}'
     exit 0
   fi
@@ -172,8 +173,8 @@ main() {
   # Extract command from tool_input
   command="$(jq -r '.tool_input.command // empty' <<< "${input}")"
 
-  # Quick exit if not a git command
-  if [[ ! "${command}" =~ ^git ]]; then
+  # Quick exit if not a git command (direct or piped)
+  if [[ ! "${command}" =~ (^git|[|][[:space:]]*git) ]]; then
     echo '{}'
     exit 0
   fi
@@ -190,6 +191,22 @@ main() {
       commit_msg="${BASH_REMATCH[1]}"
     elif [[ "${command}" =~ -m[[:space:]]+([^[:space:]]+) ]]; then
       commit_msg="${BASH_REMATCH[1]}"
+    fi
+
+    # Handle printf pattern: printf '%b' 'message with \n escapes' | git commit -F -
+    # Also supports older printf '%s...' patterns
+    if [[ -z "${commit_msg}" ]] && [[ "${command}" =~ git[[:space:]]+commit[[:space:]]+-F[[:space:]]+-[[:space:]]*$ ]]; then
+      # Match printf '%b' with single-quoted message (preferred pattern)
+      if [[ "${command}" =~ printf[[:space:]]+\'%b\'[[:space:]]+\'([^\']+)\' ]]; then
+        # Extract message and convert \n escape sequences to actual newlines for validation
+        commit_msg="$(printf '%b' "${BASH_REMATCH[1]}")"
+      # Match printf '%s...' with single-quoted first message argument (legacy)
+      elif [[ "${command}" =~ printf[[:space:]]+\'%s[^\']*\'[[:space:]]+\'([^\']+)\' ]]; then
+        commit_msg="${BASH_REMATCH[1]}"
+      # Match printf with double-quoted first message argument (legacy)
+      elif [[ "${command}" =~ printf[[:space:]]+\"%s[^\"]*\"[[:space:]]+\"([^\"]+)\" ]]; then
+        commit_msg="${BASH_REMATCH[1]}"
+      fi
     fi
 
     if [[ -n "${commit_msg}" ]]; then
