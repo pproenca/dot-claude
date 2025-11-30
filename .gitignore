@@ -6,7 +6,7 @@
 .env
 .env.*
 *.env
-.envrc
+# Note: .envrc is safe to commit (contains only 1Password references, not secrets)
 
 # Secrets and credentials
 *secret*
