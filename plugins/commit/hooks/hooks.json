@@ -1,0 +1,43 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -S ${CLAUDE_PLUGIN_ROOT}/hooks/session_start.py",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -S ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse_safety.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -S ${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse_validate.py",
+            "timeout": 10
+          },
+          {
+            "type": "prompt",
+            "prompt": "Review the commit that was just created. Run: git log -1 --format='%B' && git diff --stat HEAD~1..HEAD\n\nEvaluate the commit against Conventional Commits standards:\n\n1. **Subject line**: Is it imperative mood? Specific about WHAT changed? 50-72 chars?\n\n2. **Body (if present)**: Does it explain WHY, not just repeat WHAT the code shows?\n\n3. **Scope**: Is this ONE logical change? Are tests included with their feature/fix?\n\n4. **Separation**: Is refactoring mixed with features/fixes? (violation)\n\nIf ANY issue found, output 'ISSUE: [description]' and suggest amending.\n\nIf the commit is good, output 'VALIDATED: Commit follows Conventional Commits standards.'"
+          }
+        ]
+      }
+    ]
+  }
+}
