@@ -265,7 +265,6 @@ def repeat(count: int):
         click.echo(f"Message {i + 1}")
 
 def main():
-    """Entry point for CLI."""
     cli()
 
 if __name__ == "__main__":
@@ -294,7 +293,6 @@ import argparse
 import sys
 
 def main():
-    """Main CLI entry point."""
     parser = argparse.ArgumentParser(
         description="My awesome tool",
         prog="my-tool"
@@ -326,7 +324,6 @@ def main():
         sys.exit(1)
 
 def process_data(input_file: str, output_file: str):
-    """Process data from input to output."""
     print(f"Processing {input_file} -> {output_file}")
 
 if __name__ == "__main__":
