@@ -6,68 +6,14 @@ allowed-tools: Bash(python:*), Bash(cProfile:*), Read
 
 # Python Performance Optimization
 
-Comprehensive guide to profiling, analyzing, and optimizing Python code for better performance, including CPU profiling, memory optimization, and implementation best practices.
+Profiling and optimizing Python code for better performance.
 
-## When to Use This Skill
+## Reference Files
 
-- Identifying performance bottlenecks in Python applications
-- Reducing application latency and response times
-- Optimizing CPU-intensive operations
-- Reducing memory consumption and memory leaks
-- Improving database query performance
-- Optimizing I/O operations
-- Speeding up data processing pipelines
-- Implementing high-performance algorithms
-- Profiling production applications
-
-## Core Concepts
-
-### 1. Profiling Types
-- **CPU Profiling**: Identify time-consuming functions
-- **Memory Profiling**: Track memory allocation and leaks
-- **Line Profiling**: Profile at line-by-line granularity
-- **Call Graph**: Visualize function call relationships
-
-### 2. Performance Metrics
-- **Execution Time**: How long operations take
-- **Memory Usage**: Peak and average memory consumption
-- **CPU Utilization**: Processor usage patterns
-- **I/O Wait**: Time spent on I/O operations
-
-### 3. Optimization Strategies
-- **Algorithmic**: Better algorithms and data structures
-- **Implementation**: More efficient code patterns
-- **Parallelization**: Multi-threading/processing
-- **Caching**: Avoid redundant computation
-- **Native Extensions**: C/Rust for critical paths
-
-## Quick Start
-
-### Basic Timing
-
-```python
-import time
-
-def measure_time():
-    """Simple timing measurement."""
-    start = time.time()
-
-    # Your code here
-    result = sum(range(1000000))
-
-    elapsed = time.time() - start
-    print(f"Execution time: {elapsed:.4f} seconds")
-    return result
-
-# Better: use timeit for accurate measurements
-import timeit
-
-execution_time = timeit.timeit(
-    "sum(range(1000000))",
-    number=100
-)
-print(f"Average time: {execution_time/100:.6f} seconds")
-```
+| Topic | When to Load | File |
+|-------|--------------|------|
+| Query optimization, batch operations, connection pooling | Database performance | `references/database-optimization.md` |
+| __slots__, memory leaks, generators, weakref | Memory optimization | `references/memory-optimization.md` |
 
 ## Profiling Tools
 
@@ -255,155 +201,67 @@ def faster_squares(n):
 ```python
 import sys
 
-def list_approach():
-    """Memory-intensive list."""
-    data = [i**2 for i in range(1000000)]
-    return sum(data)
-
-def generator_approach():
-    """Memory-efficient generator."""
-    data = (i**2 for i in range(1000000))
-    return sum(data)
-
 # Memory comparison
 list_data = [i for i in range(1000000)]
 gen_data = (i for i in range(1000000))
 
 print(f"List size: {sys.getsizeof(list_data)} bytes")
 print(f"Generator size: {sys.getsizeof(gen_data)} bytes")
-
 # Generators use constant memory regardless of size
 ```
 
 ### Pattern 7: String Concatenation
 
 ```python
-import timeit
+# Slow: string += in loop (O(n²) for n concatenations)
+result = ""
+for item in items:
+    result += str(item)
 
-def slow_concat(items):
-    """Slow string concatenation."""
-    result = ""
-    for item in items:
-        result += str(item)
-    return result
-
-def fast_concat(items):
-    """Fast string concatenation with join."""
-    return "".join(str(item) for item in items)
-
-def faster_concat(items):
-    """Even faster with list."""
-    parts = [str(item) for item in items]
-    return "".join(parts)
-
-items = list(range(10000))
-
-# Benchmark
-slow = timeit.timeit(lambda: slow_concat(items), number=100)
-fast = timeit.timeit(lambda: fast_concat(items), number=100)
-faster = timeit.timeit(lambda: faster_concat(items), number=100)
-
-print(f"Concatenation (+): {slow:.4f}s")
-print(f"Join (generator): {fast:.4f}s")
-print(f"Join (list): {faster:.4f}s")
+# Fast: use join (O(n))
+result = "".join(str(item) for item in items)
 ```
 
 ### Pattern 8: Dictionary Lookups vs List Searches
 
 ```python
-import timeit
+# O(n) search in list - slow for large collections
+target in items_list
 
-# Create test data
-size = 10000
-items = list(range(size))
-lookup_dict = {i: i for i in range(size)}
+# O(1) search in dict/set - fast regardless of size
+target in items_dict
+target in items_set
 
-def list_search(items, target):
-    """O(n) search in list."""
-    return target in items
-
-def dict_search(lookup_dict, target):
-    """O(1) search in dict."""
-    return target in lookup_dict
-
-target = size - 1  # Worst case for list
-
-# Benchmark
-list_time = timeit.timeit(
-    lambda: list_search(items, target),
-    number=1000
-)
-dict_time = timeit.timeit(
-    lambda: dict_search(lookup_dict, target),
-    number=1000
-)
-
-print(f"List search: {list_time:.6f}s")
-print(f"Dict search: {dict_time:.6f}s")
-print(f"Speedup: {list_time/dict_time:.0f}x")
+# Use set for membership testing, dict for key-value lookups
 ```
 
 ### Pattern 9: Local Variable Access
 
 ```python
-import timeit
-
-# Global variable (slow)
+# Global variable access is slower - LEGB lookup each time
 GLOBAL_VALUE = 100
 
 def use_global():
-    """Access global variable."""
-    total = 0
     for i in range(10000):
-        total += GLOBAL_VALUE
-    return total
+        total += GLOBAL_VALUE  # Slow: global lookup
 
 def use_local():
-    """Use local variable."""
-    local_value = 100
-    total = 0
+    local_value = 100  # Fast: local lookup
     for i in range(10000):
         total += local_value
-    return total
-
-# Local is faster
-global_time = timeit.timeit(use_global, number=1000)
-local_time = timeit.timeit(use_local, number=1000)
-
-print(f"Global access: {global_time:.4f}s")
-print(f"Local access: {local_time:.4f}s")
-print(f"Speedup: {global_time/local_time:.2f}x")
 ```
 
 ### Pattern 10: Function Call Overhead
 
 ```python
-import timeit
+# In hot loops, inline calculations instead of function calls
+# Slow: function call overhead
+for i in range(10000):
+    total += helper_function(i)
 
-def calculate_inline():
-    """Inline calculation."""
-    total = 0
-    for i in range(10000):
-        total += i * 2 + 1
-    return total
-
-def helper_function(x):
-    """Helper function."""
-    return x * 2 + 1
-
-def calculate_with_function():
-    """Calculation with function calls."""
-    total = 0
-    for i in range(10000):
-        total += helper_function(i)
-    return total
-
-# Inline is faster due to no call overhead
-inline_time = timeit.timeit(calculate_inline, number=1000)
-function_time = timeit.timeit(calculate_with_function, number=1000)
-
-print(f"Inline: {inline_time:.4f}s")
-print(f"Function calls: {function_time:.4f}s")
+# Fast: inline the calculation
+for i in range(10000):
+    total += i * 2 + 1
 ```
 
 ## Advanced Optimization
@@ -482,42 +340,6 @@ print(f"With cache (1000 runs): {fast_time:.4f}s")
 
 # Cache info
 print(f"Cache info: {fibonacci_fast.cache_info()}")
-```
-
-### Pattern 13: Using __slots__ for Memory
-
-```python
-import sys
-
-class RegularClass:
-    """Regular class with __dict__."""
-    def __init__(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
-
-class SlottedClass:
-    """Class with __slots__ for memory efficiency."""
-    __slots__ = ['x', 'y', 'z']
-
-    def __init__(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
-
-# Memory comparison
-regular = RegularClass(1, 2, 3)
-slotted = SlottedClass(1, 2, 3)
-
-print(f"Regular class size: {sys.getsizeof(regular)} bytes")
-print(f"Slotted class size: {sys.getsizeof(slotted)} bytes")
-
-# Significant savings with many instances
-regular_objects = [RegularClass(i, i+1, i+2) for i in range(10000)]
-slotted_objects = [SlottedClass(i, i+1, i+2) for i in range(10000)]
-
-print(f"\nMemory for 10000 regular objects: ~{sys.getsizeof(regular) * 10000} bytes")
-print(f"Memory for 10000 slotted objects: ~{sys.getsizeof(slotted) * 10000} bytes")
 ```
 
 ### Pattern 14: Multiprocessing for CPU-Bound Tasks
@@ -602,180 +424,6 @@ print(f"Asynchronous: {async_time:.2f}s")
 print(f"Speedup: {sync_time/async_time:.2f}x")
 ```
 
-## Database Optimization
-
-### Pattern 16: Batch Database Operations
-
-```python
-import sqlite3
-import time
-
-def create_db():
-    """Create test database."""
-    conn = sqlite3.connect(":memory:")
-    conn.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)")
-    return conn
-
-def slow_inserts(conn, count):
-    """Insert records one at a time."""
-    start = time.time()
-    cursor = conn.cursor()
-    for i in range(count):
-        cursor.execute("INSERT INTO users (name) VALUES (?)", (f"User {i}",))
-        conn.commit()  # Commit each insert
-    elapsed = time.time() - start
-    return elapsed
-
-def fast_inserts(conn, count):
-    """Batch insert with single commit."""
-    start = time.time()
-    cursor = conn.cursor()
-    data = [(f"User {i}",) for i in range(count)]
-    cursor.executemany("INSERT INTO users (name) VALUES (?)", data)
-    conn.commit()  # Single commit
-    elapsed = time.time() - start
-    return elapsed
-
-# Benchmark
-conn1 = create_db()
-slow_time = slow_inserts(conn1, 1000)
-
-conn2 = create_db()
-fast_time = fast_inserts(conn2, 1000)
-
-print(f"Individual inserts: {slow_time:.4f}s")
-print(f"Batch insert: {fast_time:.4f}s")
-print(f"Speedup: {slow_time/fast_time:.2f}x")
-```
-
-### Pattern 17: Query Optimization
-
-```python
-# Use indexes for frequently queried columns
-"""
--- Slow: No index
-SELECT * FROM users WHERE email = 'user@example.com';
-
--- Fast: With index
-CREATE INDEX idx_users_email ON users(email);
-SELECT * FROM users WHERE email = 'user@example.com';
-"""
-
-# Use query planning
-import sqlite3
-
-conn = sqlite3.connect("example.db")
-cursor = conn.cursor()
-
-# Analyze query performance
-cursor.execute("EXPLAIN QUERY PLAN SELECT * FROM users WHERE email = ?", ("test@example.com",))
-print(cursor.fetchall())
-
-# Use SELECT only needed columns
-# Slow: SELECT *
-# Fast: SELECT id, name
-```
-
-## Memory Optimization
-
-### Pattern 18: Detecting Memory Leaks
-
-```python
-import tracemalloc
-import gc
-
-def memory_leak_example():
-    """Example that leaks memory."""
-    leaked_objects = []
-
-    for i in range(100000):
-        # Objects added but never removed
-        leaked_objects.append([i] * 100)
-
-    # In real code, this would be an unintended reference
-
-def track_memory_usage():
-    """Track memory allocations."""
-    tracemalloc.start()
-
-    # Take snapshot before
-    snapshot1 = tracemalloc.take_snapshot()
-
-    # Run code
-    memory_leak_example()
-
-    # Take snapshot after
-    snapshot2 = tracemalloc.take_snapshot()
-
-    # Compare
-    top_stats = snapshot2.compare_to(snapshot1, 'lineno')
-
-    print("Top 10 memory allocations:")
-    for stat in top_stats[:10]:
-        print(stat)
-
-    tracemalloc.stop()
-
-# Monitor memory
-track_memory_usage()
-
-# Force garbage collection
-gc.collect()
-```
-
-### Pattern 19: Iterators vs Lists
-
-```python
-import sys
-
-def process_file_list(filename):
-    """Load entire file into memory."""
-    with open(filename) as f:
-        lines = f.readlines()  # Loads all lines
-        return sum(1 for line in lines if line.strip())
-
-def process_file_iterator(filename):
-    """Process file line by line."""
-    with open(filename) as f:
-        return sum(1 for line in f if line.strip())
-
-# Iterator uses constant memory
-# List loads entire file into memory
-```
-
-### Pattern 20: Weakref for Caches
-
-```python
-import weakref
-
-class CachedResource:
-    """Resource that can be garbage collected."""
-    def __init__(self, data):
-        self.data = data
-
-# Regular cache prevents garbage collection
-regular_cache = {}
-
-def get_resource_regular(key):
-    """Get resource from regular cache."""
-    if key not in regular_cache:
-        regular_cache[key] = CachedResource(f"Data for {key}")
-    return regular_cache[key]
-
-# Weak reference cache allows garbage collection
-weak_cache = weakref.WeakValueDictionary()
-
-def get_resource_weak(key):
-    """Get resource from weak cache."""
-    resource = weak_cache.get(key)
-    if resource is None:
-        resource = CachedResource(f"Data for {key}")
-        weak_cache[key] = resource
-    return resource
-
-# When no strong references exist, objects can be GC'd
-```
-
 ## Benchmarking Tools
 
 ### Custom Benchmark Decorator
@@ -834,27 +482,6 @@ def test_map_function(benchmark):
 8. **Use generators** for large datasets
 9. **Consider NumPy** for numerical operations
 10. **Profile production code** - Use py-spy for live systems
-
-## Common Pitfalls
-
-- Optimizing without profiling
-- Using global variables unnecessarily
-- Not using appropriate data structures
-- Creating unnecessary copies of data
-- Not using connection pooling for databases
-- Ignoring algorithmic complexity
-- Over-optimizing rare code paths
-- Not considering memory usage
-
-## Resources
-
-- **cProfile**: Built-in CPU profiler
-- **memory_profiler**: Memory usage profiling
-- **line_profiler**: Line-by-line profiling
-- **py-spy**: Sampling profiler for production
-- **NumPy**: High-performance numerical computing
-- **Cython**: Compile Python to C
-- **PyPy**: Alternative Python interpreter with JIT
 
 ## Performance Checklist
 
