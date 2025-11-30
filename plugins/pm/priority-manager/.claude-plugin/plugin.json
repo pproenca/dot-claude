@@ -1,9 +1,0 @@
-{
-  "name": "pm",
-  "version": "0.1.0",
-  "description": "Personal and team priority management with git-based markdown files",
-  "author": {
-    "name": "Pedro Proenca"
-  },
-  "keywords": ["productivity", "roadmap", "priorities", "planning"]
-}
