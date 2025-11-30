@@ -1,0 +1,77 @@
+---
+name: marketplace-analysis
+description: Analyze Claude Code plugins for quality, DX, and architecture. Use when "review plugin quality", "audit plugins", "analyze the marketplace", "check plugins against Anthropic standards", "improve plugin design", or evaluating plugin architecture. Provides systematic analysis methodology with validation framework.
+---
+
+# Marketplace Analysis
+
+Analyze Claude Code plugins to achieve Anthropic-level quality standards.
+
+## Core Philosophy
+
+**Anthropic Quality Bar**: Same or more functionality with leaner, more efficient implementation.
+
+**Principles:**
+- Systems thinking over point fixes
+- Elegant simplicity over feature accumulation
+- Proven improvements over assumptions
+- Deletion over addition
+
+## Analysis Process
+
+### 1. Quick Scan
+- Count plugins and components
+- Note obvious issues (large files, naming inconsistencies)
+- Flag files >500 lines
+
+### 2. Deep Analysis (per plugin)
+1. Read SKILL.md files - check trigger phrases, writing style
+2. Read agent descriptions - check triggering examples
+3. Read commands - check argument handling
+4. Check hooks - validate event usage
+5. Map interactions - how components work together
+
+### 3. Cross-Plugin Analysis
+- Find redundancy across plugins
+- Check consistency (naming, patterns, styles)
+- Identify gaps and conflicts
+
+## Anti-Overengineering Checks
+
+Before proposing ANY change:
+1. Is this simpler than the original?
+2. Does this solve a real problem?
+3. Would a new user understand this?
+4. Can I remove instead of add?
+
+**Red flags:**
+- Adding abstraction for one use case
+- "Might need this later" reasoning
+- Recommending deletion based on filename alone
+
+## Output Format
+
+```markdown
+## Priority 1: High Impact, Low Effort
+- [ ] [Change] - [Why] - [Expected impact] - [How to validate]
+
+## Priority 2: Medium Impact
+...
+
+## Priority 3: Consider Later
+...
+```
+
+Each recommendation includes validation approach.
+
+## References
+
+For detailed guidance:
+- **`references/quality-standards.md`** - Anthropic-level quality criteria, anti-patterns
+- **`references/measuring-improvements.md`** - Metrics, user testing, validation templates
+
+Use `scripts/analyze-metrics.sh` for consistent metric collection.
+
+## Consulting Documentation
+
+Verify best practices via `claude-code-guide` subagent before claiming something is "wrong."
