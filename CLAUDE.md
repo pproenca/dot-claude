@@ -51,7 +51,6 @@ plugins/<name>/
 | **doc** | Documentation: API docs, tutorials, Amazon-style memos, Mermaid |
 | **shell** | Shell scripting with Google Shell Style Guide |
 | **debug** | Distributed systems debugging and log correlation |
-| **agent** | Multi-agent orchestration |
 | **analyze** | Marketplace plugin analyzer for quality standards |
 | **blackbox** | Flight recorder hooks for telemetry |
 

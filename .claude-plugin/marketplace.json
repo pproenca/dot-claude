@@ -35,10 +35,6 @@
       "source": "./plugins/debug"
     },
     {
-      "name": "agent",
-      "source": "./plugins/agent"
-    },
-    {
       "name": "analyze",
       "source": "./plugins/analyze"
     }
