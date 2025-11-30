@@ -1,6 +1,6 @@
 ---
 description: Analyze plugins in the marketplace for quality, DX, and improvements
-argument-hint: [plugin-name]
+argument-hint: "[plugin-name]"
 ---
 
 Analyze plugins in the marketplace to identify quality improvements.
