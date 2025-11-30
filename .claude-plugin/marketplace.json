@@ -37,6 +37,10 @@
     {
       "name": "analyze",
       "source": "./plugins/analyze"
+    },
+    {
+      "name": "blackbox",
+      "source": "./plugins/blackbox"
     }
   ]
 }
