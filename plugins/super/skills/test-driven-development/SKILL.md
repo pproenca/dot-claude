@@ -6,6 +6,21 @@ allowed-tools: Bash(pytest:*), Bash(npm test:*), Write, Edit, Read
 
 # Test-Driven Development (TDD)
 
+## Python Project Support
+
+When working in Python projects (pyproject.toml or setup.py present):
+
+**Load patterns first:**
+```
+Use Skill tool: dev:python-testing-patterns
+```
+
+**Commands:**
+- Use `uv run pytest path/to/test.py` (not `npm test`)
+- Use `uv run pytest path/to/test.py::test_name -v` for single test
+
+**Fixtures:** Use conftest.py patterns from dev:python-testing-patterns
+
 ## Overview
 
 Write the test first. Watch it fail. Write minimal code to pass.
@@ -320,6 +335,40 @@ function submitForm(data: FormData) {
 ```bash
 $ npm test
 PASS
+```
+
+**REFACTOR**
+Extract validation for multiple fields if needed.
+
+## Example: Bug Fix (Python)
+
+**Bug:** Empty email accepted
+
+**RED**
+```python
+def test_rejects_empty_email():
+    result = submit_form({"email": ""})
+    assert result["error"] == "Email required"
+```
+
+**Verify RED**
+```bash
+$ uv run pytest tests/test_form.py::test_rejects_empty_email -v
+FAILED: AssertionError: assert None == 'Email required'
+```
+
+**GREEN**
+```python
+def submit_form(data: dict) -> dict:
+    if not data.get("email", "").strip():
+        return {"error": "Email required"}
+    # ...
+```
+
+**Verify GREEN**
+```bash
+$ uv run pytest tests/test_form.py::test_rejects_empty_email -v
+PASSED
 ```
 
 **REFACTOR**
