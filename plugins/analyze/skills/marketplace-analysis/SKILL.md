@@ -75,3 +75,14 @@ Use `scripts/analyze-metrics.sh` for consistent metric collection.
 ## Consulting Documentation
 
 Verify best practices via `claude-code-guide` subagent before claiming something is "wrong."
+
+## Applying Changes
+
+When implementing improvements:
+
+1. **Before any changes:** Create TodoWrite items for each improvement
+2. **Apply changes:** Use Edit tool, one logical change at a time
+3. **MANDATORY verification:** Use `super:verification-before-completion` skill before claiming complete
+4. **Evidence required:** Run validation commands, report actual output
+
+**Never claim "improved" or "fixed" without verification evidence.**
