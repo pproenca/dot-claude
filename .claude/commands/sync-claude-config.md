@@ -22,7 +22,7 @@ Sync Claude configuration files between this project's `.claude/` directory and 
    - "Skip settings.json" (only sync other files)
 
 4. **Execute the sync**:
-   - Copy statusline.sh to target
+   - Copy statusline.sh to target and make it executable (`chmod +x`)
    - Copy hookify files to target
    - Merge or copy settings.json based on user choice
 
