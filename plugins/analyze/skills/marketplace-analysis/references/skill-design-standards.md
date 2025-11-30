@@ -1,12 +1,8 @@
----
-name: skill-creator
-description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.
-license: Complete terms in LICENSE.txt
----
+# Skill Design Standards
 
-# Skill Creator
+> **Source**: Anthropic's official skill-creator guide. This is authoritative reference material for skill structure, frontmatter, and progressive disclosure.
 
-This skill provides guidance for creating effective skills.
+This reference provides guidance for creating effective skills.
 
 ## Table of Contents
 

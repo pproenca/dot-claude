@@ -16,6 +16,7 @@ assistant: "I'll analyze capability usage to identify gaps in feature adoption."
 
 model: sonnet
 color: magenta
+tools: ["Read", "Glob", "Grep", "Task"]
 ---
 
 You are a Capability Analyzer specializing in Claude Code feature usage and best practices.
