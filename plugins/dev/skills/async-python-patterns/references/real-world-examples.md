@@ -14,7 +14,7 @@ import aiohttp
 from typing import List, Dict
 
 async def fetch_url(session: aiohttp.ClientSession, url: str) -> Dict:
-    """Fetch single URL."""
+    """Returns dict with url, status, length or error key."""
     try:
         async with session.get(url, timeout=aiohttp.ClientTimeout(total=10)) as response:
             text = await response.text()
@@ -27,7 +27,7 @@ async def fetch_url(session: aiohttp.ClientSession, url: str) -> Dict:
         return {"url": url, "error": str(e)}
 
 async def scrape_urls(urls: List[str]) -> List[Dict]:
-    """Scrape multiple URLs concurrently."""
+    """All URLs fetched concurrently, reuses single session."""
     async with aiohttp.ClientSession() as session:
         tasks = [fetch_url(session, url) for url in urls]
         results = await asyncio.gather(*tasks)
@@ -53,22 +53,17 @@ asyncio.run(main())
 import asyncio
 from typing import List, Optional
 
-# Simulated async database client
 class AsyncDB:
-    """Simulated async database."""
-
     async def execute(self, query: str) -> List[dict]:
-        """Execute query."""
         await asyncio.sleep(0.1)
         return [{"id": 1, "name": "Example"}]
 
     async def fetch_one(self, query: str) -> Optional[dict]:
-        """Fetch single row."""
         await asyncio.sleep(0.1)
         return {"id": 1, "name": "Example"}
 
 async def get_user_data(db: AsyncDB, user_id: int) -> dict:
-    """Fetch user and related data concurrently."""
+    """Runs user, orders, profile queries concurrently."""
     user_task = db.fetch_one(f"SELECT * FROM users WHERE id = {user_id}")
     orders_task = db.execute(f"SELECT * FROM orders WHERE user_id = {user_id}")
     profile_task = db.fetch_one(f"SELECT * FROM profiles WHERE user_id = {user_id}")
@@ -95,47 +90,36 @@ asyncio.run(main())
 import asyncio
 from typing import Set
 
-# Simulated WebSocket connection
 class WebSocket:
-    """Simulated WebSocket."""
-
     def __init__(self, client_id: str):
         self.client_id = client_id
 
     async def send(self, message: str):
-        """Send message."""
         print(f"Sending to {self.client_id}: {message}")
         await asyncio.sleep(0.01)
 
     async def recv(self) -> str:
-        """Receive message."""
         await asyncio.sleep(1)
         return f"Message from {self.client_id}"
 
 class WebSocketServer:
-    """Simple WebSocket server."""
-
     def __init__(self):
         self.clients: Set[WebSocket] = set()
 
     async def register(self, websocket: WebSocket):
-        """Register new client."""
         self.clients.add(websocket)
         print(f"Client {websocket.client_id} connected")
 
     async def unregister(self, websocket: WebSocket):
-        """Unregister client."""
         self.clients.remove(websocket)
         print(f"Client {websocket.client_id} disconnected")
 
     async def broadcast(self, message: str):
-        """Broadcast message to all clients."""
         if self.clients:
             tasks = [client.send(message) for client in self.clients]
             await asyncio.gather(*tasks)
 
     async def handle_client(self, websocket: WebSocket):
-        """Handle individual client connection."""
         await self.register(websocket)
         try:
             async for message in self.message_iterator(websocket):
@@ -144,8 +128,7 @@ class WebSocketServer:
             await self.unregister(websocket)
 
     async def message_iterator(self, websocket: WebSocket):
-        """Iterate over messages from client."""
-        for _ in range(3):  # Simulate 3 messages
+        for _ in range(3):
             yield await websocket.recv()
 ```
 
@@ -158,7 +141,7 @@ import asyncio
 import aiohttp
 
 async def with_connection_pool():
-    """Use connection pool for efficiency."""
+    """Reuses TCP connections instead of creating new ones."""
     connector = aiohttp.TCPConnector(limit=100, limit_per_host=10)
 
     async with aiohttp.ClientSession(connector=connector) as session:
@@ -171,7 +154,7 @@ async def with_connection_pool():
 
 ```python
 async def batch_process(items: List[str], batch_size: int = 10):
-    """Process items in batches."""
+    """Limits concurrent tasks to prevent resource exhaustion."""
     for i in range(0, len(items), batch_size):
         batch = items[i:i + batch_size]
         tasks = [process_item(item) for item in batch]
@@ -179,7 +162,6 @@ async def batch_process(items: List[str], batch_size: int = 10):
         print(f"Processed batch {i // batch_size + 1}")
 
 async def process_item(item: str):
-    """Process single item."""
     await asyncio.sleep(0.1)
     return f"Processed: {item}"
 ```
@@ -192,13 +174,12 @@ import concurrent.futures
 from typing import Any
 
 def blocking_operation(data: Any) -> Any:
-    """CPU-intensive blocking operation."""
     import time
     time.sleep(1)
     return data * 2
 
 async def run_in_executor(data: Any) -> Any:
-    """Run blocking operation in thread pool."""
+    """Offloads blocking work to thread pool, keeps event loop free."""
     loop = asyncio.get_event_loop()
     with concurrent.futures.ThreadPoolExecutor() as pool:
         result = await loop.run_in_executor(pool, blocking_operation, data)

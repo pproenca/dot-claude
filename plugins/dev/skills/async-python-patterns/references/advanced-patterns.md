@@ -14,7 +14,7 @@ import asyncio
 from typing import Optional
 
 class AsyncDatabaseConnection:
-    """Async database connection context manager."""
+    """Manages connection lifecycle via async with."""
 
     def __init__(self, dsn: str):
         self.dsn = dsn
@@ -22,20 +22,19 @@ class AsyncDatabaseConnection:
 
     async def __aenter__(self):
         print("Opening connection")
-        await asyncio.sleep(0.1)  # Simulate connection
+        await asyncio.sleep(0.1)
         self.connection = {"dsn": self.dsn, "connected": True}
         return self.connection
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         print("Closing connection")
-        await asyncio.sleep(0.1)  # Simulate cleanup
+        await asyncio.sleep(0.1)
         self.connection = None
 
 async def query_database():
-    """Use async context manager."""
     async with AsyncDatabaseConnection("postgresql://localhost") as conn:
         print(f"Using connection: {conn}")
-        await asyncio.sleep(0.2)  # Simulate query
+        await asyncio.sleep(0.2)
         return {"rows": 10}
 
 asyncio.run(query_database())
@@ -48,15 +47,13 @@ import asyncio
 from typing import AsyncIterator
 
 async def async_range(start: int, end: int, delay: float = 0.1) -> AsyncIterator[int]:
-    """Async generator that yields numbers with delay."""
     for i in range(start, end):
         await asyncio.sleep(delay)
         yield i
 
 async def fetch_pages(url: str, max_pages: int) -> AsyncIterator[dict]:
-    """Fetch paginated data asynchronously."""
     for page in range(1, max_pages + 1):
-        await asyncio.sleep(0.2)  # Simulate API call
+        await asyncio.sleep(0.2)
         yield {
             "page": page,
             "url": f"{url}?page={page}",
@@ -64,7 +61,6 @@ async def fetch_pages(url: str, max_pages: int) -> AsyncIterator[dict]:
         }
 
 async def consume_async_iterator():
-    """Consume async iterator."""
     async for number in async_range(1, 5):
         print(f"Number: {number}")
 
@@ -83,16 +79,14 @@ from asyncio import Queue
 from typing import Optional
 
 async def producer(queue: Queue, producer_id: int, num_items: int):
-    """Produce items and put them in queue."""
     for i in range(num_items):
         item = f"Item-{producer_id}-{i}"
         await queue.put(item)
         print(f"Producer {producer_id} produced: {item}")
         await asyncio.sleep(0.1)
-    await queue.put(None)  # Signal completion
+    await queue.put(None)  # Sentinel signals consumer to stop
 
 async def consumer(queue: Queue, consumer_id: int):
-    """Consume items from queue."""
     while True:
         item = await queue.get()
         if item is None:
@@ -100,14 +94,12 @@ async def consumer(queue: Queue, consumer_id: int):
             break
 
         print(f"Consumer {consumer_id} processing: {item}")
-        await asyncio.sleep(0.2)  # Simulate work
+        await asyncio.sleep(0.2)
         queue.task_done()
 
 async def producer_consumer_example():
-    """Run producer-consumer pattern."""
     queue = Queue(maxsize=10)
 
-    # Create tasks
     producers = [
         asyncio.create_task(producer(queue, i, 5))
         for i in range(2)
@@ -118,13 +110,9 @@ async def producer_consumer_example():
         for i in range(3)
     ]
 
-    # Wait for producers
     await asyncio.gather(*producers)
-
-    # Wait for queue to be empty
     await queue.join()
 
-    # Cancel consumers
     for c in consumers:
         c.cancel()
 
@@ -138,14 +126,13 @@ import asyncio
 from typing import List
 
 async def api_call(url: str, semaphore: asyncio.Semaphore) -> dict:
-    """Make API call with rate limiting."""
     async with semaphore:
         print(f"Calling {url}")
-        await asyncio.sleep(0.5)  # Simulate API call
+        await asyncio.sleep(0.5)
         return {"url": url, "status": 200}
 
 async def rate_limited_requests(urls: List[str], max_concurrent: int = 5):
-    """Make multiple requests with rate limiting."""
+    """Semaphore limits concurrent API calls to prevent rate limiting."""
     semaphore = asyncio.Semaphore(max_concurrent)
     tasks = [api_call(url, semaphore) for url in urls]
     results = await asyncio.gather(*tasks)
@@ -165,32 +152,28 @@ asyncio.run(main())
 import asyncio
 
 class AsyncCounter:
-    """Thread-safe async counter."""
+    """Lock prevents race conditions on concurrent increments."""
 
     def __init__(self):
         self.value = 0
         self.lock = asyncio.Lock()
 
     async def increment(self):
-        """Safely increment counter."""
         async with self.lock:
             current = self.value
-            await asyncio.sleep(0.01)  # Simulate work
+            await asyncio.sleep(0.01)
             self.value = current + 1
 
     async def get_value(self) -> int:
-        """Get current value."""
         async with self.lock:
             return self.value
 
 async def worker(counter: AsyncCounter, worker_id: int):
-    """Worker that increments counter."""
     for _ in range(10):
         await counter.increment()
         print(f"Worker {worker_id} incremented")
 
 async def test_counter():
-    """Test concurrent counter."""
     counter = AsyncCounter()
 
     workers = [asyncio.create_task(worker(counter, i)) for i in range(5)]

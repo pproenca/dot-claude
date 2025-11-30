@@ -25,18 +25,15 @@ import pstats
 from pstats import SortKey
 
 def slow_function():
-    """Function to profile."""
     total = 0
     for i in range(1000000):
         total += i
     return total
 
 def another_function():
-    """Another function."""
     return [i**2 for i in range(100000)]
 
 def main():
-    """Main function to profile."""
     result1 = slow_function()
     result2 = another_function()
     return result1, result2
@@ -79,7 +76,6 @@ python -m pstats output.prof
 # Add @profile decorator (line_profiler provides this)
 @profile
 def process_data(data):
-    """Process data with line profiling."""
     result = []
     for item in data:
         processed = item * 2
@@ -95,7 +91,6 @@ def process_data(data):
 from line_profiler import LineProfiler
 
 def process_data(data):
-    """Function to profile."""
     result = []
     for item in data:
         processed = item * 2
@@ -123,16 +118,9 @@ from memory_profiler import profile
 
 @profile
 def memory_intensive():
-    """Function that uses lots of memory."""
-    # Create large list
     big_list = [i for i in range(1000000)]
-
-    # Create large dict
     big_dict = {i: i**2 for i in range(100000)}
-
-    # Process data
     result = sum(big_list)
-
     return result
 
 if __name__ == "__main__":
@@ -167,20 +155,17 @@ py-spy dump --pid 12345
 ```python
 import timeit
 
-# Slow: Traditional loop
 def slow_squares(n):
-    """Create list of squares using loop."""
+    """O(n) with repeated list.append() overhead per iteration."""
     result = []
     for i in range(n):
         result.append(i**2)
     return result
 
-# Fast: List comprehension
 def fast_squares(n):
-    """Create list of squares using comprehension."""
+    """Single allocation, no per-iteration append overhead."""
     return [i**2 for i in range(n)]
 
-# Benchmark
 n = 100000
 
 slow_time = timeit.timeit(lambda: slow_squares(n), number=100)
@@ -190,9 +175,8 @@ print(f"Loop: {slow_time:.4f}s")
 print(f"Comprehension: {fast_time:.4f}s")
 print(f"Speedup: {slow_time/fast_time:.2f}x")
 
-# Even faster for simple operations: map
 def faster_squares(n):
-    """Use map for even better performance."""
+    """Map avoids Python bytecode per iteration."""
     return list(map(lambda x: x**2, range(n)))
 ```
 
@@ -201,7 +185,6 @@ def faster_squares(n):
 ```python
 import sys
 
-# Memory comparison
 list_data = [i for i in range(1000000)]
 gen_data = (i for i in range(1000000))
 
@@ -213,43 +196,41 @@ print(f"Generator size: {sys.getsizeof(gen_data)} bytes")
 ### Pattern 7: String Concatenation
 
 ```python
-# Slow: string += in loop (O(n²) for n concatenations)
+# O(n²) - each += creates new string, copies all previous chars
 result = ""
 for item in items:
     result += str(item)
 
-# Fast: use join (O(n))
+# O(n) - single allocation, no intermediate copies
 result = "".join(str(item) for item in items)
 ```
 
 ### Pattern 8: Dictionary Lookups vs List Searches
 
 ```python
-# O(n) search in list - slow for large collections
+# O(n) - must scan entire list
 target in items_list
 
-# O(1) search in dict/set - fast regardless of size
+# O(1) - hash table lookup
 target in items_dict
 target in items_set
-
-# Use set for membership testing, dict for key-value lookups
 ```
 
 ### Pattern 9: Local Variable Access
 
 ```python
-# Global variable access is slower - LEGB lookup each time
+# LEGB lookup on each iteration adds overhead
 GLOBAL_VALUE = 100
 
 def use_global():
     total = 0
     for i in range(10000):
-        total += GLOBAL_VALUE  # Slow: global lookup
+        total += GLOBAL_VALUE
     return total
 
 def use_local():
     local_value = 100
-    total = 0  # Fast: local lookup
+    total = 0
     for i in range(10000):
         total += local_value
     return total
@@ -258,12 +239,11 @@ def use_local():
 ### Pattern 10: Function Call Overhead
 
 ```python
-# In hot loops, inline calculations instead of function calls
-# Slow: function call overhead
+# Function call overhead: ~100ns per call adds up in tight loops
 for i in range(10000):
     total += helper_function(i)
 
-# Fast: inline the calculation
+# Inlined: no call stack overhead
 for i in range(10000):
     total += i * 2 + 1
 ```
@@ -277,11 +257,9 @@ import timeit
 import numpy as np
 
 def python_sum(n):
-    """Sum using pure Python."""
     return sum(range(n))
 
 def numpy_sum(n):
-    """Sum using NumPy."""
     return np.arange(n).sum()
 
 n = 1000000
@@ -293,15 +271,13 @@ print(f"Python: {python_time:.4f}s")
 print(f"NumPy: {numpy_time:.4f}s")
 print(f"Speedup: {python_time/numpy_time:.2f}x")
 
-# Vectorized operations
 def python_multiply():
-    """Element-wise multiplication in Python."""
     a = list(range(100000))
     b = list(range(100000))
     return [x * y for x, y in zip(a, b)]
 
 def numpy_multiply():
-    """Vectorized multiplication in NumPy."""
+    """Vectorized: C loop instead of Python loop."""
     a = np.arange(100000)
     b = np.arange(100000)
     return a * b
@@ -321,14 +297,14 @@ from functools import lru_cache
 import timeit
 
 def fibonacci_slow(n):
-    """Recursive fibonacci without caching."""
+    """O(2^n) - exponential due to repeated subproblems."""
     if n < 2:
         return n
     return fibonacci_slow(n-1) + fibonacci_slow(n-2)
 
 @lru_cache(maxsize=None)
 def fibonacci_fast(n):
-    """Recursive fibonacci with caching."""
+    """O(n) - each subproblem computed once."""
     if n < 2:
         return n
     return fibonacci_fast(n-1) + fibonacci_fast(n-2)
@@ -353,18 +329,15 @@ import multiprocessing as mp
 import time
 
 def cpu_intensive_task(n):
-    """CPU-intensive calculation."""
     return sum(i**2 for i in range(n))
 
 def sequential_processing():
-    """Process tasks sequentially."""
     start = time.time()
     results = [cpu_intensive_task(1000000) for _ in range(4)]
     elapsed = time.time() - start
     return elapsed, results
 
 def parallel_processing():
-    """Process tasks in parallel."""
     start = time.time()
     with mp.Pool(processes=4) as pool:
         results = pool.map(cpu_intensive_task, [1000000] * 4)
@@ -396,7 +369,6 @@ urls = [
 ]
 
 def synchronous_requests():
-    """Synchronous HTTP requests."""
     start = time.time()
     results = []
     for url in urls:
@@ -406,12 +378,10 @@ def synchronous_requests():
     return elapsed, results
 
 async def async_fetch(session, url):
-    """Async HTTP request."""
     async with session.get(url) as response:
         return response.status
 
 async def asynchronous_requests():
-    """Asynchronous HTTP requests."""
     start = time.time()
     async with aiohttp.ClientSession() as session:
         tasks = [async_fetch(session, url) for url in urls]
@@ -437,7 +407,6 @@ import time
 from functools import wraps
 
 def benchmark(func):
-    """Decorator to benchmark function execution."""
     @wraps(func)
     def wrapper(*args, **kwargs):
         start = time.perf_counter()
@@ -454,12 +423,10 @@ def benchmark(func):
 # Install: pip install pytest-benchmark
 
 def test_list_comprehension(benchmark):
-    """Benchmark list comprehension."""
     result = benchmark(lambda: [i**2 for i in range(10000)])
     assert len(result) == 10000
 
 def test_map_function(benchmark):
-    """Benchmark map function."""
     result = benchmark(lambda: list(map(lambda x: x**2, range(10000))))
     assert len(result) == 10000
 
