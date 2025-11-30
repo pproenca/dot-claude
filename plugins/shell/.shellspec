@@ -1,0 +1,4 @@
+--shell bash
+--format progress
+--warning-as-failure
+--require spec_helper
