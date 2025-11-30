@@ -235,15 +235,6 @@ The `commit` plugin validates git commits:
 **Commands (1):**
 - `/debug:trace` - Debug and trace configuration
 
-### agent (Orchestration)
-
-**Agents (1):**
-- `context-manager` - Multi-agent workflow orchestration
-
-**Commands (2):**
-- `/agent:improve` - Agent performance optimization
-- `/agent:optimize` - Multi-agent optimization
-
 ### analyze (Marketplace Quality)
 
 **Skills (1):**
