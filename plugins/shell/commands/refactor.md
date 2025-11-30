@@ -13,13 +13,13 @@ Refactor the specified shell script to follow Google Shell Style Guide.
 Create TodoWrite with each step as a todo item:
 1. Identify target script
 2. Read script and analyze
-3. Run shellcheck analysis
-4. Load style guide knowledge
-5. Identify all violations
+3. Run parallel analysis (shellcheck + shell-expert dispatch)
+4. Load style guide
+5. Collect results and identify violations
 6. Propose changes
 7. Apply refactoring
 8. Verify refactored script
-9. Dispatch shell expert agent
+9. Expert review (optional)
 10. Final report
 
 Mark each step `in_progress` when starting, `completed` when done.
@@ -47,9 +47,11 @@ Use AskUserQuestion to let user select which file to refactor:
 
 Read the target script content to understand its structure and identify style issues.
 
-## Step 3: Run Shellcheck Analysis
+## Step 3: Run Parallel Analysis
 
-Before manual analysis, run shellcheck on the script to identify issues:
+Run shellcheck and dispatch shell-expert in parallel for faster analysis.
+
+### 3a: Shellcheck (immediate)
 
 ```bash
 shellcheck -f gcc "<target_script_path>" 2>&1 || true
@@ -68,41 +70,45 @@ Parse shellcheck output to:
   - SC2046: Quote this to prevent word splitting
   - SC2006: Use $(...) notation instead of legacy backticks
 
-## Step 4: Load Style Guide Knowledge
+### 3b: Shell-expert dispatch (parallel)
 
-Reference the google-shell-style skill for refactoring rules. Key areas to check:
+In the same response as shellcheck, dispatch shell-expert to analyze the original script:
 
-**Formatting:**
-- 2-space indentation (no tabs)
-- 80-char max line length
-- `; then`/`; do` on same line as `if`/`for`/`while`
-- Proper pipeline formatting
+```
+Use Task tool with:
+- subagent_type: "shell:shell-expert"
+- prompt: "REVIEW the shell script at <target_script_path>"
+```
 
-**Variables & Quoting:**
-- Use `"${var}"` with braces and quotes
-- Use `"$@"` for argument passing
-- Quote command substitutions
+**Do not wait for shell-expert to complete.** Continue to Step 4 while the agent runs in parallel. Results will be collected in Step 5.
 
-**Commands:**
-- `$(command)` not backticks
-- `[[ ]]` not `[ ]` or `test`
-- `(( ))` for arithmetic
+## Step 4: Load Style Guide
 
-**Functions & Structure:**
-- `lower_case()` function naming
-- `local` for function variables
-- `main` function for multi-function scripts
-- `main "$@"` as last line
+Load the google-shell-style skill for comprehensive style rules:
 
-**Avoid:**
-- `eval`
-- `let`, `expr`, `$[]`
-- Aliases in scripts
-- Pipes to while (use process substitution)
+```
+Use Skill tool with: skill: "shell:google-shell-style"
+```
 
-## Step 5: Identify All Violations
+This provides formatting, quoting, naming, and anti-pattern rules for the refactoring.
 
-Combine shellcheck findings with manual style guide analysis. For each violation found, note:
+## Step 5: Collect Results and Identify Violations
+
+### 5a: Collect shell-expert results
+
+The shell-expert agent dispatched in Step 3b should now have results. Collect and incorporate:
+- Critical issues identified by the expert
+- Important issues (should fix)
+- Minor suggestions
+
+### 5b: Combine all findings
+
+Merge findings from:
+1. Shellcheck output (Step 3a)
+2. Shell-expert analysis (Step 5a)
+3. Manual style guide analysis (using rules from Step 4)
+
+For each violation found, note:
 - Line number
 - Current code
 - Recommended fix
@@ -175,28 +181,36 @@ If user selects "Dry run" and script appears to support it:
 "<target_script_path>" --help 2>&1 | head -20 || "<target_script_path>" --dry-run 2>&1 | head -20 || echo "Script does not support --help or --dry-run"
 ```
 
-## Step 9: Dispatch Shell Expert Agent
+## Step 9: Expert Review (Optional)
 
-Launch the shell-expert agent to validate the refactored script.
+Post-refactor expert review is **optional** since shell-expert already analyzed the original script in Step 3b.
+
+### Skip if ALL of these are true:
+- Shellcheck shows improvement (fewer issues than baseline)
+- No Critical issues found in Step 5
+- Syntax check passed in Step 8
+
+If skipping, note in final report: "Expert review: Skipped (improvements confirmed by shellcheck)"
+
+### Run if ANY of these are true:
+- Critical issues were found in Step 5
+- Shellcheck shows no improvement or regression
+- User explicitly requests additional validation
+
+When running, use **QUICK_REVIEW mode** for fast validation:
 
 **Use the Task tool with these parameters:**
 - `subagent_type`: `"shell:shell-expert"`
-- `prompt`: Include the exact file path from Step 1
+- `prompt`: Use QUICK_REVIEW trigger
 
-**Example Task prompt (replace the path with your actual target script):**
+**Example Task prompt:**
 ```
-REVIEW the shell script at /Users/example/scripts/deploy.sh
+QUICK REVIEW the shell script at /Users/example/scripts/deploy.sh
 
-This script was just refactored to follow Google Shell Style Guide. Analyze:
-1. Structure (main function, function organization)
-2. Safety (quoting, variable expansion, error handling)
-3. Style (formatting, naming conventions)
-
-Report issues by severity (Critical/Important/Minor) with specific line numbers.
-Provide a final recommendation: PASS, NEEDS_FIXES, or CRITICAL_ISSUES.
+This script was just refactored. Validate no Critical issues remain.
 ```
 
-**IMPORTANT:** The file path in the prompt must be the actual path you stored in Step 1, not a placeholder. The agent reads the file using this path.
+**IMPORTANT:** The file path in the prompt must be the actual path you stored in Step 1, not a placeholder.
 
 ## Step 10: Final Report
 
@@ -223,10 +237,10 @@ Present final results:
 - Test run: [PASS/SKIPPED/N/A]
 
 ### Shell Expert Assessment
-- **Recommendation:** [PASS/NEEDS_FIXES/CRITICAL_ISSUES]
+- **Initial Review (Step 3b):** [Summary of issues found on original script]
+- **Post-Refactor (Step 9):** [PASS/NEEDS_FIXES/SKIPPED]
 - **Confidence:** [HIGH/MODERATE/LOW]
-- **Summary:** [1-2 sentence summary from agent]
 
 ### Remaining Items (if any)
-- [Any issues the expert reviewer identified that need attention]
+- [Any issues that still need attention]
 ```

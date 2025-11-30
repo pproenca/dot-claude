@@ -70,7 +70,12 @@ When dispatched, you will receive:
 Based on the request, operate in the appropriate mode:
 
 ### REVIEW Mode
-**Triggers:** "review", "check style", "validate", "audit", "refactor"
+**Triggers:** "review", "check style", "audit", "refactor"
+
+### QUICK_REVIEW Mode
+**Triggers:** "quick review", "validate", "verify"
+
+Fast validation for already-refactored scripts. Skips chain-of-thought.
 
 ### SECURITY Mode
 **Triggers:** "security", "injection", "safe", "untrusted", "eval"
@@ -98,6 +103,8 @@ Before providing your review, work through these steps explicitly:
 7. Are all variable expansions quoted?
 8. Are there any uses of eval, source with variables?
 9. Does it handle unexpected input gracefully?
+
+**Early Exit Check:** After Step 3, if script is simple (< 50 lines, no functions) AND no Critical issues found, skip Step 4 and provide early PASS with confidence HIGH.
 
 ### Step 4: Style Compliance
 10. Check formatting (2-space indent, line length, pipelines)
@@ -227,6 +234,39 @@ Before providing your review, work through these steps explicitly:
 ### Assessment
 **POSIX Compliance:** [COMPLIANT / NEEDS_CHANGES / NOT_PORTABLE]
 **Effort to Fix:** [LOW / MEDIUM / HIGH]
+```
+
+---
+
+## QUICK_REVIEW Mode Process
+
+Fast validation for already-refactored scripts. **Skip full chain-of-thought.**
+
+### Process
+
+1. Read script
+2. Scan for Critical issues only:
+   - Unquoted variables in destructive commands (`rm`, `mv`)
+   - Use of `eval` with external input
+   - Missing error handling on destructive operations
+3. **Early exit:** If no Critical issues found → return PASS immediately
+
+### QUICK_REVIEW Mode Output Format
+
+**If clean (no Critical issues):**
+```
+**Quick Review:** PASS ✓
+No critical issues found in [script name] ([N] lines).
+```
+
+**If issues found:**
+```
+**Quick Review:** NEEDS_FIXES
+
+**Critical Issues:**
+- **Line X:** [issue] - [fix]
+
+**Recommendation:** Fix critical issues before deployment.
 ```
 
 ---
