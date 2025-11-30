@@ -1,6 +1,6 @@
 ---
 description: Refactor a shell script to follow Google Shell Style Guide
-argument-hint: path/to/script.sh
+argument-hint: "<path/to/script.sh>"
 allowed-tools: [Bash, Read, Edit, Glob, AskUserQuestion, Task]
 ---
 
