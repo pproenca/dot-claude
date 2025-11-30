@@ -1,6 +1,6 @@
 {
   "name": "dot-claude",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "metadata": {
     "description": "Claude Code plugins for productivity workflows - skills, agents, commands, and hooks"
   },
