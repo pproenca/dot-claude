@@ -43,5 +43,8 @@ config.local.*
 tmp/
 temp/
 
+# Git worktrees
+.worktrees/
+
 # Test scripts with credentials
 script.sh
