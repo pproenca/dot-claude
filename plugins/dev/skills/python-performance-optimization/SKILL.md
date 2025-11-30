@@ -446,14 +446,6 @@ def benchmark(func):
         print(f"{func.__name__} took {elapsed:.6f} seconds")
         return result
     return wrapper
-
-@benchmark
-def slow_function():
-    """Function to benchmark."""
-    time.sleep(0.5)
-    return sum(range(1000000))
-
-result = slow_function()
 ```
 
 ### Performance Testing with pytest-benchmark
@@ -490,22 +482,14 @@ def test_map_function(benchmark):
 ## Common Pitfalls
 
 - Optimizing without profiling first
-- Using global variables in hot loops
-- Not using appropriate data structures
-- Creating unnecessary copies of data
-- Not using connection pooling for databases
+- Using inappropriate data structures
+- Creating unnecessary data copies
 - Ignoring algorithmic complexity
-- Over-optimizing rare code paths
 
 ## Performance Checklist
 
 - [ ] Profiled code to identify bottlenecks
 - [ ] Used appropriate data structures
 - [ ] Implemented caching where beneficial
-- [ ] Optimized database queries
-- [ ] Used generators for large datasets
-- [ ] Considered multiprocessing for CPU-bound tasks
-- [ ] Used async I/O for I/O-bound tasks
-- [ ] Minimized function call overhead in hot loops
-- [ ] Checked for memory leaks
+- [ ] Considered multiprocessing/async for CPU/I/O-bound tasks
 - [ ] Benchmarked before and after optimization
