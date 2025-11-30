@@ -1,6 +1,6 @@
 {
   "name": "agent",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Context engineering and multi-agent workflow orchestration with vector databases and knowledge graphs",
   "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/agent",
   "repository": "https://github.com/pedroproenca/dot-claude",
