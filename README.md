@@ -21,7 +21,6 @@ dot-claude is a collection of plugins that extend Claude Code with specialized c
 | **doc** | Documentation generation, API docs, tutorials, Amazon-style memos |
 | **shell** | Shell scripting with Google Shell Style Guide |
 | **debug** | Distributed systems debugging and log correlation |
-| **agent** | Multi-agent orchestration and context management |
 | **analyze** | Marketplace plugin analyzer for quality standards and DX analysis |
 | **blackbox** | Flight recorder hooks for telemetry and recovery |
 
