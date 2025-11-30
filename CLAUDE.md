@@ -52,11 +52,12 @@ plugins/<name>/
 | **shell** | Shell scripting with Google Shell Style Guide |
 | **debug** | Distributed systems debugging and log correlation |
 | **agent** | Multi-agent orchestration |
-| **blackbox** | Flight recorder hooks |
+| **analyze** | Marketplace plugin analyzer for quality standards |
+| **blackbox** | Flight recorder hooks for telemetry |
 
 ### Hook System
 
-Hooks enforce workflows via JSON configuration in `hooks/hooks.json`. Three hook types:
+Hooks enforce workflows via JSON configuration in `hooks/hooks.json`. Four hook types:
 - **SessionStart** - Runs on conversation start/resume/clear/compact
 - **PreToolUse** - Runs before tool execution (can block with `deny`)
 - **PostToolUse** - Runs after tool execution
@@ -106,6 +107,12 @@ PostToolUse hooks validate git commits against Conventional Commits:
 - No mixed refactoring with features
 
 ## Development
+
+### Prerequisites
+```bash
+# macOS
+brew install jq yq ripgrep fd coreutils
+```
 
 ### Creating Skills
 
