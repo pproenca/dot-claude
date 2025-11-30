@@ -1,6 +1,6 @@
 {
   "name": "super",
-  "version": "3.1.0",
+  "version": "1.0.0",
   "description": "Enhanced fork of obra/superpowers (by Jesse Vincent). Adds TDD enforcement hooks, security-reviewer agent, diagram-generator agent, allowed-tools restrictions, and integration improvements. 20 proven workflow skills for Claude Code.",
   "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/super",
   "repository": "https://github.com/pedroproenca/dot-claude",
