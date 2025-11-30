@@ -242,13 +242,17 @@ target in items_set
 GLOBAL_VALUE = 100
 
 def use_global():
+    total = 0
     for i in range(10000):
         total += GLOBAL_VALUE  # Slow: global lookup
+    return total
 
 def use_local():
-    local_value = 100  # Fast: local lookup
+    local_value = 100
+    total = 0  # Fast: local lookup
     for i in range(10000):
         total += local_value
+    return total
 ```
 
 ### Pattern 10: Function Call Overhead
@@ -482,6 +486,16 @@ def test_map_function(benchmark):
 8. **Use generators** for large datasets
 9. **Consider NumPy** for numerical operations
 10. **Profile production code** - Use py-spy for live systems
+
+## Common Pitfalls
+
+- Optimizing without profiling first
+- Using global variables in hot loops
+- Not using appropriate data structures
+- Creating unnecessary copies of data
+- Not using connection pooling for databases
+- Ignoring algorithmic complexity
+- Over-optimizing rare code paths
 
 ## Performance Checklist
 
