@@ -453,6 +453,22 @@ def test_map_function(benchmark):
 - Creating unnecessary data copies
 - Ignoring algorithmic complexity
 
+## Workflow Integration
+
+**Use with `super:systematic-debugging`** for performance issues:
+- Profile BEFORE optimizing - find real bottlenecks first
+- Don't guess at slow code - measure with cProfile/py-spy
+- Follow the 4-phase framework: investigate, analyze, hypothesize, implement
+
+**Use with `super:verification-before-completion`** after optimization:
+- Run benchmarks to prove improvement
+- Verify no regressions in functionality
+- Show before/after metrics
+
+**Use with `dev:python-testing-patterns`** for performance tests:
+- pytest-benchmark for reliable timing
+- Regression tests to catch future slowdowns
+
 ## Performance Checklist
 
 - [ ] Profiled code to identify bottlenecks
