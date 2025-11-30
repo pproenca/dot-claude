@@ -475,6 +475,22 @@ rm -rf test-env
 - [ ] Tested on TestPyPI first
 - [ ] Git tag created for release
 
+## Workflow Integration
+
+**Use with `super:verification-before-completion`** before publishing:
+- Test installation in clean virtual environment
+- Verify CLI tools work (if applicable)
+- Run full test suite against installed package
+
+**Use with `dev:python-testing-patterns`** for package tests:
+- Test imports work correctly
+- Test entry points are registered
+- Test package metadata is correct
+
+**Use with `dev:uv-package-manager`** for modern workflows:
+- `uv build` for fast package building
+- `uv publish` for publishing
+
 ## Best Practices Summary
 
 1. **Use src/ layout** for cleaner package structure
