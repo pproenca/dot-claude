@@ -15,14 +15,12 @@ import pytest
 import asyncio
 
 async def fetch_data(url: str) -> dict:
-    """Fetch data asynchronously."""
     await asyncio.sleep(0.1)
     return {"url": url, "data": "result"}
 
 
 @pytest.mark.asyncio
 async def test_fetch_data():
-    """Test async function."""
     result = await fetch_data("https://api.example.com")
     assert result["url"] == "https://api.example.com"
     assert "data" in result
@@ -30,7 +28,6 @@ async def test_fetch_data():
 
 @pytest.mark.asyncio
 async def test_concurrent_fetches():
-    """Test concurrent async operations."""
     urls = ["url1", "url2", "url3"]
     tasks = [fetch_data(url) for url in urls]
     results = await asyncio.gather(*tasks)
@@ -41,7 +38,6 @@ async def test_concurrent_fetches():
 
 @pytest.fixture
 async def async_client():
-    """Async fixture."""
     client = {"connected": True}
     yield client
     client["connected"] = False
@@ -49,7 +45,6 @@ async def async_client():
 
 @pytest.mark.asyncio
 async def test_with_async_fixture(async_client):
-    """Test using async fixture."""
     assert async_client["connected"] is True
 ```
 
@@ -61,32 +56,25 @@ import os
 import pytest
 
 def get_database_url() -> str:
-    """Get database URL from environment."""
     return os.environ.get("DATABASE_URL", "sqlite:///:memory:")
 
 
 def test_database_url_default():
-    """Test default database URL."""
-    # Will use actual environment variable if set
     url = get_database_url()
     assert url
 
 
 def test_database_url_custom(monkeypatch):
-    """Test custom database URL with monkeypatch."""
     monkeypatch.setenv("DATABASE_URL", "postgresql://localhost/test")
     assert get_database_url() == "postgresql://localhost/test"
 
 
 def test_database_url_not_set(monkeypatch):
-    """Test when env var is not set."""
     monkeypatch.delenv("DATABASE_URL", raising=False)
     assert get_database_url() == "sqlite:///:memory:"
 
 
 class Config:
-    """Configuration class."""
-
     def __init__(self):
         self.api_key = "production-key"
 
@@ -95,7 +83,6 @@ class Config:
 
 
 def test_monkeypatch_attribute(monkeypatch):
-    """Test monkeypatching object attributes."""
     config = Config()
     monkeypatch.setattr(config, "api_key", "test-key")
     assert config.get_api_key() == "test-key"
@@ -109,33 +96,22 @@ import pytest
 from pathlib import Path
 
 def save_data(filepath: Path, data: str):
-    """Save data to file."""
     filepath.write_text(data)
 
 
 def load_data(filepath: Path) -> str:
-    """Load data from file."""
     return filepath.read_text()
 
 
 def test_file_operations(tmp_path):
-    """Test file operations with temporary directory."""
-    # tmp_path is a pathlib.Path object
     test_file = tmp_path / "test_data.txt"
-
-    # Save data
     save_data(test_file, "Hello, World!")
-
-    # Verify file exists
     assert test_file.exists()
-
-    # Load and verify data
     data = load_data(test_file)
     assert data == "Hello, World!"
 
 
 def test_multiple_files(tmp_path):
-    """Test with multiple temporary files."""
     files = {
         "file1.txt": "Content 1",
         "file2.txt": "Content 2",
@@ -146,10 +122,8 @@ def test_multiple_files(tmp_path):
         filepath = tmp_path / filename
         save_data(filepath, content)
 
-    # Verify all files created
     assert len(list(tmp_path.iterdir())) == 3
 
-    # Verify contents
     for filename, expected_content in files.items():
         filepath = tmp_path / filename
         assert load_data(filepath) == expected_content
@@ -159,28 +133,23 @@ def test_multiple_files(tmp_path):
 
 ```python
 # conftest.py
-"""Shared fixtures for all tests."""
 import pytest
 
 @pytest.fixture(scope="session")
 def database_url():
-    """Provide database URL for all tests."""
     return "postgresql://localhost/test_db"
 
 
 @pytest.fixture(autouse=True)
 def reset_database(database_url):
-    """Auto-use fixture that runs before each test."""
-    # Setup: Clear database
+    """Clears database before each test, logs completion after."""
     print(f"Clearing database: {database_url}")
     yield
-    # Teardown: Clean up
     print("Test completed")
 
 
 @pytest.fixture
 def sample_user():
-    """Provide sample user data."""
     return {
         "id": 1,
         "name": "Test User",
@@ -190,7 +159,6 @@ def sample_user():
 
 @pytest.fixture
 def sample_users():
-    """Provide list of sample users."""
     return [
         {"id": 1, "name": "User 1"},
         {"id": 2, "name": "User 2"},
@@ -198,15 +166,13 @@ def sample_users():
     ]
 
 
-# Parametrized fixture
 @pytest.fixture(params=["sqlite", "postgresql", "mysql"])
 def db_backend(request):
-    """Fixture that runs tests with different database backends."""
+    """Runs tests with different database backends."""
     return request.param
 
 
 def test_with_db_backend(db_backend):
-    """This test will run 3 times with different backends."""
     print(f"Testing with {db_backend}")
     assert db_backend in ["sqlite", "postgresql", "mysql"]
 ```
@@ -219,40 +185,29 @@ from hypothesis import given, strategies as st
 import pytest
 
 def reverse_string(s: str) -> str:
-    """Reverse a string."""
     return s[::-1]
 
 
 @given(st.text())
 def test_reverse_twice_is_original(s):
-    """Property: reversing twice returns original."""
     assert reverse_string(reverse_string(s)) == s
 
 
 @given(st.text())
 def test_reverse_length(s):
-    """Property: reversed string has same length."""
     assert len(reverse_string(s)) == len(s)
 
 
 @given(st.integers(), st.integers())
 def test_addition_commutative(a, b):
-    """Property: addition is commutative."""
     assert a + b == b + a
 
 
 @given(st.lists(st.integers()))
 def test_sorted_list_properties(lst):
-    """Property: sorted list is ordered."""
     sorted_lst = sorted(lst)
-
-    # Same length
     assert len(sorted_lst) == len(lst)
-
-    # All elements present
     assert set(sorted_lst) == set(lst)
-
-    # Is ordered
     for i in range(len(sorted_lst) - 1):
         assert sorted_lst[i] <= sorted_lst[i + 1]
 ```

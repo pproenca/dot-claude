@@ -23,8 +23,8 @@ Asynchronous Python programming with asyncio for non-blocking I/O.
 import asyncio
 
 async def fetch_data(url: str) -> dict:
-    """Fetch data from URL asynchronously."""
-    await asyncio.sleep(1)  # Simulate I/O
+    """Returns dict with url and data keys."""
+    await asyncio.sleep(1)
     return {"url": url, "data": "result"}
 
 async def main():
@@ -41,12 +41,11 @@ import asyncio
 from typing import List
 
 async def fetch_user(user_id: int) -> dict:
-    """Fetch user data."""
     await asyncio.sleep(0.5)
     return {"id": user_id, "name": f"User {user_id}"}
 
 async def fetch_all_users(user_ids: List[int]) -> List[dict]:
-    """Fetch multiple users concurrently."""
+    """Runs all fetches concurrently, returns when all complete."""
     tasks = [fetch_user(uid) for uid in user_ids]
     results = await asyncio.gather(*tasks)
     return results
@@ -65,22 +64,18 @@ asyncio.run(main())
 import asyncio
 
 async def background_task(name: str, delay: int):
-    """Long-running background task."""
     print(f"{name} started")
     await asyncio.sleep(delay)
     print(f"{name} completed")
     return f"Result from {name}"
 
 async def main():
-    # Create tasks
     task1 = asyncio.create_task(background_task("Task 1", 2))
     task2 = asyncio.create_task(background_task("Task 2", 1))
 
-    # Do other work
     print("Main: doing other work")
     await asyncio.sleep(0.5)
 
-    # Wait for tasks
     result1 = await task1
     result2 = await task2
 
@@ -96,14 +91,12 @@ import asyncio
 from typing import List, Optional
 
 async def risky_operation(item_id: int) -> dict:
-    """Operation that might fail."""
     await asyncio.sleep(0.1)
     if item_id % 3 == 0:
         raise ValueError(f"Item {item_id} failed")
     return {"id": item_id, "status": "success"}
 
 async def safe_operation(item_id: int) -> Optional[dict]:
-    """Wrapper with error handling."""
     try:
         return await risky_operation(item_id)
     except ValueError as e:
@@ -111,11 +104,9 @@ async def safe_operation(item_id: int) -> Optional[dict]:
         return None
 
 async def process_items(item_ids: List[int]):
-    """Process multiple items with error handling."""
     tasks = [safe_operation(iid) for iid in item_ids]
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
-    # Filter out failures
     successful = [r for r in results if r is not None and not isinstance(r, Exception)]
     failed = [r for r in results if isinstance(r, Exception)]
 
@@ -131,12 +122,10 @@ asyncio.run(process_items([1, 2, 3, 4, 5, 6]))
 import asyncio
 
 async def slow_operation(delay: int) -> str:
-    """Operation that takes time."""
     await asyncio.sleep(delay)
     return f"Completed after {delay}s"
 
 async def with_timeout():
-    """Execute operation with timeout."""
     try:
         result = await asyncio.wait_for(slow_operation(5), timeout=2.0)
         print(result)
@@ -175,7 +164,6 @@ async def good():
 
 ```python
 async def cancelable_task():
-    """Task that handles cancellation."""
     try:
         while True:
             await asyncio.sleep(1)
@@ -207,13 +195,11 @@ import pytest
 # Using pytest-asyncio
 @pytest.mark.asyncio
 async def test_async_function():
-    """Test async function."""
     result = await fetch_data("https://api.example.com")
     assert result is not None
 
 @pytest.mark.asyncio
 async def test_with_timeout():
-    """Test with timeout."""
     with pytest.raises(asyncio.TimeoutError):
         await asyncio.wait_for(slow_operation(5), timeout=1.0)
 ```

@@ -15,7 +15,6 @@ Base = declarative_base()
 
 
 class User(Base):
-    """User model."""
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
@@ -25,7 +24,7 @@ class User(Base):
 
 @pytest.fixture(scope="function")
 def db_session() -> Session:
-    """Create in-memory database for testing."""
+    """In-memory SQLite session, auto-closes after test."""
     engine = create_engine("sqlite:///:memory:")
     Base.metadata.create_all(engine)
 
@@ -38,7 +37,6 @@ def db_session() -> Session:
 
 
 def test_create_user(db_session):
-    """Test creating a user."""
     user = User(name="Test User", email="test@example.com")
     db_session.add(user)
     db_session.commit()
@@ -48,7 +46,6 @@ def test_create_user(db_session):
 
 
 def test_query_user(db_session):
-    """Test querying users."""
     user1 = User(name="User 1", email="user1@example.com")
     user2 = User(name="User 2", email="user2@example.com")
 
@@ -60,7 +57,6 @@ def test_query_user(db_session):
 
 
 def test_unique_email_constraint(db_session):
-    """Test unique email constraint."""
     from sqlalchemy.exc import IntegrityError
 
     user1 = User(name="User 1", email="same@example.com")

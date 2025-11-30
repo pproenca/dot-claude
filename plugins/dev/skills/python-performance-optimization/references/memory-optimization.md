@@ -12,14 +12,14 @@
 import sys
 
 class RegularClass:
-    """Regular class with __dict__."""
+    """Each instance has __dict__ (56+ bytes overhead)."""
     def __init__(self, x, y, z):
         self.x = x
         self.y = y
         self.z = z
 
 class SlottedClass:
-    """Class with __slots__ for memory efficiency."""
+    """No __dict__, attributes stored in fixed-size array."""
     __slots__ = ['x', 'y', 'z']
 
     def __init__(self, x, y, z):
@@ -27,14 +27,12 @@ class SlottedClass:
         self.y = y
         self.z = z
 
-# Memory comparison
 regular = RegularClass(1, 2, 3)
 slotted = SlottedClass(1, 2, 3)
 
 print(f"Regular class size: {sys.getsizeof(regular)} bytes")
 print(f"Slotted class size: {sys.getsizeof(slotted)} bytes")
 
-# Significant savings with many instances
 regular_objects = [RegularClass(i, i+1, i+2) for i in range(10000)]
 slotted_objects = [SlottedClass(i, i+1, i+2) for i in range(10000)]
 
@@ -49,29 +47,15 @@ import tracemalloc
 import gc
 
 def memory_leak_example():
-    """Example that leaks memory."""
     leaked_objects = []
-
     for i in range(100000):
-        # Objects added but never removed
         leaked_objects.append([i] * 100)
 
-    # In real code, this would be an unintended reference
-
 def track_memory_usage():
-    """Track memory allocations."""
     tracemalloc.start()
-
-    # Take snapshot before
     snapshot1 = tracemalloc.take_snapshot()
-
-    # Run code
     memory_leak_example()
-
-    # Take snapshot after
     snapshot2 = tracemalloc.take_snapshot()
-
-    # Compare
     top_stats = snapshot2.compare_to(snapshot1, 'lineno')
 
     print("Top 10 memory allocations:")
@@ -80,10 +64,7 @@ def track_memory_usage():
 
     tracemalloc.stop()
 
-# Monitor memory
 track_memory_usage()
-
-# Force garbage collection
 gc.collect()
 ```
 
@@ -93,18 +74,15 @@ gc.collect()
 import sys
 
 def process_file_list(filename):
-    """Load entire file into memory."""
+    """O(n) memory - entire file in RAM."""
     with open(filename) as f:
-        lines = f.readlines()  # Loads all lines
+        lines = f.readlines()
         return sum(1 for line in lines if line.strip())
 
 def process_file_iterator(filename):
-    """Process file line by line."""
+    """O(1) memory - one line at a time."""
     with open(filename) as f:
         return sum(1 for line in f if line.strip())
-
-# Iterator uses constant memory
-# List loads entire file into memory
 ```
 
 ## Pattern 20: Weakref for Caches
@@ -113,29 +91,24 @@ def process_file_iterator(filename):
 import weakref
 
 class CachedResource:
-    """Resource that can be garbage collected."""
     def __init__(self, data):
         self.data = data
 
-# Regular cache prevents garbage collection
+# Strong reference prevents GC
 regular_cache = {}
 
 def get_resource_regular(key):
-    """Get resource from regular cache."""
     if key not in regular_cache:
         regular_cache[key] = CachedResource(f"Data for {key}")
     return regular_cache[key]
 
-# Weak reference cache allows garbage collection
+# Weak reference allows GC when no other refs exist
 weak_cache = weakref.WeakValueDictionary()
 
 def get_resource_weak(key):
-    """Get resource from weak cache."""
     resource = weak_cache.get(key)
     if resource is None:
         resource = CachedResource(f"Data for {key}")
         weak_cache[key] = resource
     return resource
-
-# When no strong references exist, objects can be GC'd
 ```

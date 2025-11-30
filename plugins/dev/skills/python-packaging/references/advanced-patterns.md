@@ -28,7 +28,6 @@ from importlib.resources import files
 import json
 
 def load_config():
-    """Load configuration from package data."""
     config_file = files("my_package").joinpath("data/config.json")
     with config_file.open() as f:
         return json.load(f)

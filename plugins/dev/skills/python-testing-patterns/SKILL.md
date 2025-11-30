@@ -43,7 +43,6 @@ class Calculator:
 
 
 def test_addition():
-    """Test addition."""
     calc = Calculator()
     assert calc.add(2, 3) == 5
     assert calc.add(-1, 1) == 0
@@ -51,21 +50,18 @@ def test_addition():
 
 
 def test_subtraction():
-    """Test subtraction."""
     calc = Calculator()
     assert calc.subtract(5, 3) == 2
     assert calc.subtract(0, 5) == -5
 
 
 def test_multiplication():
-    """Test multiplication."""
     calc = Calculator()
     assert calc.multiply(3, 4) == 12
     assert calc.multiply(0, 5) == 0
 
 
 def test_division():
-    """Test division."""
     calc = Calculator()
     assert calc.divide(6, 3) == 2
     assert calc.divide(5, 2) == 2.5
@@ -109,20 +105,14 @@ class Database:
 
 @pytest.fixture
 def db() -> Generator[Database, None, None]:
-    """Fixture that provides connected database."""
-    # Setup
+    """Provides connected database, auto-disconnects after test."""
     database = Database("sqlite:///:memory:")
     database.connect()
-
-    # Provide to test
     yield database
-
-    # Teardown
     database.disconnect()
 
 
 def test_database_query(db):
-    """Test database query with fixture."""
     results = db.query("SELECT * FROM users")
     assert len(results) == 1
     assert results[0]["name"] == "Test"
@@ -130,7 +120,7 @@ def test_database_query(db):
 
 @pytest.fixture(scope="session")
 def app_config():
-    """Session-scoped fixture - created once per test session."""
+    """Shared configuration for all tests in the session."""
     return {
         "database_url": "postgresql://localhost/test",
         "api_key": "test-key",
@@ -140,16 +130,13 @@ def app_config():
 
 @pytest.fixture(scope="module")
 def api_client(app_config):
-    """Module-scoped fixture - created once per test module."""
-    # Setup expensive resource
+    """Module-scoped fixture providing API client with active session."""
     client = {"config": app_config, "session": "active"}
     yield client
-    # Cleanup
     client["session"] = "closed"
 
 
 def test_api_client(api_client):
-    """Test using api client fixture."""
     assert api_client["session"] == "active"
     assert api_client["config"]["debug"] is True
 ```
@@ -231,7 +218,6 @@ class APIClient:
 
 
 def test_get_user_success():
-    """Test successful API call with mock."""
     client = APIClient("https://api.example.com")
 
     mock_response = Mock()
@@ -291,25 +277,21 @@ def divide(a: float, b: float) -> float:
 
 
 def test_zero_division():
-    """Test exception is raised for division by zero."""
     with pytest.raises(ZeroDivisionError):
         divide(10, 0)
 
 
 def test_zero_division_with_message():
-    """Test exception message."""
     with pytest.raises(ZeroDivisionError, match="Division by zero"):
         divide(5, 0)
 
 
 def test_type_error():
-    """Test type error exception."""
     with pytest.raises(TypeError, match="must be numbers"):
         divide("10", 5)
 
 
 def test_exception_info():
-    """Test accessing exception info."""
     with pytest.raises(ValueError) as exc_info:
         int("not a number")
 
