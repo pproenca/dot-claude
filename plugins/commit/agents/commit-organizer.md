@@ -31,7 +31,7 @@ Transform messy branch histories into clean, reviewable commits that tell a cohe
 Run the analysis script to get full diff information:
 
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/analyze-branch.sh
+python3 -S ${CLAUDE_PLUGIN_ROOT}/scripts/analyze_branch.py
 ```
 
 This outputs JSON with:
