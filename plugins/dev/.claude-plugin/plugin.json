@@ -1,6 +1,6 @@
 {
   "name": "dev",
-  "version": "3.1.0",
+  "version": "1.0.0",
   "description": "Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI and production-ready practices",
   "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/dev",
   "repository": "https://github.com/pedroproenca/dot-claude",
