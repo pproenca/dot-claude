@@ -52,6 +52,21 @@ test('renders sidebar', () => {
 // Don't assert on the mock - test Page's behavior with sidebar present
 ```
 
+**Python equivalent:**
+```python
+# ❌ BAD: Testing that the mock was called, not actual behavior
+def test_sends_notification(mocker: MockerFixture) -> None:
+    mock_sender = mocker.patch("app.notifications.EmailSender")
+    notify_user(user_id="123")
+    mock_sender.assert_called_once()  # Tests mock, not outcome!
+
+# ✅ GOOD: Test observable behavior
+def test_sends_notification(smtp_server: SMTPServer) -> None:
+    notify_user(user_id="123")
+    assert len(smtp_server.outbox) == 1
+    assert smtp_server.outbox[0].to == "user@example.com"
+```
+
 ### Gate Function
 
 ```
@@ -103,6 +118,25 @@ export async function cleanupSession(session: Session) {
 afterEach(() => cleanupSession(session));
 ```
 
+**Python equivalent:**
+```python
+# ❌ BAD: _cleanup() pollutes production class
+class DatabaseSession:
+    def _cleanup(self) -> None:  # Only tests call this!
+        self._connection.rollback()
+        self._connection.close()
+
+# ✅ GOOD: Fixture handles lifecycle
+@pytest.fixture
+def db_session(database: Database) -> Iterator[DatabaseSession]:
+    session = database.create_session()
+    try:
+        yield session
+    finally:
+        session.connection.rollback()
+        session.connection.close()
+```
+
 ### Gate Function
 
 ```
@@ -150,6 +184,27 @@ test('detects duplicate server', () => {
   await addServer(config);  // Config written
   await addServer(config);  // Duplicate detected ✓
 });
+```
+
+**Python equivalent:**
+```python
+# ❌ BAD: Over-mocking breaks test invariants
+def test_rejects_duplicate_config(mocker: MockerFixture) -> None:
+    mocker.patch("app.discovery.scan_plugins")  # Breaks config persistence!
+
+    add_plugin(config)
+    add_plugin(config)  # Should raise DuplicateError - but won't!
+
+# ✅ GOOD: Mock only the slow external call
+def test_rejects_duplicate_config(
+    mocker: MockerFixture,
+    tmp_path: Path,
+) -> None:
+    mocker.patch("app.discovery.fetch_from_network")  # Just the I/O
+
+    add_plugin(config)
+    with pytest.raises(DuplicateConfigError):
+        add_plugin(config)
 ```
 
 ### Gate Function
@@ -209,6 +264,32 @@ const mockResponse = {
   metadata: { requestId: 'req-789', timestamp: 1234567890 }
   // All fields real API returns
 };
+```
+
+**Python equivalent:**
+```python
+# ❌ BAD: Partial mock missing fields downstream code needs
+mock_response: dict[str, Any] = {
+    "status": "success",
+    "data": {"user_id": "123", "name": "Alice"},
+    # Missing: metadata.request_id used by logging
+}
+
+# ✅ GOOD: Use typed factory for complete mocks
+def make_api_response(
+    *,
+    user_id: str,
+    name: str,
+    request_id: str | None = None,
+) -> APIResponse:
+    return {
+        "status": "success",
+        "data": {"user_id": user_id, "name": name},
+        "metadata": {
+            "request_id": request_id or str(uuid4()),
+            "timestamp": int(time.time()),
+        },
+    }
 ```
 
 ### Gate Function
