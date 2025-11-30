@@ -137,3 +137,4 @@ Project settings in `.claude/settings.json`:
 ## Contributing
 
 Use `super:sharing-skills` skill for contributing skills upstream via PR.
+- Remember to make worktrees local to the project
