@@ -5,8 +5,8 @@
 set -euo pipefail
 
 output_decision() {
-  local decision="$1"
-  local reason="$2"
+  local decision=$1
+  local reason=$2
   cat <<EOF
 {
   "hookSpecificOutput": {
@@ -23,7 +23,7 @@ main() {
   local file_path
 
   input="$(cat)"
-  file_path="$(echo "${input}" | jq -r '.tool_input.file_path // .tool_input.path // ""')"
+  file_path="$(jq -r '.tool_input.file_path // .tool_input.path // ""' <<< "${input}")"
 
   # If no file path found, allow (safety default)
   if [[ -z "${file_path}" ]]; then
@@ -31,9 +31,9 @@ main() {
     exit 0
   fi
 
-  # Skip non-code files (docs, config, scripts, etc.)
-  if [[ "${file_path}" =~ \.(md|json|yaml|yml|toml|txt|gitignore|env|lock|log|csv|xml|html|css|scss|less|sh)$ ]]; then
-    output_decision "allow" "Non-code file"
+  # Only enforce TDD for code files (whitelist approach)
+  if [[ ! "${file_path}" =~ \.(py|js|ts|jsx|tsx)$ ]]; then
+    output_decision "allow" "Non-code file (TDD only applies to .py, .js, .ts, .jsx, .tsx)"
     exit 0
   fi
 
