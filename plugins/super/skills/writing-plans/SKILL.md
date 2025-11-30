@@ -14,6 +14,29 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
+## Python Project Detection
+
+Before writing a plan, detect if this is a Python project and what framework it uses:
+
+**Detection signals:**
+- `pyproject.toml` or `setup.py` → Python project
+- `fastapi` in dependencies → FastAPI project
+- `django` in dependencies → Django project
+- `asyncio` imports or `async def` → Async code
+- `.python-version` or `uv.lock` → Uses uv package manager
+
+**When Python detected:**
+1. Use Skill tool to load `dev:python-testing-patterns`
+2. Use Skill tool to load `dev:uv-package-manager`
+3. Use patterns from loaded skills in plan tasks
+4. Use `uv run` prefix for all Python commands
+
+**When async code detected:**
+- Use Skill tool to load `dev:async-python-patterns`
+
+**When FastAPI/Django detected:**
+- Dispatch `dev:python-pro` agent for framework-specific patterns
+
 ## Optional: Track Plan Writing Phases
 
 For complex plans (5+ tasks), use TodoWrite to track progress:
@@ -75,7 +98,7 @@ def test_specific_behavior():
 
 **Step 2: Run test to verify it fails**
 
-Run: `pytest tests/path/test.py::test_name -v`
+Run: `uv run pytest tests/path/test.py::test_name -v`
 Expected: FAIL with "function not defined"
 
 **Step 3: Write minimal implementation**
@@ -87,7 +110,7 @@ def function(input):
 
 **Step 4: Run test to verify it passes**
 
-Run: `pytest tests/path/test.py::test_name -v`
+Run: `uv run pytest tests/path/test.py::test_name -v`
 Expected: PASS
 
 **Step 5: Commit**
@@ -104,6 +127,35 @@ git commit -m "feat: add specific feature"
 - Exact commands with expected output
 - Reference relevant skills with @ syntax
 - DRY, YAGNI, TDD, frequent commits
+
+## Python-Specific Patterns
+
+When Python detected, load patterns from the dev plugin instead of duplicating them here.
+
+**Step 1: Load relevant skill**
+
+```
+Use Skill tool: dev:python-testing-patterns
+```
+
+**Step 2: Copy patterns into plan tasks**
+
+- Fixtures from skill → conftest.py setup task
+- Parameterized tests from skill → test task examples
+- Mocking patterns from skill → integration test examples
+
+**For async code detected:**
+
+```
+Use Skill tool: dev:async-python-patterns
+```
+
+**For FastAPI/Django detected:**
+
+```
+Task tool (dev:python-pro):
+  prompt: "Provide [framework] test patterns for [feature]"
+```
 
 ## Diagram Generation Phase
 
@@ -187,3 +239,51 @@ After saving the plan (with or without diagrams), offer execution choice:
 **If Parallel Session chosen:**
 - Guide them to open new session in worktree
 - **REQUIRED SUB-SKILL:** New session uses super:executing-plans
+
+## Workflow Integration
+
+### Python Development Skills
+
+When writing Python plans, integrate these `dev` plugin skills:
+
+| Skill | When to Reference | What It Provides |
+|-------|-------------------|------------------|
+| `dev:python-testing-patterns` | All Python test code | Fixtures, mocking, parameterized tests, markers |
+| `dev:uv-package-manager` | Python commands, dependencies | `uv run`, `uv add`, `uv sync` patterns |
+| `dev:async-python-patterns` | Async code detected | asyncio, gather(), error handling, timeouts |
+| `dev:python-packaging` | Creating packages/CLIs | pyproject.toml, entry points, publishing |
+| `dev:python-performance-optimization` | Performance-critical code | Profiling, caching, optimization patterns |
+
+### Agent Dispatch
+
+For complex Python plans, dispatch specialized agents:
+
+```
+Task tool (dev:python-pro):
+  description: "Get FastAPI/Django patterns for [feature]"
+  prompt: "Analyze [feature requirements] and provide:
+    1. Framework-specific implementation pattern
+    2. Test fixtures and patterns
+    3. Common pitfalls to avoid"
+```
+
+### Plan Header with Python Context
+
+For Python projects, enhance the header:
+
+```markdown
+# [Feature Name] Implementation Plan
+
+> **For Claude:** REQUIRED SUB-SKILL: Use super:executing-plans to implement this plan task-by-task.
+> **Python Skills:** Reference dev:python-testing-patterns for tests, dev:uv-package-manager for commands.
+
+**Goal:** [One sentence describing what this builds]
+
+**Architecture:** [2-3 sentences about approach]
+
+**Tech Stack:** Python 3.12+, pytest, [framework if applicable]
+
+**Commands:** All Python commands use `uv run` prefix
+
+---
+```
