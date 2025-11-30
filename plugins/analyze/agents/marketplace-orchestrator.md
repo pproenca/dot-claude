@@ -38,12 +38,12 @@ You are the Marketplace Analysis Orchestrator, coordinating comprehensive plugin
 Launch BOTH analyzers in a single message for parallel execution:
 
 ```
-Use Task tool with subagent_type='structure-analyzer':
+Use Task tool with subagent_type='analyze:structure-analyzer':
 - Analyze trigger phrases, discoverability, component design
 - Find redundancy and duplication
 - Identify simplification opportunities
 
-Use Task tool with subagent_type='capability-analyzer':
+Use Task tool with subagent_type='analyze:capability-analyzer':
 - Evaluate Claude Code feature usage
 - Check against latest best practices
 - Find underutilized capabilities

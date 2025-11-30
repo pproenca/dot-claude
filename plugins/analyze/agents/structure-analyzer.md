@@ -45,6 +45,7 @@ You are a Structure Analyzer specializing in Claude Code plugin design, DX, and 
 - **Component design**: Single responsibility, appropriate granularity
 - **Redundancy**: Same patterns in multiple places?
 - **Elegance**: Simplest solution that works?
+- **Reference integrity**: All referenced files exist? Orphaned files?
 
 ## Analysis Process
 
@@ -62,6 +63,11 @@ You are a Structure Analyzer specializing in Claude Code plugin design, DX, and 
    - Grep for similar content
    - Compare component purposes
    - Identify overlap and gaps
+
+4. **Validate references:**
+   - Extract paths from SKILL.md (references/, scripts/, markdown links)
+   - Check each referenced file exists
+   - Find orphaned files (exist but never referenced)
 
 ## Output Format
 
@@ -82,6 +88,10 @@ You are a Structure Analyzer specializing in Claude Code plugin design, DX, and 
 
 ### Simplification Opportunities
 1. [Merge/Delete] - [Evidence] - [Impact]
+
+### Reference Integrity
+| Skill | Broken References | Orphaned Files |
+|-------|-------------------|----------------|
 
 ### Metrics
 - Total plugins: X
