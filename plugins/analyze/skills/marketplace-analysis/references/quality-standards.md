@@ -1,11 +1,12 @@
 # Anthropic-Level Quality Standards
 
-> **DISCLAIMER**: This document contains **invented proxies and heuristics**, not official Claude Code documentation. These are useful mental models for thinking about quality, but they are NOT documented guidance from Anthropic. Always verify claims against official documentation via `claude-code-guide` before treating them as authoritative.
+> **Note**: This document combines **official Anthropic guidance** (from `skill-design-standards.md`) with **derived heuristics** for plugin quality. The Skill Design Standards section is authoritative; other sections are useful mental models.
 
 This reference defines what "Anthropic quality" means for Claude Code plugins.
 
 ## Table of Contents
 
+- [Skill Design Standards (Official)](#skill-design-standards-official)
 - [The Quality Bar](#the-quality-bar)
 - [Quality Dimensions](#quality-dimensions)
   - [Trigger Quality](#1-trigger-quality)
@@ -14,6 +15,68 @@ This reference defines what "Anthropic quality" means for Claude Code plugins.
   - [Implementation Quality](#4-implementation-quality)
 - [Anti-Patterns](#anti-patterns)
 - [Quality Checklist](#quality-checklist)
+
+## Skill Design Standards (Official)
+
+These criteria come from Anthropic's official skill-creator guide. See `skill-design-standards.md` for full details.
+
+### Core Principles
+
+1. **Token Efficiency**: Only add what Claude doesn't already know
+   - Challenge each piece: "Does this justify its token cost?"
+   - Prefer concise examples over verbose explanations
+
+2. **Progressive Disclosure**: Three-level loading system
+   - Level 1: Metadata (name + description) ~100 words - always loaded
+   - Level 2: SKILL.md body <5k words - when triggered
+   - Level 3: References/scripts - as needed
+
+3. **Degrees of Freedom**: Match specificity to task fragility
+   - High freedom: text instructions (multiple approaches valid)
+   - Medium freedom: pseudocode/scripts with params
+   - Low freedom: specific scripts (fragile/error-prone tasks)
+
+### Skill Structure Checklist
+
+```
+skill-name/
+├── SKILL.md (required)
+│   ├── YAML: name + description ONLY
+│   └── Body: core workflow, references to details
+├── scripts/          # Deterministic code
+├── references/       # Loaded as needed
+└── assets/           # Used in output, never loaded
+```
+
+**Mandatory checks:**
+- [ ] SKILL.md under 500 lines
+- [ ] Frontmatter has ONLY `name` and `description`
+- [ ] Description contains "what it does" AND "when to use"
+- [ ] No forbidden files (README.md, CHANGELOG.md, INSTALLATION_GUIDE.md)
+- [ ] References one level deep (no nested references)
+- [ ] Reference files >100 lines have TOC
+- [ ] Writing uses imperative/infinitive form
+- [ ] No duplicated content between SKILL.md and references
+
+### Description Quality
+
+The description is the **primary triggering mechanism**. It must include:
+- What the skill does (capabilities)
+- When to use it (trigger phrases, contexts)
+
+**Good:**
+```yaml
+description: Comprehensive document creation, editing, and analysis with
+support for tracked changes, comments, formatting preservation, and text
+extraction. Use when working with professional documents (.docx files) for:
+(1) Creating new documents, (2) Modifying or editing content, (3) Working
+with tracked changes, (4) Adding comments, or any other document tasks.
+```
+
+**Bad:**
+```yaml
+description: Use for document processing.
+```
 
 ## The Quality Bar
 

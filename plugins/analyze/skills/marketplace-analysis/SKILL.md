@@ -67,8 +67,11 @@ Each recommendation includes validation approach.
 ## References
 
 For detailed guidance:
-- **`references/quality-standards.md`** - Anthropic-level quality criteria, anti-patterns
+- **`references/skill-design-standards.md`** - **Official Anthropic skill-creator guide** (authoritative source for skill structure, frontmatter, progressive disclosure)
+- **`references/quality-standards.md`** - Quality criteria checklist, anti-patterns (includes summary of official standards)
 - **`references/measuring-improvements.md`** - Metrics, user testing, validation templates
+- **`references/output-patterns.md`** - Template and examples patterns for consistent output
+- **`references/workflows.md`** - Sequential and conditional workflow patterns
 
 Use `scripts/analyze-metrics.sh` for consistent metric collection.
 
