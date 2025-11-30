@@ -447,6 +447,20 @@ uv cache dir                # Show cache location
 uv --version                # Show version
 ```
 
+## Workflow Integration
+
+**Use with `dev:python-packaging`** for library development:
+- pyproject.toml configuration patterns
+- Build and publish workflows
+
+**Use with `dev:python-testing-patterns`** for test workflows:
+- `uv run pytest` for test execution
+- Dev dependency management
+
+**Use with `super:verification-before-completion`** before committing:
+- `uv sync` to verify dependencies resolve
+- `uv run pytest` to verify tests pass
+
 ## Best Practices Summary
 
 1. **Use uv for all new projects** - Start with `uv init`
