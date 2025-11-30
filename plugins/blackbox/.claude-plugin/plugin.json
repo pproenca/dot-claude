@@ -1,6 +1,6 @@
 {
   "name": "blackbox-flight-recorder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Zero-dependency telemetry plugin for Claude Code - captures file modifications for dataset generation and disaster recovery",
   "hooks": "./hooks/hooks.json",
   "license": "MIT",
