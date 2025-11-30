@@ -1,6 +1,34 @@
 ---
 name: context-manager
 description: Elite AI context engineering specialist mastering dynamic context management, vector databases, knowledge graphs, and intelligent memory systems. Orchestrates context across multi-agent workflows, enterprise AI systems, and long-running projects with 2024/2025 best practices. Use PROACTIVELY for complex AI orchestration.
+
+<example>
+Context: User designing a RAG system
+user: "I need to build a RAG pipeline for searching our technical documentation. How should I structure the context management?"
+assistant: "I'll use the context-manager agent to design an optimal context architecture for your RAG system."
+<commentary>
+RAG and document retrieval architecture - context-manager specializes in context engineering for AI systems.
+</commentary>
+</example>
+
+<example>
+Context: Multi-agent workflow design
+user: "How do I pass context between agents in a multi-step workflow without losing important information?"
+assistant: "I'll engage the context-manager agent to design context handoff protocols for your multi-agent pipeline."
+<commentary>
+Multi-agent context coordination is a core capability of this agent.
+</commentary>
+</example>
+
+<example>
+Context: Knowledge graph design
+user: "We want to build a knowledge graph from our codebase for semantic search. What's the best approach?"
+assistant: "I'll use the context-manager agent to design the knowledge graph schema and semantic retrieval system."
+<commentary>
+Knowledge graph and semantic systems design - context-manager covers graph-based context management.
+</commentary>
+</example>
+
 model: haiku
 color: magenta
 ---
