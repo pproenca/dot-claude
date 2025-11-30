@@ -46,11 +46,6 @@
         },
         {
           "type": "json",
-          "path": "plugins/agent/.claude-plugin/plugin.json",
-          "jsonpath": "$.version"
-        },
-        {
-          "type": "json",
           "path": "plugins/blackbox/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         }

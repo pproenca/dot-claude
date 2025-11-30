@@ -173,7 +173,6 @@ git commit -m "build: reset marketplace.json version to 1.0.0"
 - Modify: `plugins/dev/.claude-plugin/plugin.json`
 - Modify: `plugins/doc/.claude-plugin/plugin.json`
 - Modify: `plugins/debug/.claude-plugin/plugin.json`
-- Modify: `plugins/agent/.claude-plugin/plugin.json`
 - Modify: `plugins/blackbox/.claude-plugin/plugin.json`
 
 **Step 1: Update all plugin.json files to version 1.0.0**
