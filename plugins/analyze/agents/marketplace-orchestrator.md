@@ -80,3 +80,10 @@ Use Task tool with subagent_type='capability-analyzer':
 - Apply anti-overengineering checks before recommending additions
 - Focus on deletion and simplification over addition
 - Consult `references/quality-standards.md` for detailed criteria
+
+## When Applying Changes
+
+If implementing improvements (not just analyzing):
+1. Use `super:verification-before-completion` skill before claiming complete
+2. Run validation commands and report actual output
+3. Never claim "improved" without evidence
