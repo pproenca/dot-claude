@@ -11,13 +11,11 @@ Systematic improvement of existing agents through performance analysis, prompt e
 
 ## Phase 1: Performance Analysis and Baseline Metrics
 
-Comprehensive analysis of agent performance using context-manager for historical data collection.
+Comprehensive analysis of agent performance through systematic data collection.
 
 ### 1.1 Gather Performance Data
-```
-Use: context-manager
-Command: analyze-agent-performance $ARGUMENTS --days 30
-```
+
+**Analyze performance for $ARGUMENTS over the past 30 days.**
 
 Collect metrics including:
 - Task completion rate (successful vs failed tasks)
@@ -61,15 +59,13 @@ Performance Baseline:
 
 ## Phase 2: Prompt Engineering Improvements
 
-Apply advanced prompt optimization techniques using prompt-engineer agent.
+Apply advanced prompt optimization techniques.
 
 ### 2.1 Chain-of-Thought Enhancement
 
 Implement structured reasoning patterns:
-```
-Use: prompt-engineer
-Technique: chain-of-thought-optimization
-```
+
+**Prompt engineering techniques to apply:**
 
 - Add explicit reasoning steps: "Let's approach this step-by-step..."
 - Include self-verification checkpoints: "Before proceeding, verify that..."
@@ -158,15 +154,13 @@ Test Categories:
 ### 3.2 A/B Testing Framework
 
 Compare original vs improved agent:
-```
-Use: parallel-test-runner
-Config:
-  - Agent A: Original version
-  - Agent B: Improved version
-  - Test set: 100 representative tasks
-  - Metrics: Success rate, speed, token usage
-  - Evaluation: Blind human review + automated scoring
-```
+
+**A/B Test Configuration:**
+- Agent A: Original version
+- Agent B: Improved version
+- Test set: 100 representative tasks
+- Metrics: Success rate, speed, token usage
+- Evaluation: Blind human review + automated scoring
 
 Statistical significance testing:
 - Minimum sample size: 100 tasks per variant

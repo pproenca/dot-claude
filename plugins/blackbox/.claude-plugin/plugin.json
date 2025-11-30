@@ -5,10 +5,10 @@
   "hooks": "./hooks/hooks.json",
   "license": "MIT",
   "keywords": [
-    "git",
-    "worktrees",
-    "branches",
-    "commits"
+    "telemetry",
+    "file-tracking",
+    "dataset-generation",
+    "disaster-recovery"
   ],
   "author": {
     "name": "Pedro Proenca",
