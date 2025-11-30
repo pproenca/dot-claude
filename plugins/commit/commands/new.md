@@ -1,185 +1,151 @@
 ---
 description: Create a new commit from staged changes following Conventional Commits
 argument-hint: ""
-allowed-tools: [Bash, Read, Task, AskUserQuestion]
+allowed-tools: [Bash, Read, Task, AskUserQuestion, TodoWrite]
 ---
 
 # Create New Commit
 
-Create a well-structured commit from currently staged changes using Conventional Commits format.
+**Announce at start:** "Creating a commit from staged changes."
 
-## Workflow
+## Progress Tracking
 
-1. Check staged changes exist
-2. Analyze staged diff and detect commit type
-3. Check for breaking changes
-4. Propose commit message
-5. Execute commit
+Create TodoWrite todos for each step:
+- Check staged changes exist
+- Analyze diff and detect type
+- Check for breaking changes
+- Draft and validate commit message
+- Execute commit
+
+Mark each step as `in_progress` when starting, `completed` when done.
 
 ---
 
-## Step 1: Check Staged Changes
+## FIRST ACTION (Mandatory)
+
+Run this command NOW before doing anything else:
 
 ```bash
 git diff --cached --stat
 ```
 
-**If nothing staged**: STOP - tell user to stage changes first with `git add`.
+**If no output:** STOP immediately. Tell user: "No staged changes. Run `git add <files>` first."
+
+**If output exists:** Continue to Step 2.
 
 ---
 
-## Step 2: Analyze Staged Diff and Detect Type
+## Step 2: Analyze Diff
 
-Get the staged changes:
+Run these commands NOW:
 
 ```bash
 git diff --cached
-```
-
-Get list of changed files:
-
-```bash
 git diff --cached --name-only
 ```
 
-### Type Auto-Detection
+Determine commit type using this priority:
 
-Analyze the diff and determine the commit type using this priority order:
+| Pattern | Type | Confidence |
+|---------|------|------------|
+| Only test files (`*_test.*`, `test_*.*`, `tests/`, `__tests__/`) | `test` | HIGH → proceed |
+| Only docs (`*.md`, `docs/`, `README*`) | `docs` | HIGH → proceed |
+| Only CI files (`.github/`, `.gitlab-ci*`, `Jenkinsfile`) | `ci` | HIGH → proceed |
+| Only build configs (`Makefile`, `*config.*`, `package.json` deps) | `build` | HIGH → proceed |
+| Bug fix patterns (error handling, null checks, edge cases) | `fix` | MODERATE → ask |
+| Files renamed/moved, no new exports | `refactor` | MODERATE → ask |
+| New files in source directories, new exports/functions | `feat` | MODERATE → ask |
+| Everything else | Ask | LOW → ask |
 
-| If changes are... | Type | Confidence |
-|-------------------|------|------------|
-| Only test files (`*_test.*`, `test_*.*`, `tests/`, `__tests__/`) | `test` | HIGH |
-| Only documentation (`*.md`, `docs/`, `README*`) | `docs` | HIGH |
-| Only CI files (`.github/`, `.gitlab-ci*`, `Jenkinsfile`) | `ci` | HIGH |
-| Only build configs (`Makefile`, `*config.*`, `package.json` deps) | `build` | HIGH |
-| Contains bug fix patterns (error handling, null checks, edge cases) | `fix` | MODERATE |
-| Files renamed/moved, no new exports | `refactor` | MODERATE |
-| New files in source directories, new exports/functions | `feat` | MODERATE |
-| Everything else | Ask user | LOW |
+**For MODERATE confidence:** Show detected type, allow user to confirm or change.
 
-### Confidence Handling
+**For LOW confidence:** Ask user to select type.
 
-- **HIGH confidence**: Use detected type, proceed without asking
-- **MODERATE confidence**: Show detected type, allow user to change
-- **LOW confidence**: Ask user to select type
+Use AskUserQuestion with these parameters:
 
-When confidence is MODERATE or LOW, use AskUserQuestion:
-
-### Type Selection (When Ambiguous)
 - Header: "Type"
-- Question: "What type of change is this?"
+- Question: "I detected this as '[detected_type]'. What type of change is this?"
 - Options:
+  - Auto-detect: Use Claude's analysis (currently: [detected_type])
   - feat: New feature or capability
   - fix: Bug fix or error correction
   - refactor: Code restructuring (no behavior change)
   - chore: Maintenance or cleanup
+- multiSelect: false
 
 ---
 
-## Step 3: Check for Breaking Changes
+## Step 3: Check Breaking Changes
 
-Scan the diff for potential breaking change patterns:
-
+Scan diff for these patterns:
 - Removed function/method definitions
 - Changed function signatures (added required parameters)
 - Removed exports or public APIs
 - Removed environment variables or config keys
 - Changed return types
 
-If any patterns detected, use AskUserQuestion:
+**If patterns detected,** use AskUserQuestion with these parameters:
 
-### Breaking Change Confirmation
 - Header: "Breaking?"
-- Question: "This change appears to [describe detected pattern]. Is this a breaking change?"
+- Question: "This appears to [describe pattern]. Is this a breaking change?"
 - Options:
-  - Yes, breaking: Mark with exclamation mark (!) and add BREAKING CHANGE footer
-  - No, compatible: Proceed without breaking change marker
+  - Yes, breaking: Mark with ! and BREAKING CHANGE footer
+  - No, compatible: Proceed without breaking marker
+- multiSelect: false
 
 ---
 
-## Step 4: Propose Commit Message
+## Step 4: Draft Message
 
-Based on the analysis, draft a commit message following Conventional Commits:
+Draft commit message following Conventional Commits:
 
-**Format:**
-```
-<type>[!]: <description>
+**Format:** type[!]: description
 
-[optional body]
-
-[optional BREAKING CHANGE: footer]
-```
-
-**Subject rules:**
-- Type prefix is REQUIRED (`feat`, `fix`, `docs`, etc.)
-- Use `!` before colon for breaking changes
+**Rules:**
+- Type prefix is REQUIRED (feat, fix, docs, etc.)
+- Use exclamation mark (!) before colon for breaking changes
 - Description in imperative mood ("add", not "adding")
 - Description starts lowercase
 - 50-72 chars ideal, max 100
 - No period at end
 
-**Body (Context and Rationale):**
-
-The body explains WHY, not WHAT. Write naturally - no rigid labels required.
-
-Include as needed:
-- What issue or need prompted this change
-- Why this approach was chosen over alternatives
-- Any implementation details worth noting
+**Body (for non-trivial changes):**
+- Explains WHY, not WHAT
+- What issue prompted this change
+- Why this approach was chosen
 - Known limitations or trade-offs
 
-**Example:**
-```
-feat: add rate limiting to auth endpoint
+Present the message and validate with AskUserQuestion:
 
-Traffic analysis showed credential stuffing attacks hitting 10K+ req/sec.
-Token bucket algorithm chosen over sliding window for O(1) memory.
-Uses Redis for distributed enforcement across pods.
-
-IPv6 address sharing may cause false positives for shared networks.
-```
-
-**Breaking change example:**
-```
-feat!: remove deprecated v1 API endpoints
-
-The v1 API has been deprecated since 2023-01. This removes all
-/api/v1/* endpoints. Clients must migrate to /api/v2/*.
-
-BREAKING CHANGE: All /api/v1/* endpoints removed. Use /api/v2/*.
-```
-
-Present the proposed message and validate with AskUserQuestion:
-
-### Message Validation
 - Header: "Commit"
-- Question: "Does this commit message accurately describe your changes?"
+- Question: "Does this message accurately describe your changes?"
 - Options:
-  - Looks good: Proceed with this message as-is
-  - Change type: I want to use a different type prefix
-  - Needs edits: I'll provide corrections to the message
-  - Add context: I want to add more details to the body
+  - Looks good: Proceed as-is
+  - Change type: Use different type prefix
+  - Needs edits: I'll provide corrections
+  - Add context: Add more details to body
+- multiSelect: false
 
 ---
 
 ## Step 5: Execute Commit
 
-**For single-line commits (no body):**
+**Single-line commits (no body):**
 ```bash
 git commit -m 'type: description'
 ```
 
-**For multi-line commits (with body):**
+**Multi-line commits (with body):**
 ```bash
 printf '%b' 'type: subject line\n\nBody text explaining why.' | git commit -F -
 ```
 
-**For breaking changes:**
+**Breaking changes:**
 ```bash
 printf '%b' 'feat!: remove deprecated API\n\nMigration required for all v1 clients.\n\nBREAKING CHANGE: /api/v1/* endpoints removed.' | git commit -F -
 ```
 
-**Critical:** The entire message must be a single-quoted string with NO literal newlines. Use `\n` escape sequences for line breaks. The `printf '%b'` command interprets these escape sequences at runtime.
+**Critical:** Use single-quoted strings with `\n` escape sequences. The `printf '%b'` interprets escapes at runtime.
 
 Verify with:
 ```bash
@@ -190,9 +156,6 @@ git log -1 --format='%B'
 
 ## Notes
 
-- Use single quotes for commit messages to prevent shell expansion of `!` in breaking changes
-- The `printf '%b' | git commit -F -` pattern with `\n` escape sequences avoids Claude Code's newline safety checks
+- Use single quotes for commit messages to prevent shell expansion of exclamation marks
 - Validation hooks will automatically check the commit message format
-- If the commit is rejected by hooks, review the error and adjust the message
-- For complex changes that should be split, suggest using `/commit:reset` instead
-- Type prefix is mandatory - commits without valid type will be blocked
+- For complex changes that should be split, suggest using /commit:reset instead
