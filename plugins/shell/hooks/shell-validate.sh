@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Shell Script Validation - PreToolUse hook
-# Validates shell scripts before they're written, warns on issues
+# Validates shell scripts before they're written
+# Blocks on syntax errors, warns on style issues
 
 set -euo pipefail
 
@@ -9,8 +10,8 @@ main() {
   local file_path
   local content
   local temp_file
-  local error
-  local sc_output
+  local syntax_error=""
+  local sc_output=""
   local warnings=()
 
   input="$(cat)"
@@ -26,28 +27,38 @@ main() {
   # Write content to temp file for validation
   temp_file="$(mktemp)"
   trap 'rm -f "${temp_file}"' EXIT
-  echo "${content}" >"${temp_file}"
+  printf '%s' "${content}" >"${temp_file}"
 
   # Check for shebang
   if ! head -1 "${temp_file}" | grep -q '^#!'; then
     warnings+=("Missing shebang (add #!/bin/bash or #!/bin/sh)")
   fi
 
-  # Syntax check with bash -n
+  # Syntax check with bash -n - this is blocking
   if ! bash -n "${temp_file}" 2>/dev/null; then
-    error="$(bash -n "${temp_file}" 2>&1 || true)"
-    warnings+=("Syntax error: ${error}")
+    syntax_error="$(bash -n "${temp_file}" 2>&1 || true)"
   fi
 
-  # Run shellcheck if available (non-blocking)
-  if command -v shellcheck &> /dev/null; then
+  # Run shellcheck if available (non-blocking, just warnings)
+  if command -v shellcheck &>/dev/null; then
     sc_output="$(shellcheck -f gcc "${temp_file}" 2>&1 || true)"
     if [[ -n "${sc_output}" ]]; then
       warnings+=("shellcheck: ${sc_output}")
     fi
   fi
 
-  # Output warnings if any
+  # Block on syntax errors
+  if [[ -n "${syntax_error}" ]]; then
+    cat <<EOF
+{
+  "decision": "block",
+  "reason": "Shell script has syntax error: ${syntax_error//\"/\\\"}. Fix the syntax before writing."
+}
+EOF
+    exit 0
+  fi
+
+  # Output warnings if any (non-blocking)
   if [[ ${#warnings[@]} -gt 0 ]]; then
     printf "Shell script warnings for %s:\n" "${file_path}"
     for w in "${warnings[@]}"; do

@@ -410,11 +410,4 @@ For shell-expert agent reviews, issues are classified as:
 
 ## Additional Resources
 
-### Reference Files
-
-For the complete Google Shell Style Guide:
-- **`${CLAUDE_PLUGIN_ROOT}/styleguide.md`** - Full original styleguide (project root)
-
-### Quick Reference
-
-- **`quick-reference.md`** - Checklist format for review
+For the complete Google Shell Style Guide, see: https://google.github.io/styleguide/shellguide.html
