@@ -1,0 +1,18 @@
+{
+  "name": "debug",
+  "version": "3.1.0",
+  "description": "Distributed systems debugging: log analysis, error correlation, stack trace detection, and root cause investigation",
+  "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/debug",
+  "repository": "https://github.com/pedroproenca/dot-claude",
+  "license": "MIT",
+  "keywords": [
+    "debugging",
+    "distributed-systems",
+    "logs",
+    "error-correlation",
+    "stack-traces"
+  ],
+  "author": {
+    "name": "Pedro Proenca"
+  }
+}
