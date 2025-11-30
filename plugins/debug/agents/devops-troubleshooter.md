@@ -1,6 +1,34 @@
 ---
 name: devops-troubleshooter
 description: Expert DevOps troubleshooter specializing in rapid incident response, advanced debugging, and modern observability. Masters log analysis, distributed tracing, Kubernetes debugging, performance optimization, and root cause analysis. Handles production outages, system reliability, and preventive monitoring. Use PROACTIVELY for debugging, incident response, or system troubleshooting.
+
+<example>
+Context: Production incident in progress
+user: "Our pods keep getting OOMKilled and the service is degraded. Help!"
+assistant: "I'll use the devops-troubleshooter agent to diagnose the memory issues and restore service stability."
+<commentary>
+Active production incident with infrastructure component - devops-troubleshooter handles Kubernetes and resource issues.
+</commentary>
+</example>
+
+<example>
+Context: User investigating performance degradation
+user: "API response times have increased 3x since last week. Need to find the bottleneck."
+assistant: "I'll engage the devops-troubleshooter to analyze distributed tracing and metrics to identify the performance regression."
+<commentary>
+Performance investigation requiring observability tools and distributed system analysis.
+</commentary>
+</example>
+
+<example>
+Context: Infrastructure configuration issue
+user: "Our Terraform deployment keeps failing with state lock errors. How do I debug this?"
+assistant: "I'll use the devops-troubleshooter to diagnose the Terraform state issues and help resolve the deployment blocker."
+<commentary>
+Infrastructure-as-Code debugging - devops-troubleshooter covers IaC troubleshooting.
+</commentary>
+</example>
+
 model: haiku
 color: green
 ---
