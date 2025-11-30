@@ -36,6 +36,24 @@ Analyze Claude Code plugins to achieve Anthropic-level quality standards.
 - Check consistency (naming, patterns, styles)
 - Identify gaps and conflicts
 
+### 4. Reference Validation
+
+For each skill, verify bundled references exist:
+
+1. **Extract paths from SKILL.md:**
+   - `references/*.md` mentions
+   - `scripts/*.sh` or `scripts/*.py` mentions
+   - Markdown links: `[text](relative/path)`
+
+2. **Validate each path:**
+   - Resolve relative to skill directory
+   - Check file exists with Glob
+   - Flag missing as "broken reference"
+
+3. **Report:**
+   - Missing references = Priority 1 errors
+   - Orphaned files (exist but not referenced) = Priority 3 notes
+
 ## Anti-Overengineering Checks
 
 Before proposing ANY change:
