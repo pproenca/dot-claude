@@ -1,6 +1,6 @@
 # Claude Code local settings
-.claude/*.local.md
-**/.claude/*.local.md
+# .claude/*.local.md
+# **/.claude/*.local.md
 
 # Sensitive files - NEVER commit
 .env
@@ -42,6 +42,9 @@ config.local.*
 # Temporary files
 tmp/
 temp/
+
+# Git worktrees
+.worktrees/
 
 # Test scripts with credentials
 script.sh

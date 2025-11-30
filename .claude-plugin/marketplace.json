@@ -1,83 +1,42 @@
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "10x-claude-skills",
-  "version": "1.0.0",
-  "description": "Personal productivity plugins for Claude Code - optimized for 10x development workflows",
+  "name": "dot-claude",
+  "version": "3.1.0",
+  "metadata": {
+    "description": "Claude Code plugins for productivity workflows - skills, agents, commands, and hooks"
+  },
   "owner": {
     "name": "Pedro Proenca",
-    "email": "pedro.proenca@example.com"
+    "email": "pedro@10xengs.com"
   },
-  "repository": "https://github.com/pedroproenca/10x-claude-skills",
+  "repository": "https://github.com/pedroproenca/dot-claude",
   "plugins": [
     {
-      "name": "commit-organizer",
-      "version": "1.0.0",
-      "description": "Organize messy commits into clean, logical commits following Google and Anthropic best practices",
-      "source": "./plugins/dev/commit-organizer",
-      "category": "dev"
+      "name": "super",
+      "source": "./plugins/super"
     },
     {
-      "name": "feature-dev",
-      "version": "1.0.0",
-      "description": "Feature development workflow with exploration, architecture, and review agents",
-      "source": "./plugins/dev/feature-dev",
-      "category": "dev"
+      "name": "commit",
+      "source": "./plugins/commit"
     },
     {
-      "name": "superpowers",
-      "version": "1.0.0",
-      "description": "Advanced development methodologies for debugging, testing, planning, and code review",
-      "source": "./plugins/dev/superpowers",
-      "category": "dev"
+      "name": "shell",
+      "source": "./plugins/shell"
     },
     {
-      "name": "docs",
-      "version": "1.0.0",
-      "description": "Generate comprehensive technical documentation with specialized agents via /docs:generate",
-      "source": "./plugins/docs/docs",
-      "category": "docs"
+      "name": "dev",
+      "source": "./plugins/dev"
     },
     {
-      "name": "priority-manager",
-      "version": "0.1.0",
-      "description": "Personal and team priority management with git-based markdown files",
-      "source": "./plugins/pm/priority-manager",
-      "category": "pm"
+      "name": "doc",
+      "source": "./plugins/doc"
     },
     {
-      "name": "agent-sdk-dev",
-      "version": "1.0.0",
-      "description": "Claude Agent SDK development and verification",
-      "source": "./plugins/sdk/agent-sdk-dev",
-      "category": "sdk"
+      "name": "debug",
+      "source": "./plugins/debug"
     },
     {
-      "name": "hookify",
-      "version": "0.1.0",
-      "description": "Create hooks to prevent unwanted behaviors from conversation analysis",
-      "source": "./plugins/sdk/hookify",
-      "category": "sdk"
-    },
-    {
-      "name": "mcp-builder",
-      "version": "1.0.0",
-      "description": "Build and integrate MCP servers with TypeScript and Python",
-      "source": "./plugins/sdk/mcp-builder",
-      "category": "sdk"
-    },
-    {
-      "name": "plugin-dev",
-      "version": "1.0.0",
-      "description": "Comprehensive plugin development guidance for commands, agents, hooks, MCP, and skills",
-      "source": "./plugins/sdk/plugin-dev",
-      "category": "sdk"
-    },
-    {
-      "name": "skill-creator",
-      "version": "1.0.0",
-      "description": "Guide for creating effective, distributable Claude Code skills",
-      "source": "./plugins/sdk/skill-creator",
-      "category": "sdk"
+      "name": "agent",
+      "source": "./plugins/agent"
     }
   ]
 }
