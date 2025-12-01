@@ -103,8 +103,7 @@ Task(subagent_type="super:security-reviewer", prompt="Audit API endpoints for OW
 
 The `super` plugin enforces test-driven development:
 
-1. **TDD Guard Hook** - Blocks production file edits unless test file edited first
-2. **Verification Hook** - Requires test/build evidence before completion claims
+1. **Verification Hook** - Requires test/build evidence before completion claims
 
 ### Conventional Commits
 
@@ -119,7 +118,6 @@ The `commit` plugin validates git commits:
 
 | Hook | Plugin | Type | Behavior |
 |------|--------|------|----------|
-| TDD Guard | super | PreToolUse | Blocks production file edits unless test file edited first |
 | Worktree Guard | super | PreToolUse | Warns about git worktree awareness |
 | Verification | super | Stop | Requires test/build evidence before completion claims |
 | Git Safety | commit | PreToolUse | Validates git commands before execution |
@@ -298,8 +296,8 @@ allowed-tools: Bash(pytest:*), Write, Edit, Read
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/tdd-guard.sh",
-            "timeout": 5
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/worktree-guard.sh",
+            "timeout": 3
           }
         ]
       }
