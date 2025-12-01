@@ -76,8 +76,9 @@ def validate_all_plugins_listed(
     # Get sources from marketplace.json
     marketplace_sources: set[str] = set()
     for plugin_entry in marketplace_data.get("plugins", []):
-        source = plugin_entry.get("source", "").removeprefix("./")
-        marketplace_sources.add(source)
+        source = plugin_entry.get("source")
+        if source:
+            marketplace_sources.add(source.removeprefix("./"))
 
     # Check file system
     if plugins_dir.is_dir():
