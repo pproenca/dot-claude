@@ -11,44 +11,124 @@
   "repository": "https://github.com/pedroproenca/dot-claude",
   "plugins": [
     {
-      "name": "super",
-      "description": "Core workflows: TDD enforcement, verification, brainstorming, debugging, code review",
-      "source": "./plugins/super"
-    },
-    {
-      "name": "commit",
-      "description": "Git workflows: Conventional Commits, PR creation, branch organization",
-      "source": "./plugins/commit"
-    },
-    {
-      "name": "shell",
-      "description": "Shell scripting with Google Shell Style Guide",
-      "source": "./plugins/shell"
-    },
-    {
-      "name": "python",
-      "description": "Python development: uv, async, FastAPI, Django, testing patterns",
-      "source": "./plugins/python"
-    },
-    {
-      "name": "doc",
-      "description": "Documentation: API docs, tutorials, Amazon-style memos, Mermaid diagrams",
-      "source": "./plugins/doc"
-    },
-    {
-      "name": "debug",
-      "description": "Distributed systems debugging and log correlation",
-      "source": "./plugins/debug"
-    },
-    {
       "name": "analyze",
-      "description": "Marketplace plugin analyzer for quality standards",
-      "source": "./plugins/analyze"
+      "description": "Marketplace plugin analyzer for achieving Anthropic-level quality standards through systematic DX, architecture, and capability analysis",
+      "source": "./plugins/analyze",
+      "version": "1.0.0",
+      "keywords": [
+        "analysis",
+        "quality",
+        "marketplace",
+        "plugins",
+        "dx",
+        "architecture"
+      ]
     },
     {
       "name": "blackbox",
-      "description": "Flight recorder hooks for telemetry",
-      "source": "./plugins/blackbox"
+      "description": "Zero-dependency telemetry plugin for Claude Code - captures file modifications for dataset generation and disaster recovery",
+      "source": "./plugins/blackbox",
+      "version": "2.0.0",
+      "keywords": [
+        "telemetry",
+        "file-tracking",
+        "dataset-generation",
+        "disaster-recovery"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "commit",
+      "description": "Git workflows: worktrees, branches, and commit organization",
+      "source": "./plugins/commit",
+      "version": "2.0.0",
+      "keywords": [
+        "git",
+        "worktrees",
+        "branches",
+        "commits"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "debug",
+      "description": "Distributed systems debugging: log analysis, error correlation, stack trace detection, and root cause investigation",
+      "source": "./plugins/debug",
+      "version": "2.0.0",
+      "keywords": [
+        "debugging",
+        "distributed-systems",
+        "logs",
+        "error-correlation",
+        "stack-traces"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "doc",
+      "description": "Documentation: API docs, tutorials, memos, architecture guides, Mermaid diagrams",
+      "source": "./plugins/doc",
+      "version": "2.0.0",
+      "keywords": [
+        "documentation",
+        "api-docs",
+        "tutorials",
+        "mermaid",
+        "architecture",
+        "memos",
+        "amazon-style"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "python",
+      "description": "Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django and production-ready practices",
+      "source": "./plugins/python",
+      "version": "2.0.0",
+      "keywords": [
+        "python",
+        "uv",
+        "ruff",
+        "pydantic",
+        "fastapi",
+        "django"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "shell",
+      "description": "Shell scripting toolkit with Google Style Guide refactoring and Unix man page expertise",
+      "source": "./plugins/shell",
+      "version": "2.0.0",
+      "keywords": [
+        "shell",
+        "bash",
+        "style",
+        "refactor",
+        "google",
+        "man",
+        "unix",
+        "manual"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "super",
+      "description": "Enhanced fork of obra/superpowers (by Jesse Vincent). Adds TDD enforcement hooks, security-reviewer agent, diagram-generator agent, allowed-tools restrictions, and integration improvements. 20 proven workflow skills for Claude Code.",
+      "source": "./plugins/super",
+      "version": "2.0.0",
+      "keywords": [
+        "skills",
+        "tdd",
+        "debugging",
+        "collaboration",
+        "best-practices",
+        "workflows",
+        "hooks",
+        "agents",
+        "security-review"
+      ],
+      "license": "MIT"
     }
   ],
   "version": "2.0.0"
