@@ -46,3 +46,28 @@ temp/
 
 # Test scripts with credentials
 script.sh
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Unit test / coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Type checking / Linting
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments (uv/venv)
+.venv/
+venv/
+env/
+ENV/
