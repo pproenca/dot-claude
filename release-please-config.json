@@ -16,7 +16,12 @@
         },
         {
           "type": "json",
-          "path": "plugins/super/.claude-plugin/plugin.json",
+          "path": "plugins/analyze/.claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "plugins/blackbox/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
@@ -26,12 +31,7 @@
         },
         {
           "type": "json",
-          "path": "plugins/shell/.claude-plugin/plugin.json",
-          "jsonpath": "$.version"
-        },
-        {
-          "type": "json",
-          "path": "plugins/dev/.claude-plugin/plugin.json",
+          "path": "plugins/debug/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
@@ -41,12 +41,17 @@
         },
         {
           "type": "json",
-          "path": "plugins/debug/.claude-plugin/plugin.json",
+          "path": "plugins/python/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
           "type": "json",
-          "path": "plugins/blackbox/.claude-plugin/plugin.json",
+          "path": "plugins/shell/.claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "plugins/super/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         }
       ]
