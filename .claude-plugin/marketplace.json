@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Claude Code plugins for productivity workflows - skills, agents, commands, and hooks",
-    "version": "2.0.0"
+    "version": "3.0.0"
   },
   "repository": "https://github.com/pedroproenca/dot-claude",
   "plugins": [
@@ -14,7 +14,7 @@
       "name": "analyze",
       "description": "Marketplace plugin analyzer for achieving Anthropic-level quality standards through systematic DX, architecture, and capability analysis",
       "source": "./plugins/analyze",
-      "version": "1.0.0",
+      "version": "3.0.0",
       "keywords": [
         "analysis",
         "quality",
@@ -28,7 +28,7 @@
       "name": "blackbox",
       "description": "Zero-dependency telemetry plugin for Claude Code - captures file modifications for dataset generation and disaster recovery",
       "source": "./plugins/blackbox",
-      "version": "2.0.0",
+      "version": "3.0.0",
       "keywords": [
         "telemetry",
         "file-tracking",
@@ -41,7 +41,7 @@
       "name": "commit",
       "description": "Git workflows: worktrees, branches, and commit organization",
       "source": "./plugins/commit",
-      "version": "2.0.0",
+      "version": "3.0.0",
       "keywords": [
         "git",
         "worktrees",
@@ -54,7 +54,7 @@
       "name": "debug",
       "description": "Distributed systems debugging: log analysis, error correlation, stack trace detection, and root cause investigation",
       "source": "./plugins/debug",
-      "version": "2.0.0",
+      "version": "3.0.0",
       "keywords": [
         "debugging",
         "distributed-systems",
@@ -68,7 +68,7 @@
       "name": "doc",
       "description": "Documentation: API docs, tutorials, memos, architecture guides, Mermaid diagrams",
       "source": "./plugins/doc",
-      "version": "2.0.0",
+      "version": "3.0.0",
       "keywords": [
         "documentation",
         "api-docs",
@@ -84,7 +84,7 @@
       "name": "python",
       "description": "Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django and production-ready practices",
       "source": "./plugins/python",
-      "version": "2.0.0",
+      "version": "3.0.0",
       "keywords": [
         "python",
         "uv",
@@ -99,7 +99,7 @@
       "name": "shell",
       "description": "Shell scripting toolkit with Google Style Guide refactoring and Unix man page expertise",
       "source": "./plugins/shell",
-      "version": "2.0.0",
+      "version": "3.0.0",
       "keywords": [
         "shell",
         "bash",
@@ -116,7 +116,7 @@
       "name": "super",
       "description": "Enhanced fork of obra/superpowers (by Jesse Vincent). Adds TDD enforcement hooks, security-reviewer agent, diagram-generator agent, allowed-tools restrictions, and integration improvements. 20 proven workflow skills for Claude Code.",
       "source": "./plugins/super",
-      "version": "2.0.0",
+      "version": "3.0.0",
       "keywords": [
         "skills",
         "tdd",
