@@ -1,5 +1,49 @@
 # Changelog
 
+## [3.0.0](https://github.com/pproenca/dot-claude/compare/v2.0.0...v3.0.0) (2025-12-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* **dev:** Plugin namespace changes from dev: to python:
+    - dev:python-pro → python:python-expert
+    - /dev:scaffold removed
+    - /python:refactor added (mirrors shell:refactor pattern)
+    - All dev:* skill references → python:*
+
+### Features
+
+* add project-level architect and config-reviewer agents ([71f6dc4](https://github.com/pproenca/dot-claude/commit/71f6dc491547bb542266280b27ea66afa58150c7))
+* **agents:** add plugin-automation-analyzer agent ([45d2a5a](https://github.com/pproenca/dot-claude/commit/45d2a5aa2352f21c6d110d9afdfed2abad4cd1e1))
+* **dev:** enhance python-pro agent with modern Python patterns ([9add4f1](https://github.com/pproenca/dot-claude/commit/9add4f13169b17a454766b52109e9f91cc01b876))
+* **scripts:** add marketplace plugin metadata sync ([ae34371](https://github.com/pproenca/dot-claude/commit/ae34371a033b1afdacdba1dd6c90dcff9591142a))
+* **scripts:** add release-please-config consistency check ([e3f53fa](https://github.com/pproenca/dot-claude/commit/e3f53fa8ac1877c1d5579d1bce21df165330ccf5))
+
+
+### Bug Fixes
+
+* handle missing keys in config update and null sources in plugin validation ([3367774](https://github.com/pproenca/dot-claude/commit/336777427f5e14757bb9468b59534ac5091444b9))
+* **scripts:** update release-please config for marketplace structure ([24949f1](https://github.com/pproenca/dot-claude/commit/24949f1d2c099e627adad102d598dd3546f9e9ce))
+* **super:** remove tdd-guard hook ([59b0929](https://github.com/pproenca/dot-claude/commit/59b09295456a27a32fb53e79eb110bc8715580e8))
+* **super:** standardize skill cross-references and update agent invocations ([51bfc16](https://github.com/pproenca/dot-claude/commit/51bfc160676c794caf081eb1a8b01242a8ea7d62))
+
+
+### Code Refactoring
+
+* **agents:** remove agent- prefix from dotclaude agents ([c6adf35](https://github.com/pproenca/dot-claude/commit/c6adf355a4604fab7d7d4b7b0c94ea46480dac23))
+* **dev:** rename dev plugin to python ([ea239c9](https://github.com/pproenca/dot-claude/commit/ea239c92d3eeb13af7a2c985cf7055ba9b7305e3))
+* **scripts:** rewrite validation scripts in Python ([571ed05](https://github.com/pproenca/dot-claude/commit/571ed052b528476c3a5df717245e94dc6ca68183))
+* **super:** remove sharing-skills skill ([abce32f](https://github.com/pproenca/dot-claude/commit/abce32f8ed2b297f1d54734e2f435ffe806a24fa))
+* **super:** slim down code-reviewer, security-reviewer, diagram-generator agents ([469782d](https://github.com/pproenca/dot-claude/commit/469782d2d5579d4f075b0ad0226de420d3866038))
+
+
+### Documentation
+
+* add super plugin quality improvement plans ([37f17f4](https://github.com/pproenca/dot-claude/commit/37f17f4b0f9c93d24ef3e52d114b1c4e1f85e14e))
+* **commit:** remove backticks from inline punctuation markers ([05b0a5b](https://github.com/pproenca/dot-claude/commit/05b0a5bb32d8ac1d2f66fb9b963639ca96159f64))
+* **init:** update claude to use 'uv' for python ([0db55a7](https://github.com/pproenca/dot-claude/commit/0db55a79b2f2c55a767765ca868781ab7aa8a027))
+* **super:** add code-review-standards reference ([b81961c](https://github.com/pproenca/dot-claude/commit/b81961cc4e3ca0ab07feb69e498f684c8573527e))
+
 ## [2.0.0](https://github.com/pproenca/dot-claude/compare/v1.0.1...v2.0.0) (2025-11-30)
 
 
