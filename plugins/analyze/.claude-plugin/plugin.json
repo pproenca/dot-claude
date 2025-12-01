@@ -1,10 +1,17 @@
 {
   "name": "analyze",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "Marketplace plugin analyzer for achieving Anthropic-level quality standards through systematic DX, architecture, and capability analysis",
   "author": {
     "name": "dot-claude",
     "url": "https://github.com/anthropics/dot-claude"
   },
-  "keywords": ["analysis", "quality", "marketplace", "plugins", "dx", "architecture"]
+  "keywords": [
+    "analysis",
+    "quality",
+    "marketplace",
+    "plugins",
+    "dx",
+    "architecture"
+  ]
 }
