@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for update-release-config.py script.
+"""Tests for update_release_config.py script.
 
 TDD: Tests written first to verify sync_marketplace_plugins behavior.
 """
@@ -13,13 +13,13 @@ import sys
 import tempfile
 import unittest
 
-# Load module with hyphenated filename
+# Load module
 SCRIPTS_DIR = os.path.dirname(__file__)
-MODULE_PATH = os.path.join(SCRIPTS_DIR, "update-release-config.py")
+MODULE_PATH = os.path.join(SCRIPTS_DIR, "update_release_config.py")
 
 
 def load_update_release_config():
-    """Load the update-release-config.py module."""
+    """Load the update_release_config.py module."""
     spec = importlib.util.spec_from_file_location("update_release_config", MODULE_PATH)
     module = importlib.util.module_from_spec(spec)
     sys.modules["update_release_config"] = module
@@ -296,6 +296,130 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
         self.assertEqual(marketplace["plugins"][0]["name"], "minimal-plugin")
         # Missing fields should not be present (not None or empty)
         self.assertNotIn("description", marketplace["plugins"][0])
+
+
+class TestUpdateConfig(unittest.TestCase):
+    """Tests for update_config function."""
+
+    def setUp(self):
+        """Create temp directory with test fixtures."""
+        self.temp_dir = tempfile.mkdtemp()
+
+        # Create marketplace.json
+        self.marketplace_dir = os.path.join(self.temp_dir, ".claude-plugin")
+        os.makedirs(self.marketplace_dir)
+        marketplace = {
+            "name": "test-marketplace",
+            "version": "1.0.0",
+            "metadata": {"version": "1.0.0"},
+            "plugins": [],
+        }
+        with open(os.path.join(self.marketplace_dir, "marketplace.json"), "w") as f:
+            json.dump(marketplace, f)
+
+        # Create plugins directory
+        self.plugins_dir = os.path.join(self.temp_dir, "plugins")
+        os.makedirs(self.plugins_dir)
+
+        # Create release-please-config.json
+        self.release_config_path = os.path.join(
+            self.temp_dir, "release-please-config.json"
+        )
+        with open(self.release_config_path, "w") as f:
+            json.dump({"packages": {".": {"extra-files": []}}}, f)
+
+    def tearDown(self):
+        """Clean up temp directory."""
+        shutil.rmtree(self.temp_dir)
+        if "update_release_config" in sys.modules:
+            del sys.modules["update_release_config"]
+
+    def _create_plugin(self, name: str):
+        """Helper to create a plugin with plugin.json."""
+        plugin_dir = os.path.join(self.plugins_dir, name, ".claude-plugin")
+        os.makedirs(plugin_dir)
+        with open(os.path.join(plugin_dir, "plugin.json"), "w") as f:
+            json.dump({"name": name, "version": "1.0.0"}, f)
+
+    def test_generates_metadata_version_entry(self):
+        """Test that $.metadata.version entry is generated."""
+        self._create_plugin("test-plugin")
+
+        update_release_config = load_update_release_config()
+        from pathlib import Path
+
+        result = update_release_config.update_config(Path(self.temp_dir))
+        self.assertTrue(result)
+
+        with open(self.release_config_path) as f:
+            config = json.load(f)
+
+        extra_files = config["packages"]["."]["extra-files"]
+        jsonpaths = [e["jsonpath"] for e in extra_files]
+
+        self.assertIn("$.metadata.version", jsonpaths)
+
+    def test_generates_plugin_version_entries_in_marketplace(self):
+        """Test that $.plugins[N].version entries are generated for each plugin."""
+        self._create_plugin("alpha-plugin")
+        self._create_plugin("beta-plugin")
+        self._create_plugin("gamma-plugin")
+
+        update_release_config = load_update_release_config()
+        from pathlib import Path
+
+        result = update_release_config.update_config(Path(self.temp_dir))
+        self.assertTrue(result)
+
+        with open(self.release_config_path) as f:
+            config = json.load(f)
+
+        extra_files = config["packages"]["."]["extra-files"]
+        marketplace_entries = [
+            e for e in extra_files
+            if e["path"] == ".claude-plugin/marketplace.json"
+        ]
+        jsonpaths = [e["jsonpath"] for e in marketplace_entries]
+
+        # Should have: $.metadata.version, $.plugins[0-2].version (no root $.version)
+        self.assertNotIn("$.version", jsonpaths)
+        self.assertIn("$.metadata.version", jsonpaths)
+        self.assertIn("$.plugins[0].version", jsonpaths)
+        self.assertIn("$.plugins[1].version", jsonpaths)
+        self.assertIn("$.plugins[2].version", jsonpaths)
+
+    def test_plugin_indices_match_sorted_order(self):
+        """Test that plugin indices in marketplace match alphabetical order."""
+        # Create in non-alphabetical order
+        self._create_plugin("zebra")
+        self._create_plugin("alpha")
+
+        update_release_config = load_update_release_config()
+        from pathlib import Path
+
+        result = update_release_config.update_config(Path(self.temp_dir))
+        self.assertTrue(result)
+
+        with open(self.release_config_path) as f:
+            config = json.load(f)
+
+        extra_files = config["packages"]["."]["extra-files"]
+
+        # Find plugin.json entries - should be in sorted order
+        plugin_json_entries = [
+            e for e in extra_files
+            if e["path"].startswith("plugins/") and e["path"].endswith("plugin.json")
+        ]
+        plugin_paths = [e["path"] for e in plugin_json_entries]
+
+        # Should be sorted alphabetically
+        self.assertEqual(
+            plugin_paths,
+            [
+                "plugins/alpha/.claude-plugin/plugin.json",
+                "plugins/zebra/.claude-plugin/plugin.json",
+            ]
+        )
 
 
 if __name__ == "__main__":

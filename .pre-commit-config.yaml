@@ -16,8 +16,8 @@ repos:
 
       - id: update-release-config
         name: Update Release Config
-        entry: python3 -S scripts/update-release-config.py
+        entry: python3 -S scripts/update_release_config.py
         language: python
-        files: ^(plugins/|scripts/update-release-config.py|release-please-config.json|.claude-plugin/marketplace.json|version.txt)
+        files: ^(plugins/|scripts/update_release_config.py|release-please-config.json|.claude-plugin/marketplace.json|version.txt)
         pass_filenames: false
 

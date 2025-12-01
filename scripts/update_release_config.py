@@ -36,13 +36,16 @@ def update_config(root_dir: Path) -> bool:
 
     # 3. Prepare extra-files list
     extra_files: list[dict[str, str]] = [
+        # Metadata version (marketplace version lives in metadata.version)
         {
             "type": "json",
             "path": ".claude-plugin/marketplace.json",
-            "jsonpath": "$.version",
-        }
+            "jsonpath": "$.metadata.version",
+        },
     ]
 
+    # Add plugin.json entries
+    valid_plugins: list[str] = []
     for plugin in plugin_dirs:
         plugin_json_path = f"plugins/{plugin}/.claude-plugin/plugin.json"
         full_path = root_dir / plugin_json_path
@@ -50,11 +53,22 @@ def update_config(root_dir: Path) -> bool:
             extra_files.append(
                 {"type": "json", "path": plugin_json_path, "jsonpath": "$.version"}
             )
+            valid_plugins.append(plugin)
         else:
             print(
                 f"Warning: Plugin {plugin} missing plugin.json at {plugin_json_path}",
                 file=sys.stderr,
             )
+
+    # Add marketplace plugin version entries
+    for idx, _plugin in enumerate(valid_plugins):
+        extra_files.append(
+            {
+                "type": "json",
+                "path": ".claude-plugin/marketplace.json",
+                "jsonpath": f"$.plugins[{idx}].version",
+            }
+        )
 
     # 4. Update config
     config["packages"]["."]["extra-files"] = extra_files
@@ -166,7 +180,7 @@ def sync_marketplace_plugins(root_dir: Path) -> bool:
 
 
 def sync_version(root_dir: Path) -> bool:
-    """Sync version from version.txt to marketplace.json.
+    """Sync version from version.txt to marketplace.json metadata.version.
 
     Returns True on success, False on error.
     """
@@ -187,11 +201,16 @@ def sync_version(root_dir: Path) -> bool:
         print(f"ERROR: Invalid JSON in {marketplace_path}: {e}", file=sys.stderr)
         return False
 
-    if marketplace.get("version") != current_version:
+    # Ensure metadata dict exists
+    if "metadata" not in marketplace:
+        marketplace["metadata"] = {}
+
+    metadata_version = marketplace.get("metadata", {}).get("version")
+    if metadata_version != current_version:
         print(
-            f"Syncing marketplace.json version from {marketplace.get('version')} to {current_version}"
+            f"Syncing marketplace.json metadata.version from {metadata_version} to {current_version}"
         )
-        marketplace["version"] = current_version
+        marketplace["metadata"]["version"] = current_version
         marketplace_path.write_text(json.dumps(marketplace, indent=2) + "\n")
 
     return True
