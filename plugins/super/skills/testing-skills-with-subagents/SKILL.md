@@ -14,7 +14,7 @@ You run scenarios without the skill (RED - watch agent fail), write skill addres
 
 **Core principle:** If you didn't watch an agent fail without the skill, you don't know if the skill prevents the right failures.
 
-**REQUIRED BACKGROUND:** You MUST understand super:test-driven-development before using this skill. That skill defines the fundamental RED-GREEN-REFACTOR cycle. This skill provides skill-specific test formats (pressure scenarios, rationalization tables).
+**REQUIRED SUB-SKILL:** Use super:test-driven-development. You MUST understand the RED-GREEN-REFACTOR cycle defined there. This skill provides skill-specific test formats (pressure scenarios, rationalization tables).
 
 **Complete worked example:** See examples/CLAUDE_MD_TESTING.md for a full test campaign testing CLAUDE.md documentation variants.
 
@@ -393,11 +393,11 @@ From applying TDD to TDD skill itself (2025-10-03):
 - Uses `Task` tool to dispatch test subagents with pressure scenarios
 - Uses `Read` to examine skill content and examples
 
-**REQUIRED BACKGROUND:**
+**REQUIRED SUB-SKILL:**
 - **test-driven-development** - Foundational skill defining RED-GREEN-REFACTOR cycle
 
 **Called by:**
-- **writing-skills** - REQUIRED sub-skill for testing before deployment (Step 5)
+- **writing-skills** - **REQUIRED SUB-SKILL:** Use super:writing-skills for testing before deployment (Step 5)
 
 **Pairs with:**
 - **writing-skills** - This skill provides testing methodology; writing-skills provides creation structure

@@ -177,9 +177,9 @@ Done!
 ## Integration
 
 **Required workflow skills:**
-- **writing-plans** - REQUIRED: Creates the plan that this skill executes
-- **requesting-code-review** - REQUIRED: Review after each task (see Step 3)
-- **finishing-a-development-branch** - REQUIRED: Complete development after all tasks (see Step 7)
+- **writing-plans** - **REQUIRED SUB-SKILL:** Use super:writing-plans to create the plan that this skill executes
+- **requesting-code-review** - **REQUIRED SUB-SKILL:** Use super:requesting-code-review for review after each task (see Step 3)
+- **finishing-a-development-branch** - **REQUIRED SUB-SKILL:** Use super:finishing-a-development-branch to complete development after all tasks (see Step 7)
 
 **Subagents must use:**
 - **test-driven-development** - Subagents follow TDD for each task
