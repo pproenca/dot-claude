@@ -10,9 +10,9 @@ dot-claude is a collection of Claude Code plugins providing skills, agents, comm
 
 ### Plugin Validation
 ```bash
-./scripts/validate-plugins.sh
+python3 scripts/validate-plugins.py
 ```
-Validates all plugins using `claude plugin validate`.
+Validates all plugins using `claude plugin validate`. Also runs automatically via pre-commit hook.
 
 ### Configuration Sync
 ```
@@ -111,6 +111,13 @@ PostToolUse hooks validate git commits against Conventional Commits:
 ```bash
 # macOS
 brew install jq yq ripgrep fd coreutils
+
+# Python 3.8+ required for validation scripts
+python3 --version
+
+# Install pre-commit hooks (optional but recommended)
+pip install pre-commit
+pre-commit install
 ```
 
 ### Creating Skills
@@ -144,3 +151,4 @@ Project settings in `.claude/settings.json`:
 
 Use `super:sharing-skills` skill for contributing skills upstream via PR.
 - Remember to make worktrees local to the project
+- remember to use 'uv' for all python related changes/executions inside this repo
