@@ -238,7 +238,7 @@ After saving the plan (with or without diagrams), offer execution choice:
 
 **If Parallel Session chosen:**
 - Guide them to open new session in worktree
-- **REQUIRED SUB-SKILL:** New session uses super:executing-plans
+- **REQUIRED SUB-SKILL:** Use super:executing-plans
 
 ## Workflow Integration
 
