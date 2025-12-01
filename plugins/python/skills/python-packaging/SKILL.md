@@ -482,12 +482,12 @@ rm -rf test-env
 - Verify CLI tools work (if applicable)
 - Run full test suite against installed package
 
-**Use with `dev:python-testing-patterns`** for package tests:
+**Use with `python:python-testing-patterns`** for package tests:
 - Test imports work correctly
 - Test entry points are registered
 - Test package metadata is correct
 
-**Use with `dev:uv-package-manager`** for modern workflows:
+**Use with `python:uv-package-manager`** for modern workflows:
 - `uv build` for fast package building
 - `uv publish` for publishing
 

@@ -59,9 +59,9 @@ assistant: "Before merging, let me dispatch the code-reviewer agent for a final 
 
 ## Language-Specific Delegation
 
-When reviewing Python code, consider delegating deep Python-specific concerns to `dev:python-pro`:
+When reviewing Python code, consider delegating deep Python-specific concerns to `python:python-expert`:
 
-**Delegate to python-pro when:**
+**Delegate to python-expert when:**
 - Reviewing async/await patterns for correctness and performance
 - Evaluating modern Python tooling choices (uv, ruff, pyproject.toml)
 - Assessing FastAPI or Django architectural patterns

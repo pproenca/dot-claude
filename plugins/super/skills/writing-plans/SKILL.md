@@ -26,16 +26,16 @@ Before writing a plan, detect if this is a Python project and what framework it 
 - `.python-version` or `uv.lock` → Uses uv package manager
 
 **When Python detected:**
-1. Use Skill tool to load `dev:python-testing-patterns`
-2. Use Skill tool to load `dev:uv-package-manager`
+1. Use Skill tool to load `python:python-testing-patterns`
+2. Use Skill tool to load `python:uv-package-manager`
 3. Use patterns from loaded skills in plan tasks
 4. Use `uv run` prefix for all Python commands
 
 **When async code detected:**
-- Use Skill tool to load `dev:async-python-patterns`
+- Use Skill tool to load `python:async-python-patterns`
 
 **When FastAPI/Django detected:**
-- Dispatch `dev:python-pro` agent for framework-specific patterns
+- Dispatch `python:python-expert` agent for framework-specific patterns
 
 ## Optional: Track Plan Writing Phases
 
@@ -130,12 +130,12 @@ git commit -m "feat: add specific feature"
 
 ## Python-Specific Patterns
 
-When Python detected, load patterns from the dev plugin instead of duplicating them here.
+When Python detected, load patterns from the python plugin instead of duplicating them here.
 
 **Step 1: Load relevant skill**
 
 ```
-Use Skill tool: dev:python-testing-patterns
+Use Skill tool: python:python-testing-patterns
 ```
 
 **Step 2: Copy patterns into plan tasks**
@@ -147,13 +147,13 @@ Use Skill tool: dev:python-testing-patterns
 **For async code detected:**
 
 ```
-Use Skill tool: dev:async-python-patterns
+Use Skill tool: python:async-python-patterns
 ```
 
 **For FastAPI/Django detected:**
 
 ```
-Task tool (dev:python-pro):
+Task tool (python:python-expert):
   prompt: "Provide [framework] test patterns for [feature]"
 ```
 
@@ -244,22 +244,22 @@ After saving the plan (with or without diagrams), offer execution choice:
 
 ### Python Development Skills
 
-When writing Python plans, integrate these `dev` plugin skills:
+When writing Python plans, integrate these `python` plugin skills:
 
 | Skill | When to Reference | What It Provides |
 |-------|-------------------|------------------|
-| `dev:python-testing-patterns` | All Python test code | Fixtures, mocking, parameterized tests, markers |
-| `dev:uv-package-manager` | Python commands, dependencies | `uv run`, `uv add`, `uv sync` patterns |
-| `dev:async-python-patterns` | Async code detected | asyncio, gather(), error handling, timeouts |
-| `dev:python-packaging` | Creating packages/CLIs | pyproject.toml, entry points, publishing |
-| `dev:python-performance-optimization` | Performance-critical code | Profiling, caching, optimization patterns |
+| `python:python-testing-patterns` | All Python test code | Fixtures, mocking, parameterized tests, markers |
+| `python:uv-package-manager` | Python commands, dependencies | `uv run`, `uv add`, `uv sync` patterns |
+| `python:async-python-patterns` | Async code detected | asyncio, gather(), error handling, timeouts |
+| `python:python-packaging` | Creating packages/CLIs | pyproject.toml, entry points, publishing |
+| `python:python-performance-optimization` | Performance-critical code | Profiling, caching, optimization patterns |
 
 ### Agent Dispatch
 
 For complex Python plans, dispatch specialized agents:
 
 ```
-Task tool (dev:python-pro):
+Task tool (python:python-expert):
   description: "Get FastAPI/Django patterns for [feature]"
   prompt: "Analyze [feature requirements] and provide:
     1. Framework-specific implementation pattern
@@ -275,7 +275,7 @@ For Python projects, enhance the header:
 # [Feature Name] Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use super:executing-plans to implement this plan task-by-task.
-> **Python Skills:** Reference dev:python-testing-patterns for tests, dev:uv-package-manager for commands.
+> **Python Skills:** Reference python:python-testing-patterns for tests, python:uv-package-manager for commands.
 
 **Goal:** [One sentence describing what this builds]
 

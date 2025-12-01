@@ -47,7 +47,7 @@ plugins/<name>/
 |--------|---------|
 | **super** | Core workflows: TDD enforcement, verification, brainstorming, debugging, code review |
 | **commit** | Git: Conventional Commits, PR creation, branch organization |
-| **dev** | Python: uv, async, FastAPI, Django, testing patterns |
+| **python** | Python: uv, async, FastAPI, Django, testing patterns |
 | **doc** | Documentation: API docs, tutorials, Amazon-style memos, Mermaid |
 | **shell** | Shell scripting with Google Shell Style Guide |
 | **debug** | Distributed systems debugging and log correlation |
