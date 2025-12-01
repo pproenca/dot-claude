@@ -1,10 +1,83 @@
 ---
 name: writing-plans
 description: Use when design is complete and you need detailed implementation tasks for engineers with zero codebase context - creates comprehensive implementation plans with exact file paths, complete code examples, and verification steps assuming engineer has minimal domain knowledge
-allowed-tools: Read, Write, AskUserQuestion, Glob, Grep
+allowed-tools: Read, Write, AskUserQuestion, Glob, Grep, mcp__context7__resolve-library-id, mcp__context7__get-library-docs
 ---
 
 # Writing Plans
+
+## External Documentation Search (First Step)
+
+Before researching the codebase, offer to search external documentation for the latest API references using Context7 MCP.
+
+### Step 0: Check Context7 Availability
+
+First, check if Context7 MCP tools are available by looking for `mcp__context7__` tools in your available tools list.
+
+**If Context7 is NOT available:**
+- Skip this entire section silently
+- Proceed directly to Python Project Detection
+- Do NOT ask the user about documentation search
+
+**If Context7 IS available:**
+- Continue with Step 1
+
+### Step 1: Ask About Documentation
+
+Use AskUserQuestion:
+
+```
+Question: "Would you like me to search external documentation before planning?"
+Header: "Docs"
+multiSelect: false
+Options:
+- Yes, let me specify: I'll enter which libraries/frameworks to search
+- Auto-detect from task: Analyze the task and search relevant libraries automatically
+- No, skip: Proceed with planning without external docs
+```
+
+### Step 2: Get Library Names
+
+**If user selected "Yes, let me specify":**
+- Ask follow-up: "Which libraries/frameworks should I search? (comma-separated, e.g., 'fastapi, pydantic, sqlalchemy')"
+
+**If user selected "Auto-detect from task":**
+- Extract technology keywords from the task description
+- Present detected libraries for confirmation: "I detected these technologies: [list]. Should I search docs for these?"
+
+**If user selected "No, skip":**
+- Proceed directly to Python Project Detection
+
+### Step 3: Fetch Documentation
+
+For each library the user confirms:
+
+1. **Resolve library ID:**
+   ```
+   mcp__context7__resolve-library-id(libraryName: "library-name")
+   ```
+   Select the most relevant match based on description and documentation coverage.
+
+2. **Fetch relevant docs:**
+   ```
+   mcp__context7__get-library-docs(
+     context7CompatibleLibraryID: "/org/project",
+     topic: "[relevant topic from task]",
+     mode: "code"
+   )
+   ```
+   Use `mode: "info"` for architectural/conceptual questions.
+
+3. **Use for context only:**
+   Keep documentation in working memory to inform plan tasks. Do NOT include raw docs in the plan document.
+
+**If tool call fails:** Inform user that Context7 couldn't fetch docs for that library and continue with available information.
+
+### Step 4: Continue to Planning
+
+After documentation is loaded (or skipped), proceed to Python Project Detection with documentation context available.
+
+---
 
 ## Overview
 
