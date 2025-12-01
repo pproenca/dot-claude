@@ -3,6 +3,7 @@
 
 TDD: Tests written first to verify sync_marketplace_plugins behavior.
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -12,6 +13,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+from typing import Any
 
 # Load module
 SCRIPTS_DIR = os.path.dirname(__file__)
@@ -37,21 +39,15 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
         # Create marketplace.json
         self.marketplace_dir = os.path.join(self.temp_dir, ".claude-plugin")
         os.makedirs(self.marketplace_dir)
-        self.marketplace_path = os.path.join(
-            self.marketplace_dir, "marketplace.json"
-        )
+        self.marketplace_path = os.path.join(self.marketplace_dir, "marketplace.json")
 
         # Create plugins directory
         self.plugins_dir = os.path.join(self.temp_dir, "plugins")
         os.makedirs(self.plugins_dir)
 
         # Create release-please-config.json (required by update_config)
-        self.release_config = {
-            "packages": {".": {"extra-files": []}}
-        }
-        release_config_path = os.path.join(
-            self.temp_dir, "release-please-config.json"
-        )
+        self.release_config = {"packages": {".": {"extra-files": []}}}
+        release_config_path = os.path.join(self.temp_dir, "release-please-config.json")
         with open(release_config_path, "w") as f:
             json.dump(self.release_config, f)
 
@@ -73,7 +69,7 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
         """Helper to create a plugin with plugin.json."""
         plugin_dir = os.path.join(self.plugins_dir, name, ".claude-plugin")
         os.makedirs(plugin_dir)
-        plugin_json = {
+        plugin_json: dict[str, Any] = {
             "name": name,
             "version": version,
             "description": description,
@@ -101,9 +97,15 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
         self._create_plugin("test-plugin", description="New description from plugin")
 
         # Create marketplace with outdated description
-        self._create_marketplace([
-            {"name": "test-plugin", "source": "./plugins/test-plugin", "description": "Old description"}
-        ])
+        self._create_marketplace(
+            [
+                {
+                    "name": "test-plugin",
+                    "source": "./plugins/test-plugin",
+                    "description": "Old description",
+                }
+            ]
+        )
 
         # Import and run
         update_release_config = load_update_release_config()
@@ -122,9 +124,9 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
     def test_syncs_version_from_plugin_json(self):
         """Test that version is synced from plugin.json to marketplace."""
         self._create_plugin("test-plugin", version="2.5.0")
-        self._create_marketplace([
-            {"name": "test-plugin", "source": "./plugins/test-plugin"}
-        ])
+        self._create_marketplace(
+            [{"name": "test-plugin", "source": "./plugins/test-plugin"}]
+        )
 
         update_release_config = load_update_release_config()
         from pathlib import Path
@@ -141,9 +143,9 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
     def test_syncs_keywords_from_plugin_json(self):
         """Test that keywords are synced from plugin.json to marketplace."""
         self._create_plugin("test-plugin", keywords=["testing", "automation"])
-        self._create_marketplace([
-            {"name": "test-plugin", "source": "./plugins/test-plugin"}
-        ])
+        self._create_marketplace(
+            [{"name": "test-plugin", "source": "./plugins/test-plugin"}]
+        )
 
         update_release_config = load_update_release_config()
         from pathlib import Path
@@ -160,9 +162,9 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
     def test_syncs_license_from_plugin_json(self):
         """Test that license is synced from plugin.json to marketplace."""
         self._create_plugin("test-plugin", license_="Apache-2.0")
-        self._create_marketplace([
-            {"name": "test-plugin", "source": "./plugins/test-plugin"}
-        ])
+        self._create_marketplace(
+            [{"name": "test-plugin", "source": "./plugins/test-plugin"}]
+        )
 
         update_release_config = load_update_release_config()
         from pathlib import Path
@@ -203,9 +205,15 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
     def test_preserves_name_and_source(self):
         """Test that name and source fields are preserved, not overwritten."""
         self._create_plugin("test-plugin")
-        self._create_marketplace([
-            {"name": "test-plugin", "source": "./plugins/test-plugin", "custom_field": "preserved"}
-        ])
+        self._create_marketplace(
+            [
+                {
+                    "name": "test-plugin",
+                    "source": "./plugins/test-plugin",
+                    "custom_field": "preserved",
+                }
+            ]
+        )
 
         update_release_config = load_update_release_config()
         from pathlib import Path
@@ -229,11 +237,13 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
         self._create_plugin("middle-plugin")
 
         # Create marketplace in non-alphabetical order
-        self._create_marketplace([
-            {"name": "zebra-plugin", "source": "./plugins/zebra-plugin"},
-            {"name": "alpha-plugin", "source": "./plugins/alpha-plugin"},
-            {"name": "middle-plugin", "source": "./plugins/middle-plugin"},
-        ])
+        self._create_marketplace(
+            [
+                {"name": "zebra-plugin", "source": "./plugins/zebra-plugin"},
+                {"name": "alpha-plugin", "source": "./plugins/alpha-plugin"},
+                {"name": "middle-plugin", "source": "./plugins/middle-plugin"},
+            ]
+        )
 
         update_release_config = load_update_release_config()
         from pathlib import Path
@@ -245,7 +255,9 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
             marketplace = json.load(f)
 
         plugin_names = [p["name"] for p in marketplace["plugins"]]
-        self.assertEqual(plugin_names, ["alpha-plugin", "middle-plugin", "zebra-plugin"])
+        self.assertEqual(
+            plugin_names, ["alpha-plugin", "middle-plugin", "zebra-plugin"]
+        )
 
     def test_handles_missing_plugin_json(self):
         """Test that plugins without plugin.json are warned but not fatal."""
@@ -376,8 +388,7 @@ class TestUpdateConfig(unittest.TestCase):
 
         extra_files = config["packages"]["."]["extra-files"]
         marketplace_entries = [
-            e for e in extra_files
-            if e["path"] == ".claude-plugin/marketplace.json"
+            e for e in extra_files if e["path"] == ".claude-plugin/marketplace.json"
         ]
         jsonpaths = [e["jsonpath"] for e in marketplace_entries]
 
@@ -407,7 +418,8 @@ class TestUpdateConfig(unittest.TestCase):
 
         # Find plugin.json entries - should be in sorted order
         plugin_json_entries = [
-            e for e in extra_files
+            e
+            for e in extra_files
             if e["path"].startswith("plugins/") and e["path"].endswith("plugin.json")
         ]
         plugin_paths = [e["path"] for e in plugin_json_entries]
@@ -418,7 +430,7 @@ class TestUpdateConfig(unittest.TestCase):
             [
                 "plugins/alpha/.claude-plugin/plugin.json",
                 "plugins/zebra/.claude-plugin/plugin.json",
-            ]
+            ],
         )
 
 
