@@ -1,0 +1,16 @@
+repos:
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.29.1
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
+  - repo: local
+    hooks:
+      - id: validate-plugins
+        name: Validate Plugins
+        entry: ./scripts/validate-plugins.sh
+        language: script
+        files: ^(plugins/|scripts/validate-plugins.sh|release-please-config.json|.claude-plugin/marketplace.json)
+        pass_filenames: false
+
