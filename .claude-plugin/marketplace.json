@@ -1,46 +1,55 @@
 {
   "name": "dot-claude",
-  "version": "2.0.0",
-  "metadata": {
-    "description": "Claude Code plugins for productivity workflows - skills, agents, commands, and hooks"
-  },
   "owner": {
     "name": "Pedro Proenca",
     "email": "pedro@10xengs.com"
+  },
+  "metadata": {
+    "description": "Claude Code plugins for productivity workflows - skills, agents, commands, and hooks",
+    "version": "2.0.0"
   },
   "repository": "https://github.com/pedroproenca/dot-claude",
   "plugins": [
     {
       "name": "super",
+      "description": "Core workflows: TDD enforcement, verification, brainstorming, debugging, code review",
       "source": "./plugins/super"
     },
     {
       "name": "commit",
+      "description": "Git workflows: Conventional Commits, PR creation, branch organization",
       "source": "./plugins/commit"
     },
     {
       "name": "shell",
+      "description": "Shell scripting with Google Shell Style Guide",
       "source": "./plugins/shell"
     },
     {
       "name": "python",
+      "description": "Python development: uv, async, FastAPI, Django, testing patterns",
       "source": "./plugins/python"
     },
     {
       "name": "doc",
+      "description": "Documentation: API docs, tutorials, Amazon-style memos, Mermaid diagrams",
       "source": "./plugins/doc"
     },
     {
       "name": "debug",
+      "description": "Distributed systems debugging and log correlation",
       "source": "./plugins/debug"
     },
     {
       "name": "analyze",
+      "description": "Marketplace plugin analyzer for quality standards",
       "source": "./plugins/analyze"
     },
     {
       "name": "blackbox",
+      "description": "Flight recorder hooks for telemetry",
       "source": "./plugins/blackbox"
     }
-  ]
+  ],
+  "version": "2.0.0"
 }
