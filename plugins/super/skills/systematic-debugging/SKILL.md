@@ -289,8 +289,8 @@ If systematic investigation reveals issue is truly environmental, timing-depende
 ## Integration with Other Skills
 
 **This skill requires using:**
-- **root-cause-tracing** - REQUIRED when error is deep in call stack (see Phase 1, Step 5)
-- **test-driven-development** - REQUIRED for creating failing test case (see Phase 4, Step 1)
+- **root-cause-tracing** - **REQUIRED SUB-SKILL:** Use super:root-cause-tracing when error is deep in call stack (see Phase 1, Step 5)
+- **test-driven-development** - **REQUIRED SUB-SKILL:** Use super:test-driven-development for creating failing test case (see Phase 4, Step 1)
 
 **Complementary skills:**
 - **defense-in-depth** - Add validation at multiple layers after finding root cause

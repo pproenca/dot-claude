@@ -16,7 +16,7 @@ You write test cases (pressure scenarios with subagents), watch them fail (basel
 
 **Core principle:** If you didn't watch an agent fail without the skill, you don't know if the skill teaches the right thing.
 
-**REQUIRED BACKGROUND:** You MUST understand super:test-driven-development before using this skill. That skill defines the fundamental RED-GREEN-REFACTOR cycle. This skill adapts TDD to documentation.
+**REQUIRED SUB-SKILL:** Use super:test-driven-development. You MUST understand the RED-GREEN-REFACTOR cycle defined there. This skill adapts TDD to documentation.
 
 **Official guidance:** For Anthropic's official skill authoring best practices, see anthropic-best-practices.md. This document provides additional patterns and guidelines that complement the TDD-focused approach in this skill.
 
@@ -211,7 +211,7 @@ When searching, dispatch subagent with template...
 [20 lines of repeated instructions]
 
 # ✅ GOOD: Reference other skill
-Always use subagents (50-100x context savings). REQUIRED: Use [other-skill-name] for workflow.
+Always use subagents (50-100x context savings). **REQUIRED SUB-SKILL:** Use super:[other-skill-name] for workflow.
 ```
 
 **Compress examples:**
@@ -255,7 +255,7 @@ wc -w skills/path/SKILL.md
 
 Use skill name only, with explicit requirement markers:
 - ✅ Good: `**REQUIRED SUB-SKILL:** Use super:test-driven-development`
-- ✅ Good: `**REQUIRED BACKGROUND:** You MUST understand super:systematic-debugging`
+- ✅ Good: `**REQUIRED SUB-SKILL:** Use super:systematic-debugging`
 - ❌ Bad: `See skills/testing/test-driven-development` (unclear if required)
 - ❌ Bad: `@skills/testing/test-driven-development/SKILL.md` (force-loads, burns context)
 
@@ -358,7 +358,7 @@ Edit skill without testing? Same violation.
 - Don't "adapt" while running tests
 - Delete means delete
 
-**REQUIRED BACKGROUND:** The super:test-driven-development skill explains why this matters. Same principles apply to documentation.
+**REQUIRED SUB-SKILL:** Use super:test-driven-development. That skill explains why this matters. Same principles apply to documentation.
 
 ## Testing All Skill Types
 
