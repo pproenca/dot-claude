@@ -14,3 +14,10 @@ repos:
         files: ^(plugins/|scripts/validate-plugins.py|release-please-config.json|.claude-plugin/marketplace.json)
         pass_filenames: false
 
+      - id: update-release-config
+        name: Update Release Config
+        entry: python3 -S scripts/update-release-config.py
+        language: python
+        files: ^(plugins/|scripts/update-release-config.py|release-please-config.json|.claude-plugin/marketplace.json|version.txt)
+        pass_filenames: false
+
