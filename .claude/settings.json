@@ -43,11 +43,9 @@
       "Bash(npx:*)",
       "Skill(commit:*)",
       "Skill(super:*)",
-      "Skill(dev:*)",
       "Skill(doc:*)",
       "Skill(shell:*)",
-      "Skill(debug:*)",
-      "Skill(agent:*)"
+      "Skill(debug:*)"
     ],
     "ask": [
       "Bash(git push:*)",
