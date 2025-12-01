@@ -1,6 +1,6 @@
 {
   "name": "doc",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Documentation: API docs, tutorials, memos, architecture guides, Mermaid diagrams",
   "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/doc",
   "repository": "https://github.com/pedroproenca/dot-claude",

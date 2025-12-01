@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/pproenca/dot-claude/compare/v3.0.0...v3.1.0) (2025-12-01)
+
+
+### Features
+
+* **super:** add Context7 MCP integration to writing-plans skill ([0ee4626](https://github.com/pproenca/dot-claude/commit/0ee4626c6db33946ad66a7375f411e09733dabe4))
+
 ## [3.0.0](https://github.com/pproenca/dot-claude/compare/v2.0.0...v3.0.0) (2025-12-01)
 
 
