@@ -72,7 +72,7 @@ Analyze the commits to determine the primary type for the PR title.
 7. `build`/`ci` - Build/CI changes
 8. `chore` - Maintenance
 
-**Breaking change**: If ANY commit has `!` or `BREAKING CHANGE:`, the PR title should include `!`.
+**Breaking change**: If ANY commit has ! or BREAKING CHANGE:, the PR title should include !.
 
 **Single commit**: Use that commit's type and subject directly.
 
@@ -87,12 +87,14 @@ Analyze the commits to determine the primary type for the PR title.
 The PR title should follow Conventional Commits format:
 
 ```
-<type>[!]: <summary of changes>
+<type>: <summary of changes>
 ```
+
+Add ! before the colon for breaking changes (e.g., feat!: remove API).
 
 **Rules:**
 - Use dominant type from Step 2
-- Include `!` if any commit is a breaking change
+- Include ! if any commit is a breaking change
 - Imperative mood ("add", not "adding")
 - 50-72 chars ideal
 - No period at end
