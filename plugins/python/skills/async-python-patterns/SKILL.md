@@ -215,7 +215,7 @@ async def test_with_timeout():
 - Replace `await asyncio.sleep(N)` with condition polling when waiting for state changes
 - Eliminates flaky tests from timing guesses
 
-**Use with `dev:python-testing-patterns`** for async test patterns:
+**Use with `python:python-testing-patterns`** for async test patterns:
 - pytest-asyncio setup and fixtures
 - Testing concurrent operations
 

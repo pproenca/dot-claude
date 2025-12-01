@@ -12,14 +12,14 @@ When working in Python projects (pyproject.toml or setup.py present):
 
 **Load patterns first:**
 ```
-Use Skill tool: dev:python-testing-patterns
+Use Skill tool: python:python-testing-patterns
 ```
 
 **Commands:**
 - Use `uv run pytest path/to/test.py` (not `npm test`)
 - Use `uv run pytest path/to/test.py::test_name -v` for single test
 
-**Fixtures:** Use conftest.py patterns from dev:python-testing-patterns
+**Fixtures:** Use conftest.py patterns from python:python-testing-patterns
 
 ## Overview
 
