@@ -18,6 +18,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 readonly REPO_ROOT
 readonly PLUGINS_DIR="${REPO_ROOT}/plugins"
 readonly MARKETPLACE_JSON="${REPO_ROOT}/.claude-plugin/marketplace.json"
+readonly RELEASE_CONFIG_JSON="${REPO_ROOT}/release-please-config.json"
 
 #######################################
 # Outputs error message to stderr.
@@ -97,6 +98,36 @@ validate_all_plugins_listed() {
 }
 
 #######################################
+# Validates release-please-config.json consistency.
+# Globals:
+#   REPO_ROOT, MARKETPLACE_JSON, RELEASE_CONFIG_JSON
+# Returns:
+#   0 if consistency check passes, 1 otherwise
+#######################################
+validate_release_config_consistency() {
+  echo ""
+  echo "Validating release-please-config.json consistency..."
+
+  local has_error=0
+  local marketplace_plugins
+  local plugin_source
+  local plugin_json_path
+
+  marketplace_plugins=$(jq -r '.plugins[].source | sub("^\\./"; "")' "${MARKETPLACE_JSON}")
+
+  # Check each plugin is in release-please-config.json
+  for plugin_source in ${marketplace_plugins}; do
+    plugin_json_path="${plugin_source}/.claude-plugin/plugin.json"
+    if ! grep -q "\"path\": \"${plugin_json_path}\"" "${RELEASE_CONFIG_JSON}"; then
+      err "Plugin missing from release-please-config.json: ${plugin_source}"
+      has_error=1
+    fi
+  done
+
+  return "${has_error}"
+}
+
+#######################################
 # Validates each plugin using claude CLI.
 # Globals:
 #   PLUGINS_DIR
@@ -130,6 +161,7 @@ main() {
   validate_marketplace || failed=1
   validate_marketplace_references || failed=1
   validate_all_plugins_listed || failed=1
+  validate_release_config_consistency || failed=1
   validate_individual_plugins || failed=1
 
   echo ""
