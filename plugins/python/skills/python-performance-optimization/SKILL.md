@@ -465,7 +465,7 @@ def test_map_function(benchmark):
 - Verify no regressions in functionality
 - Show before/after metrics
 
-**Use with `dev:python-testing-patterns`** for performance tests:
+**Use with `python:python-testing-patterns`** for performance tests:
 - pytest-benchmark for reliable timing
 - Regression tests to catch future slowdowns
 
