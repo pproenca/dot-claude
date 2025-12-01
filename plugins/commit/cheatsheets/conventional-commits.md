@@ -36,7 +36,7 @@ The body explains WHY, not WHAT. Write naturally without rigid labels.
 
 ### Breaking Changes
 
-Mark breaking changes with `!` before the colon:
+Mark breaking changes with ! before the colon:
 ```
 feat!: remove deprecated API endpoint
 ```
@@ -171,7 +171,7 @@ BREAKING CHANGE: All /api/v1/* endpoints removed. Use /api/v2/*.
 ```
 
 **Why it works:**
-- Breaking change marked with `!` in type
+- Breaking change marked with ! in type
 - BREAKING CHANGE footer provides details
 - Clearly states migration path
 
@@ -316,7 +316,7 @@ These rules are MANDATORY and hooks will BLOCK violations:
 - Commit > 200 lines
 - Commit > 400 lines (strongly recommended to split)
 - Missing body on non-trivial commit
-- Potential breaking change without `!` marker
+- Potential breaking change without ! marker
 
 ---
 
@@ -326,7 +326,7 @@ Before committing, verify:
 
 - [ ] Type prefix matches the change (feat/fix/refactor/etc.)
 - [ ] Description is specific and searchable
-- [ ] Breaking changes marked with `!` or `BREAKING CHANGE:` footer
+- [ ] Breaking changes marked with ! or BREAKING CHANGE: footer
 - [ ] Commit > 200 lines? Consider splitting
 - [ ] Commit > 400 lines? Must split unless single-file change
 - [ ] Refactoring mixed with features? Separate them
