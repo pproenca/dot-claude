@@ -17,7 +17,7 @@ dot-claude is a collection of plugins that extend Claude Code with specialized c
 |--------|---------|
 | **super** | Core workflows: TDD enforcement, verification, brainstorming, debugging, code review |
 | **commit** | Git workflows with Conventional Commits, PR generation, branch organization |
-| **dev** | Python development with uv, pytest, FastAPI, Django, async patterns |
+| **python** | Python development with uv, pytest, FastAPI, Django, async patterns |
 | **doc** | Documentation generation, API docs, tutorials, Amazon-style memos |
 | **shell** | Shell scripting with Google Shell Style Guide |
 | **debug** | Distributed systems debugging and log correlation |
@@ -65,7 +65,7 @@ Skills are invoked automatically when relevant, or manually via the Skill tool:
 skill: super:test-driven-development
 
 # Python project setup
-skill: dev:uv-package-manager
+skill: python:uv-package-manager
 
 # Documentation writing
 skill: doc:amazon-writing
@@ -78,7 +78,7 @@ Slash commands expand to full prompts:
 ```
 /super:plan          # Create implementation plan
 /commit:new          # Create Conventional Commit
-/dev:scaffold        # Scaffold Python project
+/python:refactor     # Refactor Python file
 /doc:gen             # Generate documentation
 ```
 
@@ -91,7 +91,7 @@ Agents are specialized subagents invoked via Task tool:
 Task(subagent_type="super:code-reviewer", prompt="Review the authentication module")
 
 # Python expertise
-Task(subagent_type="dev:python-pro", prompt="Optimize async database queries")
+Task(subagent_type="python:python-expert", prompt="Optimize async database queries")
 
 # Security analysis
 Task(subagent_type="super:security-reviewer", prompt="Audit API endpoints for OWASP vulnerabilities")
@@ -177,7 +177,7 @@ The `commit` plugin validates git commits:
 - `/commit:pr [base-branch]` - Generate PR title and description
 - `/commit:reset` - Reset and reorganize commits
 
-### dev (Python Development)
+### python (Python Development)
 
 **Skills (5):**
 - `async-python-patterns` - asyncio and concurrent programming
@@ -186,13 +186,11 @@ The `commit` plugin validates git commits:
 - `python-testing-patterns` - pytest, fixtures, mocking
 - `uv-package-manager` - Fast dependency management
 
-**Agents (3):**
-- `django-pro` - Django web framework expert
-- `fastapi-pro` - FastAPI API development
-- `python-pro` - Python 3.12+ expert
+**Agents (1):**
+- `python-expert` - Python 3.12+ expert with FastAPI and Django knowledge
 
 **Commands (1):**
-- `/dev:scaffold` - Python project scaffolding
+- `/python:refactor` - Refactor Python file with ruff, mypy, and modern patterns
 
 ### doc (Documentation)
 

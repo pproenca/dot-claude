@@ -23,8 +23,8 @@
       "source": "./plugins/shell"
     },
     {
-      "name": "dev",
-      "source": "./plugins/dev"
+      "name": "python",
+      "source": "./plugins/python"
     },
     {
       "name": "doc",
