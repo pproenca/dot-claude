@@ -1,5 +1,5 @@
 #!/usr/bin/env python3 -S
-"""Update release-please-config.json with plugin version files."""
+"""Update release-please-config.json and sync marketplace.json with plugin metadata."""
 
 from __future__ import annotations
 
@@ -65,6 +65,106 @@ def update_config(root_dir: Path) -> bool:
     return True
 
 
+# Fields to sync from plugin.json to marketplace.json
+SYNC_FIELDS = ("description", "version", "keywords", "license")
+
+
+def sync_marketplace_plugins(root_dir: Path) -> bool:
+    """Sync plugin metadata from plugin.json files to marketplace.json.
+
+    - Auto-discovers new plugins in plugins/ directory
+    - Syncs: description, version, keywords, license
+    - Preserves: name, source, and any marketplace-only fields
+
+    Returns True on success, False on error.
+    """
+    marketplace_path = root_dir / ".claude-plugin" / "marketplace.json"
+    plugins_dir = root_dir / "plugins"
+
+    # 1. Read existing marketplace.json
+    if not marketplace_path.exists():
+        return True  # No marketplace.json, nothing to sync
+
+    try:
+        marketplace: dict[str, Any] = json.loads(marketplace_path.read_text())
+    except json.JSONDecodeError as e:
+        print(f"ERROR: Invalid JSON in {marketplace_path}: {e}", file=sys.stderr)
+        return False
+
+    # 2. Build dict of existing marketplace plugins by name
+    existing_plugins: dict[str, dict[str, Any]] = {}
+    for plugin_entry in marketplace.get("plugins", []):
+        name = plugin_entry.get("name")
+        if name:
+            existing_plugins[name] = plugin_entry
+
+    # 3. Scan plugins directory
+    if not plugins_dir.is_dir():
+        return True  # No plugins directory, nothing to sync
+
+    updated: list[str] = []
+    added: list[str] = []
+
+    for plugin_dir in sorted(plugins_dir.iterdir()):
+        if not plugin_dir.is_dir():
+            continue
+
+        plugin_name = plugin_dir.name
+        plugin_json_path = plugin_dir / ".claude-plugin" / "plugin.json"
+
+        if not plugin_json_path.exists():
+            print(
+                f"Warning: Plugin {plugin_name} missing plugin.json, skipping",
+                file=sys.stderr,
+            )
+            continue
+
+        # Read plugin.json
+        try:
+            plugin_data: dict[str, Any] = json.loads(plugin_json_path.read_text())
+        except json.JSONDecodeError as e:
+            print(
+                f"ERROR: Invalid JSON in {plugin_json_path}: {e}",
+                file=sys.stderr,
+            )
+            return False
+
+        # Get or create marketplace entry
+        if plugin_name in existing_plugins:
+            entry = existing_plugins[plugin_name]
+            updated.append(plugin_name)
+        else:
+            entry = {
+                "name": plugin_name,
+                "source": f"./plugins/{plugin_name}",
+            }
+            existing_plugins[plugin_name] = entry
+            added.append(plugin_name)
+
+        # Sync fields from plugin.json
+        for field in SYNC_FIELDS:
+            if field in plugin_data:
+                entry[field] = plugin_data[field]
+
+    # 4. Rebuild plugins array sorted by name
+    marketplace["plugins"] = [
+        existing_plugins[name] for name in sorted(existing_plugins.keys())
+    ]
+
+    # 5. Write updated marketplace.json
+    marketplace_path.write_text(json.dumps(marketplace, indent=2) + "\n")
+
+    # 6. Print summary
+    if updated or added:
+        print("Syncing plugin metadata to marketplace.json...")
+        if updated:
+            print(f"  Updated: {', '.join(updated)} ({len(updated)} plugins)")
+        if added:
+            print(f"  Added: {', '.join(added)} ({len(added)} new plugins)")
+
+    return True
+
+
 def sync_version(root_dir: Path) -> bool:
     """Sync version from version.txt to marketplace.json.
 
@@ -100,6 +200,9 @@ def sync_version(root_dir: Path) -> bool:
 def main() -> int:
     """Main entry point. Returns exit code."""
     root_dir = Path(__file__).resolve().parent.parent
+
+    if not sync_marketplace_plugins(root_dir):
+        return 1
 
     if not update_config(root_dir):
         return 1
