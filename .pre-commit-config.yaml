@@ -9,8 +9,8 @@ repos:
     hooks:
       - id: validate-plugins
         name: Validate Plugins
-        entry: ./scripts/validate-plugins.sh
-        language: script
-        files: ^(plugins/|scripts/validate-plugins.sh|release-please-config.json|.claude-plugin/marketplace.json)
+        entry: python3 -S scripts/validate-plugins.py
+        language: python
+        files: ^(plugins/|scripts/validate-plugins.py|release-please-config.json|.claude-plugin/marketplace.json)
         pass_filenames: false
 
