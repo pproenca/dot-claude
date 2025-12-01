@@ -1,6 +1,6 @@
 {
   "name": "shell",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Shell scripting toolkit with Google Style Guide refactoring and Unix man page expertise",
   "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/shell",
   "repository": "https://github.com/pedroproenca/dot-claude",
