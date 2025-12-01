@@ -46,7 +46,7 @@ cd dot-claude
 
 2. Validate plugins:
 ```bash
-./scripts/validate-plugins.sh
+./scripts/validate-plugins.py
 ```
 
 3. Sync configuration (from within Claude Code):
@@ -351,7 +351,7 @@ Custom status line shows session metrics:
 
 ```bash
 # Validate all plugins
-./scripts/validate-plugins.sh
+./scripts/validate-plugins.py
 ```
 
 ## Contributing
@@ -361,7 +361,7 @@ Use the `super:sharing-skills` skill for contributing skills upstream via PR.
 1. Fork the repository
 2. Create a feature branch
 3. Make changes following existing patterns
-4. Run validation: `./scripts/validate-plugins.sh`
+4. Run validation: `./scripts/validate-plugins.py`
 5. Submit a pull request
 
 ## License
