@@ -26,7 +26,7 @@ cat <<EOF
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "<EXTREMELY_IMPORTANT>\nYou have superpowers.\n\n**Below is the full content of your 'super:using-superpowers' skill - your introduction to using skills. For all other skills, use the 'Skill' tool:**\n\n${using_core_escaped}\n\n${warning_escaped}\n</EXTREMELY_IMPORTANT>"
+    "additionalContext": "<EXTREMELY_IMPORTANT>\nYou have superpowers.\n\n**Below is the full content of your 'core:using-core' skill - your introduction to using skills. For all other skills, use the 'Skill' tool:**\n\n${using_core_escaped}\n\n${warning_escaped}\n</EXTREMELY_IMPORTANT>"
   }
 }
 EOF
