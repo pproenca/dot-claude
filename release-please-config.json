@@ -16,57 +16,57 @@
         },
         {
           "type": "json",
-          "path": "plugins/blackbox/.claude-plugin/plugin.json",
+          "path": "plugins/domain/doc/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
           "type": "json",
-          "path": "plugins/commit/.claude-plugin/plugin.json",
+          "path": "plugins/domain/python/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
           "type": "json",
-          "path": "plugins/core/.claude-plugin/plugin.json",
+          "path": "plugins/domain/shell/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
           "type": "json",
-          "path": "plugins/debug/.claude-plugin/plugin.json",
+          "path": "plugins/essential/commit/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
           "type": "json",
-          "path": "plugins/doc/.claude-plugin/plugin.json",
+          "path": "plugins/essential/core/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
           "type": "json",
-          "path": "plugins/meta/.claude-plugin/plugin.json",
+          "path": "plugins/methodology/debug/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
           "type": "json",
-          "path": "plugins/python/.claude-plugin/plugin.json",
+          "path": "plugins/methodology/review/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
           "type": "json",
-          "path": "plugins/review/.claude-plugin/plugin.json",
+          "path": "plugins/methodology/testing/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
           "type": "json",
-          "path": "plugins/shell/.claude-plugin/plugin.json",
+          "path": "plugins/methodology/workflow/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
           "type": "json",
-          "path": "plugins/testing/.claude-plugin/plugin.json",
+          "path": "plugins/specialized/blackbox/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {
           "type": "json",
-          "path": "plugins/workflow/.claude-plugin/plugin.json",
+          "path": "plugins/specialized/meta/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
         {

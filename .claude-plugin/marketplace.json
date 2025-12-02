@@ -13,7 +13,20 @@
     {
       "name": "blackbox",
       "description": "Zero-dependency telemetry plugin for Claude Code - captures file modifications for dataset generation and disaster recovery",
-      "source": "./plugins/blackbox",
+      "source": "./plugins/specialized/blackbox",
+      "version": "3.1.0",
+      "keywords": [
+        "telemetry",
+        "file-tracking",
+        "dataset-generation",
+        "disaster-recovery"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "blackbox-flight-recorder",
+      "source": "./plugins/specialized/blackbox",
+      "description": "Zero-dependency telemetry plugin for Claude Code - captures file modifications for dataset generation and disaster recovery",
       "version": "3.1.0",
       "keywords": [
         "telemetry",
@@ -26,7 +39,7 @@
     {
       "name": "commit",
       "description": "Git workflows: worktrees, branches, and commit organization",
-      "source": "./plugins/commit",
+      "source": "./plugins/essential/commit",
       "version": "3.1.0",
       "keywords": [
         "git",
@@ -38,7 +51,7 @@
     },
     {
       "name": "core",
-      "source": "./plugins/core",
+      "source": "./plugins/essential/core",
       "description": "Core workflows: TDD, verification, brainstorming - essential capabilities always loaded",
       "version": "1.0.0",
       "keywords": [
@@ -52,7 +65,7 @@
     {
       "name": "debug",
       "description": "Systematic debugging: root cause analysis, defense-in-depth validation, log correlation, and distributed systems troubleshooting",
-      "source": "./plugins/debug",
+      "source": "./plugins/methodology/debug",
       "version": "3.2.0",
       "keywords": [
         "debugging",
@@ -67,7 +80,7 @@
     {
       "name": "doc",
       "description": "Documentation: API docs, tutorials, memos, architecture guides, Mermaid diagrams",
-      "source": "./plugins/doc",
+      "source": "./plugins/domain/doc",
       "version": "3.1.0",
       "keywords": [
         "documentation",
@@ -82,7 +95,7 @@
     },
     {
       "name": "meta",
-      "source": "./plugins/meta",
+      "source": "./plugins/specialized/meta",
       "description": "Plugin development: writing skills, testing skills, marketplace analysis",
       "version": "1.0.0",
       "keywords": [
@@ -96,7 +109,7 @@
     {
       "name": "python",
       "description": "Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django and production-ready practices",
-      "source": "./plugins/python",
+      "source": "./plugins/domain/python",
       "version": "3.1.0",
       "keywords": [
         "python",
@@ -110,7 +123,7 @@
     },
     {
       "name": "review",
-      "source": "./plugins/review",
+      "source": "./plugins/methodology/review",
       "description": "Code review workflows: requesting reviews, receiving feedback, review best practices",
       "version": "1.0.0",
       "keywords": [
@@ -123,7 +136,7 @@
     {
       "name": "shell",
       "description": "Shell scripting toolkit with Google Style Guide refactoring and Unix man page expertise",
-      "source": "./plugins/shell",
+      "source": "./plugins/domain/shell",
       "version": "3.1.0",
       "keywords": [
         "shell",
@@ -139,7 +152,7 @@
     },
     {
       "name": "testing",
-      "source": "./plugins/testing",
+      "source": "./plugins/methodology/testing",
       "description": "Testing patterns: anti-patterns to avoid, condition-based waiting for async tests",
       "version": "1.0.0",
       "keywords": [
@@ -152,7 +165,7 @@
     },
     {
       "name": "workflow",
-      "source": "./plugins/workflow",
+      "source": "./plugins/methodology/workflow",
       "description": "Planning and execution workflows: plans, subagents, git worktrees, branch completion",
       "version": "1.0.0",
       "keywords": [

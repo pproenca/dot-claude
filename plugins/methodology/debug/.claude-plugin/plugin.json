@@ -1,0 +1,19 @@
+{
+  "name": "debug",
+  "version": "3.2.0",
+  "description": "Systematic debugging: root cause analysis, defense-in-depth validation, log correlation, and distributed systems troubleshooting",
+  "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/methodology/debug",
+  "repository": "https://github.com/pedroproenca/dot-claude",
+  "license": "MIT",
+  "keywords": [
+    "debugging",
+    "root-cause",
+    "defense-in-depth",
+    "distributed-systems",
+    "logs",
+    "error-correlation"
+  ],
+  "author": {
+    "name": "Pedro Proenca"
+  }
+}

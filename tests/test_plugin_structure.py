@@ -9,7 +9,24 @@ from typing import Any
 
 import pytest
 
-from conftest import count_lines, plugin_exists, skill_exists
+from conftest import count_lines, get_plugin_path, plugin_exists, skill_exists, TIER_MAPPING
+
+
+def find_all_plugins(plugins_dir: Path) -> list[Path]:
+    """Find all plugin directories (supports nested tier structure)."""
+    plugins = []
+    for tier_or_plugin in plugins_dir.iterdir():
+        if not tier_or_plugin.is_dir():
+            continue
+        # Check if this is a direct plugin
+        if (tier_or_plugin / ".claude-plugin" / "plugin.json").exists():
+            plugins.append(tier_or_plugin)
+        else:
+            # Tier directory - check subdirectories
+            for plugin_dir in tier_or_plugin.iterdir():
+                if plugin_dir.is_dir() and (plugin_dir / ".claude-plugin" / "plugin.json").exists():
+                    plugins.append(plugin_dir)
+    return plugins
 
 
 class TestPluginValidation:
@@ -17,13 +34,12 @@ class TestPluginValidation:
 
     def test_all_plugins_validate(self, plugins_dir: Path) -> None:
         """All plugins should pass claude plugin validate."""
-        for plugin_path in plugins_dir.iterdir():
-            if plugin_path.is_dir():
-                result = subprocess.run(
-                    ["claude", "plugin", "validate", str(plugin_path)],
-                    capture_output=True,
-                )
-                assert result.returncode == 0, f"Plugin {plugin_path.name} failed validation"
+        for plugin_path in find_all_plugins(plugins_dir):
+            result = subprocess.run(
+                ["claude", "plugin", "validate", str(plugin_path)],
+                capture_output=True,
+            )
+            assert result.returncode == 0, f"Plugin {plugin_path.name} failed validation"
 
 
 class TestSkillMetadata:
@@ -45,7 +61,8 @@ def agent_exists(plugins_dir: Path, qualified_name: str) -> bool:
     if ":" not in qualified_name:
         return False
     plugin, agent = qualified_name.split(":", 1)
-    agent_path = plugins_dir / plugin / "agents" / f"{agent}.md"
+    plugin_path = get_plugin_path(plugins_dir, plugin)
+    agent_path = plugin_path / "agents" / f"{agent}.md"
     return agent_path.exists()
 
 
@@ -183,30 +200,30 @@ class TestPhase1TokenEfficiency:
 
     def test_mermaid_expert_under_100_lines(self, plugins_dir: Path) -> None:
         """Mermaid expert agent should be <100 lines after extraction."""
-        agent_path = plugins_dir / "doc" / "agents" / "mermaid-expert.md"
+        agent_path = get_plugin_path(plugins_dir, "doc") / "agents" / "mermaid-expert.md"
         lines = count_lines(agent_path)
         assert lines < 100, f"mermaid-expert.md has {lines} lines, expected <100"
 
     def test_mermaid_reference_exists(self, plugins_dir: Path) -> None:
         """Mermaid syntax reference file should exist."""
-        ref_path = plugins_dir / "doc" / "agents" / "references" / "mermaid-syntax.md"
+        ref_path = get_plugin_path(plugins_dir, "doc") / "agents" / "references" / "mermaid-syntax.md"
         assert ref_path.exists(), "mermaid-syntax.md reference not found"
 
     def test_devops_troubleshooter_under_80_lines(self, plugins_dir: Path) -> None:
         """DevOps troubleshooter should be <80 lines after trimming."""
-        agent_path = plugins_dir / "debug" / "agents" / "devops-troubleshooter.md"
+        agent_path = get_plugin_path(plugins_dir, "debug") / "agents" / "devops-troubleshooter.md"
         lines = count_lines(agent_path)
         assert lines < 80, f"devops-troubleshooter.md has {lines} lines, expected <80"
 
     def test_diagram_generator_under_50_lines(self, plugins_dir: Path) -> None:
         """Diagram generator should delegate to mermaid-expert."""
-        agent_path = plugins_dir / "doc" / "agents" / "diagram-generator.md"
+        agent_path = get_plugin_path(plugins_dir, "doc") / "agents" / "diagram-generator.md"
         lines = count_lines(agent_path)
         assert lines < 50, f"diagram-generator.md has {lines} lines, expected <50"
 
     def test_diagram_generator_delegates(self, plugins_dir: Path) -> None:
         """Diagram generator should reference mermaid-expert."""
-        agent_path = plugins_dir / "doc" / "agents" / "diagram-generator.md"
+        agent_path = get_plugin_path(plugins_dir, "doc") / "agents" / "diagram-generator.md"
         content = agent_path.read_text()
         assert "mermaid-expert" in content.lower() or "doc:" in content
 
@@ -297,7 +314,7 @@ class TestPhase5Degradation:
 
     def test_python_has_fallback_text(self, plugins_dir: Path) -> None:
         """Python skills should have fallback text for core dependency."""
-        python_skill = plugins_dir / "python" / "skills" / "python-testing-patterns" / "SKILL.md"
+        python_skill = get_plugin_path(plugins_dir, "python") / "skills" / "python-testing-patterns" / "SKILL.md"
         content = python_skill.read_text()
         # Either has fallback text or doesn't reference core:verification
         has_fallback = "If the `core` plugin is installed" in content
