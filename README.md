@@ -21,7 +21,7 @@ dot-claude is a collection of plugins that extend Claude Code with specialized c
 | **doc** | Documentation generation, API docs, tutorials, Amazon-style memos |
 | **shell** | Shell scripting with Google Shell Style Guide |
 | **debug** | Distributed systems debugging and log correlation |
-| **analyze** | Marketplace plugin analyzer for quality standards and DX analysis |
+| **meta** | Plugin development: writing skills, testing skills, marketplace analysis |
 | **blackbox** | Flight recorder hooks for telemetry and recovery |
 
 ## Installation
@@ -230,9 +230,11 @@ The `commit` plugin validates git commits:
 **Commands (1):**
 - `/debug:trace` - Debug and trace configuration
 
-### analyze (Marketplace Quality)
+### meta (Plugin Development)
 
-**Skills (1):**
+**Skills (3):**
+- `writing-skills` - Guide for creating effective skills with YAML frontmatter
+- `testing-skills` - Test skills with subagents using RED-GREEN-REFACTOR
 - `marketplace-analysis` - Systematic DX, architecture, and capability analysis
 
 **Agents (3):**
@@ -241,7 +243,7 @@ The `commit` plugin validates git commits:
 - `structure-analyzer` - Analyze plugin structure and architecture
 
 **Commands (1):**
-- `/analyze:marketplace` - Analyze plugin for marketplace quality standards
+- `/meta:marketplace` - Analyze plugin for marketplace quality standards
 
 ### blackbox (Flight Recorder)
 
