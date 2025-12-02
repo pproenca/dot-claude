@@ -131,3 +131,25 @@ class TestPhase1TokenEfficiency:
         agent_path = plugins_dir / "super" / "agents" / "diagram-generator.md"
         content = agent_path.read_text()
         assert "mermaid-expert" in content.lower() or "doc:" in content
+
+
+class TestPhase2Naming:
+    """Tests for Phase 2: Naming improvements."""
+
+    def test_skill_names_are_concise(self, all_skills: list[dict[str, Any]]) -> None:
+        """No skill name should exceed 20 characters."""
+        long_names = []
+        for skill in all_skills:
+            name = skill.get("name", "")
+            if len(name) > 20:
+                long_names.append(f"{name} ({len(name)} chars)")
+        assert not long_names, f"Skills with names >20 chars: {long_names}"
+
+    def test_descriptions_use_when_pattern(self, all_skills: list[dict[str, Any]]) -> None:
+        """All descriptions should start with 'Use when'."""
+        non_compliant = []
+        for skill in all_skills:
+            desc = skill.get("description", "")
+            if not desc.lower().startswith("use when"):
+                non_compliant.append(f"{skill.get('name')}: {desc[:50]}...")
+        assert not non_compliant, f"Skills not starting with 'Use when': {non_compliant}"
