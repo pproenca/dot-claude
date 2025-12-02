@@ -1,0 +1,17 @@
+{
+  "name": "core",
+  "version": "1.0.0",
+  "description": "Core workflows: TDD, verification, brainstorming - essential capabilities always loaded",
+  "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/core",
+  "repository": "https://github.com/pedroproenca/dot-claude",
+  "license": "MIT",
+  "keywords": [
+    "tdd",
+    "verification",
+    "brainstorming",
+    "core"
+  ],
+  "author": {
+    "name": "Pedro Proenca"
+  }
+}

@@ -97,6 +97,76 @@ class TestCrossReferences:
             exists = skill_exists(plugins_dir, f"debug:{ref}") or agent_exists(plugins_dir, f"debug:{ref}")
             assert exists, f"Reference debug:{ref} not found as skill or agent"
 
+    def test_core_skill_references_exist(self, plugins_dir: Path) -> None:
+        """All core:* references should point to existing skills or agents."""
+        import re
+
+        core_refs = set()
+        for md_file in plugins_dir.rglob("*.md"):
+            content = md_file.read_text()
+            refs = re.findall(r"core:([a-z][a-z0-9-]+)", content)
+            core_refs.update(refs)
+
+        for ref in core_refs:
+            exists = skill_exists(plugins_dir, f"core:{ref}") or agent_exists(plugins_dir, f"core:{ref}")
+            assert exists, f"Reference core:{ref} not found as skill or agent"
+
+    def test_workflow_skill_references_exist(self, plugins_dir: Path) -> None:
+        """All workflow:* references should point to existing skills or agents."""
+        import re
+
+        workflow_refs = set()
+        for md_file in plugins_dir.rglob("*.md"):
+            content = md_file.read_text()
+            refs = re.findall(r"workflow:([a-z][a-z0-9-]+)", content)
+            workflow_refs.update(refs)
+
+        for ref in workflow_refs:
+            exists = skill_exists(plugins_dir, f"workflow:{ref}") or agent_exists(plugins_dir, f"workflow:{ref}")
+            assert exists, f"Reference workflow:{ref} not found as skill or agent"
+
+    def test_review_skill_references_exist(self, plugins_dir: Path) -> None:
+        """All review:* references should point to existing skills or agents."""
+        import re
+
+        review_refs = set()
+        for md_file in plugins_dir.rglob("*.md"):
+            content = md_file.read_text()
+            refs = re.findall(r"review:([a-z][a-z0-9-]+)", content)
+            review_refs.update(refs)
+
+        for ref in review_refs:
+            exists = skill_exists(plugins_dir, f"review:{ref}") or agent_exists(plugins_dir, f"review:{ref}")
+            assert exists, f"Reference review:{ref} not found as skill or agent"
+
+    def test_testing_skill_references_exist(self, plugins_dir: Path) -> None:
+        """All testing:* references should point to existing skills or agents."""
+        import re
+
+        testing_refs = set()
+        for md_file in plugins_dir.rglob("*.md"):
+            content = md_file.read_text()
+            refs = re.findall(r"testing:([a-z][a-z0-9-]+)", content)
+            testing_refs.update(refs)
+
+        for ref in testing_refs:
+            exists = skill_exists(plugins_dir, f"testing:{ref}") or agent_exists(plugins_dir, f"testing:{ref}")
+            assert exists, f"Reference testing:{ref} not found as skill or agent"
+
+    def test_meta_skill_references_exist(self, plugins_dir: Path) -> None:
+        """All meta:* references should point to existing skills or agents."""
+        import re
+
+        meta_refs = set()
+        for md_file in plugins_dir.rglob("*.md"):
+            content = md_file.read_text()
+            refs = re.findall(r"meta:([a-z][a-z0-9-]+)", content)
+            meta_refs.update(refs)
+
+        for ref in meta_refs:
+            exists = skill_exists(plugins_dir, f"meta:{ref}") or agent_exists(plugins_dir, f"meta:{ref}")
+            assert exists, f"Reference meta:{ref} not found as skill or agent"
+
 
 class TestCurrentState:
     """Tests documenting current state (baseline)."""
@@ -106,9 +176,9 @@ class TestCurrentState:
         assert plugin_exists(plugins_dir, "super")
 
     def test_super_has_expected_skill_count(self, all_skills: list[dict[str, Any]]) -> None:
-        """Super should have 16 skills after Phase 3 (moved 3 to debug)."""
+        """Super should have 0 skills after Phase 4 (all moved to new plugins)."""
         super_skills = [s for s in all_skills if s.get("plugin") == "super"]
-        assert len(super_skills) == 16, f"Expected 16 super skills, found {len(super_skills)}"
+        assert len(super_skills) == 0, f"Expected 0 super skills, found {len(super_skills)}"
 
     def test_debug_plugin_exists(self, plugins_dir: Path) -> None:
         """Debug plugin should exist."""
@@ -191,3 +261,62 @@ class TestPhase3Debugging:
         old_skills = ["systematic-debugging", "root-cause-tracing", "defense-in-depth"]
         for skill in old_skills:
             assert not skill_exists(plugins_dir, f"super:{skill}"), f"super:{skill} should be removed"
+
+
+class TestPhase4SplitSuper:
+    """Tests for Phase 4: Split super plugin."""
+
+    def test_core_plugin_exists(self, plugins_dir: Path) -> None:
+        """Core plugin should exist."""
+        assert plugin_exists(plugins_dir, "core")
+
+    def test_core_has_essential_skills(self, plugins_dir: Path) -> None:
+        """Core should have essential skills."""
+        essential = ["using-core", "verification", "tdd", "brainstorming"]
+        for skill in essential:
+            assert skill_exists(plugins_dir, f"core:{skill}"), f"core:{skill} not found"
+
+    def test_workflow_plugin_exists(self, plugins_dir: Path) -> None:
+        """Workflow plugin should exist."""
+        assert plugin_exists(plugins_dir, "workflow")
+
+    def test_workflow_has_planning_skills(self, plugins_dir: Path) -> None:
+        """Workflow should have planning skills."""
+        planning = ["writing-plans", "executing-plans", "subagent-dev", "git-worktrees", "finish-branch", "parallel-agents"]
+        for skill in planning:
+            assert skill_exists(plugins_dir, f"workflow:{skill}"), f"workflow:{skill} not found"
+
+    def test_review_plugin_exists(self, plugins_dir: Path) -> None:
+        """Review plugin should exist."""
+        assert plugin_exists(plugins_dir, "review")
+
+    def test_review_has_code_review_skill(self, plugins_dir: Path) -> None:
+        """Review should have merged code-review skill."""
+        assert skill_exists(plugins_dir, "review:code-review")
+
+    def test_testing_plugin_exists(self, plugins_dir: Path) -> None:
+        """Testing plugin should exist."""
+        assert plugin_exists(plugins_dir, "testing")
+
+    def test_testing_has_skills(self, plugins_dir: Path) -> None:
+        """Testing should have anti-patterns and condition-wait."""
+        skills = ["anti-patterns", "condition-wait"]
+        for skill in skills:
+            assert skill_exists(plugins_dir, f"testing:{skill}"), f"testing:{skill} not found"
+
+    def test_meta_plugin_exists(self, plugins_dir: Path) -> None:
+        """Meta plugin should exist."""
+        assert plugin_exists(plugins_dir, "meta")
+
+    def test_meta_has_skills(self, plugins_dir: Path) -> None:
+        """Meta should have plugin development skills."""
+        skills = ["writing-skills", "testing-skills"]
+        for skill in skills:
+            assert skill_exists(plugins_dir, f"meta:{skill}"), f"meta:{skill} not found"
+
+    def test_super_deprecated(self, plugins_dir: Path) -> None:
+        """Super should have deprecation notice."""
+        import json
+        plugin_json = plugins_dir / "super" / ".claude-plugin" / "plugin.json"
+        data = json.loads(plugin_json.read_text())
+        assert "deprecated" in data.get("description", "").lower()

@@ -103,7 +103,7 @@ When implementing improvements:
 
 1. **Before any changes:** Create TodoWrite items for each improvement
 2. **Apply changes:** Use Edit tool, one logical change at a time
-3. **MANDATORY verification:** Use `super:verification` skill before claiming complete
+3. **MANDATORY verification:** Use `core:verification` skill before claiming complete
 4. **Evidence required:** Run validation commands, report actual output
 
 **Never claim "improved" or "fixed" without verification evidence.**

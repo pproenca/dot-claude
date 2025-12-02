@@ -1,20 +1,14 @@
 {
   "name": "super",
-  "version": "3.1.0",
-  "description": "Enhanced fork of obra/superpowers (by Jesse Vincent). Adds TDD enforcement hooks, security-reviewer agent, diagram-generator agent, allowed-tools restrictions, and integration improvements. 20 proven workflow skills for Claude Code.",
+  "version": "4.0.0",
+  "description": "DEPRECATED: Use core, workflow, review, testing, meta, debug plugins instead. This plugin remains as an alias for backward compatibility.",
   "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/super",
   "repository": "https://github.com/pedroproenca/dot-claude",
   "license": "MIT",
   "keywords": [
-    "skills",
-    "tdd",
-    "debugging",
-    "collaboration",
-    "best-practices",
-    "workflows",
-    "hooks",
-    "agents",
-    "security-review"
+    "deprecated",
+    "alias",
+    "backward-compatibility"
   ],
   "author": {
     "name": "Pedro Proenca"

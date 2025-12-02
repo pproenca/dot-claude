@@ -211,7 +211,7 @@ async def test_with_timeout():
 - Add logging at coroutine boundaries to trace data flow
 - Check for missing awaits, blocked event loops, race conditions
 
-**Use with `super:condition-wait`** instead of arbitrary sleeps:
+**Use with `testing:condition-wait`** instead of arbitrary sleeps:
 - Replace `await asyncio.sleep(N)` with condition polling when waiting for state changes
 - Eliminates flaky tests from timing guesses
 

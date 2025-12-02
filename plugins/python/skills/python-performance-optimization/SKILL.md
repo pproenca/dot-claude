@@ -460,7 +460,7 @@ def test_map_function(benchmark):
 - Don't guess at slow code - measure with cProfile/py-spy
 - Follow the 4-phase framework: investigate, analyze, hypothesize, implement
 
-**Use with `super:verification`** after optimization:
+**Use with `core:verification`** after optimization:
 - Run benchmarks to prove improvement
 - Verify no regressions in functionality
 - Show before/after metrics
