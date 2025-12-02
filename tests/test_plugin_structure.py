@@ -52,20 +52,18 @@ def agent_exists(plugins_dir: Path, qualified_name: str) -> bool:
 class TestCrossReferences:
     """Tests for cross-plugin reference integrity."""
 
-    def test_super_skill_references_exist(self, plugins_dir: Path) -> None:
-        """All super:* references should point to existing skills or agents."""
+    def test_no_super_references_in_plugins(self, plugins_dir: Path) -> None:
+        """No super:* references should exist in plugin code after migration."""
         import re
 
-        super_refs = set()
+        super_refs = []
         for md_file in plugins_dir.rglob("*.md"):
             content = md_file.read_text()
-            # Match super:skill-name patterns
             refs = re.findall(r"super:([a-z0-9-]+)", content)
-            super_refs.update(refs)
+            if refs:
+                super_refs.append((str(md_file), refs))
 
-        for ref in super_refs:
-            exists = skill_exists(plugins_dir, f"super:{ref}") or agent_exists(plugins_dir, f"super:{ref}")
-            assert exists, f"Reference super:{ref} not found as skill or agent"
+        assert not super_refs, f"Found deprecated super:* references: {super_refs}"
 
     def test_python_skill_references_exist(self, plugins_dir: Path) -> None:
         """All python:* references should point to existing skills or agents."""
@@ -171,14 +169,9 @@ class TestCrossReferences:
 class TestCurrentState:
     """Tests documenting current state (baseline)."""
 
-    def test_super_plugin_exists(self, plugins_dir: Path) -> None:
-        """Super plugin should exist in current state."""
-        assert plugin_exists(plugins_dir, "super")
-
-    def test_super_has_expected_skill_count(self, all_skills: list[dict[str, Any]]) -> None:
-        """Super should have 0 skills after Phase 4 (all moved to new plugins)."""
-        super_skills = [s for s in all_skills if s.get("plugin") == "super"]
-        assert len(super_skills) == 0, f"Expected 0 super skills, found {len(super_skills)}"
+    def test_super_plugin_removed(self, plugins_dir: Path) -> None:
+        """Super plugin should NOT exist after migration."""
+        assert not plugin_exists(plugins_dir, "super"), "super plugin should be removed"
 
     def test_debug_plugin_exists(self, plugins_dir: Path) -> None:
         """Debug plugin should exist."""
@@ -207,13 +200,13 @@ class TestPhase1TokenEfficiency:
 
     def test_diagram_generator_under_50_lines(self, plugins_dir: Path) -> None:
         """Diagram generator should delegate to mermaid-expert."""
-        agent_path = plugins_dir / "super" / "agents" / "diagram-generator.md"
+        agent_path = plugins_dir / "doc" / "agents" / "diagram-generator.md"
         lines = count_lines(agent_path)
         assert lines < 50, f"diagram-generator.md has {lines} lines, expected <50"
 
     def test_diagram_generator_delegates(self, plugins_dir: Path) -> None:
         """Diagram generator should reference mermaid-expert."""
-        agent_path = plugins_dir / "super" / "agents" / "diagram-generator.md"
+        agent_path = plugins_dir / "doc" / "agents" / "diagram-generator.md"
         content = agent_path.read_text()
         assert "mermaid-expert" in content.lower() or "doc:" in content
 
@@ -222,20 +215,13 @@ class TestPhase2Naming:
     """Tests for Phase 2: Naming improvements."""
 
     def test_skill_names_are_concise(self, all_skills: list[dict[str, Any]]) -> None:
-        """Super plugin skill names should not exceed 20 characters."""
-        # These skills will be merged in Phase 4, not renamed in Phase 2
-        phase4_merge_candidates = {"requesting-code-review", "receiving-code-review"}
+        """Skill names should not exceed 20 characters."""
         long_names = []
         for skill in all_skills:
-            # Phase 2 only renames super plugin skills
-            if skill.get("plugin") != "super":
-                continue
             name = skill.get("name", "")
-            if name in phase4_merge_candidates:
-                continue
             if len(name) > 20:
-                long_names.append(f"{name} ({len(name)} chars)")
-        assert not long_names, f"Super skills with names >20 chars: {long_names}"
+                long_names.append(f"{skill.get('plugin')}:{name} ({len(name)} chars)")
+        assert not long_names, f"Skills with names >20 chars: {long_names}"
 
     def test_descriptions_use_when_pattern(self, all_skills: list[dict[str, Any]]) -> None:
         """All descriptions should start with 'Use when'."""
@@ -313,13 +299,6 @@ class TestPhase4SplitSuper:
         skills = ["writing-skills", "testing-skills"]
         for skill in skills:
             assert skill_exists(plugins_dir, f"meta:{skill}"), f"meta:{skill} not found"
-
-    def test_super_deprecated(self, plugins_dir: Path) -> None:
-        """Super should have deprecation notice."""
-        import json
-        plugin_json = plugins_dir / "super" / ".claude-plugin" / "plugin.json"
-        data = json.loads(plugin_json.read_text())
-        assert "deprecated" in data.get("description", "").lower()
 
 
 class TestPhase5Degradation:
