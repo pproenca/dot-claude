@@ -65,6 +65,35 @@ def validate_marketplace_references(
     return not has_error
 
 
+def find_plugin_dirs(plugins_dir: Path) -> list[tuple[str, Path]]:
+    """Find all plugin directories (supports nested tier structure).
+
+    Returns list of (relative_path, absolute_path) tuples.
+    A plugin is identified by having a .claude-plugin/plugin.json file.
+    """
+    plugins: list[tuple[str, Path]] = []
+
+    if not plugins_dir.is_dir():
+        return plugins
+
+    for tier_or_plugin in plugins_dir.iterdir():
+        if not tier_or_plugin.is_dir():
+            continue
+
+        # Check if this is a direct plugin (has .claude-plugin/plugin.json)
+        if (tier_or_plugin / ".claude-plugin" / "plugin.json").exists():
+            relative = f"plugins/{tier_or_plugin.name}"
+            plugins.append((relative, tier_or_plugin))
+        else:
+            # This might be a tier directory, check subdirectories
+            for plugin_dir in tier_or_plugin.iterdir():
+                if plugin_dir.is_dir() and (plugin_dir / ".claude-plugin" / "plugin.json").exists():
+                    relative = f"plugins/{tier_or_plugin.name}/{plugin_dir.name}"
+                    plugins.append((relative, plugin_dir))
+
+    return plugins
+
+
 def validate_all_plugins_listed(
     repo_root: Path, marketplace_data: dict[str, Any]
 ) -> bool:
@@ -79,17 +108,14 @@ def validate_all_plugins_listed(
         source = plugin_entry.get("source", "").removeprefix("./")
         marketplace_sources.add(source)
 
-    # Check file system
-    if plugins_dir.is_dir():
-        for item in plugins_dir.iterdir():
-            if item.is_dir():
-                relative_path = f"plugins/{item.name}"
-                # O(1) lookup in set
-                if relative_path not in marketplace_sources:
-                    err(
-                        f"Plugin directory not listed in marketplace.json: {relative_path}"
-                    )
-                    has_error = True
+    # Check file system using nested-aware discovery
+    for relative_path, _ in find_plugin_dirs(plugins_dir):
+        # O(1) lookup in set
+        if relative_path not in marketplace_sources:
+            err(
+                f"Plugin directory not listed in marketplace.json: {relative_path}"
+            )
+            has_error = True
 
     return not has_error
 
@@ -151,11 +177,9 @@ def validate_individual_plugins(repo_root: Path) -> bool:
     has_error = False
     plugins_dir = repo_root / "plugins"
 
-    if plugins_dir.is_dir():
-        for item in plugins_dir.iterdir():
-            if item.is_dir():
-                if not run_command(["claude", "plugin", "validate", str(item)]):
-                    has_error = True
+    for _, plugin_path in find_plugin_dirs(plugins_dir):
+        if not run_command(["claude", "plugin", "validate", str(plugin_path)]):
+            has_error = True
 
     return not has_error
 

@@ -24,9 +24,29 @@ Syncs settings, statusline, and hookify files between project `.claude/` and `~/
 
 ### Plugin Structure
 
+Plugins are organized into tier-based domains:
+```
+plugins/
+├── essential/         # Tier 0: Always loaded
+│   ├── core/          # TDD, verification, brainstorming
+│   └── commit/        # Conventional Commits, PR creation
+├── methodology/       # Tier 1: Workflow patterns
+│   ├── workflow/      # Planning, execution, subagents, worktrees
+│   ├── review/        # Code review workflows
+│   ├── debug/         # Systematic debugging, root-cause analysis
+│   └── testing/       # Test anti-patterns, condition waiting
+├── domain/            # Tier 2: Domain expertise
+│   ├── python/        # Python: uv, async, FastAPI, Django
+│   ├── doc/           # Documentation: API docs, memos, Mermaid
+│   └── shell/         # Shell: Google Style Guide
+└── specialized/       # Tier 3: Optional/Meta
+    ├── meta/          # Plugin development tools
+    └── blackbox/      # Telemetry: flight recorder hooks
+```
+
 Each plugin follows this layout:
 ```
-plugins/<name>/
+plugins/<tier>/<name>/
   .claude-plugin/
     plugin.json          # Metadata (name, version, description)
   skills/
@@ -41,20 +61,33 @@ plugins/<name>/
     *.sh, *.py           # Hook scripts
 ```
 
-### Plugins
+### Plugins by Tier
 
+**Essential (Tier 0)** - Always loaded
 | Plugin | Purpose |
 |--------|---------|
-| **core** | Essential: TDD, verification, brainstorming |
-| **workflow** | Planning and execution: plan, exec, brainstorm, notes, context, subagents, worktrees |
-| **review** | Code review: requesting, receiving, best practices |
-| **testing** | Test patterns: anti-patterns, condition waiting |
-| **meta** | Plugin dev: writing skills, marketplace analysis |
+| **core** | TDD, verification, brainstorming |
 | **commit** | Git: Conventional Commits, PR creation |
+
+**Methodology (Tier 1)** - Workflow patterns
+| Plugin | Purpose |
+|--------|---------|
+| **workflow** | Planning and execution: plan, exec, subagents, worktrees |
+| **review** | Code review: requesting, receiving, best practices |
+| **debug** | Debugging: systematic, root-cause, defense-in-depth |
+| **testing** | Test patterns: anti-patterns, condition waiting |
+
+**Domain (Tier 2)** - Domain expertise
+| Plugin | Purpose |
+|--------|---------|
 | **python** | Python: uv, async, FastAPI, Django patterns |
 | **doc** | Documentation: API docs, memos, Mermaid |
 | **shell** | Shell: Google Style Guide |
-| **debug** | Debugging: systematic, root-cause, defense-in-depth |
+
+**Specialized (Tier 3)** - Optional/Meta
+| Plugin | Purpose |
+|--------|---------|
+| **meta** | Plugin dev: writing skills, marketplace analysis |
 | **blackbox** | Telemetry: flight recorder hooks |
 
 ### Hook System
@@ -125,19 +158,19 @@ pre-commit install
 
 ### Creating Skills
 
-1. Create `plugins/<plugin>/skills/<name>/SKILL.md`
+1. Create `plugins/<tier>/<plugin>/skills/<name>/SKILL.md`
 2. Add YAML frontmatter with `name`, `description`, and optional `allowed-tools`
 3. Test with `meta:testing-skills` skill
 
 ### Creating Agents
 
-1. Create `plugins/<plugin>/agents/<name>.md`
+1. Create `plugins/<tier>/<plugin>/agents/<name>.md`
 2. Define the agent's role and capabilities
 3. Register in plugin if needed
 
 ### Creating Hooks
 
-1. Add hook configuration to `plugins/<plugin>/hooks/hooks.json`
+1. Add hook configuration to `plugins/<tier>/<plugin>/hooks/hooks.json`
 2. Create hook script (`.sh` or `.py`)
 3. Use `$CLAUDE_PLUGIN_ROOT` for relative paths
 4. Return JSON with `hookSpecificOutput.permissionDecision` for PreToolUse hooks
