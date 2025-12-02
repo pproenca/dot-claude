@@ -9,6 +9,33 @@ from pathlib import Path
 from typing import Any
 
 
+def find_plugin_paths(plugins_dir: Path) -> list[str]:
+    """Find all plugin paths (supports nested tier structure).
+
+    Returns list of relative paths like 'plugins/tier/name'.
+    A plugin is identified by having a .claude-plugin/plugin.json file.
+    """
+    plugins: list[str] = []
+
+    if not plugins_dir.is_dir():
+        return plugins
+
+    for tier_or_plugin in sorted(plugins_dir.iterdir()):
+        if not tier_or_plugin.is_dir():
+            continue
+
+        # Check if this is a direct plugin (has .claude-plugin/plugin.json)
+        if (tier_or_plugin / ".claude-plugin" / "plugin.json").exists():
+            plugins.append(f"plugins/{tier_or_plugin.name}")
+        else:
+            # This might be a tier directory, check subdirectories
+            for plugin_dir in sorted(tier_or_plugin.iterdir()):
+                if plugin_dir.is_dir() and (plugin_dir / ".claude-plugin" / "plugin.json").exists():
+                    plugins.append(f"plugins/{tier_or_plugin.name}/{plugin_dir.name}")
+
+    return plugins
+
+
 def update_config(root_dir: Path) -> bool:
     """Update release-please-config.json with extra-files for all plugins.
 
@@ -27,12 +54,12 @@ def update_config(root_dir: Path) -> bool:
         print(f"ERROR: Invalid JSON in {config_path}: {e}", file=sys.stderr)
         return False
 
-    # 2. Find all plugins
+    # 2. Find all plugins using nested-aware discovery
     if not plugins_dir.is_dir():
         print(f"ERROR: Plugins directory not found: {plugins_dir}", file=sys.stderr)
         return False
 
-    plugin_dirs = sorted(d.name for d in plugins_dir.iterdir() if d.is_dir())
+    plugin_paths = find_plugin_paths(plugins_dir)
 
     # 3. Prepare extra-files list
     extra_files: list[dict[str, str]] = [
@@ -45,23 +72,23 @@ def update_config(root_dir: Path) -> bool:
     ]
 
     # Add plugin.json entries
-    valid_plugins: list[str] = []
-    for plugin in plugin_dirs:
-        plugin_json_path = f"plugins/{plugin}/.claude-plugin/plugin.json"
+    valid_plugin_paths: list[str] = []
+    for plugin_path in plugin_paths:
+        plugin_json_path = f"{plugin_path}/.claude-plugin/plugin.json"
         full_path = root_dir / plugin_json_path
         if full_path.exists():
             extra_files.append(
                 {"type": "json", "path": plugin_json_path, "jsonpath": "$.version"}
             )
-            valid_plugins.append(plugin)
+            valid_plugin_paths.append(plugin_path)
         else:
             print(
-                f"Warning: Plugin {plugin} missing plugin.json at {plugin_json_path}",
+                f"Warning: Plugin missing plugin.json at {plugin_json_path}",
                 file=sys.stderr,
             )
 
     # Add marketplace plugin version entries
-    for idx, _plugin in enumerate(valid_plugins):
+    for idx, _plugin_path in enumerate(valid_plugin_paths):
         extra_files.append(
             {
                 "type": "json",
@@ -86,7 +113,7 @@ SYNC_FIELDS = ("description", "version", "keywords", "license")
 def sync_marketplace_plugins(root_dir: Path) -> bool:
     """Sync plugin metadata from plugin.json files to marketplace.json.
 
-    - Auto-discovers new plugins in plugins/ directory
+    - Auto-discovers new plugins in plugins/ directory (supports nested tiers)
     - Syncs: description, version, keywords, license
     - Preserves: name, source, and any marketplace-only fields
 
@@ -112,23 +139,21 @@ def sync_marketplace_plugins(root_dir: Path) -> bool:
         if name:
             existing_plugins[name] = plugin_entry
 
-    # 3. Scan plugins directory
+    # 3. Scan plugins directory using nested-aware discovery
     if not plugins_dir.is_dir():
         return True  # No plugins directory, nothing to sync
 
     updated: list[str] = []
     added: list[str] = []
 
-    for plugin_dir in sorted(plugins_dir.iterdir()):
-        if not plugin_dir.is_dir():
-            continue
-
-        plugin_name = plugin_dir.name
-        plugin_json_path = plugin_dir / ".claude-plugin" / "plugin.json"
+    plugin_paths = find_plugin_paths(plugins_dir)
+    for plugin_path in plugin_paths:
+        full_path = root_dir / plugin_path
+        plugin_json_path = full_path / ".claude-plugin" / "plugin.json"
 
         if not plugin_json_path.exists():
             print(
-                f"Warning: Plugin {plugin_name} missing plugin.json, skipping",
+                f"Warning: Plugin at {plugin_path} missing plugin.json, skipping",
                 file=sys.stderr,
             )
             continue
@@ -143,14 +168,18 @@ def sync_marketplace_plugins(root_dir: Path) -> bool:
             )
             return False
 
+        plugin_name = plugin_data.get("name", full_path.name)
+
         # Get or create marketplace entry
         if plugin_name in existing_plugins:
             entry = existing_plugins[plugin_name]
+            # Update source path in case it moved
+            entry["source"] = f"./{plugin_path}"
             updated.append(plugin_name)
         else:
             entry = {
                 "name": plugin_name,
-                "source": f"./plugins/{plugin_name}",
+                "source": f"./{plugin_path}",
             }
             existing_plugins[plugin_name] = entry
             added.append(plugin_name)
