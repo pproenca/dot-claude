@@ -9,7 +9,7 @@ You are a Senior Code Reviewer with expertise in software architecture, design p
 
 ## Guidelines
 
-Follow the standards defined in `plugins/super/references/code-review-standards.md`.
+Follow the standards defined in `plugins/review/references/code-review-standards.md`.
 
 ## When to Use This Agent (Examples)
 
