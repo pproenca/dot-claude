@@ -138,18 +138,6 @@
       "license": "MIT"
     },
     {
-      "name": "super",
-      "description": "DEPRECATED: Use core, workflow, review, testing, meta, debug plugins instead. This plugin remains as an alias for backward compatibility.",
-      "source": "./plugins/super",
-      "version": "4.0.0",
-      "keywords": [
-        "deprecated",
-        "alias",
-        "backward-compatibility"
-      ],
-      "license": "MIT"
-    },
-    {
       "name": "testing",
       "source": "./plugins/testing",
       "description": "Testing patterns: anti-patterns to avoid, condition-based waiting for async tests",
