@@ -82,6 +82,21 @@ class TestCrossReferences:
             exists = skill_exists(plugins_dir, f"python:{ref}") or agent_exists(plugins_dir, f"python:{ref}")
             assert exists, f"Reference python:{ref} not found as skill or agent"
 
+    def test_debug_skill_references_exist(self, plugins_dir: Path) -> None:
+        """All debug:* references should point to existing skills or agents."""
+        import re
+
+        debug_refs = set()
+        for md_file in plugins_dir.rglob("*.md"):
+            content = md_file.read_text()
+            # Match debug:skill-name patterns
+            refs = re.findall(r"debug:([a-z][a-z0-9-]+)", content)
+            debug_refs.update(refs)
+
+        for ref in debug_refs:
+            exists = skill_exists(plugins_dir, f"debug:{ref}") or agent_exists(plugins_dir, f"debug:{ref}")
+            assert exists, f"Reference debug:{ref} not found as skill or agent"
+
 
 class TestCurrentState:
     """Tests documenting current state (baseline)."""
@@ -91,9 +106,9 @@ class TestCurrentState:
         assert plugin_exists(plugins_dir, "super")
 
     def test_super_has_expected_skill_count(self, all_skills: list[dict[str, Any]]) -> None:
-        """Super should have 19 skills in current state."""
+        """Super should have 16 skills after Phase 3 (moved 3 to debug)."""
         super_skills = [s for s in all_skills if s.get("plugin") == "super"]
-        assert len(super_skills) == 19, f"Expected 19 super skills, found {len(super_skills)}"
+        assert len(super_skills) == 16, f"Expected 16 super skills, found {len(super_skills)}"
 
     def test_debug_plugin_exists(self, plugins_dir: Path) -> None:
         """Debug plugin should exist."""
@@ -137,13 +152,20 @@ class TestPhase2Naming:
     """Tests for Phase 2: Naming improvements."""
 
     def test_skill_names_are_concise(self, all_skills: list[dict[str, Any]]) -> None:
-        """No skill name should exceed 20 characters."""
+        """Super plugin skill names should not exceed 20 characters."""
+        # These skills will be merged in Phase 4, not renamed in Phase 2
+        phase4_merge_candidates = {"requesting-code-review", "receiving-code-review"}
         long_names = []
         for skill in all_skills:
+            # Phase 2 only renames super plugin skills
+            if skill.get("plugin") != "super":
+                continue
             name = skill.get("name", "")
+            if name in phase4_merge_candidates:
+                continue
             if len(name) > 20:
                 long_names.append(f"{name} ({len(name)} chars)")
-        assert not long_names, f"Skills with names >20 chars: {long_names}"
+        assert not long_names, f"Super skills with names >20 chars: {long_names}"
 
     def test_descriptions_use_when_pattern(self, all_skills: list[dict[str, Any]]) -> None:
         """All descriptions should start with 'Use when'."""
@@ -153,3 +175,19 @@ class TestPhase2Naming:
             if not desc.lower().startswith("use when"):
                 non_compliant.append(f"{skill.get('name')}: {desc[:50]}...")
         assert not non_compliant, f"Skills not starting with 'Use when': {non_compliant}"
+
+
+class TestPhase3Debugging:
+    """Tests for Phase 3: Consolidate debugging."""
+
+    def test_debugging_skills_in_debug_plugin(self, plugins_dir: Path) -> None:
+        """All debugging skills should be in debug plugin."""
+        debug_skills = ["systematic", "root-cause", "defense-in-depth"]
+        for skill in debug_skills:
+            assert skill_exists(plugins_dir, f"debug:{skill}"), f"debug:{skill} not found"
+
+    def test_super_no_debugging_skills(self, plugins_dir: Path) -> None:
+        """Super should not have debugging skills after move."""
+        old_skills = ["systematic-debugging", "root-cause-tracing", "defense-in-depth"]
+        for skill in old_skills:
+            assert not skill_exists(plugins_dir, f"super:{skill}"), f"super:{skill} should be removed"

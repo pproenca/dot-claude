@@ -1,6 +1,6 @@
 ---
 name: defense-in-depth
-description: Use when invalid data causes failures deep in execution, bypassing initial checks - adds validation at entry, business logic, and environment layers to make bugs structurally impossible.
+description: Use when invalid data causes failures deep in execution, bypassing initial checks - adds validation at entry, business logic, and environment layers to make bugs structurally impossible
 allowed-tools: Read
 ---
 
@@ -126,3 +126,8 @@ All four layers were necessary. During testing, each layer caught bugs the other
 - Debug logging identified structural misuse
 
 **Don't stop at one validation point.** Add checks at every layer.
+
+## Integration
+
+**Used by:** debug:systematic (Phase 4 - after fixing root cause)
+**Pairs with:** debug:root-cause (find where to add validation)

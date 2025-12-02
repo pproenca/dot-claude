@@ -1,6 +1,6 @@
 ---
 name: blackbox
-description: "Blackbox flight recorder for file snapshots and disaster recovery. Use when: (1) asking how blackbox works, (2) needing to restore a previous file version, (3) querying file modification history, (4) checking what files were changed, (5) recovering from accidental edits."
+description: Use when restoring previous file versions, querying file modification history, recovering from accidental edits, or understanding how blackbox flight recorder works for file snapshots and disaster recovery
 ---
 
 # Blackbox Flight Recorder

@@ -457,7 +457,7 @@ uv --version                # Show version
 - `uv run pytest` for test execution
 - Dev dependency management
 
-**Use with `super:verification-before-completion`** before committing:
+**Use with `super:verification`** before committing:
 - `uv sync` to verify dependencies resolve
 - `uv run pytest` to verify tests pass
 
