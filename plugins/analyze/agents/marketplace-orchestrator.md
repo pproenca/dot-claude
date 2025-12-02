@@ -84,6 +84,6 @@ Use Task tool with subagent_type='analyze:capability-analyzer':
 ## When Applying Changes
 
 If implementing improvements (not just analyzing):
-1. Use `super:verification` skill before claiming complete
+1. Use `core:verification` skill before claiming complete
 2. Run validation commands and report actual output
 3. Never claim "improved" without evidence

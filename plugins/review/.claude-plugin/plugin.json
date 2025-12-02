@@ -1,0 +1,16 @@
+{
+  "name": "review",
+  "version": "1.0.0",
+  "description": "Code review workflows: requesting reviews, receiving feedback, review best practices",
+  "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/review",
+  "repository": "https://github.com/pedroproenca/dot-claude",
+  "license": "MIT",
+  "keywords": [
+    "code-review",
+    "feedback",
+    "review"
+  ],
+  "author": {
+    "name": "Pedro Proenca"
+  }
+}

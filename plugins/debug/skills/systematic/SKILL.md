@@ -79,7 +79,7 @@ You MUST complete each phase before proceeding to the next.
    - Produces clean summary of architecture for focused debugging
    - Essential for large codebases with many layers
 
-   **Parallel Investigation:** For independent components, consider `super:parallel-agents`:
+   **Parallel Investigation:** For independent components, consider `workflow:parallel-agents`:
    - Investigate multiple components simultaneously
    - Converge findings to identify root cause
    - Reduces total investigation time for complex systems
@@ -166,7 +166,7 @@ You MUST complete each phase before proceeding to the next.
    - Automated test if possible
    - One-off test script if no framework
    - MUST have before fixing
-   - **REQUIRED SUB-SKILL:** Use super:tdd for writing proper failing tests
+   - **REQUIRED SUB-SKILL:** Use core:tdd for writing proper failing tests
 
 2. **Implement Single Fix**
    - Address the root cause identified
@@ -247,9 +247,9 @@ If you catch yourself thinking:
 
 **This skill requires using:**
 - **debug:root-cause** - Use when error is deep in call stack (see Phase 1, Step 5)
-- **super:tdd** - Use for creating failing test case (see Phase 4, Step 1)
+- **core:tdd** - Use for creating failing test case (see Phase 4, Step 1)
 
 **Complementary skills:**
 - **debug:defense-in-depth** - Add validation at multiple layers after finding root cause
-- **super:condition-wait** - Replace arbitrary timeouts identified in Phase 2
-- **super:verification** - Verify fix worked before claiming success
+- **testing:condition-wait** - Replace arbitrary timeouts identified in Phase 2
+- **core:verification** - Verify fix worked before claiming success
