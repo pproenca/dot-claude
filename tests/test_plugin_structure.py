@@ -98,3 +98,36 @@ class TestCurrentState:
     def test_debug_plugin_exists(self, plugins_dir: Path) -> None:
         """Debug plugin should exist."""
         assert plugin_exists(plugins_dir, "debug")
+
+
+class TestPhase1TokenEfficiency:
+    """Tests for Phase 1: Token efficiency improvements."""
+
+    def test_mermaid_expert_under_100_lines(self, plugins_dir: Path) -> None:
+        """Mermaid expert agent should be <100 lines after extraction."""
+        agent_path = plugins_dir / "doc" / "agents" / "mermaid-expert.md"
+        lines = count_lines(agent_path)
+        assert lines < 100, f"mermaid-expert.md has {lines} lines, expected <100"
+
+    def test_mermaid_reference_exists(self, plugins_dir: Path) -> None:
+        """Mermaid syntax reference file should exist."""
+        ref_path = plugins_dir / "doc" / "agents" / "references" / "mermaid-syntax.md"
+        assert ref_path.exists(), "mermaid-syntax.md reference not found"
+
+    def test_devops_troubleshooter_under_80_lines(self, plugins_dir: Path) -> None:
+        """DevOps troubleshooter should be <80 lines after trimming."""
+        agent_path = plugins_dir / "debug" / "agents" / "devops-troubleshooter.md"
+        lines = count_lines(agent_path)
+        assert lines < 80, f"devops-troubleshooter.md has {lines} lines, expected <80"
+
+    def test_diagram_generator_under_50_lines(self, plugins_dir: Path) -> None:
+        """Diagram generator should delegate to mermaid-expert."""
+        agent_path = plugins_dir / "super" / "agents" / "diagram-generator.md"
+        lines = count_lines(agent_path)
+        assert lines < 50, f"diagram-generator.md has {lines} lines, expected <50"
+
+    def test_diagram_generator_delegates(self, plugins_dir: Path) -> None:
+        """Diagram generator should reference mermaid-expert."""
+        agent_path = plugins_dir / "super" / "agents" / "diagram-generator.md"
+        content = agent_path.read_text()
+        assert "mermaid-expert" in content.lower() or "doc:" in content
