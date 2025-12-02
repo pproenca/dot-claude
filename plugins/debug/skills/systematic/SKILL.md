@@ -1,5 +1,5 @@
 ---
-name: systematic-debugging
+name: systematic
 description: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes - four-phase framework (root cause investigation, pattern analysis, hypothesis testing, implementation) that ensures understanding before attempting solutions
 allowed-tools: Bash, Read, Grep
 ---
@@ -97,32 +97,11 @@ You MUST complete each phase before proceeding to the next.
    THEN investigate that specific component
    ```
 
-   **Example (multi-layer system):**
-   ```bash
-   # Layer 1: Workflow
-   echo "=== Secrets available in workflow: ==="
-   echo "IDENTITY: ${IDENTITY:+SET}${IDENTITY:-UNSET}"
-
-   # Layer 2: Build script
-   echo "=== Env vars in build script: ==="
-   env | grep IDENTITY || echo "IDENTITY not in environment"
-
-   # Layer 3: Signing script
-   echo "=== Keychain state: ==="
-   security list-keychains
-   security find-identity -v
-
-   # Layer 4: Actual signing
-   codesign --sign "$IDENTITY" --verbose=4 "$APP"
-   ```
-
-   **This reveals:** Which layer fails (secrets → workflow ✓, workflow → build ✗)
-
 5. **Trace Data Flow**
 
    **WHEN error is deep in call stack:**
 
-   **REQUIRED SUB-SKILL:** Use super:root-cause-tracing for backward tracing technique
+   **REQUIRED SUB-SKILL:** Use debug:root-cause for backward tracing technique
 
    **Quick version:**
    - Where does bad value originate?
@@ -242,17 +221,6 @@ If you catch yourself thinking:
 
 **If 3+ fixes failed:** Question the architecture (see Phase 4.5)
 
-## your human partner's Signals You're Doing It Wrong
-
-**Watch for these redirections:**
-- "Is that not happening?" - You assumed without verifying
-- "Will it show us...?" - You should have added evidence gathering
-- "Stop guessing" - You're proposing fixes without understanding
-- "Ultrathink this" - Question fundamentals, not just symptoms
-- "We're stuck?" (frustrated) - Your approach isn't working
-
-**When you see these:** STOP. Return to Phase 1.
-
 ## Common Rationalizations
 
 | Excuse | Reality |
@@ -275,32 +243,13 @@ If you catch yourself thinking:
 | **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
 | **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |
 
-## When Process Reveals "No Root Cause"
-
-If systematic investigation reveals issue is truly environmental, timing-dependent, or external:
-
-1. You've completed the process
-2. Document what you investigated
-3. Implement appropriate handling (retry, timeout, error message)
-4. Add monitoring/logging for future investigation
-
-**But:** 95% of "no root cause" cases are incomplete investigation.
-
 ## Integration with Other Skills
 
 **This skill requires using:**
-- **root-cause-tracing** - **REQUIRED SUB-SKILL:** Use super:root-cause-tracing when error is deep in call stack (see Phase 1, Step 5)
-- **tdd** - **REQUIRED SUB-SKILL:** Use super:tdd for creating failing test case (see Phase 4, Step 1)
+- **debug:root-cause** - Use when error is deep in call stack (see Phase 1, Step 5)
+- **super:tdd** - Use for creating failing test case (see Phase 4, Step 1)
 
 **Complementary skills:**
-- **defense-in-depth** - Add validation at multiple layers after finding root cause
-- **condition-wait** - Replace arbitrary timeouts identified in Phase 2
-- **verification** - Verify fix worked before claiming success
-
-## Real-World Impact
-
-From debugging sessions:
-- Systematic approach: 15-30 minutes to fix
-- Random fixes approach: 2-3 hours of thrashing
-- First-time fix rate: 95% vs 40%
-- New bugs introduced: Near zero vs common
+- **debug:defense-in-depth** - Add validation at multiple layers after finding root cause
+- **super:condition-wait** - Replace arbitrary timeouts identified in Phase 2
+- **super:verification** - Verify fix worked before claiming success

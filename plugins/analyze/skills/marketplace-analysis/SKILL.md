@@ -1,6 +1,6 @@
 ---
 name: marketplace-analysis
-description: Analyze Claude Code plugins for quality, DX, and architecture. Use when "review plugin quality", "audit plugins", "analyze the marketplace", "check plugins against Anthropic standards", "improve plugin design", or evaluating plugin architecture. Provides systematic analysis methodology with validation framework.
+description: Use when reviewing plugin quality, auditing plugins, analyzing the marketplace, checking plugins against Anthropic standards, or evaluating plugin architecture - provides systematic analysis methodology with validation framework
 ---
 
 # Marketplace Analysis
@@ -103,7 +103,7 @@ When implementing improvements:
 
 1. **Before any changes:** Create TodoWrite items for each improvement
 2. **Apply changes:** Use Edit tool, one logical change at a time
-3. **MANDATORY verification:** Use `super:verification-before-completion` skill before claiming complete
+3. **MANDATORY verification:** Use `super:verification` skill before claiming complete
 4. **Evidence required:** Run validation commands, report actual output
 
 **Never claim "improved" or "fixed" without verification evidence.**

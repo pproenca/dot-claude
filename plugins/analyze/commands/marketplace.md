@@ -22,5 +22,5 @@ Analyze plugins in the marketplace to identify quality improvements.
 
 4. **If user requests changes:**
    - Apply improvements using Edit tool
-   - **MANDATORY:** Use `Skill` tool with `skill: "super:verification-before-completion"` before claiming changes are complete
+   - **MANDATORY:** Use `Skill` tool with `skill: "super:verification"` before claiming changes are complete
    - Run validation commands and report evidence
