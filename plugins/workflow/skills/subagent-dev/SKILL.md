@@ -63,7 +63,7 @@ Task tool (general-purpose):
 
 **Dispatch code-reviewer subagent:**
 ```
-Task tool (super:code-reviewer):
+Task tool (review:code-reviewer):
   Use template at requesting-code-review/code-reviewer.md
 
   WHAT_WAS_IMPLEMENTED: [from subagent's report]
