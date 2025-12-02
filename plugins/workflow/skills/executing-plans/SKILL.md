@@ -61,7 +61,7 @@ When batch execution complete:
 
 **Dispatch code-reviewer subagent:**
 ```
-Task tool (super:code-reviewer):
+Task tool (review:code-reviewer):
   WHAT_WAS_IMPLEMENTED: [Summary of tasks completed in this batch]
   PLAN_OR_REQUIREMENTS: Tasks [N-M] from [plan-file]
   BASE_SHA: [commit before batch started]

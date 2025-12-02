@@ -40,7 +40,7 @@ assistant: "Let me use the python-expert agent for async Python patterns"
 - Simple Python syntax questions (answer directly)
 - Non-Python language questions (use appropriate agent)
 - General debugging without Python-specific context (use `debug:systematic`)
-- Code review tasks (use `super:code-reviewer`, which will delegate Python concerns if needed)
+- Code review tasks (use `review:code-reviewer`, which will delegate Python concerns if needed)
 
 **Still use python-expert even if:**
 - "It's just a small Python question" - modern ecosystem knowledge adds value
