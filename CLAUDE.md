@@ -45,14 +45,18 @@ plugins/<name>/
 
 | Plugin | Purpose |
 |--------|---------|
-| **super** | Core workflows: TDD enforcement, verification, brainstorming, debugging, code review |
-| **commit** | Git: Conventional Commits, PR creation, branch organization |
-| **python** | Python: uv, async, FastAPI, Django, testing patterns |
-| **doc** | Documentation: API docs, tutorials, Amazon-style memos, Mermaid |
-| **shell** | Shell scripting with Google Shell Style Guide |
-| **debug** | Distributed systems debugging and log correlation |
-| **analyze** | Marketplace plugin analyzer for quality standards |
-| **blackbox** | Flight recorder hooks for telemetry |
+| **core** | Essential: TDD, verification, brainstorming |
+| **workflow** | Planning: plans, execution, subagents, worktrees |
+| **review** | Code review: requesting, receiving, best practices |
+| **testing** | Test patterns: anti-patterns, condition waiting |
+| **meta** | Plugin dev: writing skills, marketplace analysis |
+| **commit** | Git: Conventional Commits, PR creation |
+| **python** | Python: uv, async, FastAPI, Django patterns |
+| **doc** | Documentation: API docs, memos, Mermaid |
+| **shell** | Shell: Google Style Guide |
+| **debug** | Debugging: systematic, root-cause, defense-in-depth |
+| **blackbox** | Telemetry: flight recorder hooks |
+| **super** | DEPRECATED: backward-compatible alias |
 
 ### Hook System
 
@@ -63,9 +67,9 @@ Hooks enforce workflows via JSON configuration in `hooks/hooks.json`. Four hook 
 - **Stop** - Runs when conversation ends (can block completion)
 
 Key enforced behaviors:
-- **TDD Guard** (`super`): Blocks production file edits unless test file edited first
-- **Worktree Guard** (`super`): Warns about git worktree awareness
-- **Verification** (`super`): Blocks completion claims without test/build evidence
+- **TDD Guard** (`core`): Blocks production file edits unless test file edited first
+- **Worktree Guard** (`workflow`): Warns about git worktree awareness
+- **Verification** (`core`): Blocks completion claims without test/build evidence
 - **Commit Safety** (`commit`): Validates commits against Conventional Commits
 
 ### Skills
@@ -91,11 +95,11 @@ Slash commands in `commands/*.md` expand to full prompts. Invoke with `/plugin:c
 
 ## Key Workflows
 
-### Verification Before Completion (super plugin)
+### Verification Before Completion (core plugin)
 
 The Stop hook prompt checks:
 1. Claims of "complete/fixed/passing/done" require verification command output
-2. Plan execution requires `finishing-a-development-branch` skill usage
+2. Plan execution requires `workflow:finish-branch` skill usage
 
 ### Commit Validation (commit plugin)
 
@@ -124,7 +128,7 @@ pre-commit install
 
 1. Create `plugins/<plugin>/skills/<name>/SKILL.md`
 2. Add YAML frontmatter with `name`, `description`, and optional `allowed-tools`
-3. Test with `super:testing-skills-with-subagents` skill
+3. Test with `meta:testing-skills` skill
 
 ### Creating Agents
 
@@ -149,6 +153,7 @@ Project settings in `.claude/settings.json`:
 
 ## Contributing
 
-Use `super:sharing-skills` skill for contributing skills upstream via PR.
+Use `meta:writing-skills` skill when creating new skills for this marketplace.
 - Remember to make worktrees local to the project
-- remember to use 'uv' for all python related changes/executions inside this repo
+- Remember to use 'uv' for all python related changes/executions inside this repo
+- Run `uv run pytest tests/` to validate plugin structure before committing
