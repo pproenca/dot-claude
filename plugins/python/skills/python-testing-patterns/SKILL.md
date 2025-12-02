@@ -429,19 +429,25 @@ exclude_lines = [
 
 ## Workflow Integration
 
-**Use with `core:tdd`** for the RED-GREEN-REFACTOR cycle:
+**RED-GREEN-REFACTOR cycle:**
 - Write failing test first (this skill provides patterns)
 - Watch it fail (verify correct failure)
 - Write minimal code to pass
 - Refactor while keeping tests green
 
-**Use with `debug:systematic`** when tests fail unexpectedly:
+If the `core` plugin is installed, use `core:tdd` for the full TDD methodology.
+
+**When tests fail unexpectedly:**
 - Don't guess at fixes - trace root cause first
 - Add diagnostic assertions to narrow down failures
 
-**Use with `core:verification`** before claiming done:
+If the `debug` plugin is installed, use `debug:systematic` for structured debugging.
+
+**Before claiming done:**
 - Run full test suite, not just new tests
 - Verify no regressions introduced
+
+If the `core` plugin is installed, use `core:verification` for systematic verification.
 
 ## Best Practices Summary
 
