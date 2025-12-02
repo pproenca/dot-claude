@@ -51,6 +51,19 @@
       "license": "MIT"
     },
     {
+      "name": "core",
+      "source": "./plugins/core",
+      "description": "Core workflows: TDD, verification, brainstorming - essential capabilities always loaded",
+      "version": "1.0.0",
+      "keywords": [
+        "tdd",
+        "verification",
+        "brainstorming",
+        "core"
+      ],
+      "license": "MIT"
+    },
+    {
       "name": "debug",
       "description": "Systematic debugging: root cause analysis, defense-in-depth validation, log correlation, and distributed systems troubleshooting",
       "source": "./plugins/debug",
@@ -82,6 +95,19 @@
       "license": "MIT"
     },
     {
+      "name": "meta",
+      "source": "./plugins/meta",
+      "description": "Plugin development: writing skills, testing skills, marketplace analysis",
+      "version": "1.0.0",
+      "keywords": [
+        "plugin-development",
+        "skills",
+        "marketplace",
+        "meta"
+      ],
+      "license": "MIT"
+    },
+    {
       "name": "python",
       "description": "Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django and production-ready practices",
       "source": "./plugins/python",
@@ -93,6 +119,18 @@
         "pydantic",
         "fastapi",
         "django"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "review",
+      "source": "./plugins/review",
+      "description": "Code review workflows: requesting reviews, receiving feedback, review best practices",
+      "version": "1.0.0",
+      "keywords": [
+        "code-review",
+        "feedback",
+        "review"
       ],
       "license": "MIT"
     },
@@ -115,19 +153,40 @@
     },
     {
       "name": "super",
-      "description": "Enhanced fork of obra/superpowers (by Jesse Vincent). Adds TDD enforcement hooks, security-reviewer agent, diagram-generator agent, allowed-tools restrictions, and integration improvements. 20 proven workflow skills for Claude Code.",
+      "description": "DEPRECATED: Use core, workflow, review, testing, meta, debug plugins instead. This plugin remains as an alias for backward compatibility.",
       "source": "./plugins/super",
-      "version": "3.1.0",
+      "version": "4.0.0",
       "keywords": [
-        "skills",
-        "tdd",
-        "debugging",
-        "collaboration",
-        "best-practices",
-        "workflows",
-        "hooks",
-        "agents",
-        "security-review"
+        "deprecated",
+        "alias",
+        "backward-compatibility"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "testing",
+      "source": "./plugins/testing",
+      "description": "Testing patterns: anti-patterns to avoid, condition-based waiting for async tests",
+      "version": "1.0.0",
+      "keywords": [
+        "testing",
+        "anti-patterns",
+        "async",
+        "flaky-tests"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "workflow",
+      "source": "./plugins/workflow",
+      "description": "Planning and execution workflows: plans, subagents, git worktrees, branch completion",
+      "version": "1.0.0",
+      "keywords": [
+        "planning",
+        "execution",
+        "subagents",
+        "worktrees",
+        "workflow"
       ],
       "license": "MIT"
     }
