@@ -81,6 +81,18 @@ The new architecture provides:
 4. **Independent versioning** - Plugins can evolve separately
 5. **Optional dependencies** - Domain plugins (python, shell, doc) work standalone but enhance with `core`
 
+## Migration Complete
+
+As of v5.0.0, the `super` plugin has been fully removed. All functionality is now in:
+- **core** - Essential workflows (TDD, verification, brainstorming)
+- **workflow** - Planning, execution, and git workflows
+- **review** - Code review
+- **testing** - Test patterns
+- **meta** - Plugin development
+- **debug** - Debugging skills
+
+If you have any references to `super:*` in your own configurations or documentation, update them using the mapping table above.
+
 ## Questions?
 
 See `CLAUDE.md` for full architecture documentation or open an issue on GitHub.
