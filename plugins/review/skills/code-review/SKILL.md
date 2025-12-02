@@ -107,6 +107,40 @@ Push back when:
 - Reference working tests/code
 - Involve human partner if architectural
 
+### Source-Specific Handling
+
+#### From Human Partner
+- **Trusted** - implement after understanding
+- **Still ask** if scope unclear
+- **No performative agreement**
+- **Skip to action** or technical acknowledgment
+
+#### From External Reviewers
+```
+BEFORE implementing:
+  1. Check: Technically correct for THIS codebase?
+  2. Check: Breaks existing functionality?
+  3. Check: Reason for current implementation?
+  4. Check: Works on all platforms/versions?
+  5. Check: Does reviewer understand full context?
+
+IF suggestion seems wrong:
+  Push back with technical reasoning
+
+IF conflicts with human partner's prior decisions:
+  Stop and discuss with human partner first
+```
+
+### YAGNI Check
+
+```
+IF reviewer suggests "implementing properly":
+  grep codebase for actual usage
+
+  IF unused: "This endpoint isn't called. Remove it (YAGNI)?"
+  IF used: Then implement properly
+```
+
 ### Acknowledging Correct Feedback
 
 When feedback IS correct:

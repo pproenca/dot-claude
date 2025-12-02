@@ -333,3 +333,4 @@ class TestPhase5Degradation:
         has_fallback = "If the `core` plugin is installed" in content
         no_reference = "core:verification" not in content
         assert has_fallback or no_reference, "Python skill references core without fallback"
+
