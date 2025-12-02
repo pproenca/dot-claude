@@ -46,7 +46,7 @@ plugins/<name>/
 | Plugin | Purpose |
 |--------|---------|
 | **core** | Essential: TDD, verification, brainstorming |
-| **workflow** | Planning: plans, execution, subagents, worktrees |
+| **workflow** | Planning and execution: plan, exec, brainstorm, notes, context, subagents, worktrees |
 | **review** | Code review: requesting, receiving, best practices |
 | **testing** | Test patterns: anti-patterns, condition waiting |
 | **meta** | Plugin dev: writing skills, marketplace analysis |
@@ -56,7 +56,6 @@ plugins/<name>/
 | **shell** | Shell: Google Style Guide |
 | **debug** | Debugging: systematic, root-cause, defense-in-depth |
 | **blackbox** | Telemetry: flight recorder hooks |
-| **super** | DEPRECATED: backward-compatible alias |
 
 ### Hook System
 
@@ -91,7 +90,7 @@ Agents are subagent definitions in `agents/*.md`. They're invoked via the Task t
 
 ### Commands
 
-Slash commands in `commands/*.md` expand to full prompts. Invoke with `/plugin:command` syntax (e.g., `/super:plan`, `/commit:new`).
+Slash commands in `commands/*.md` expand to full prompts. Invoke with `/plugin:command` syntax (e.g., `/workflow:plan`, `/commit:new`).
 
 ## Key Workflows
 
