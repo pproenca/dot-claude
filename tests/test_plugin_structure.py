@@ -320,3 +320,16 @@ class TestPhase4SplitSuper:
         plugin_json = plugins_dir / "super" / ".claude-plugin" / "plugin.json"
         data = json.loads(plugin_json.read_text())
         assert "deprecated" in data.get("description", "").lower()
+
+
+class TestPhase5Degradation:
+    """Tests for Phase 5: Graceful degradation."""
+
+    def test_python_has_fallback_text(self, plugins_dir: Path) -> None:
+        """Python skills should have fallback text for core dependency."""
+        python_skill = plugins_dir / "python" / "skills" / "python-testing-patterns" / "SKILL.md"
+        content = python_skill.read_text()
+        # Either has fallback text or doesn't reference core:verification
+        has_fallback = "If the `core` plugin is installed" in content
+        no_reference = "core:verification" not in content
+        assert has_fallback or no_reference, "Python skill references core without fallback"
