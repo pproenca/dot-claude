@@ -61,11 +61,6 @@
         },
         {
           "type": "json",
-          "path": "plugins/super/.claude-plugin/plugin.json",
-          "jsonpath": "$.version"
-        },
-        {
-          "type": "json",
           "path": "plugins/testing/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
@@ -128,11 +123,6 @@
           "type": "json",
           "path": ".claude-plugin/marketplace.json",
           "jsonpath": "$.plugins[10].version"
-        },
-        {
-          "type": "json",
-          "path": ".claude-plugin/marketplace.json",
-          "jsonpath": "$.plugins[11].version"
         }
       ]
     }

@@ -15,7 +15,10 @@ dot-claude is a collection of plugins that extend Claude Code with specialized c
 
 | Plugin | Purpose |
 |--------|---------|
-| **super** | Core workflows: TDD enforcement, verification, brainstorming, debugging, code review |
+| **core** | Essential workflows: TDD enforcement, verification, brainstorming |
+| **workflow** | Planning and execution: plans, subagents, worktrees, branch finishing |
+| **review** | Code review: requesting reviews, receiving feedback, security analysis |
+| **testing** | Test patterns: anti-patterns, condition-based waiting |
 | **commit** | Git workflows with Conventional Commits, PR generation, branch organization |
 | **python** | Python development with uv, pytest, FastAPI, Django, async patterns |
 | **doc** | Documentation generation, API docs, tutorials, Amazon-style memos |
@@ -23,6 +26,8 @@ dot-claude is a collection of plugins that extend Claude Code with specialized c
 | **debug** | Distributed systems debugging and log correlation |
 | **meta** | Plugin development: writing skills, testing skills, marketplace analysis |
 | **blackbox** | Flight recorder hooks for telemetry and recovery |
+
+> **Note:** The `super` plugin has been split into focused modules: `core`, `workflow`, `review`, `testing`, and `debug`. See [MIGRATION.md](MIGRATION.md) for migration guide.
 
 ## Installation
 
@@ -62,7 +67,7 @@ Skills are invoked automatically when relevant, or manually via the Skill tool:
 
 ```
 # TDD workflow
-skill: super:test-driven-development
+skill: core:tdd
 
 # Python project setup
 skill: python:uv-package-manager
@@ -76,7 +81,7 @@ skill: doc:amazon-writing
 Slash commands expand to full prompts:
 
 ```
-/super:plan          # Create implementation plan
+/workflow:plan       # Create implementation plan
 /commit:new          # Create Conventional Commit
 /python:refactor     # Refactor Python file
 /doc:gen             # Generate documentation
@@ -88,22 +93,24 @@ Agents are specialized subagents invoked via Task tool:
 
 ```python
 # Code review
-Task(subagent_type="super:code-reviewer", prompt="Review the authentication module")
+Task(subagent_type="review:code-reviewer", prompt="Review the authentication module")
 
 # Python expertise
 Task(subagent_type="python:python-expert", prompt="Optimize async database queries")
 
 # Security analysis
-Task(subagent_type="super:security-reviewer", prompt="Audit API endpoints for OWASP vulnerabilities")
+Task(subagent_type="review:security-reviewer", prompt="Audit API endpoints for OWASP vulnerabilities")
 ```
 
 ## Key Features
 
 ### TDD Enforcement
 
-The `super` plugin enforces test-driven development:
+The `core` plugin enforces test-driven development through multiple mechanisms:
 
-1. **Verification Hook** - Requires test/build evidence before completion claims
+1. **TDD Guard Hook** - Blocks production file edits unless test files are edited first
+2. **Verification Hook** - Requires test/build evidence before completion claims
+3. **core:tdd Skill** - Guides writing tests first, watching them fail, then implementing minimal code to pass
 
 ### Conventional Commits
 
@@ -118,8 +125,9 @@ The `commit` plugin validates git commits:
 
 | Hook | Plugin | Type | Behavior |
 |------|--------|------|----------|
-| Worktree Guard | super | PreToolUse | Warns about git worktree awareness |
-| Verification | super | Stop | Requires test/build evidence before completion claims |
+| TDD Guard | core | PreToolUse | Blocks production file edits unless test files edited first |
+| Verification | core | Stop | Requires test/build evidence before completion claims |
+| Worktree Guard | workflow | PreToolUse | Warns about git worktree awareness |
 | Git Safety | commit | PreToolUse | Validates git commands before execution |
 | Commit Validation | commit | PostToolUse | Enforces Conventional Commits format |
 | Shell Validation | shell | PreToolUse | Checks shell syntax before file creation |
@@ -128,41 +136,63 @@ The `commit` plugin validates git commits:
 
 ## Plugin Details
 
-### super (Core Workflows)
+### core (Essential Workflows)
 
-**Skills (20):**
-- `brainstorming` - Socratic method design refinement
-- `condition-based-waiting` - Replace arbitrary timeouts with condition polling
-- `defense-in-depth` - Validate at every layer data passes through
-- `dispatching-parallel-agents` - Concurrent agent deployment
+**Skills (3):**
+- `tdd` - Write tests first, watch fail, write minimal code to pass
+- `brainstorming` - Socratic method design refinement before implementation
+- `verification` - Evidence-based success claims with test/build output
+
+**Commands (1):**
+- `/core:context` - Show project context for resuming work
+
+**Hooks:**
+- TDD Guard (PreToolUse) - Blocks production edits without test file changes first
+- Verification (Stop) - Requires evidence before completion claims
+
+### workflow (Planning & Execution)
+
+**Skills (6):**
+- `writing-plans` - Detailed implementation plans with exact file paths
 - `executing-plans` - Execute plans in controlled batches with review checkpoints
-- `finishing-a-development-branch` - Guide completion of development work
-- `receiving-code-review` - Handle code review feedback with technical rigor
-- `requesting-code-review` - Dispatch code-reviewer subagent for implementation review
-- `root-cause-tracing` - Trace bugs backward through call stack
-- `sharing-skills` - Contribute skills upstream via PR
-- `subagent-driven-development` - Fresh subagent per task with code review
-- `systematic-debugging` - Four-phase debugging framework
-- `test-driven-development` - Write tests first, watch fail, write minimal code
-- `testing-anti-patterns` - Prevent testing mock behavior and production pollution
-- `testing-skills-with-subagents` - RED-GREEN-REFACTOR cycle for process documentation
 - `using-git-worktrees` - Create isolated git worktrees for feature work
-- `using-superpowers` - Mandatory workflows for finding and using skills
-- `verification-before-completion` - Evidence-based success claims
-- `writing-plans` - Detailed implementation plans
-- `writing-skills` - TDD approach to creating new skills
+- `finishing-branch` - Guide completion with merge/PR/cleanup options
+- `subagent-driven-development` - Fresh subagent per task with code review gates
+- `dispatching-parallel-agents` - Concurrent agent deployment for independent failures
 
-**Agents (3):**
+**Commands (3):**
+- `/workflow:plan` - Create detailed implementation plan
+- `/workflow:exec` - Execute plan with review checkpoints
+- `/workflow:notes` - Add session notes to CLAUDE.md
+
+**Hooks:**
+- Worktree Guard (PreToolUse) - Warns about git worktree awareness
+
+### review (Code Review)
+
+**Skills (2):**
+- `requesting-code-review` - Dispatch code-reviewer subagent for implementation review
+- `receiving-code-review` - Handle feedback with technical rigor, not performative agreement
+
+**Agents (2):**
 - `code-reviewer` - Reviews code against plans and standards
-- `diagram-generator` - Creates architecture diagrams
-- `security-reviewer` - Security vulnerability assessment
+- `security-reviewer` - Security vulnerability assessment (OWASP, CWE)
 
-**Commands (5):**
-- `/super:plan` - Create implementation plan
-- `/super:brainstorm` - Interactive design refinement
-- `/super:exec` - Execute plan with review checkpoints
-- `/super:context` - Show project context for resuming
-- `/super:notes` - Add session notes to CLAUDE.md
+### testing (Test Patterns)
+
+**Skills (2):**
+- `anti-patterns` - Prevent testing mock behavior and production pollution
+- `condition-based-waiting` - Replace arbitrary timeouts with condition polling
+
+### debug (Debugging)
+
+**Skills (3):**
+- `systematic-debugging` - Four-phase framework: investigate, analyze, hypothesize, implement
+- `root-cause-tracing` - Trace bugs backward through call stack with instrumentation
+- `defense-in-depth` - Validate at entry, business logic, and environment layers
+
+**Agents (1):**
+- `diagram-generator` - Creates architecture diagrams for debugging
 
 ### commit (Git Workflows)
 
@@ -315,7 +345,7 @@ The `.claude/settings.json` file controls tool permissions:
 ```json
 {
   "permissions": {
-    "allow": ["Bash(git:*)", "Bash(uv:*)", "Skill(super:*)"],
+    "allow": ["Bash(git:*)", "Bash(uv:*)", "Skill(core:*)", "Skill(workflow:*)"],
     "ask": ["Bash(git push:*)", "Bash(rm:*)"]
   }
 }
@@ -334,7 +364,7 @@ Custom status line shows session metrics:
 
 1. Create `plugins/<plugin>/skills/<name>/SKILL.md`
 2. Add YAML frontmatter with `name`, `description`, optional `allowed-tools`
-3. Test with `super:testing-skills-with-subagents` skill
+3. Test with `meta:testing-skills` skill
 
 ### Creating Agents
 
@@ -358,13 +388,15 @@ Custom status line shows session metrics:
 
 ## Contributing
 
-Use the `super:sharing-skills` skill for contributing skills upstream via PR.
+Contributions are welcome! To contribute:
 
 1. Fork the repository
 2. Create a feature branch
 3. Make changes following existing patterns
 4. Run validation: `./scripts/validate-plugins.py`
 5. Submit a pull request
+
+Use the `meta:writing-skills` skill when creating new skills for the marketplace.
 
 ## License
 
