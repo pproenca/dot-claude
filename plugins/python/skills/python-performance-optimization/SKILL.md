@@ -455,12 +455,12 @@ def test_map_function(benchmark):
 
 ## Workflow Integration
 
-**Use with `super:systematic-debugging`** for performance issues:
+**Use with `debug:systematic`** for performance issues:
 - Profile BEFORE optimizing - find real bottlenecks first
 - Don't guess at slow code - measure with cProfile/py-spy
 - Follow the 4-phase framework: investigate, analyze, hypothesize, implement
 
-**Use with `super:verification-before-completion`** after optimization:
+**Use with `super:verification`** after optimization:
 - Run benchmarks to prove improvement
 - Verify no regressions in functionality
 - Show before/after metrics

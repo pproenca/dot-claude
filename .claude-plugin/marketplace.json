@@ -52,15 +52,16 @@
     },
     {
       "name": "debug",
-      "description": "Distributed systems debugging: log analysis, error correlation, stack trace detection, and root cause investigation",
+      "description": "Systematic debugging: root cause analysis, defense-in-depth validation, log correlation, and distributed systems troubleshooting",
       "source": "./plugins/debug",
-      "version": "3.1.0",
+      "version": "3.2.0",
       "keywords": [
         "debugging",
+        "root-cause",
+        "defense-in-depth",
         "distributed-systems",
         "logs",
-        "error-correlation",
-        "stack-traces"
+        "error-correlation"
       ],
       "license": "MIT"
     },

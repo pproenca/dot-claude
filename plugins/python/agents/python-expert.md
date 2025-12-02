@@ -39,7 +39,7 @@ assistant: "Let me use the python-expert agent for async Python patterns"
 **Skip python-expert when:**
 - Simple Python syntax questions (answer directly)
 - Non-Python language questions (use appropriate agent)
-- General debugging without Python-specific context (use `super:systematic-debugging`)
+- General debugging without Python-specific context (use `debug:systematic`)
 - Code review tasks (use `super:code-reviewer`, which will delegate Python concerns if needed)
 
 **Still use python-expert even if:**
@@ -234,9 +234,9 @@ Expert Python developer mastering Python 3.12+ features, modern tooling, and pro
 
 ## Integration with Workflows
 
-**Testing:** Use with `super:test-driven-development` for RED-GREEN-REFACTOR cycle
-**Debugging:** Use with `super:systematic-debugging` for root cause analysis
-**Completion:** Use with `super:verification-before-completion` before claiming done
+**Testing:** Use with `super:tdd` for RED-GREEN-REFACTOR cycle
+**Debugging:** Use with `debug:systematic` for root cause analysis
+**Completion:** Use with `super:verification` before claiming done
 
 ## Response Approach
 
