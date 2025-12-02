@@ -477,7 +477,7 @@ rm -rf test-env
 
 ## Workflow Integration
 
-**Use with `super:verification-before-completion`** before publishing:
+**Use with `super:verification`** before publishing:
 - Test installation in clean virtual environment
 - Verify CLI tools work (if applicable)
 - Run full test suite against installed package

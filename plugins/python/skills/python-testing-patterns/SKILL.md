@@ -429,17 +429,17 @@ exclude_lines = [
 
 ## Workflow Integration
 
-**Use with `super:test-driven-development`** for the RED-GREEN-REFACTOR cycle:
+**Use with `super:tdd`** for the RED-GREEN-REFACTOR cycle:
 - Write failing test first (this skill provides patterns)
 - Watch it fail (verify correct failure)
 - Write minimal code to pass
 - Refactor while keeping tests green
 
-**Use with `super:systematic-debugging`** when tests fail unexpectedly:
+**Use with `debug:systematic`** when tests fail unexpectedly:
 - Don't guess at fixes - trace root cause first
 - Add diagnostic assertions to narrow down failures
 
-**Use with `super:verification-before-completion`** before claiming done:
+**Use with `super:verification`** before claiming done:
 - Run full test suite, not just new tests
 - Verify no regressions introduced
 

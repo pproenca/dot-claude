@@ -255,7 +255,7 @@ wc -w skills/path/SKILL.md
 
 Use skill name only, with explicit requirement markers:
 - ✅ Good: `**REQUIRED SUB-SKILL:** Use super:tdd`
-- ✅ Good: `**REQUIRED SUB-SKILL:** Use super:systematic-debugging`
+- ✅ Good: `**REQUIRED SUB-SKILL:** Use debug:systematic`
 - ❌ Bad: `See skills/testing/tdd` (unclear if required)
 - ❌ Bad: `@skills/testing/tdd/SKILL.md` (force-loads, burns context)
 
