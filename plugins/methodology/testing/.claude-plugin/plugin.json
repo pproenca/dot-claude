@@ -1,0 +1,17 @@
+{
+  "name": "testing",
+  "version": "1.0.0",
+  "description": "Testing patterns: anti-patterns to avoid, condition-based waiting for async tests",
+  "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/methodology/testing",
+  "repository": "https://github.com/pedroproenca/dot-claude",
+  "license": "MIT",
+  "keywords": [
+    "testing",
+    "anti-patterns",
+    "async",
+    "flaky-tests"
+  ],
+  "author": {
+    "name": "Pedro Proenca"
+  }
+}

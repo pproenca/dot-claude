@@ -1,0 +1,17 @@
+{
+  "name": "meta",
+  "version": "1.0.0",
+  "description": "Plugin development: writing skills, testing skills, marketplace analysis",
+  "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/specialized/meta",
+  "repository": "https://github.com/pedroproenca/dot-claude",
+  "license": "MIT",
+  "keywords": [
+    "plugin-development",
+    "skills",
+    "marketplace",
+    "meta"
+  ],
+  "author": {
+    "name": "Pedro Proenca"
+  }
+}
