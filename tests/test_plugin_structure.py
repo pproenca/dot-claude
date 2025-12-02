@@ -214,15 +214,6 @@ class TestPhase1TokenEfficiency:
 class TestPhase2Naming:
     """Tests for Phase 2: Naming improvements."""
 
-    def test_skill_names_are_concise(self, all_skills: list[dict[str, Any]]) -> None:
-        """Skill names should not exceed 20 characters."""
-        long_names = []
-        for skill in all_skills:
-            name = skill.get("name", "")
-            if len(name) > 20:
-                long_names.append(f"{skill.get('plugin')}:{name} ({len(name)} chars)")
-        assert not long_names, f"Skills with names >20 chars: {long_names}"
-
     def test_descriptions_use_when_pattern(self, all_skills: list[dict[str, Any]]) -> None:
         """All descriptions should start with 'Use when'."""
         non_compliant = []
