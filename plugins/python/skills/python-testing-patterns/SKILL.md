@@ -429,7 +429,7 @@ exclude_lines = [
 
 ## Workflow Integration
 
-**Use with `super:tdd`** for the RED-GREEN-REFACTOR cycle:
+**Use with `core:tdd`** for the RED-GREEN-REFACTOR cycle:
 - Write failing test first (this skill provides patterns)
 - Watch it fail (verify correct failure)
 - Write minimal code to pass
@@ -439,7 +439,7 @@ exclude_lines = [
 - Don't guess at fixes - trace root cause first
 - Add diagnostic assertions to narrow down failures
 
-**Use with `super:verification`** before claiming done:
+**Use with `core:verification`** before claiming done:
 - Run full test suite, not just new tests
 - Verify no regressions introduced
 

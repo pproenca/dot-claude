@@ -234,9 +234,9 @@ Expert Python developer mastering Python 3.12+ features, modern tooling, and pro
 
 ## Integration with Workflows
 
-**Testing:** Use with `super:tdd` for RED-GREEN-REFACTOR cycle
+**Testing:** Use with `core:tdd` for RED-GREEN-REFACTOR cycle
 **Debugging:** Use with `debug:systematic` for root cause analysis
-**Completion:** Use with `super:verification` before claiming done
+**Completion:** Use with `core:verification` before claiming done
 
 ## Response Approach
 
