@@ -210,5 +210,5 @@ Ready to implement auth feature
 - Any skill needing isolated workspace
 
 **Pairs with:**
-- **finishing-a-development-branch** - **REQUIRED SUB-SKILL:** Use super:finishing-a-development-branch for cleanup after work complete
-- **executing-plans** or **subagent-driven-development** - Work happens in this worktree
+- **finish-branch** - **REQUIRED SUB-SKILL:** Use super:finish-branch for cleanup after work complete
+- **executing-plans** or **subagent-dev** - Work happens in this worktree

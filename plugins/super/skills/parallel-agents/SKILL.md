@@ -1,5 +1,5 @@
 ---
-name: dispatching-parallel-agents
+name: parallel-agents
 description: Use when facing 3+ independent failures that can be investigated without shared state or dependencies - dispatches multiple Claude agents to investigate and fix independent problems concurrently
 allowed-tools: Task
 ---
