@@ -1,5 +1,5 @@
 ---
-name: testing-skills-with-subagents
+name: testing-skills
 description: Use when creating or editing skills, before deployment, to verify they work under pressure and resist rationalization - applies RED-GREEN-REFACTOR cycle to process documentation by running baseline without skill, writing to address failures, iterating to close loopholes
 allowed-tools: Task, Read
 ---
@@ -14,7 +14,7 @@ You run scenarios without the skill (RED - watch agent fail), write skill addres
 
 **Core principle:** If you didn't watch an agent fail without the skill, you don't know if the skill prevents the right failures.
 
-**REQUIRED SUB-SKILL:** Use super:test-driven-development. You MUST understand the RED-GREEN-REFACTOR cycle defined there. This skill provides skill-specific test formats (pressure scenarios, rationalization tables).
+**REQUIRED SUB-SKILL:** Use super:tdd. You MUST understand the RED-GREEN-REFACTOR cycle defined there. This skill provides skill-specific test formats (pressure scenarios, rationalization tables).
 
 **Complete worked example:** See examples/CLAUDE_MD_TESTING.md for a full test campaign testing CLAUDE.md documentation variants.
 
@@ -394,7 +394,7 @@ From applying TDD to TDD skill itself (2025-10-03):
 - Uses `Read` to examine skill content and examples
 
 **REQUIRED SUB-SKILL:**
-- **test-driven-development** - Foundational skill defining RED-GREEN-REFACTOR cycle
+- **tdd** - Foundational skill defining RED-GREEN-REFACTOR cycle
 
 **Called by:**
 - **writing-skills** - **REQUIRED SUB-SKILL:** Use super:writing-skills for testing before deployment (Step 5)

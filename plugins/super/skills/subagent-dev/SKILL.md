@@ -1,5 +1,5 @@
 ---
-name: subagent-driven-development
+name: subagent-dev
 description: Use when executing implementation plans with independent tasks in the current session - dispatches fresh subagent for each task with code review between tasks, enabling fast iteration with quality gates
 allowed-tools: Task, Read, Skill
 ---
@@ -103,8 +103,8 @@ After all tasks complete, dispatch final code-reviewer:
 ### 7. Complete Development
 
 After final review passes:
-- Announce: "I'm using the finishing-a-development-branch skill to complete this work."
-- **REQUIRED SUB-SKILL:** Use super:finishing-a-development-branch
+- Announce: "I'm using the finish-branch skill to complete this work."
+- **REQUIRED SUB-SKILL:** Use super:finish-branch
 - Follow that skill to verify tests, present options, execute choice
 
 ## Example Workflow
@@ -179,10 +179,10 @@ Done!
 **Required workflow skills:**
 - **writing-plans** - **REQUIRED SUB-SKILL:** Use super:writing-plans to create the plan that this skill executes
 - **requesting-code-review** - **REQUIRED SUB-SKILL:** Use super:requesting-code-review for review after each task (see Step 3)
-- **finishing-a-development-branch** - **REQUIRED SUB-SKILL:** Use super:finishing-a-development-branch to complete development after all tasks (see Step 7)
+- **finish-branch** - **REQUIRED SUB-SKILL:** Use super:finish-branch to complete development after all tasks (see Step 7)
 
 **Subagents must use:**
-- **test-driven-development** - Subagents follow TDD for each task
+- **tdd** - Subagents follow TDD for each task
 
 **Alternative workflow:**
 - **executing-plans** - Use for parallel session instead of same-session execution

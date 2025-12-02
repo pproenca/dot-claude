@@ -1,5 +1,5 @@
 ---
-name: condition-based-waiting
+name: condition-wait
 description: Use when tests have race conditions, timing dependencies, or inconsistent pass/fail behavior - replaces arbitrary timeouts with condition polling to wait for actual state changes, eliminating flaky tests from timing guesses
 allowed-tools: Bash(pytest:*), Read
 ---
