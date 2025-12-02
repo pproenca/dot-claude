@@ -1,5 +1,5 @@
 ---
-name: finishing-a-development-branch
+name: finish-branch
 description: Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup
 allowed-tools: Bash(git:*), Bash(gh:*), AskUserQuestion
 ---
@@ -12,7 +12,7 @@ Guide completion of development work by presenting clear options and handling ch
 
 **Core principle:** Verify tests → Present options → Execute choice → Clean up.
 
-**Announce at start:** "I'm using the finishing-a-development-branch skill to complete this work."
+**Announce at start:** "I'm using the finish-branch skill to complete this work."
 
 ## The Process
 
@@ -194,7 +194,7 @@ git worktree remove <worktree-path>
 ## Integration
 
 **Called by:**
-- **subagent-driven-development** (Step 7) - After all tasks complete
+- **subagent-dev** (Step 7) - After all tasks complete
 - **executing-plans** (Step 5) - After all batches complete
 
 **Pairs with:**

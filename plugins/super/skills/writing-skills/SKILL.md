@@ -16,7 +16,7 @@ You write test cases (pressure scenarios with subagents), watch them fail (basel
 
 **Core principle:** If you didn't watch an agent fail without the skill, you don't know if the skill teaches the right thing.
 
-**REQUIRED SUB-SKILL:** Use super:test-driven-development. You MUST understand the RED-GREEN-REFACTOR cycle defined there. This skill adapts TDD to documentation.
+**REQUIRED SUB-SKILL:** Use super:tdd. You MUST understand the RED-GREEN-REFACTOR cycle defined there. This skill adapts TDD to documentation.
 
 **Official guidance:** For Anthropic's official skill authoring best practices, see anthropic-best-practices.md. This document provides additional patterns and guidelines that complement the TDD-focused approach in this skill.
 
@@ -61,7 +61,7 @@ The entire skill creation process follows RED-GREEN-REFACTOR.
 ## Skill Types
 
 ### Technique
-Concrete method with steps to follow (condition-based-waiting, root-cause-tracing)
+Concrete method with steps to follow (condition-wait, root-cause-tracing)
 
 ### Pattern
 Way of thinking about problems (flatten-with-flags, test-invariants)
@@ -182,7 +182,7 @@ Use words Claude would search for:
 
 **Use active voice, verb-first:**
 - ✅ `creating-skills` not `skill-creation`
-- ✅ `testing-skills-with-subagents` not `subagent-skill-testing`
+- ✅ `testing-skills` not `subagent-skill-testing`
 
 ### 4. Token Efficiency (Critical)
 
@@ -240,7 +240,7 @@ wc -w skills/path/SKILL.md
 ```
 
 **Name by what you DO or core insight:**
-- ✅ `condition-based-waiting` > `async-test-helpers`
+- ✅ `condition-wait` > `async-test-helpers`
 - ✅ `using-skills` not `skill-usage`
 - ✅ `flatten-with-flags` > `data-structure-refactoring`
 - ✅ `root-cause-tracing` > `debugging-techniques`
@@ -254,10 +254,10 @@ wc -w skills/path/SKILL.md
 **When writing documentation that references other skills:**
 
 Use skill name only, with explicit requirement markers:
-- ✅ Good: `**REQUIRED SUB-SKILL:** Use super:test-driven-development`
+- ✅ Good: `**REQUIRED SUB-SKILL:** Use super:tdd`
 - ✅ Good: `**REQUIRED SUB-SKILL:** Use super:systematic-debugging`
-- ❌ Bad: `See skills/testing/test-driven-development` (unclear if required)
-- ❌ Bad: `@skills/testing/test-driven-development/SKILL.md` (force-loads, burns context)
+- ❌ Bad: `See skills/testing/tdd` (unclear if required)
+- ❌ Bad: `@skills/testing/tdd/SKILL.md` (force-loads, burns context)
 
 **Why no @ links:** `@` syntax force-loads files immediately, consuming 200k+ context before you need them.
 
@@ -323,7 +323,7 @@ When: All content fits, no heavy reference needed
 
 ### Skill with Reusable Tool
 ```
-condition-based-waiting/
+condition-wait/
   SKILL.md    # Overview + patterns
   example.ts  # Working helpers to adapt
 ```
@@ -358,7 +358,7 @@ Edit skill without testing? Same violation.
 - Don't "adapt" while running tests
 - Delete means delete
 
-**REQUIRED SUB-SKILL:** Use super:test-driven-development. That skill explains why this matters. Same principles apply to documentation.
+**REQUIRED SUB-SKILL:** Use super:tdd. That skill explains why this matters. Same principles apply to documentation.
 
 ## Testing All Skill Types
 
@@ -366,7 +366,7 @@ Different skill types need different test approaches:
 
 ### Discipline-Enforcing Skills (rules/requirements)
 
-**Examples:** TDD, verification-before-completion, designing-before-coding
+**Examples:** TDD, verification, designing-before-coding
 
 **Test with:**
 - Academic questions: Do they understand the rules?
@@ -378,7 +378,7 @@ Different skill types need different test approaches:
 
 ### Technique Skills (how-to guides)
 
-**Examples:** condition-based-waiting, root-cause-tracing, defensive-programming
+**Examples:** condition-wait, root-cause-tracing, defensive-programming
 
 **Test with:**
 - Application scenarios: Can they apply the technique correctly?
@@ -521,7 +521,7 @@ Run same scenarios WITH skill. Agent should now comply.
 
 Agent found new rationalization? Add explicit counter. Re-test until bulletproof.
 
-**REQUIRED SUB-SKILL:** Use super:testing-skills-with-subagents for the complete testing methodology:
+**REQUIRED SUB-SKILL:** Use super:testing-skills for the complete testing methodology:
 - How to write pressure scenarios
 - Pressure types (time, sunk cost, authority, exhaustion)
 - Plugging holes systematically

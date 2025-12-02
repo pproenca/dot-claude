@@ -305,7 +305,7 @@ After saving the plan (with or without diagrams), offer execution choice:
 **Which approach?"**
 
 **If Subagent-Driven chosen:**
-- **REQUIRED SUB-SKILL:** Use super:subagent-driven-development
+- **REQUIRED SUB-SKILL:** Use super:subagent-dev
 - Stay in this session
 - Fresh subagent per task + code review
 
