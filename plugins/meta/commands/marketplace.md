@@ -13,7 +13,7 @@ Analyze plugins in the marketplace to identify quality improvements.
 **Process:**
 
 1. **Load the methodology:**
-   Use `Skill` tool with `skill: "analyze:marketplace-analysis"`
+   Use `Skill` tool with `skill: "meta:marketplace-analysis"`
 
 2. **Analyze the plugin(s):**
    Read all plugin components (skills, agents, commands, hooks) and apply the methodology.
