@@ -113,16 +113,15 @@ After code review passes:
 - Show what was implemented
 - Show verification output
 - **Show code review summary** (issues found and resolved)
-- **Use `AskUserQuestion` tool** to request feedback:
+- **Use the AskUserQuestion tool** (do NOT output as plain text):
 
-```
 Question: "Batch [N] complete. How should I proceed?"
 Header: "Next step"
 Options:
-  - "Continue" - Proceed to next batch
-  - "Review changes" - Show diffs or re-explain what was done
-  - "Make adjustments" - Apply corrections before continuing
-```
+- Continue: Proceed to next batch
+- Review changes: Show diffs or re-explain what was done
+- Make adjustments: Apply corrections before continuing
+multiSelect: false
 
 Wait for user response before proceeding.
 
