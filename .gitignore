@@ -44,6 +44,9 @@ temp/
 # Git worktrees
 .worktrees/
 
+# Git mailmap (used for author rewriting)
+.mailmap
+
 # Test scripts with credentials
 script.sh
 
