@@ -36,12 +36,34 @@ HEAD_SHA=$(git rev-parse HEAD)
 
 **2. Dispatch code-reviewer subagent:**
 
-Use Task tool with review:code-reviewer type with:
+Use Task tool with `review:code-reviewer` type. See dispatch template at `plugins/methodology/review/templates/code-reviewer-dispatch.md`.
+
+**Placeholders:**
 - `{WHAT_WAS_IMPLEMENTED}` - What you just built
 - `{PLAN_OR_REQUIREMENTS}` - What it should do
 - `{BASE_SHA}` - Starting commit
 - `{HEAD_SHA}` - Ending commit
 - `{DESCRIPTION}` - Brief summary
+
+**Example dispatch:**
+```
+Task tool (review:code-reviewer):
+  description: "Review Task 2 implementation"
+  prompt: |
+    Review the implementation against requirements.
+
+    ## Context
+    - **What Was Implemented:** Verification and repair functions for index
+    - **Requirements/Plan:** Task 2 from docs/plans/deployment-plan.md
+    - **Description:** Added verifyIndex() and repairIndex() with 4 issue types
+
+    ## Git Range
+    - **Base:** a7981ec
+    - **Head:** 3df7661
+
+    First run: git diff --stat a7981ec..3df7661
+    Then review against plugins/methodology/review/references/code-review-standards.md
+```
 
 **3. Act on feedback:**
 - Fix Critical issues immediately
@@ -155,6 +177,37 @@ When feedback IS correct:
 ```
 
 **Why no thanks:** Actions speak. Just fix it. The code itself shows you heard the feedback.
+
+### Gracefully Correcting Your Pushback
+
+If you pushed back and were wrong:
+```
+✅ "You were right - I checked [X] and it does [Y]. Implementing now."
+✅ "Verified this and you're correct. My initial understanding was wrong because [reason]. Fixing."
+
+❌ Long apology
+❌ Defending why you pushed back
+❌ Over-explaining
+```
+
+State the correction factually and move on.
+
+### When You Can't Easily Verify
+
+If you can't verify the feedback:
+```
+"I can't verify this without [X]. Should I [investigate/ask/proceed]?"
+```
+
+Don't assume the reviewer is right or wrong - state the limitation and ask for direction.
+
+### Signal if Uncomfortable Pushing Back
+
+If you feel uncomfortable pushing back on technically incorrect feedback but know it's wrong:
+
+**Signal phrase:** "Strange things are afoot at the Circle K"
+
+This signals to your human partner that you have technical concerns but are struggling to articulate pushback. They can then dig deeper.
 
 ### Implementation Order
 

@@ -253,12 +253,13 @@ Options:
 If user selects diagram types, dispatch diagram-generator subagent:
 
 ```
-Task tool (general-purpose):
+Task tool (doc:diagram-generator):
   description: "Generate Mermaid diagrams for plan"
-  prompt: Use template at writing-plans/diagram-prompt-template.md
+  prompt: |
+    See template at plugins/methodology/workflow/templates/diagram-prompt.md
 
-  DIAGRAM_TYPES: [user's selection]
-  PLAN_CONTENT: [full plan text]
+    DIAGRAM_TYPES: [user's selection]
+    PLAN_CONTENT: [full plan text]
 ```
 
 ### Step 3: Insert Diagrams

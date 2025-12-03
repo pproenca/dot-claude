@@ -65,6 +65,19 @@ python3 scripts/validate-plugins.py
 ```
 Validates all plugins using `claude plugin validate`. Also runs automatically via pre-commit hook.
 
+### Reference Validation
+```bash
+python3 scripts/validate-references.py
+```
+Validates cross-references in plugins:
+- Template file references point to existing files
+- No stale plugin prefixes (e.g., `super:` instead of `workflow:`)
+- Skill/agent references are valid
+- Required sections exist in critical skills
+- No orphaned template files
+
+Also runs automatically via pre-commit hook.
+
 ### Configuration Sync
 ```
 /sync-claude-config
