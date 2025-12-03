@@ -9,10 +9,9 @@ don't actually exist in the project, and offers to fix them automatically.
 import json
 import sys
 from pathlib import Path
-from typing import Set, List, Tuple
 
 
-def get_actual_plugins(project_root: Path) -> Set[str]:
+def get_actual_plugins(project_root: Path) -> set[str]:
     """Scan project plugins directory and return set of actual plugin IDs."""
     project_plugins = set()
     plugins_dir = project_root / "plugins"
@@ -35,7 +34,7 @@ def get_actual_plugins(project_root: Path) -> Set[str]:
     return project_plugins
 
 
-def check_settings_file(settings_path: Path, actual_plugins: Set[str]) -> Tuple[List[str], List[str]]:
+def check_settings_file(settings_path: Path, actual_plugins: set[str]) -> tuple[list[str], list[str]]:
     """
     Check settings.json for plugin reference mismatches.
 
@@ -69,7 +68,7 @@ def check_settings_file(settings_path: Path, actual_plugins: Set[str]) -> Tuple[
     return missing_enabled, missing_skills
 
 
-def fix_settings_file(settings_path: Path, missing_enabled: List[str], missing_skills: List[str]) -> None:
+def fix_settings_file(settings_path: Path, missing_enabled: list[str], missing_skills: list[str]) -> None:
     """Remove missing plugin references from settings.json."""
     with open(settings_path) as f:
         settings = json.load(f)

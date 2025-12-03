@@ -1,17 +1,23 @@
 """Tests for scripts/fix-plugin-references.py"""
 
+import importlib.util
 import json
 import tempfile
 from pathlib import Path
-import sys
-import importlib.util
 
-# Load the script as a module
-script_path = Path(__file__).parent.parent / "scripts" / "fix-plugin-references.py"
-spec = importlib.util.spec_from_file_location("fix_plugin_references", script_path)
-fix_plugin_references = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(fix_plugin_references)
 
+def _load_module():
+    """Load the fix-plugin-references.py script as a module."""
+    script_path = Path(__file__).parent.parent / "scripts" / "fix-plugin-references.py"
+    spec = importlib.util.spec_from_file_location("fix_plugin_references", script_path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Cannot load module from {script_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+fix_plugin_references = _load_module()
 get_actual_plugins = fix_plugin_references.get_actual_plugins
 check_settings_file = fix_plugin_references.check_settings_file
 fix_settings_file = fix_plugin_references.fix_settings_file
