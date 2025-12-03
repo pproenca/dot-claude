@@ -193,7 +193,7 @@ Done!
 - **finish-branch** - **REQUIRED SUB-SKILL:** Use workflow:finish-branch to complete development after all tasks (see Step 7)
 
 **Subagents must use:**
-- **tdd** - Subagents follow TDD for each task
+- **tdd** - **REQUIRED SUB-SKILL:** Use core:tdd for TDD in each task
 
 **Alternative workflow:**
 - **executing-plans** - Use for parallel session instead of same-session execution
