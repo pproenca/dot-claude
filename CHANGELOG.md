@@ -13,10 +13,10 @@
 ### ⚠ BREAKING CHANGES
 
 * **dev:** Plugin namespace changes from dev: to python:
-    - dev:python-pro → python:python-expert
-    - /dev:scaffold removed
-    - /python:refactor added (mirrors shell:refactor pattern)
-    - All dev:* skill references → python:*
+  * dev:python-pro → python:python-expert
+  * /dev:scaffold removed
+  * /python:refactor added (mirrors shell:refactor pattern)
+  * All dev:*skill references → python:*
 
 ### Features
 

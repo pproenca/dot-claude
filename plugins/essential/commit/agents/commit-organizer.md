@@ -14,6 +14,7 @@ allowed-tools: [Bash, Read, AskUserQuestion, TodoWrite]
 ## Progress Tracking
 
 Create TodoWrite todos NOW:
+
 - Run branch analysis script
 - Reason through changes (chain-of-thought)
 - Classify changes by type
@@ -28,11 +29,13 @@ Mark each as `in_progress` when starting, `completed` when done.
 ## When NOT to Use
 
 **Skip when:**
+
 - Single commit with clear message
 - Just need to stage and commit (use git directly)
 - Commits already follow Conventional Commits format
 
 **Still use when:**
+
 - Multiple messy commits need reorganization
 - Need to split large commits logically
 - Preparing PR with clean history
@@ -48,6 +51,7 @@ python3 -S ${CLAUDE_PLUGIN_ROOT}/scripts/analyze_branch.py
 ```
 
 This outputs JSON with:
+
 - Branch point commit
 - All changed files with FULL DIFF CONTENT
 - Line counts per file
@@ -72,20 +76,24 @@ This outputs JSON with:
 Work through these questions NOW and write out your reasoning explicitly:
 
 ### 2.1 Primary Goal Analysis
+
 1. "What is the PRIMARY goal of this branch?" - The main feature, fix, or refactoring
 2. "How would I describe this branch in one sentence to a colleague?"
 
 ### 2.2 Secondary Change Detection
+
 3. "Are there SECONDARY changes mixed in?" - Cleanup, formatting, unrelated fixes
 4. "Were any refactorings done to ENABLE the main work?" - These should be separate commits
 
 ### 2.3 File Relationship Mapping
+
 5. "Which files are CORE to the goal vs SUPPORTING?"
    - Core: Files that implement the main change
    - Supporting: Tests, configs, documentation
 6. "Which files changed together logically?" - Same feature, same layer, same concern
 
 ### 2.4 Dependency Analysis
+
 7. "What order must these changes be applied?" - Types before implementations, interfaces before consumers
 8. "Could a reviewer understand Commit N without reading Commits 1..N-1?"
 
@@ -112,6 +120,7 @@ For each changed file/section, classify NOW using Conventional Commits types:
 ### Breaking Change Detection
 
 Mark commits as breaking (`feat!:`, `fix!:`) if they:
+
 - Remove or rename public API/exports
 - Change function signatures (add required params)
 - Remove environment variables or config keys
@@ -120,6 +129,7 @@ Mark commits as breaking (`feat!:`, `fix!:`) if they:
 ### Verification Checkpoint
 
 Verify NOW before proceeding:
+
 - [ ] Every file assigned exactly one primary type
 - [ ] Any file marked "unclear" has a question queued for user
 - [ ] No file left unclassified
@@ -149,6 +159,7 @@ These are NON-NEGOTIABLE:
 When changes exceed 200 lines, apply these strategies:
 
 **Stacking (Sequential Dependencies)**
+
 ```
 Commit 1: refactor: add interface/types for new feature
 Commit 2: feat: implement core logic
@@ -156,6 +167,7 @@ Commit 3: feat: migrate consumers to new implementation
 ```
 
 **Horizontal (By Layer)**
+
 ```
 Commit 1: feat: add shared types/interfaces
 Commit 2: feat: implement backend logic
@@ -163,6 +175,7 @@ Commit 3: feat: add frontend integration
 ```
 
 **Vertical (By Feature)**
+
 ```
 Commit 1: feat: add multiplication operator
 Commit 2: feat: add division operator
@@ -212,6 +225,7 @@ Every proposed subject must pass: **A developer skimming `git log --oneline` sho
 ## Step 7: Validate Before Presenting
 
 Verify each commit NOW:
+
 - [ ] Has valid type prefix (feat/fix/refactor/etc)
 - [ ] Single concern (one logical change)
 - [ ] Standalone (understandable without reading other commits)
@@ -234,13 +248,12 @@ Use AskUserQuestion with these parameters:
 - Header: "Clarify"
 - Question: "[Specific question about intent or grouping]"
 - Options:
-  - [Option A]: [Description]
-  - [Option B]: [Description]
 - multiSelect: false
 
 ### Present proposal
 
 Output in this order:
+
 1. **Branch Summary** - 1-2 sentences: What this branch accomplishes
 2. **Proposed Commits** - Use format from Step 6
 3. **Splitting Rationale** - WHY you grouped changes this way

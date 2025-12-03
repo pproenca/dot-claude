@@ -1,6 +1,7 @@
 # Memory Optimization
 
 ## Table of Contents
+
 - [Pattern 13: Using __slots__ for Memory](#pattern-13-using-__slots__-for-memory)
 - [Pattern 18: Detecting Memory Leaks](#pattern-18-detecting-memory-leaks)
 - [Pattern 19: Iterators vs Lists](#pattern-19-iterators-vs-lists)

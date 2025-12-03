@@ -9,22 +9,29 @@ dot-claude is a collection of Claude Code plugins providing skills, agents, comm
 ## Commands
 
 ### Running Tests
+
 ```bash
 uv run pytest tests/
 ```
+
 Runs the test suite to validate plugin structure and cross-references.
 
 ### Plugin Validation
+
 ```bash
 uv run python scripts/validate-plugins.py
 ```
+
 Validates all plugins using `claude plugin validate`. Also runs automatically via pre-commit hook.
 
 ### Reference Validation
+
 ```bash
 uv run python scripts/validate-references.py
 ```
+
 Validates cross-references in plugins:
+
 - Template file references point to existing files
 - No stale plugin prefixes (e.g., `super:` instead of `workflow:`)
 - Skill/agent references are valid
@@ -34,15 +41,19 @@ Validates cross-references in plugins:
 Also runs automatically via pre-commit hook.
 
 ### Settings Validation
+
 ```bash
 uv run python scripts/validate-settings.py
 ```
+
 Validates `.claude/settings.json` files for correct tool patterns and skill references.
 
 ### Configuration Sync
+
 ```
 /sync-claude-config
 ```
+
 Syncs settings, statusline, and hookify files between project `.claude/` and `~/.claude/`.
 
 ## Architecture
@@ -50,6 +61,7 @@ Syncs settings, statusline, and hookify files between project `.claude/` and `~/
 ### Plugin Structure
 
 Plugins are organized into tier-based domains:
+
 ```
 plugins/
 ├── essential/         # Tier 0: Always loaded
@@ -70,6 +82,7 @@ plugins/
 ```
 
 Each plugin follows this layout:
+
 ```
 plugins/<tier>/<name>/
   .claude-plugin/
@@ -89,12 +102,14 @@ plugins/<tier>/<name>/
 ### Plugins by Tier
 
 **Essential (Tier 0)** - Always loaded
+
 | Plugin | Purpose |
 |--------|---------|
 | **core** | TDD, verification, brainstorming |
 | **commit** | Git: Conventional Commits, PR creation |
 
 **Methodology (Tier 1)** - Workflow patterns
+
 | Plugin | Purpose |
 |--------|---------|
 | **workflow** | Planning and execution: plan, exec, subagents, worktrees |
@@ -103,6 +118,7 @@ plugins/<tier>/<name>/
 | **testing** | Test patterns: anti-patterns, condition waiting |
 
 **Domain (Tier 2)** - Domain expertise
+
 | Plugin | Purpose |
 |--------|---------|
 | **python** | Python: uv, async, FastAPI, Django patterns |
@@ -110,6 +126,7 @@ plugins/<tier>/<name>/
 | **shell** | Shell: Google Style Guide |
 
 **Specialized (Tier 3)** - Optional/Meta
+
 | Plugin | Purpose |
 |--------|---------|
 | **meta** | Plugin dev: writing skills, marketplace analysis |
@@ -118,12 +135,14 @@ plugins/<tier>/<name>/
 ### Hook System
 
 Hooks enforce workflows via JSON configuration in `hooks/hooks.json`. Four hook types:
+
 - **SessionStart** - Runs on conversation start/resume/clear/compact
 - **PreToolUse** - Runs before tool execution (can block with `deny`)
 - **PostToolUse** - Runs after tool execution
 - **Stop** - Runs when conversation ends (can block completion)
 
 Key enforced behaviors:
+
 - **TDD Guard** (`core`): Blocks production file edits unless test file edited first
 - **Worktree Guard** (`workflow`): Warns about git worktree awareness
 - **Verification** (`core`): Blocks completion claims without test/build evidence
@@ -132,6 +151,7 @@ Key enforced behaviors:
 ### Skills
 
 Skills are SKILL.md files with YAML frontmatter:
+
 ```yaml
 ---
 name: skill-name
@@ -155,12 +175,14 @@ Slash commands in `commands/*.md` expand to full prompts. Invoke with `/plugin:c
 ### Verification Before Completion (core plugin)
 
 The Stop hook prompt checks:
+
 1. Claims of "complete/fixed/passing/done" require verification command output
 2. Plan execution requires `workflow:finish-branch` skill usage
 
 ### Commit Validation (commit plugin)
 
 PostToolUse hooks validate git commits against Conventional Commits:
+
 - Subject line format and length
 - Body explains WHY not WHAT
 - One logical change per commit
@@ -169,6 +191,7 @@ PostToolUse hooks validate git commits against Conventional Commits:
 ## Development
 
 ### Prerequisites
+
 ```bash
 # macOS - install system dependencies
 brew install jq yq ripgrep fd coreutils
@@ -205,6 +228,7 @@ uv run pre-commit install
 ## Configuration
 
 Project settings in `.claude/settings.json`:
+
 - `permissions.allow` - Auto-approved tool patterns
 - `permissions.deny` - Blocked tool patterns
 - `permissions.ask` - Require user approval
@@ -213,6 +237,7 @@ Project settings in `.claude/settings.json`:
 ## Contributing
 
 Use `meta:writing-skills` skill when creating new skills for this marketplace.
+
 - Remember to make worktrees local to the project
 - Remember to use 'uv' for all python related changes/executions inside this repo
 - Run `uv run pytest tests/` to validate plugin structure before committing

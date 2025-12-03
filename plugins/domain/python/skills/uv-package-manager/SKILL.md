@@ -450,14 +450,17 @@ uv --version                # Show version
 ## Workflow Integration
 
 **Use with `python:python-packaging`** for library development:
+
 - pyproject.toml configuration patterns
 - Build and publish workflows
 
 **Use with `python:python-testing-patterns`** for test workflows:
+
 - `uv run pytest` for test execution
 - Dev dependency management
 
 **Use with `core:verification`** before committing:
+
 - `uv sync` to verify dependencies resolve
 - `uv run pytest` to verify tests pass
 

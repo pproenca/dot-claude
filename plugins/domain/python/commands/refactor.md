@@ -11,6 +11,7 @@ Refactor the specified Python file to follow modern Python patterns and best pra
 ## Progress Tracking
 
 Create TodoWrite with each step:
+
 1. Identify and read target file
 2. Analyze (ruff + mypy + python-expert in parallel)
 3. Propose changes
@@ -28,6 +29,7 @@ fd -e py --type f 2>/dev/null | head -20
 ```
 
 Use AskUserQuestion:
+
 - Header: "File"
 - Question: "Which Python file would you like to refactor?"
 - Options: [up to 4 files from fd results]
@@ -39,21 +41,25 @@ Read the file content to understand its structure.
 Run these in parallel:
 
 ### Ruff check
+
 ```bash
 ruff check "<target_file_path>" 2>&1 || true
 ```
 
 ### Ruff format diff
+
 ```bash
 ruff format --diff "<target_file_path>" 2>&1 || true
 ```
 
 ### Mypy (if installed)
+
 ```bash
 mypy "<target_file_path>" --ignore-missing-imports 2>&1 || true
 ```
 
 ### Python-expert dispatch
+
 ```
 Task tool with:
 - subagent_type: "python:python-expert"
@@ -61,6 +67,7 @@ Task tool with:
 ```
 
 Combine findings. For each issue note:
+
 - Line number
 - Current code
 - Recommended fix
@@ -69,12 +76,14 @@ Combine findings. For each issue note:
 ## Step 3: Propose Changes
 
 Present summary:
+
 - Total issues: N
 - Ruff violations: N
 - Type errors: N
 - Pattern improvements: N
 
 Use AskUserQuestion:
+
 - Header: "Refactor"
 - Question: "How would you like to proceed?"
 - Options:
@@ -85,6 +94,7 @@ Use AskUserQuestion:
 ## Step 4: Apply Refactoring
 
 Use Edit tool to apply approved changes in order:
+
 1. Critical fixes (type errors, security issues)
 2. Ruff auto-fixes (formatting, linting)
 3. Pattern improvements (modern Python idioms)
@@ -92,11 +102,13 @@ Use Edit tool to apply approved changes in order:
 ## Step 5: Verify and Report
 
 ### Syntax check
+
 ```bash
 python -m py_compile "<target_file_path>"
 ```
 
 ### Ruff comparison
+
 ```bash
 ruff check "<target_file_path>" 2>&1 || true
 ```

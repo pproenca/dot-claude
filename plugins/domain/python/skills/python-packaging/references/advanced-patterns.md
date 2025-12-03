@@ -1,6 +1,7 @@
 # Advanced Packaging Patterns
 
 ## Table of Contents
+
 - [Pattern 11: Including Data Files](#pattern-11-including-data-files)
 - [Pattern 12: Namespace Packages](#pattern-12-namespace-packages)
 - [Pattern 13: C Extensions](#pattern-13-c-extensions)
@@ -22,6 +23,7 @@ my_package = [
 ```
 
 **Accessing data files:**
+
 ```python
 # src/my_package/loader.py
 from importlib.resources import files
@@ -56,7 +58,7 @@ company/
     └── routes.py
 ```
 
-**Do NOT include __init__.py in the namespace directory (company/):**
+**Do NOT include **init**.py in the namespace directory (company/):**
 
 ```toml
 # company-core/pyproject.toml
@@ -77,6 +79,7 @@ include = ["company.api*"]
 ```
 
 **Usage:**
+
 ```python
 # Both packages can be imported under same namespace
 from company.core import models
@@ -97,6 +100,7 @@ ext-modules = [
 ```
 
 **Or with setup.py:**
+
 ```python
 # setup.py
 from setuptools import setup, Extension
@@ -125,6 +129,7 @@ __version__ = "1.2.3"
 ```
 
 **Version constraints in dependencies:**
+
 ```toml
 dependencies = [
     "requests>=2.28.0,<3.0.0",  # Compatible range
@@ -152,6 +157,7 @@ local_scheme = "dirty-tag"
 ```
 
 **Creates versions like:**
+
 - `1.0.0` (from git tag)
 - `1.0.1.dev3+g1234567` (3 commits after tag)
 

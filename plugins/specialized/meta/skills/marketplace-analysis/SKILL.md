@@ -12,6 +12,7 @@ Analyze Claude Code plugins to achieve Anthropic-level quality standards.
 **Anthropic Quality Bar**: Same or more functionality with leaner, more efficient implementation.
 
 **Principles:**
+
 - Systems thinking over point fixes
 - Elegant simplicity over feature accumulation
 - Proven improvements over assumptions
@@ -20,11 +21,13 @@ Analyze Claude Code plugins to achieve Anthropic-level quality standards.
 ## Analysis Process
 
 ### 1. Quick Scan
+
 - Count plugins and components
 - Note obvious issues (large files, naming inconsistencies)
 - Flag files >500 lines
 
 ### 2. Deep Analysis (per plugin)
+
 1. Read SKILL.md files - check trigger phrases, writing style
 2. Read agent descriptions - check triggering examples
 3. Read commands - check argument handling
@@ -32,6 +35,7 @@ Analyze Claude Code plugins to achieve Anthropic-level quality standards.
 5. Map interactions - how components work together
 
 ### 3. Cross-Plugin Analysis
+
 - Find redundancy across plugins
 - Check consistency (naming, patterns, styles)
 - Identify gaps and conflicts
@@ -57,12 +61,14 @@ For each skill, verify bundled references exist:
 ## Anti-Overengineering Checks
 
 Before proposing ANY change:
+
 1. Is this simpler than the original?
 2. Does this solve a real problem?
 3. Would a new user understand this?
 4. Can I remove instead of add?
 
 **Red flags:**
+
 - Adding abstraction for one use case
 - "Might need this later" reasoning
 - Recommending deletion based on filename alone
@@ -85,6 +91,7 @@ Each recommendation includes validation approach.
 ## References
 
 For detailed guidance:
+
 - **`references/skill-design-standards.md`** - **Official Anthropic skill-creator guide** (authoritative source for skill structure, frontmatter, progressive disclosure)
 - **`references/quality-standards.md`** - Quality criteria checklist, anti-patterns (includes summary of official standards)
 - **`references/measuring-improvements.md`** - Metrics, user testing, validation templates

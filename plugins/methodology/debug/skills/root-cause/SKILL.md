@@ -15,6 +15,7 @@ Bugs often manifest deep in the call stack (git init in wrong directory, file cr
 ## When to Use
 
 **Use when:**
+
 - Error happens deep in execution (not at entry point)
 - Stack trace shows long call chain
 - Unclear where invalid data originated
@@ -23,6 +24,7 @@ Bugs often manifest deep in the call stack (git init in wrong directory, file cr
 ## Large Codebase Optimization
 
 Use Explore subagent to trace call chains:
+
 - Delegates investigation to subagent
 - Returns focused summary without context bloat
 - Essential for codebases with deep call stacks
@@ -32,17 +34,21 @@ This prevents main conversation pollution during investigation. The Explore agen
 ## The Tracing Process
 
 ### 1. Observe the Symptom
+
 ```
 Error: git init failed in /Users/jesse/project/packages/core
 ```
 
 ### 2. Find Immediate Cause
+
 **What code directly causes this?**
+
 ```typescript
 await execFileAsync('git', ['init'], { cwd: projectDir });
 ```
 
 ### 3. Ask: What Called This?
+
 ```typescript
 WorktreeManager.createSessionWorktree(projectDir, sessionId)
   → called by Session.initializeWorkspace()
@@ -51,13 +57,17 @@ WorktreeManager.createSessionWorktree(projectDir, sessionId)
 ```
 
 ### 4. Keep Tracing Up
+
 **What value was passed?**
+
 - `projectDir = ''` (empty string!)
 - Empty string as `cwd` resolves to `process.cwd()`
 - That's the source code directory!
 
 ### 5. Find Original Trigger
+
 **Where did empty string come from?**
+
 ```typescript
 const context = setupCoreTest(); // Returns { tempDir: '' }
 Project.create('name', context.tempDir); // Accessed before beforeEach!
@@ -85,11 +95,13 @@ async function gitInit(directory: string) {
 **Critical:** Use `console.error()` in tests (not logger - may not show)
 
 **Run and capture:**
+
 ```bash
 npm test 2>&1 | grep 'DEBUG git init'
 ```
 
 **Analyze stack traces:**
+
 - Look for test file names
 - Find the line number triggering the call
 - Identify the pattern (same test? same parameter?)
@@ -111,6 +123,7 @@ Runs tests one-by-one, stops at first polluter. See script for usage.
 **Symptom:** `.git` created in `packages/core/` (source code)
 
 **Trace chain:**
+
 1. `git init` runs in `process.cwd()` ← empty cwd parameter
 2. WorktreeManager called with empty projectDir
 3. Session.create() passed empty string
@@ -122,6 +135,7 @@ Runs tests one-by-one, stops at first polluter. See script for usage.
 **Fix:** Made tempDir a getter that throws if accessed before beforeEach
 
 **Also added defense-in-depth:**
+
 - Layer 1: Project.create() validates directory
 - Layer 2: WorkspaceManager validates not empty
 - Layer 3: NODE_ENV guard refuses git init outside tmpdir

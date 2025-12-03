@@ -35,6 +35,7 @@ Each line is a JSON object:
 ### Event Data (`d` field)
 
 For `PreToolUse` events:
+
 ```json
 {
   "hook_event_name": "PreToolUse",

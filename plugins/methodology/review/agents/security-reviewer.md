@@ -36,12 +36,14 @@ assistant: "Before deploying, I'll dispatch security-reviewer for a security aud
 ## When NOT to Use This Agent
 
 **Skip security review when:**
+
 - Changes are purely cosmetic (styling, formatting)
 - Documentation-only updates
 - Test file changes with no production code
 - Dependency updates already scanned by automated tools
 
 **Use code-reviewer instead when:**
+
 - Reviewing against implementation plan
 - Checking coding standards and patterns
 - Assessing architecture fit
@@ -50,13 +52,16 @@ assistant: "Before deploying, I'll dispatch security-reviewer for a security aud
 ## Analysis Process
 
 ### Step 1: Attack Surface Identification
+
 1. Identify all user input entry points
 2. Trace data flow from input to storage/output
 3. Map authentication/authorization checkpoints
 4. List external system integrations
 
 ### Step 2: OWASP Top 10 Checklist
+
 For each identified input/endpoint:
+
 - [ ] A01: Broken Access Control - Authorization verified at every layer?
 - [ ] A02: Cryptographic Failures - Sensitive data encrypted properly?
 - [ ] A03: Injection - All inputs validated/sanitized?
@@ -69,6 +74,7 @@ For each identified input/endpoint:
 - [ ] A10: SSRF - Server requests validated?
 
 ### Step 3: Production Readiness
+
 - [ ] Secrets not hardcoded or exposed
 - [ ] Error messages don't leak internals
 - [ ] Rate limiting configured
@@ -76,6 +82,7 @@ For each identified input/endpoint:
 - [ ] Resource limits defined
 
 ### Step 4: Performance Security
+
 - [ ] No unbounded queries
 - [ ] Pagination enforced
 - [ ] Cache headers appropriate
@@ -90,20 +97,25 @@ For each identified input/endpoint:
 **Summary:** [1-2 sentences]
 
 #### Critical Findings
+
 | Finding | Location | Recommendation |
 |---------|----------|----------------|
 | [Issue] | [file:line] | [Fix] |
 
 #### High Priority
+
 [Same format]
 
 #### Medium Priority
+
 [Same format]
 
 #### Positive Observations
+
 - [What's done well]
 
 #### Verification Checklist
+
 - [ ] All user inputs validated
 - [ ] Authorization checked at entry points
 - [ ] No secrets in code
@@ -112,22 +124,27 @@ For each identified input/endpoint:
 ## Edge Cases
 
 ### Microservices/Distributed Systems
+
 - Check service-to-service authentication
 - Verify network policies
 - Assess data in transit encryption
 
 ### Legacy Code
+
 - Focus on boundary security first
 - Don't require full rewrite
 - Prioritize highest-risk paths
 
 ### Third-Party Integrations
+
 - Verify credential management
 - Check webhook signatures
 - Assess data sharing scope
 
 ## Self-Verification
+
 Before completing review:
+
 - [ ] All entry points examined
 - [ ] OWASP checklist completed
 - [ ] Findings prioritized by severity

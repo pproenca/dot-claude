@@ -85,6 +85,7 @@ Read the appropriate reference file for the target document type to understand r
 ### Step 3: Rewrite
 
 Transform the content following:
+
 - Core writing rules (narrative, data-driven, active voice)
 - Document-specific structure and sections
 - Length constraints for the document type
@@ -92,6 +93,7 @@ Transform the content following:
 ### Step 4: Verify
 
 Check the rewritten content against:
+
 - All six core writing rules applied
 - Required sections present for document type
 - No bullet points (narrative prose only)

@@ -49,6 +49,7 @@ skill-name/
 ```
 
 **Mandatory checks:**
+
 - [ ] SKILL.md under 500 lines
 - [ ] Frontmatter has ONLY `name` and `description`
 - [ ] Description contains "what it does" AND "when to use"
@@ -61,10 +62,12 @@ skill-name/
 ### Description Quality
 
 The description is the **primary triggering mechanism**. It must include:
+
 - What the skill does (capabilities)
 - When to use it (trigger phrases, contexts)
 
 **Good:**
+
 ```yaml
 description: Comprehensive document creation, editing, and analysis with
 support for tracked changes, comments, formatting preservation, and text
@@ -74,6 +77,7 @@ with tracked changes, (4) Adding comments, or any other document tasks.
 ```
 
 **Bad:**
+
 ```yaml
 description: Use for document processing.
 ```
@@ -92,6 +96,7 @@ Code and design that feels "right":
 - **Readable**: Future maintainers understand intent
 
 **Test for elegance:**
+
 - Can you explain it in one sentence?
 - Would you be proud to show this to a colleague?
 - Does it feel inevitable, not arbitrary?
@@ -106,6 +111,7 @@ Maximum value with minimum cost:
 - **Context efficient**: Progressive disclosure everywhere
 
 **Test for efficiency:**
+
 - Is the common case optimized?
 - Are there unnecessary steps?
 - Does it scale as usage grows?
@@ -120,6 +126,7 @@ Real impact on how people work:
 - **Learning curve**: Steep improvement, then stable
 
 **Test for productivity:**
+
 - Does this save time on the first use?
 - Does it save more time over many uses?
 - Does it prevent mistakes?
@@ -129,6 +136,7 @@ Real impact on how people work:
 ### 1. Trigger Quality
 
 **Excellent triggers** (imperative format per official docs):
+
 ```yaml
 description: Create and configure Claude Code hooks. Validate tool usage,
 implement PreToolUse/PostToolUse handlers. Use when working with hook events,
@@ -136,11 +144,13 @@ tool validation, or event-driven automation.
 ```
 
 **Poor triggers:**
+
 ```yaml
 description: Use for hook development.
 ```
 
 **Criteria:**
+
 - Action verbs describing capabilities
 - Multiple entry points
 - Specific trigger terms
@@ -149,18 +159,21 @@ description: Use for hook development.
 ### 2. Documentation Quality
 
 **Excellent docs:**
+
 - Purpose clear in first paragraph
 - Working examples that can be copied
 - Edge cases addressed
 - Progressive disclosure (details in references)
 
 **Poor docs:**
+
 - Vague overview
 - Examples that don't run
 - Missing edge cases
 - Everything in one file
 
 **Criteria:**
+
 - New user productive in 5 minutes
 - Copy-paste examples work
 - Edge cases documented
@@ -169,18 +182,21 @@ description: Use for hook development.
 ### 3. Architecture Quality
 
 **Excellent architecture:**
+
 - One component, one responsibility
 - No duplicated functionality
 - Clean interfaces
 - Obvious extension points
 
 **Poor architecture:**
+
 - Components doing multiple things
 - Same logic in multiple places
 - Tangled dependencies
 - Unclear boundaries
 
 **Criteria:**
+
 - Can explain each component in one sentence
 - No copy-paste between components
 - Changes isolated to one component
@@ -189,18 +205,21 @@ description: Use for hook development.
 ### 4. Implementation Quality
 
 **Excellent implementation:**
+
 - Simplest code that works
 - Named for intent, not implementation
 - Handles errors gracefully
 - Tested with real usage
 
 **Poor implementation:**
+
 - Over-abstracted
 - Cryptic naming
 - Silent failures
 - Untested assumptions
 
 **Criteria:**
+
 - Would you want to maintain this?
 - Are names self-documenting?
 - Do errors help users fix issues?
@@ -211,6 +230,7 @@ description: Use for hook development.
 ### The Kitchen Sink
 
 Adding features "just in case":
+
 - Configurability for unlikely scenarios
 - Abstractions with one implementation
 - Options nobody uses
@@ -220,6 +240,7 @@ Adding features "just in case":
 ### The Swiss Army Knife
 
 One component doing too many things:
+
 - 500+ line SKILL.md
 - Agent with 10+ responsibilities
 - Command with 5+ subcommands
@@ -229,6 +250,7 @@ One component doing too many things:
 ### The Copy-Paste
 
 Duplicated logic across components:
+
 - Same validation in multiple hooks
 - Same formatting in multiple agents
 - Same patterns reimplemented
@@ -238,6 +260,7 @@ Duplicated logic across components:
 ### The Invisible Feature
 
 Capabilities users don't know about:
+
 - Undocumented trigger phrases
 - Hidden command arguments
 - Implicit behaviors
@@ -249,30 +272,35 @@ Capabilities users don't know about:
 Before declaring something "done":
 
 ### Trigger Quality
+
 - [ ] Imperative format with action verbs
 - [ ] Specific trigger terms (phrases don't need quotes)
 - [ ] Covers different phrasings of same intent
 - [ ] "Use when..." clause for context
 
 ### Documentation Quality
+
 - [ ] Purpose clear in 2 sentences
 - [ ] Working copy-paste examples
 - [ ] Edge cases addressed
 - [ ] Description under 1024 characters
 
 ### Architecture Quality
+
 - [ ] Each component has one job
 - [ ] No duplicated functionality
 - [ ] Dependencies are obvious
 - [ ] Extension points are clear
 
 ### Implementation Quality
+
 - [ ] Simplest solution that works
 - [ ] Names describe intent
 - [ ] Errors are helpful
 - [ ] Tested with real usage
 
 ### Overall Quality
+
 - [ ] Would you be proud to ship this?
 - [ ] Is this better than what exists?
 - [ ] Can you prove it's better?

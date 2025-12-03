@@ -15,11 +15,13 @@ Before researching the codebase, offer to search external documentation for the 
 First, check if Context7 MCP tools are available by looking for `mcp__context7__` tools in your available tools list.
 
 **If Context7 is NOT available:**
+
 - Skip this entire section silently
 - Proceed directly to Python Project Detection
 - Do NOT ask the user about documentation search
 
 **If Context7 IS available:**
+
 - Continue with Step 1
 
 ### Step 1: Ask About Documentation
@@ -39,13 +41,16 @@ Options:
 ### Step 2: Get Library Names
 
 **If user selected "Yes, let me specify":**
+
 - Ask follow-up: "Which libraries/frameworks should I search? (comma-separated, e.g., 'fastapi, pydantic, sqlalchemy')"
 
 **If user selected "Auto-detect from task":**
+
 - Extract technology keywords from the task description
 - Present detected libraries for confirmation: "I detected these technologies: [list]. Should I search docs for these?"
 
 **If user selected "No, skip":**
+
 - Proceed directly to Python Project Detection
 
 ### Step 3: Fetch Documentation
@@ -53,12 +58,15 @@ Options:
 For each library the user confirms:
 
 1. **Resolve library ID:**
+
    ```
    mcp__context7__resolve-library-id(libraryName: "library-name")
    ```
+
    Select the most relevant match based on description and documentation coverage.
 
 2. **Fetch relevant docs:**
+
    ```
    mcp__context7__get-library-docs(
      context7CompatibleLibraryID: "/org/project",
@@ -66,6 +74,7 @@ For each library the user confirms:
      mode: "code"
    )
    ```
+
    Use `mode: "info"` for architectural/conceptual questions.
 
 3. **Use for context only:**
@@ -92,6 +101,7 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 Before writing a plan, detect if this is a Python project and what framework it uses:
 
 **Detection signals:**
+
 - `pyproject.toml` or `setup.py` → Python project
 - `fastapi` in dependencies → FastAPI project
 - `django` in dependencies → Django project
@@ -99,20 +109,24 @@ Before writing a plan, detect if this is a Python project and what framework it 
 - `.python-version` or `uv.lock` → Uses uv package manager
 
 **When Python detected:**
+
 1. Use Skill tool to load `python:python-testing-patterns`
 2. Use Skill tool to load `python:uv-package-manager`
 3. Use patterns from loaded skills in plan tasks
 4. Use `uv run` prefix for all Python commands
 
 **When async code detected:**
+
 - Use Skill tool to load `python:async-python-patterns`
 
 **When FastAPI/Django detected:**
+
 - Dispatch `python:python-expert` agent for framework-specific patterns
 
 ## Optional: Track Plan Writing Phases
 
 For complex plans (5+ tasks), use TodoWrite to track progress:
+
 - Research existing architecture
 - Define high-level approach
 - Break down into tasks
@@ -127,6 +141,7 @@ For complex plans (5+ tasks), use TodoWrite to track progress:
 ## Bite-Sized Task Granularity
 
 **Each step is one action (2-5 minutes):**
+
 - "Write the failing test" - step
 - "Run it to make sure it fails" - step
 - "Implement the minimal code to make the test pass" - step
@@ -192,6 +207,7 @@ Expected: PASS
 git add tests/path/test.py src/path/file.py
 git commit -m "feat: add specific feature"
 ```
+
 ```
 
 ## Remember
@@ -208,7 +224,9 @@ When Python detected, load patterns from the python plugin instead of duplicatin
 **Step 1: Load relevant skill**
 
 ```
+
 Use Skill tool: python:python-testing-patterns
+
 ```
 
 **Step 2: Copy patterns into plan tasks**
@@ -220,14 +238,18 @@ Use Skill tool: python:python-testing-patterns
 **For async code detected:**
 
 ```
+
 Use Skill tool: python:async-python-patterns
+
 ```
 
 **For FastAPI/Django detected:**
 
 ```
+
 Task tool (python:python-expert):
   prompt: "Provide [framework] test patterns for [feature]"
+
 ```
 
 ## Diagram Generation Phase
@@ -239,10 +261,12 @@ Diagrams help Claude understand complex plans during execution. They're not just
 Use AskUserQuestion:
 
 ```
+
 Question: "Should I generate diagrams to help with plan execution?"
 Header: "Diagrams"
 multiSelect: false
 Options:
+
 - Auto-detect: Let Claude decide what diagrams (if any) would help execution
 - Task Dependencies: Show task order, parallelization, and blockers
 - Architecture: Show system components, layers, and boundaries
@@ -250,6 +274,7 @@ Options:
 - State: Show status transitions and lifecycle stages
 - Data Model: Show database schema and entity relationships
 - No diagrams: Skip diagram generation entirely
+
 ```
 
 **Default to "Auto-detect"** for complex plans. Only skip diagrams for trivial changes.
@@ -259,6 +284,7 @@ Options:
 If user selects "Auto-detect" or specific types, dispatch diagram-generator agent:
 
 ```
+
 Task tool (doc:diagram-generator):
   description: "Generate Mermaid diagrams for plan"
   prompt: |
@@ -267,6 +293,7 @@ Task tool (doc:diagram-generator):
     MODE: [auto-detect | specific]
     DIAGRAM_TYPES: [user's selection or "auto"]
     PLAN_CONTENT: [full plan text]
+
 ```
 
 **For auto-detect mode**, the agent will:
@@ -302,6 +329,7 @@ Add `## Diagrams` section to the plan document after the header block, before fi
 ### When to Skip the Question Entirely
 
 Don't even ask about diagrams when:
+
 - Plan has < 3 tasks with purely linear sequence
 - Single-file changes (bug fix, refactor)
 - Configuration-only changes
@@ -323,15 +351,18 @@ Options:
 ```
 
 **If Subagent-Driven chosen:**
+
 - **REQUIRED SUB-SKILL:** Use Skill tool: `workflow:subagent-dev`
 - Stay in this session
 - Fresh subagent per task + code review between tasks
 
 **If Parallel Session chosen:**
+
 - Guide them to open new session in worktree
 - **REQUIRED SUB-SKILL:** Use Skill tool: `workflow:executing-plans`
 
 **If Skip chosen:**
+
 - Confirm the plan file location
 - End the planning workflow
 

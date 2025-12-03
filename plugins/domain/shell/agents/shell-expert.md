@@ -41,10 +41,12 @@ This provides all formatting rules, security patterns, and severity classificati
 ## Input Handling
 
 When dispatched, you will receive:
+
 1. A script path (e.g., "REVIEW the shell script at /path/to/script.sh")
 2. A mode indicator: REVIEW, QUICK_REVIEW, SECURITY, or POSIX
 
 **Your first actions:**
+
 1. Load the google-shell-style skill (as shown above)
 2. Read the script file
 3. Confirm path and line count
@@ -98,6 +100,7 @@ Analyze script through these lenses:
 ## QUICK_REVIEW Mode
 
 Fast validation - scan for Critical issues only:
+
 - Unquoted variables in `rm`, `mv`, or path operations
 - `eval` with external input
 - Missing error handling on destructive operations
@@ -109,6 +112,7 @@ Fast validation - scan for Critical issues only:
 ## SECURITY Mode
 
 Analyze:
+
 1. **Input vectors:** args, stdin, env, files
 2. **Injection risks:** eval, unquoted expansions, source with variables
 3. **Resource safety:** temp files (mktemp + trap), permissions
@@ -137,6 +141,7 @@ Analyze:
 ## POSIX Mode
 
 Check for bashisms:
+
 - `[[ ]]` → `[ ]` with quoting
 - Arrays → not POSIX
 - `${var//pat/rep}` → sed

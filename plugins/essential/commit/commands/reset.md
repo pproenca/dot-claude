@@ -43,6 +43,7 @@ echo "Backup: $BACKUP_BRANCH"
 Use the Task tool with `subagent_type="commit:commit-organizer"` to analyze the branch.
 
 The agent will:
+
 - Run `${CLAUDE_PLUGIN_ROOT}/scripts/analyze-branch.sh` to get full diffs
 - Read ALL diffs holistically (cumulative change, not individual commits)
 - Classify changes (refactoring/fix/feature/config)
@@ -50,6 +51,7 @@ The agent will:
 - Propose commit organization with draft messages
 
 **Prompt for the agent:**
+
 ```
 Analyze this branch and propose a commit organization following Conventional Commits specification.
 
@@ -71,6 +73,7 @@ Present the agent's proposed commit organization to the user.
 Use AskUserQuestion to confirm the proposed organization:
 
 ### Organization Approval
+
 - Header: "Plan"
 - Question: "Do you approve this commit organization?"
 - Options:
@@ -122,6 +125,7 @@ git status
 ```
 
 Check that:
+
 - Each commit is self-contained
 - Commit order makes sense (dependencies first)
 - Messages explain WHY, not just WHAT

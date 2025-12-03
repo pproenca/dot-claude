@@ -56,7 +56,8 @@ if __name__ == "__main__":
     stats.dump_stats("profile_output.prof")
 ```
 
-**Command-line profiling:**
+__Command-line profiling:__
+
 ```bash
 # Profile a script
 python -m cProfile -o output.prof script.py
@@ -86,7 +87,8 @@ def process_data(data):
 # kernprof -l -v script.py
 ```
 
-**Manual line profiling:**
+__Manual line profiling:__
+
 ```python
 from line_profiler import LineProfiler
 
@@ -435,16 +437,16 @@ def test_map_function(benchmark):
 
 ## Best Practices
 
-1. **Profile before optimizing** - Measure to find real bottlenecks
-2. **Focus on hot paths** - Optimize code that runs most frequently
-3. **Use appropriate data structures** - Dict for lookups, set for membership
-4. **Avoid premature optimization** - Clarity first, then optimize
-5. **Use built-in functions** - They're implemented in C
-6. **Cache expensive computations** - Use lru_cache
-7. **Batch I/O operations** - Reduce system calls
-8. **Use generators** for large datasets
-9. **Consider NumPy** for numerical operations
-10. **Profile production code** - Use py-spy for live systems
+1. __Profile before optimizing__ - Measure to find real bottlenecks
+2. __Focus on hot paths__ - Optimize code that runs most frequently
+3. __Use appropriate data structures__ - Dict for lookups, set for membership
+4. __Avoid premature optimization__ - Clarity first, then optimize
+5. __Use built-in functions__ - They're implemented in C
+6. __Cache expensive computations__ - Use lru_cache
+7. __Batch I/O operations__ - Reduce system calls
+8. __Use generators__ for large datasets
+9. __Consider NumPy__ for numerical operations
+10. __Profile production code__ - Use py-spy for live systems
 
 ## Common Pitfalls
 
@@ -455,17 +457,20 @@ def test_map_function(benchmark):
 
 ## Workflow Integration
 
-**Use with `debug:systematic`** for performance issues:
+__Use with `debug:systematic`__ for performance issues:
+
 - Profile BEFORE optimizing - find real bottlenecks first
 - Don't guess at slow code - measure with cProfile/py-spy
 - Follow the 4-phase framework: investigate, analyze, hypothesize, implement
 
-**Use with `core:verification`** after optimization:
+__Use with `core:verification`__ after optimization:
+
 - Run benchmarks to prove improvement
 - Verify no regressions in functionality
 - Show before/after metrics
 
-**Use with `python:python-testing-patterns`** for performance tests:
+__Use with `python:python-testing-patterns`__ for performance tests:
+
 - pytest-benchmark for reliable timing
 - Regression tests to catch future slowdowns
 

@@ -1,6 +1,7 @@
 # Real-World Async Examples
 
 ## Table of Contents
+
 - [Web Scraping with aiohttp](#web-scraping-with-aiohttp)
 - [Async Database Operations](#async-database-operations)
 - [WebSocket Server](#websocket-server)

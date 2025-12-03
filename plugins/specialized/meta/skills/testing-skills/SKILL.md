@@ -21,12 +21,14 @@ You run scenarios without the skill (RED - watch agent fail), write skill addres
 ## When to Use
 
 Test skills that:
+
 - Enforce discipline (TDD, testing requirements)
 - Have compliance costs (time, effort, rework)
 - Could be rationalized away ("just this once")
 - Contradict immediate goals (speed over quality)
 
 Don't test:
+
 - Pure reference skills (API docs, syntax guides)
 - Skills without rules to violate
 - Skills agents have no incentive to bypass
@@ -76,6 +78,7 @@ Choose A, B, or C.
 ```
 
 Run this WITHOUT a TDD skill. Agent chooses B or C and rationalizes:
+
 - "I already manually tested it"
 - "Tests after achieve same goals"
 - "Deleting is wasteful"
@@ -100,19 +103,24 @@ If agent still fails: skill is unclear or incomplete. Revise and re-test.
 ### Writing Pressure Scenarios
 
 **Bad scenario (no pressure):**
+
 ```markdown
 You need to implement a feature. What does the skill say?
 ```
+
 Too academic. Agent just recites the skill.
 
 **Good scenario (single pressure):**
+
 ```markdown
 Production is down. $10k/min lost. Manager says add 2-line
 fix now. 5 minutes until deploy window. What do you do?
 ```
+
 Time pressure + authority + consequences.
 
 **Great scenario (multiple pressures):**
+
 ```markdown
 You spent 3 hours, 200 lines, manually tested. It works.
 It's 6pm, dinner at 6:30pm. Code review tomorrow 9am.
@@ -169,6 +177,7 @@ Make agent believe it's real work, not a quiz.
 Agent violated rule despite having the skill? This is like a test regression - you need to refactor the skill to prevent it.
 
 **Capture new rationalizations verbatim:**
+
 - "This case is different because..."
 - "I'm following the spirit not the letter"
 - "The PURPOSE is X, and I'm achieving X differently"
@@ -196,10 +205,12 @@ Write code before test? Delete it.
 Write code before test? Delete it. Start over.
 
 **No exceptions:**
+
 - Don't keep it as "reference"
 - Don't "adapt" it while writing tests
 - Don't look at it
 - Delete means delete
+
 ```
 </After>
 
@@ -233,6 +244,7 @@ Add symptoms of ABOUT to violate.
 **Re-test same scenarios with updated skill.**
 
 Agent should now:
+
 - Choose correct option
 - Cite new sections
 - Acknowledge their previous rationalization was addressed
@@ -278,6 +290,7 @@ it crystal clear that Option A was the only acceptable answer?
 4. **Meta-testing reveals** "skill was clear, I should follow it"
 
 **Not bulletproof if:**
+
 - Agent finds new rationalizations
 - Agent argues skill is wrong
 - Agent creates "hybrid approaches"
@@ -286,6 +299,7 @@ it crystal clear that Option A was the only acceptable answer?
 ## Example: TDD Skill Bulletproofing
 
 ### Initial Test (Failed)
+
 ```markdown
 Scenario: 200 lines done, forgot TDD, exhausted, dinner plans
 Agent chose: C (write tests after)
@@ -293,6 +307,7 @@ Rationalization: "Tests after achieve same goals"
 ```
 
 ### Iteration 1 - Add Counter
+
 ```markdown
 Added section: "Why Order Matters"
 Re-tested: Agent STILL chose C
@@ -300,6 +315,7 @@ New rationalization: "Spirit not letter"
 ```
 
 ### Iteration 2 - Add Foundational Principle
+
 ```markdown
 Added: "Violating letter is violating spirit"
 Re-tested: Agent chose A (delete it)
@@ -314,16 +330,19 @@ Meta-test: "Skill was clear, I should follow it"
 Before deploying skill, verify you followed RED-GREEN-REFACTOR:
 
 **RED Phase:**
+
 - [ ] Created pressure scenarios (3+ combined pressures)
 - [ ] Ran scenarios WITHOUT skill (baseline)
 - [ ] Documented agent failures and rationalizations verbatim
 
 **GREEN Phase:**
+
 - [ ] Wrote skill addressing specific baseline failures
 - [ ] Ran scenarios WITH skill
 - [ ] Agent now complies
 
 **REFACTOR Phase:**
+
 - [ ] Identified NEW rationalizations from testing
 - [ ] Added explicit counters for each loophole
 - [ ] Updated rationalization table
@@ -381,6 +400,7 @@ RED-GREEN-REFACTOR for documentation works exactly like RED-GREEN-REFACTOR for c
 ## Real-World Impact
 
 From applying TDD to TDD skill itself (2025-10-03):
+
 - 6 RED-GREEN-REFACTOR iterations to bulletproof
 - Baseline testing revealed 10+ unique rationalizations
 - Each REFACTOR closed specific loopholes
@@ -390,14 +410,18 @@ From applying TDD to TDD skill itself (2025-10-03):
 ## Integration
 
 **Tool usage:**
+
 - Uses `Task` tool to dispatch test subagents with pressure scenarios
 - Uses `Read` to examine skill content and examples
 
 **REQUIRED SUB-SKILL:**
+
 - **tdd** - Foundational skill defining RED-GREEN-REFACTOR cycle
 
 **Called by:**
+
 - **writing-skills** - **REQUIRED SUB-SKILL:** Use meta:writing-skills for testing before deployment (Step 5)
 
 **Pairs with:**
+
 - **writing-skills** - This skill provides testing methodology; writing-skills provides creation structure

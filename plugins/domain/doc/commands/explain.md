@@ -8,9 +8,11 @@ allowed-tools: Read, Bash(git log:*), Glob, Grep, AskUserQuestion
 You are a code education expert specializing in explaining complex code through clear narratives, visual diagrams, and step-by-step breakdowns. Transform difficult concepts into understandable explanations for developers at all levels.
 
 ## Context
+
 The user needs help understanding complex code sections, algorithms, design patterns, or system architectures. Focus on clarity, visual aids, and progressive disclosure of complexity to facilitate learning and onboarding.
 
 ## Requirements
+
 $ARGUMENTS
 
 ## Instructions
@@ -20,6 +22,7 @@ $ARGUMENTS
 Analyze the code to determine complexity and structure:
 
 **Code Complexity Assessment**
+
 ```python
 import ast
 import re
@@ -111,6 +114,7 @@ class CodeAnalyzer:
 Create visual representations of code flow:
 
 **Flow Diagram Generation**
+
 ```python
 class VisualExplainer:
     def generate_flow_diagram(self, code_structure):
@@ -188,6 +192,7 @@ class VisualExplainer:
 Break down complex code into digestible steps:
 
 **Progressive Explanation**
+
 ```python
 def generate_step_by_step_explanation(self, code, analysis):
     """
@@ -265,6 +270,7 @@ slow_function = timer(slow_function)
 **In this code**: The decorator is used to {specific_use_in_code}
 ''',
         'generators': '''
+
 ## Understanding Generators
 
 Generators produce values one at a time, saving memory by not creating all values at once.
@@ -272,6 +278,7 @@ Generators produce values one at a time, saving memory by not creating all value
 **Simple Analogy**: Like a ticket dispenser that gives one ticket at a time, rather than printing all tickets upfront.
 
 **How it works**:
+
 ```python
 # Generator function
 def count_up_to(n):
@@ -288,8 +295,9 @@ for num in count_up_to(5):
 **In this code**: The generator is used to {specific_use_in_code}
 '''
     }
-    
+
     return explanations.get(concept, f"Explanation for {concept}")
+
 ```
 
 ### 4. Algorithm Visualization
@@ -355,6 +363,7 @@ class AlgorithmVisualizer:
 
 ### Call Stack Visualization:
 ```
+
 {func_name}({example_input})
 │
 ├─> Base case check: {example_input} == 0? No
@@ -368,11 +377,12 @@ class AlgorithmVisualizer:
 │   │   │   │
 │   │   │   └─> Base case: Return 1
 │   │   │
-│   │   └─> Return: 1 * 1 = 1
+│   │   └─> Return: 1 *1 = 1
 │   │
-│   └─> Return: 2 * 1 = 2
+│   └─> Return: 2* 1 = 2
 │
 └─> Return: 3 * 2 = 6
+
 ```
 
 **Final Result**: {func_name}({example_input}) = 6
@@ -385,6 +395,7 @@ class AlgorithmVisualizer:
 Generate interactive examples for better understanding:
 
 **Code Playground Examples**
+
 ```python
 def generate_interactive_examples(self, concept):
     """
@@ -417,6 +428,7 @@ safe_divide(10, "2")  # Type error
 ```
 
 ### Example 2: Custom Exceptions
+
 ```python
 class ValidationError(Exception):
     """Custom exception for validation errors"""
@@ -443,7 +455,9 @@ except ValidationError as e:
 ```
 
 ### Exercise: Implement Your Own
+
 Try implementing a function that:
+
 1. Takes a list of numbers
 2. Returns their average
 3. Handles empty lists
@@ -451,9 +465,11 @@ Try implementing a function that:
 5. Uses appropriate exception handling
 ''',
         'async_programming': '''
+
 ## Try It Yourself: Async Programming
 
 ### Example 1: Basic Async/Await
+
 ```python
 import asyncio
 import time
@@ -485,6 +501,7 @@ asyncio.run(main())
 ```
 
 ### Example 2: Real-world Async Pattern
+
 ```python
 async def fetch_data(url):
     """Simulate API call"""
@@ -501,10 +518,12 @@ urls = ["api.example.com/1", "api.example.com/2", "api.example.com/3"]
 results = asyncio.run(process_urls(urls))
 print(results)
 ```
+
 '''
     }
-    
+
     return examples.get(concept, "No example available")
+
 ```
 
 ### 6. Design Pattern Explanation
@@ -543,35 +562,43 @@ classDiagram
 ```
 
 ### Implementation in this code:
+
 {code_analysis}
 
 ### Benefits:
+
 ✅ Controlled access to single instance
 ✅ Reduced namespace pollution
 ✅ Permits refinement of operations
 
 ### Drawbacks:
+
 ❌ Can make unit testing difficult
 ❌ Violates Single Responsibility Principle
 ❌ Can hide dependencies
 
 ### Alternative Approaches:
+
 1. Dependency Injection
 2. Module-level singleton
 3. Borg pattern
 ''',
             'observer': '''
+
 ## Observer Pattern
 
 ### What is it?
+
 The Observer pattern defines a one-to-many dependency between objects so that when one object changes state, all dependents are notified.
 
 ### When to use it?
+
 - Event handling systems
 - Model-View architectures
 - Distributed event handling
 
 ### Visual Representation:
+
 ```mermaid
 classDiagram
     class Subject {
@@ -598,9 +625,11 @@ classDiagram
 ```
 
 ### Implementation in this code:
+
 {code_analysis}
 
 ### Real-world Example:
+
 ```python
 # Newsletter subscription system
 class Newsletter:
@@ -629,10 +658,12 @@ class EmailSubscriber:
     def update(self, article):
         print(f"Sending email to {self.email}: New article - {article}")
 ```
+
 '''
         }
-        
+
         return patterns.get(pattern_name, "Pattern explanation not available")
+
 ```
 
 ### 7. Common Pitfalls and Best Practices
@@ -680,6 +711,7 @@ except Exception as e:
     logger.error(f"Unexpected error: {e}")
     raise
 ```
+
 '''
         },
         {
@@ -687,17 +719,20 @@ except Exception as e:
             'issue': 'Global variable usage',
             'severity': 'medium',
             'explanation': '''
+
 ## ⚠️ Global Variable Usage
 
 **Problem**: Using global variables makes code harder to test and reason about.
 
 **Better approaches**:
+
 1. Pass as parameter
 2. Use class attributes
 3. Use dependency injection
 4. Return values instead
 
 **Example refactor**:
+
 ```python
 # Bad
 count = 0
@@ -714,15 +749,17 @@ class Counter:
         self.count += 1
         return self.count
 ```
+
 '''
         }
     ]
-    
+
     for pitfall in pitfall_patterns:
         if re.search(pitfall['pattern'], code):
             issues.append(pitfall)
     
     return issues
+
 ```
 
 ### 8. Learning Path Recommendations

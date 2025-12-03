@@ -15,6 +15,7 @@ The 6-pager is Amazon's standard format for presenting complex ideas, strategies
 ### 1. Introduction
 
 Provide an outline of the idea being pitched or described:
+
 - Precise statement of content and general direction
 - Relevant details and contextual information
 - Why this topic matters now
@@ -26,6 +27,7 @@ Keep this section succinct to avoid overloading the reader while containing all 
 List the metrics for success upfront so readers can evaluate the rest of the document through this lens.
 
 Goals must be SMART:
+
 - **Specific**: Clearly defined, not vague
 - **Measurable**: Quantifiable metrics
 - **Achievable**: Realistic given resources
@@ -33,6 +35,7 @@ Goals must be SMART:
 - **Time-bound**: Clear deadlines
 
 Example goals:
+
 - "Increase customer retention from 72% to 85% by Q4 2024"
 - "Reduce page load time from 3.2s to under 1s by June 2024"
 - "Achieve $5M ARR within 18 months of launch"
@@ -40,6 +43,7 @@ Example goals:
 ### 3. Tenets
 
 Guiding principles that inform decision-making for this initiative. Tenets are:
+
 - Inspirational north stars
 - Decision-making frameworks
 - Trade-off guides when choices conflict
@@ -47,6 +51,7 @@ Guiding principles that inform decision-making for this initiative. Tenets are:
 Tenets help readers understand the philosophy behind recommendations. They answer: "When we face difficult choices, what principles guide us?"
 
 Example tenets:
+
 - "Customer trust over short-term revenue"
 - "Simplicity over feature completeness"
 - "Data-driven decisions over intuition"
@@ -54,6 +59,7 @@ Example tenets:
 ### 4. State of the Business
 
 Provide a detailed snapshot of the current situation:
+
 - How the team/product/initiative is structured
 - How execution is progressing
 - Performance against goals
@@ -65,6 +71,7 @@ Include specific data, charts (in appendix), and trend analysis. This section es
 ### 5. Lessons Learned
 
 Provide context on what went well and what didn't:
+
 - Successes with analysis of why they worked
 - Failures with honest assessment of causes
 - Surprising discoveries
@@ -75,6 +82,7 @@ Back up all analysis with relevant data and metrics. Lead with brutal honesty ra
 ### 6. Strategic Priorities
 
 Lay out the recommended path forward:
+
 - Specific initiatives and their rationale
 - Resource requirements
 - Timeline and milestones
@@ -86,6 +94,7 @@ Priorities should be precise without losing sight of the big picture. Each prior
 ### 7. Appendix (Unlimited)
 
 Include all supporting materials:
+
 - Detailed charts and graphs
 - Data tables
 - Technical specifications
@@ -104,6 +113,7 @@ The reader should understand the topic without needing other documents. Links to
 ### Evidence-Based Claims
 
 Every assertion requires supporting evidence:
+
 - Market claims need data
 - Customer insights need research
 - Projections need models
@@ -112,6 +122,7 @@ Every assertion requires supporting evidence:
 ### Logical Flow
 
 Each section builds on previous sections:
+
 - Introduction frames the topic
 - Goals establish success criteria
 - Tenets explain decision philosophy
@@ -122,6 +133,7 @@ Each section builds on previous sections:
 ### Time Investment
 
 Great 6-pagers take time:
+
 - Initial draft: 1-2 days
 - Revision and feedback: 2-3 days
 - Final polish: 1-2 days
@@ -132,6 +144,7 @@ Share drafts with colleagues for improvement. Set aside for a day, then edit wit
 ## Meeting Usage
 
 In Amazon meetings:
+
 1. First 20-25 minutes: Silent reading
 2. Remaining time: Discussion and questions
 3. Decision-makers engage with the document, not presenter personality
