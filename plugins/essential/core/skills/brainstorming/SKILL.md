@@ -112,16 +112,15 @@ After understanding the idea, propose 2-3 different approaches:
 
 **Step 2: Get approach selection**
 
-Use AskUserQuestion to select approach:
+**Use the AskUserQuestion tool** (do NOT output as plain text):
 
-```
 Question: "Which approach would you prefer?"
 Header: "Approach"
 Options:
 - [Approach A name] (recommended): [Brief description of why this is recommended]
 - [Approach B name]: [Brief description and trade-off]
 - [Approach C name]: [Brief description and trade-off]
-```
+multiSelect: false
 
 Generate option labels and descriptions dynamically based on the approaches identified.
 
@@ -160,16 +159,15 @@ If "Minor tweaks" or "Needs rethinking" selected, pause for their input.
 
 **Step 1: Documentation decision**
 
-Use AskUserQuestion for documentation:
+**Use the AskUserQuestion tool** (do NOT output as plain text):
 
-```
 Question: "How should I proceed with documentation?"
 Header: "Docs"
 Options:
 - Save and commit: Write design doc and commit to git
 - Save only: Write design doc without committing
 - Skip docs: Proceed without saving design document
-```
+multiSelect: false
 
 **Step 2: Save design (if chosen)**
 
@@ -179,16 +177,15 @@ Options:
 
 **Step 3: Implementation handoff**
 
-Use AskUserQuestion for next steps:
+**Use the AskUserQuestion tool** (do NOT output as plain text):
 
-```
 Question: "Ready to proceed with implementation?"
 Header: "Next step"
 Options:
 - Set up worktree: Create isolated workspace and write implementation plan
 - Just the plan: Write implementation plan in current workspace
 - Stop here: I will handle implementation separately
-```
+multiSelect: false
 
 **Step 4: Execute choice**
 

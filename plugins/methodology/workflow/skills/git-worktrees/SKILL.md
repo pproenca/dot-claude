@@ -1,7 +1,7 @@
 ---
 name: git-worktrees
 description: Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification
-allowed-tools: Bash(git worktree:*), Bash(git branch:*), Read
+allowed-tools: Bash(git worktree:*), Bash(git branch:*), Read, AskUserQuestion
 ---
 
 # Using Git Worktrees
@@ -38,16 +38,14 @@ grep -i "worktree.*director" CLAUDE.md 2>/dev/null
 
 ### 3. Ask User
 
-If no directory exists and no CLAUDE.md preference:
+If no directory exists and no CLAUDE.md preference, **use AskUserQuestion tool:**
 
-```
-No worktree directory found. Where should I create worktrees?
-
-1. .worktrees/ (project-local, hidden)
-2. ~/.config/superpowers/worktrees/<project-name>/ (global location)
-
-Which would you prefer?
-```
+Question: "No worktree directory found. Where should I create worktrees?"
+Header: "Location"
+Options:
+- .worktrees/ (project-local): Hidden directory within project, ignored by git
+- Global (~/.config/superpowers/worktrees/<project>/): Outside project, shared across machines
+multiSelect: false
 
 ## Safety Verification
 
