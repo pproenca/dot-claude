@@ -45,3 +45,9 @@ known-first-party = ["dot_claude"]
 
 [tool.ty.environment]
 python-version = "3.12"
+
+# Ignore unresolved imports in plugin test files that use dynamic sys.path manipulation
+[[tool.ty.overrides]]
+include = ["plugins/**/tests/test_*.py"]
+[tool.ty.overrides.rules]
+unresolved-import = "ignore"
