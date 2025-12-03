@@ -31,6 +31,17 @@ Execute plan by dispatching fresh subagent per task, with code review after each
 - Tasks are tightly coupled (manual execution better)
 - Plan needs revision (brainstorm first)
 
+## Efficiency Targets
+
+| Complexity | Target Tool Uses | Target Tokens |
+|------------|------------------|---------------|
+| TRIVIAL | 2-3 | <3k |
+| SIMPLE | 4-6 | <8k |
+| MODERATE | 8-15 | <20k |
+| COMPLEX | No hard limit | Reasonable |
+
+**Why this matters:** A "Remove orphaned file" task should NOT use 11 tools and 27k tokens.
+
 ## The Process
 
 ### Step 0: Verify Isolation Context
@@ -68,12 +79,58 @@ Read plan file, create TodoWrite with:
 
 ### 2. Execute Task with Subagent
 
-For each task:
+Check task **Complexity** tag before dispatching:
 
-**Dispatch fresh subagent:**
+#### TRIVIAL Tasks
+
+**Do NOT dispatch a subagent.** Execute directly as parent agent:
+
+1. Read task from plan
+2. Execute the change (Bash, Edit, Write as needed)
+3. Verify with `git diff`
+4. Commit
+5. Mark complete
+
+**Rationale:** Subagent overhead (context loading, skill loading) exceeds task value.
+
+#### SIMPLE Tasks
+
+**Dispatch lightweight subagent:**
 
 ```
 Task tool (general-purpose):
+  model: haiku
+  description: "Implement Task N: [task name]"
+  prompt: |
+    You are implementing Task N from [plan-file]. This is a SIMPLE task.
+
+    Work efficiently:
+    1. Read the task
+    2. If modifying code: write a simple test first
+    3. Make the change
+    4. Verify tests pass
+    5. Commit
+    6. Report back briefly
+
+    EFFICIENCY TARGET: 4-6 tool uses maximum.
+    Skip skill loading unless absolutely necessary.
+
+    ANTI-PATTERNS TO AVOID:
+    - Reading files not mentioned in task
+    - Using Glob/Grep to "verify" obvious facts
+    - Loading skills you don't need
+    - Re-reading the plan file multiple times
+
+    Work from: [directory]
+```
+
+#### MODERATE Tasks
+
+**Dispatch standard subagent:**
+
+```
+Task tool (general-purpose):
+  model: sonnet
   description: "Implement Task N: [task name]"
   prompt: |
     You are implementing Task N from [plan-file].
@@ -81,27 +138,75 @@ Task tool (general-purpose):
     Read that task carefully. Your job is to:
     1. Use core:tdd skill - write failing test FIRST, then implement
     2. Implement exactly what the task specifies
-    3. Use core:verification skill - verify all tests pass with actual output
+    3. Use core:verification skill - verify all tests pass
     4. Commit your work
     5. Report back
 
+    EFFICIENCY TARGET: 8-15 tool uses.
+
+    ANTI-PATTERNS TO AVOID:
+    - Reading files not mentioned in task
+    - Using Glob/Grep to "verify" obvious facts
+    - Loading skills you don't need
+    - Re-reading the plan file multiple times
+
+    Work from: [directory]
+
+    Report: What you implemented, test results, files changed
+```
+
+#### COMPLEX Tasks
+
+**Dispatch thorough subagent:**
+
+```
+Task tool (general-purpose):
+  model: sonnet
+  description: "Implement Task N: [task name]"
+  prompt: |
+    You are implementing Task N from [plan-file]. This is a COMPLEX task.
+
+    Read that task carefully. Your job is to:
+    1. Use core:tdd skill - write failing test FIRST, then implement
+    2. Implement exactly what the task specifies
+    3. Use core:verification skill - verify all tests pass with actual output
+    4. Consider edge cases and error handling
+    5. Commit your work
+    6. Report back thoroughly
+
     IMPORTANT:
-    - You MUST use core:tdd. Write the test first, see it fail, then
-      write minimal code to pass. No exceptions.
-    - You MUST use core:verification before reporting completion. Show
-      actual test output as evidence.
+    - You MUST use core:tdd. Write the test first, see it fail.
+    - You MUST use core:verification before reporting completion.
 
     Work from: [directory]
 
     Report: What you implemented, what you tested, test results (with output),
-    files changed, any issues
+    files changed, any issues or concerns
 ```
 
 **Subagent reports back** with summary of work.
 
-**Note:** Subagents implement individual tasks only. The parent (you) handles finish-branch after ALL tasks complete - subagents don't need to know about it.
+**Note:** Subagents implement individual tasks only. The parent (you) handles finish-branch after ALL tasks complete.
 
 ### 3. Review Subagent's Work
+
+**Review strategy based on task complexity:**
+
+#### TRIVIAL tasks
+
+No review needed - parent already verified git diff during execution.
+
+#### SIMPLE tasks
+
+Parent reviews subagent report + git diff. No code-reviewer dispatch.
+
+```bash
+git diff --stat [BASE_SHA]..[HEAD_SHA]
+```
+
+Check: Does the change match the task? Any unintended changes?
+
+#### MODERATE tasks
 
 **Dispatch code-reviewer subagent:**
 
@@ -125,6 +230,10 @@ Task tool (review:code-reviewer):
     First run: git diff --stat [BASE_SHA]..[HEAD_SHA]
     Then review against plugins/methodology/review/references/code-review-standards.md
 ```
+
+#### COMPLEX tasks
+
+**Dispatch thorough code-reviewer subagent** with model: opus for critical analysis.
 
 **Code reviewer returns:** Strengths, Issues (Critical/Important/Minor), Assessment
 
