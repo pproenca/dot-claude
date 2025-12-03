@@ -232,25 +232,31 @@ Task tool (python:python-expert):
 
 ## Diagram Generation Phase
 
-After completing the plan content, offer diagram generation.
+Diagrams help Claude understand complex plans during execution. They're not just for humans - they serve as a reference that helps Claude maintain context during multi-step implementations.
 
 ### Step 1: Ask About Diagrams
 
 Use AskUserQuestion:
 
 ```
-Question: "Would you like me to generate diagrams for this plan?"
+Question: "Should I generate diagrams to help with plan execution?"
 Header: "Diagrams"
-multiSelect: true
+multiSelect: false
 Options:
-- Task Dependencies: Flowchart showing task order and parallelization
-- Architecture: Component diagram showing system structure
-- No diagrams: Skip diagram generation
+- Auto-detect: Let Claude decide what diagrams (if any) would help execution
+- Task Dependencies: Show task order, parallelization, and blockers
+- Architecture: Show system components, layers, and boundaries
+- Sequence: Show API flows, service calls, and message passing
+- State: Show status transitions and lifecycle stages
+- Data Model: Show database schema and entity relationships
+- No diagrams: Skip diagram generation entirely
 ```
 
-### Step 2: Generate Diagrams (if requested)
+**Default to "Auto-detect"** for complex plans. Only skip diagrams for trivial changes.
 
-If user selects diagram types, dispatch diagram-generator subagent:
+### Step 2: Generate Diagrams
+
+If user selects "Auto-detect" or specific types, dispatch diagram-generator agent:
 
 ```
 Task tool (doc:diagram-generator):
@@ -258,9 +264,16 @@ Task tool (doc:diagram-generator):
   prompt: |
     See template at plugins/methodology/workflow/templates/diagram-prompt.md
 
-    DIAGRAM_TYPES: [user's selection]
+    MODE: [auto-detect | specific]
+    DIAGRAM_TYPES: [user's selection or "auto"]
     PLAN_CONTENT: [full plan text]
 ```
+
+**For auto-detect mode**, the agent will:
+1. Analyze plan complexity and structure
+2. Decide IF any diagrams would help Claude execute
+3. Select the most useful diagram type(s)
+4. Skip if plan is simple enough that diagrams add no value
 
 ### Step 3: Insert Diagrams
 
@@ -286,12 +299,14 @@ Add `## Diagrams` section to the plan document after the header block, before fi
 ### Task 1: ...
 ```
 
-### When to Skip Diagrams
+### When to Skip the Question Entirely
 
-Skip the diagram question when:
-- Plan has < 4 tasks with linear sequence
-- Single-file refactoring
-- No multi-component architecture
+Don't even ask about diagrams when:
+- Plan has < 3 tasks with purely linear sequence
+- Single-file changes (bug fix, refactor)
+- Configuration-only changes
+
+In these cases, just skip to execution handoff.
 
 ## Execution Handoff
 

@@ -2,21 +2,44 @@
 
 Use this template when dispatching diagram generation for implementation plans.
 
+**Key insight:** Diagrams help Claude maintain context during complex plan execution. They're execution aids, not just visual documentation.
+
 ## Dispatch Format
 
-```
-Task tool (doc:diagram-generator):
-  description: "Generate diagrams for implementation plan"
-  prompt: |
-    Generate Mermaid diagrams for the following implementation plan.
+### Auto-Detect Mode (Recommended)
 
-    ## Requested Diagram Types
-    {DIAGRAM_TYPES}
+Let the agent decide IF and WHAT diagrams would help:
+
+```
+Task tool with subagent_type="doc:diagram-generator":
+  description: "Auto-detect useful diagrams for plan"
+  prompt: |
+    MODE: auto-detect
 
     ## Plan Content
     {PLAN_CONTENT}
 
-    Generate clean, readable Mermaid code for each requested diagram type.
+    Analyze this plan and decide:
+    1. Would any diagrams help Claude execute this plan better?
+    2. If yes, which type(s) would be most useful?
+    3. Generate only what adds value - skip if plan is straightforward.
+```
+
+### Specific Mode
+
+Request specific diagram types:
+
+```
+Task tool with subagent_type="doc:diagram-generator":
+  description: "Generate [TYPE] diagram for plan"
+  prompt: |
+    MODE: specific
+    DIAGRAM_TYPES: {USER_SELECTION}
+
+    ## Plan Content
+    {PLAN_CONTENT}
+
+    Generate the requested diagram type(s).
 ```
 
 ## Available Diagram Types
@@ -131,51 +154,62 @@ mindmap
 
 ## Diagram Selection Guidelines
 
-**Use Task Dependencies when:**
-- Plan has 4+ tasks
-- Some tasks can run in parallel
-- Task order matters
+**How diagrams help Claude execute:**
 
-**Use Architecture when:**
-- Plan involves multiple components
-- Data flows between systems
-- New modules/services are created
+| Diagram Type | Execution Benefit |
+|--------------|-------------------|
+| **Task Dependencies** | Prevents starting blocked tasks, shows parallelization |
+| **Architecture** | Clarifies component boundaries during multi-file changes |
+| **Sequence** | Tracks message order, helps debug integration |
+| **State** | Prevents invalid state transitions |
+| **ER Diagram** | Shows relationships, prevents FK violations |
+| **Flowchart** | Ensures all decision paths are covered |
 
-**Use Sequence when:**
-- Plan involves API integrations
-- Multiple services communicate
-- Request/response patterns matter
+**Auto-detect will skip diagrams when:**
+- Plan has < 5 tasks with linear sequence
+- Single-file changes (bug fix, refactor)
+- No inter-component dependencies
+- Configuration-only changes
 
-**Use State when:**
-- Objects have lifecycle states
-- Workflow has defined transitions
-- Status changes are important
-
-**Skip diagrams when:**
-- Plan has < 4 tasks with linear sequence
-- Single-file refactoring
-- No multi-component architecture
+**Auto-detect will generate diagrams when:**
+- 5+ tasks with non-linear dependencies
+- Multiple components/services that interact
+- State machines with 3+ states
+- Database schema with 3+ related entities
+- API integrations with request/response cycles
 
 ## Output Format
 
-Each diagram should include:
-1. **Title** - What the diagram shows
-2. **Type** - Which Mermaid diagram type
-3. **Purpose** - Why this diagram helps
-4. **Code** - Clean Mermaid syntax
+### When generating:
 
-Example:
+```markdown
+### [Diagram Title]
+
+**Purpose:** [How this helps Claude execute the plan]
+
+\`\`\`mermaid
+[diagram code]
+\`\`\`
+```
+
+### When skipping:
+
+```markdown
+**Diagrams:** Skipped - [reason, e.g., "linear 4-task plan doesn't benefit from visualization"]
+```
+
+## Example
+
 ```markdown
 ### Task Execution Flow
 
-**Type:** Task Dependencies (graph LR)
-**Purpose:** Shows which tasks can run in parallel and dependencies
+**Purpose:** Shows which tasks can run in parallel (T1 & T2) and what blocks T3
 
-```mermaid
+\`\`\`mermaid
 graph LR
     T1[Setup Database] --> T3[Create API]
     T2[Setup Auth] --> T3
     T3 --> T4[Add Frontend]
     T4 --> T5[Write Tests]
-```
+\`\`\`
 ```
