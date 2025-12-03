@@ -37,11 +37,28 @@ for tier, plugins in TIER_MAPPING.items():
 
 # Known Claude Code tools
 KNOWN_TOOLS = {
-    "Bash", "Read", "Write", "Edit", "Glob", "Grep",
-    "Task", "Skill", "SlashCommand", "TodoWrite",
-    "AskUserQuestion", "WebFetch", "WebSearch",
-    "BashOutput", "KillShell", "NotebookEdit", "EnterPlanMode", "ExitPlanMode"
+    "Bash",
+    "Read",
+    "Write",
+    "Edit",
+    "Glob",
+    "Grep",
+    "Task",
+    "Skill",
+    "SlashCommand",
+    "TodoWrite",
+    "AskUserQuestion",
+    "WebFetch",
+    "WebSearch",
+    "BashOutput",
+    "KillShell",
+    "NotebookEdit",
+    "EnterPlanMode",
+    "ExitPlanMode",
 }
+
+# MCP tool pattern: mcp__<server>__<tool>
+MCP_TOOL_PATTERN = re.compile(r"^mcp__[a-zA-Z0-9_-]+__[a-zA-Z0-9_-]+$")
 
 
 def err(msg: str) -> None:
@@ -133,9 +150,9 @@ def discover_valid_references(repo_root: Path) -> dict[str, set[str]]:
     This is built once and reused for O(1) validation lookups.
     """
     return {
-        'skills': discover_valid_skills(repo_root),
-        'plugins': discover_valid_plugins(repo_root),
-        'tools': KNOWN_TOOLS,
+        "skills": discover_valid_skills(repo_root),
+        "plugins": discover_valid_plugins(repo_root),
+        "tools": KNOWN_TOOLS,
     }
 
 
@@ -166,17 +183,15 @@ def extract_permission_pattern(pattern: str) -> tuple[str, str] | None:
       'Invalid(...)' -> None
     """
     # Match: Tool(reference:*) or Tool(reference) or Tool
-    match = re.match(r'^(\w+)(?:\(([^:)]+)(?::[^)]+)?\))?$', pattern)
+    match = re.match(r"^(\w+)(?:\(([^:)]+)(?::[^)]+)?\))?$", pattern)
     if match:
         tool, ref = match.groups()
-        return (tool, ref or '')
+        return (tool, ref or "")
     return None
 
 
 def validate_permission_patterns(
-    settings: dict[str, Any],
-    registry: dict[str, set[str]],
-    path: Path
+    settings: dict[str, Any], registry: dict[str, set[str]], path: Path
 ) -> list[str]:
     """Validate Bash(*), Skill(*) pattern references."""
     errors = []
@@ -193,6 +208,10 @@ def validate_permission_patterns(
                 errors.append(f"{path}: permission pattern must be string: {pattern}")
                 continue
 
+            # Check if it's an MCP tool pattern (mcp__server__tool)
+            if MCP_TOOL_PATTERN.match(pattern):
+                continue  # Valid MCP tool pattern, skip further validation
+
             parsed = extract_permission_pattern(pattern)
             if not parsed:
                 errors.append(f"{path}: invalid permission pattern: {pattern}")
@@ -201,7 +220,7 @@ def validate_permission_patterns(
             tool, ref = parsed
 
             # Validate tool name (O(1) lookup)
-            if tool not in registry['tools']:
+            if tool not in registry["tools"]:
                 errors.append(f"{path}: unknown tool in pattern '{pattern}': {tool}")
 
             # Validate Skill references
@@ -209,23 +228,21 @@ def validate_permission_patterns(
                 # ref should be either "plugin:skill" or "plugin:*"
                 if ":" not in ref:
                     # Simple plugin reference like Skill(commit)
-                    if ref not in registry['plugins']:
+                    if ref not in registry["plugins"]:
                         errors.append(f"{path}: Skill pattern references unknown plugin: {pattern}")
                 elif ref.endswith(":*"):
                     plugin = ref[:-2]  # Remove ":*"
-                    if plugin not in registry['plugins']:
+                    if plugin not in registry["plugins"]:
                         errors.append(f"{path}: Skill pattern references unknown plugin: {pattern}")
                 else:
-                    if ref not in registry['skills']:
+                    if ref not in registry["skills"]:
                         errors.append(f"{path}: Skill pattern references unknown skill: {pattern}")
 
     return errors
 
 
 def validate_command_executability(
-    settings: dict[str, Any],
-    path: Path,
-    working_dir: Path
+    settings: dict[str, Any], path: Path, working_dir: Path
 ) -> list[str]:
     """Test statusLine command executability (timeout=5s)."""
     errors = []
@@ -254,11 +271,7 @@ def validate_command_executability(
 
         # Run with short timeout to test executability
         result = subprocess.run(
-            cmd_parts,
-            cwd=working_dir,
-            capture_output=True,
-            text=True,
-            timeout=5
+            cmd_parts, cwd=working_dir, capture_output=True, text=True, timeout=5
         )
         # We don't care about exit code, just that it's executable
         if result.returncode != 0:
@@ -273,10 +286,7 @@ def validate_command_executability(
     return errors
 
 
-def detect_permission_conflicts(
-    settings: dict[str, Any],
-    path: Path
-) -> list[str]:
+def detect_permission_conflicts(settings: dict[str, Any], path: Path) -> list[str]:
     """Find tools in both allow and ask lists."""
     errors = []
     permissions = settings.get("permissions", {})
@@ -295,7 +305,9 @@ def detect_permission_conflicts(
     conflicts_allow_deny = allow_patterns & deny_patterns
     if conflicts_allow_deny:
         for pattern in conflicts_allow_deny:
-            errors.append(f"{path}: permission conflict - pattern in both allow and deny: {pattern}")
+            errors.append(
+                f"{path}: permission conflict - pattern in both allow and deny: {pattern}"
+            )
 
     # Check for exact duplicates between ask and deny
     conflicts_ask_deny = ask_patterns & deny_patterns
@@ -307,9 +319,7 @@ def detect_permission_conflicts(
 
 
 def validate_settings_file(
-    path: Path,
-    registry: dict[str, set[str]],
-    working_dir: Path
+    path: Path, registry: dict[str, set[str]], working_dir: Path
 ) -> tuple[bool, list[str], list[str]]:
     """Validate single settings file.
 
