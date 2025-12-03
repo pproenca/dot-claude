@@ -28,3 +28,10 @@ repos:
         files: \.claude/settings.*\.json$
         pass_filenames: false
 
+      - id: validate-references
+        name: Validate Plugin References
+        entry: python3 -S scripts/validate-references.py
+        language: python
+        files: ^plugins/.*\.md$
+        pass_filenames: false
+

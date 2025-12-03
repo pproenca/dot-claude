@@ -62,15 +62,26 @@ Task tool (general-purpose):
 ### 3. Review Subagent's Work
 
 **Dispatch code-reviewer subagent:**
+
+Use template at `plugins/methodology/review/templates/code-reviewer-dispatch.md`.
+
 ```
 Task tool (review:code-reviewer):
-  Use template at requesting-code-review/code-reviewer.md
+  description: "Review Task N implementation"
+  prompt: |
+    Review the implementation against requirements.
 
-  WHAT_WAS_IMPLEMENTED: [from subagent's report]
-  PLAN_OR_REQUIREMENTS: Task N from [plan-file]
-  BASE_SHA: [commit before task]
-  HEAD_SHA: [current commit]
-  DESCRIPTION: [task summary]
+    ## Context
+    - **What Was Implemented:** [from subagent's report]
+    - **Requirements/Plan:** Task N from [plan-file]
+    - **Description:** [task summary]
+
+    ## Git Range
+    - **Base:** [commit before task]
+    - **Head:** [current commit]
+
+    First run: git diff --stat [BASE_SHA]..[HEAD_SHA]
+    Then review against plugins/methodology/review/references/code-review-standards.md
 ```
 
 **Code reviewer returns:** Strengths, Issues (Critical/Important/Minor), Assessment
@@ -187,4 +198,5 @@ Done!
 **Alternative workflow:**
 - **executing-plans** - Use for parallel session instead of same-session execution
 
-See code-reviewer template: requesting-code-review/code-reviewer.md
+**Templates:**
+- Code reviewer dispatch: `plugins/methodology/review/templates/code-reviewer-dispatch.md`
