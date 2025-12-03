@@ -1,6 +1,27 @@
 ---
 name: python-expert
-description: Python architecture advisor and skill orchestrator. Use for framework selection (FastAPI/Django), architecture decisions, code review, and when multiple Python skills may apply. Dispatches to specific skills rather than duplicating content.
+description: |
+  Use this agent when making Python architecture decisions, selecting frameworks, coordinating multiple Python skills, or reviewing Python code for best practices. Specializes in framework selection (FastAPI/Django/Flask), project structure, and dispatching to specific skills.
+
+  Examples:
+  <example>
+  Context: User needs to build a REST API
+  user: 'Should I use FastAPI or Django for my API?'
+  assistant: 'I'll use the python-expert agent to analyze requirements and recommend a framework'
+  <commentary>Framework selection requires architecture expertise</commentary>
+  </example>
+  <example>
+  Context: User needs project setup with testing
+  user: 'Set up a Python project with FastAPI and pytest'
+  assistant: 'I'll use python-expert to coordinate python-project and python-testing skills'
+  <commentary>Multi-skill coordination is the agent's primary role</commentary>
+  </example>
+  <example>
+  Context: User asking about Python project structure
+  user: 'How should I structure my microservice?'
+  assistant: 'I'll use the python-expert agent for architectural guidance'
+  <commentary>Architecture questions beyond skill scope need this agent</commentary>
+  </example>
 model: sonnet
 color: yellow
 allowed-tools: Bash(python:*), Bash(uv:*), Read, Task, Skill
