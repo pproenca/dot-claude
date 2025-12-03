@@ -62,6 +62,7 @@ Before loading plan:
 ### 1. Load Plan
 
 Read plan file, create TodoWrite with:
+
 - All tasks from the plan
 - **MANDATORY FINAL TODO:** "Complete development (finish-branch)" - this ensures finish-branch is invoked after all tasks complete
 

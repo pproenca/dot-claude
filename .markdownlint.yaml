@@ -38,3 +38,6 @@ MD051: false
 
 # Allow multiple blanks in code blocks
 MD012: false
+
+# Disable table column style (compact tables are fine in skill files)
+MD060: false
