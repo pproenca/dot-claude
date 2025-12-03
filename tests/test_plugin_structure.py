@@ -312,7 +312,7 @@ class TestPhase5Degradation:
 
     def test_python_has_fallback_text(self, plugins_dir: Path) -> None:
         """Python skills should have fallback text for core dependency."""
-        python_skill = get_plugin_path(plugins_dir, "python") / "skills" / "python-testing-patterns" / "SKILL.md"
+        python_skill = get_plugin_path(plugins_dir, "python") / "skills" / "python-testing" / "SKILL.md"
         content = python_skill.read_text()
         # Either has fallback text or doesn't reference core:verification
         has_fallback = "If the `core` plugin is installed" in content
