@@ -81,12 +81,9 @@ git merge <feature-branch>
 
 # Verify tests on merged result
 <test command>
-
-# If tests pass
-git branch -d <feature-branch>
 ```
 
-Then: Cleanup worktree (Step 5)
+Then: Cleanup worktree and branch (Step 5)
 
 #### Option 2: Push and Create PR
 
@@ -141,19 +138,85 @@ Then: Cleanup worktree (Step 5)
 
 **For Options 1, 2, 4:**
 
-Check if in worktree:
+**CRITICAL: Follow this exact sequence to avoid errors.**
+
+#### 5a. Detect if in worktree
 
 ```bash
-git worktree list | grep $(git branch --show-current)
+# Check if current directory is inside a worktree
+worktree_path=$(git rev-parse --show-toplevel)
+main_repo=$(git rev-parse --path-format=absolute --git-common-dir | sed 's|/\.git$||')
+
+# If worktree_path != main_repo, we're in a worktree
 ```
 
-If yes:
+#### 5b. Leave worktree FIRST (mandatory)
+
+**Cannot remove a worktree while standing in it (causes "Permission denied").**
 
 ```bash
-git worktree remove <worktree-path>
+# Change to main repository BEFORE attempting removal
+cd "$main_repo"
 ```
 
-**For Option 3:** Keep worktree.
+#### 5c. Remove worktree
+
+```bash
+# Now safe to remove worktree
+git worktree remove "$worktree_path"
+```
+
+**If worktree removal fails with "not a working tree":**
+
+```bash
+# Directory may have been manually deleted - prune stale entries
+git worktree prune
+```
+
+#### 5d. Delete branch (after worktree is gone)
+
+**Cannot delete a branch while it's checked out in any worktree.**
+
+```bash
+# For merged branches (Options 1, 2)
+git branch -d <feature-branch>
+
+# For discarded branches (Option 4)
+git branch -D <feature-branch>
+```
+
+**If branch deletion fails with "used by worktree":**
+
+```bash
+# Worktree removal may not have completed - verify state
+git worktree list
+
+# If worktree still listed, force prune then retry
+git worktree prune
+git branch -d <feature-branch>
+```
+
+### Complete Cleanup Script
+
+For reference, the full safe cleanup sequence:
+
+```bash
+# 1. Capture paths while still in worktree
+worktree_path=$(git rev-parse --show-toplevel)
+main_repo=$(git rev-parse --path-format=absolute --git-common-dir | sed 's|/\.git$||')
+branch_name=$(git branch --show-current)
+
+# 2. Leave worktree (CRITICAL - must do before removal)
+cd "$main_repo"
+
+# 3. Remove worktree
+git worktree remove "$worktree_path" || git worktree prune
+
+# 4. Delete branch (only after worktree gone)
+git branch -d "$branch_name"  # or -D for force delete
+```
+
+**For Option 3:** Keep worktree - skip this entire step.
 
 ## Quick Reference
 
@@ -186,6 +249,21 @@ git worktree remove <worktree-path>
 - **Problem:** Accidentally delete work
 - **Fix:** Require typed "discard" confirmation
 
+**Wrong cleanup sequence (deleting branch before worktree)**
+
+- **Problem:** `git branch -d` fails with "used by worktree"
+- **Fix:** Always remove worktree FIRST, then delete branch
+
+**Removing worktree while standing in it**
+
+- **Problem:** `git worktree remove` fails with "Permission denied"
+- **Fix:** `cd` to main repository BEFORE removing worktree
+
+**Inconsistent worktree state after partial failures**
+
+- **Problem:** "not a working tree" errors after failed removal attempts
+- **Fix:** Run `git worktree prune` to clean up stale entries
+
 ## Red Flags
 
 **Never:**
@@ -194,6 +272,8 @@ git worktree remove <worktree-path>
 - Merge without verifying tests on result
 - Delete work without confirmation
 - Force-push without explicit request
+- Delete branch while worktree exists (wrong order)
+- Remove worktree while cwd is inside it
 
 **Always:**
 
@@ -201,6 +281,8 @@ git worktree remove <worktree-path>
 - Present exactly 4 options
 - Get typed confirmation for Option 4
 - Clean up worktree for Options 1 & 4 only
+- Leave worktree directory before removing it
+- Follow cleanup sequence: cd out → remove worktree → delete branch
 
 ## Integration
 
