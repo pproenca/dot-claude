@@ -55,7 +55,9 @@ my-package/
 └── .python-version
 ```
 
-**Why:** Prevents importing from source without installing, cleaner test isolation.
+**Why src/ layout:** The src/ layout prevents accidental imports from the source tree during
+testing. Without it, `import my_package` might resolve to the local directory instead of the
+installed package, masking missing `__init__.py` files or build configuration errors.
 
 ### Minimal pyproject.toml
 

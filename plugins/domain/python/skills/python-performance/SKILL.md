@@ -94,10 +94,10 @@ asyncio.run(main())
 
 ```python
 async def fetch_all(urls: list[str]) -> list[dict]:
+    # Concurrent I/O eliminates sequential waiting: 10 URLs at 100ms each
+    # complete in ~100ms total, not 1000ms. Critical for API aggregation.
     tasks = [fetch_data(url) for url in urls]
     return await asyncio.gather(*tasks)
-
-# All fetches run concurrently - total time ≈ slowest single fetch
 ```
 
 ### Error Handling
@@ -156,28 +156,33 @@ def sync_func():
 ### Data Structures
 
 ```python
-# O(n) list search → O(1) set/dict lookup
-if item in items_list:  # Slow for large lists
-if item in items_set:   # Fast regardless of size
+# Sets use hash tables for O(1) membership testing. For collections
+# checked repeatedly or exceeding ~10 items, the overhead of hashing
+# pays off vs linear scanning.
+if item in items_list:  # O(n) - scans every element
+if item in items_set:   # O(1) - hash lookup
 
-# O(n²) string concat → O(n) join
+# String immutability in Python forces reallocation on every +=.
+# For N concatenations, this creates O(n²) total copying.
+# join() pre-calculates final size and allocates once.
 result = ""
 for s in strings:
-    result += s  # Each += copies entire string!
+    result += s  # Creates N intermediate string objects
 
-result = "".join(strings)  # Single allocation
+result = "".join(strings)  # Single allocation, O(n) total
 ```
 
 ### List Comprehensions
 
 ```python
-# Slower: append overhead per iteration
+# List comprehensions bypass method dispatch overhead (no .append lookup)
+# and CPython pre-sizes the result list. For simple transforms, prefer
+# comprehensions unless loop body requires complex logic or side effects.
 result = []
 for i in range(n):
-    result.append(i**2)
+    result.append(i**2)  # Method lookup + call per iteration
 
-# Faster: single allocation
-result = [i**2 for i in range(n)]
+result = [i**2 for i in range(n)]  # Optimized bytecode path
 ```
 
 ### Generators for Memory
@@ -185,13 +190,15 @@ result = [i**2 for i in range(n)]
 ```python
 import sys
 
-list_data = [i for i in range(1_000_000)]  # ~8MB
-gen_data = (i for i in range(1_000_000))   # ~100 bytes
+list_data = [i for i in range(1_000_000)]  # ~8MB in memory
+gen_data = (i for i in range(1_000_000))   # ~100 bytes (lazy evaluation)
 
-# Use generators when you only need to iterate once
+# Generators yield values on-demand, preventing memory exhaustion when
+# processing data larger than available RAM. Essential for log parsing,
+# ETL pipelines, or any single-pass data processing.
 def process_large_file(path):
     with open(path) as f:
-        for line in f:  # Generator, not list
+        for line in f:  # File iterator is itself a generator
             yield process(line)
 ```
 
@@ -212,17 +219,18 @@ expensive_computation.cache_clear()
 ### Local Variables
 
 ```python
-# Slower: LEGB lookup on each iteration
+# Python's LEGB resolution requires dictionary lookups for global/nonlocal
+# variables, but uses direct array indexing for locals. In tight loops with
+# 10k+ iterations, this overhead compounds significantly.
 GLOBAL = 100
 def slow():
     for i in range(10000):
-        x = GLOBAL * i  # Looks up GLOBAL each time
+        x = GLOBAL * i  # Dict lookup each iteration
 
-# Faster: local lookup
 def fast():
-    local = 100
+    local = 100  # Captured once at function entry
     for i in range(10000):
-        x = local * i
+        x = local * i  # Direct array index
 ```
 
 ## Multiprocessing (CPU-Bound)

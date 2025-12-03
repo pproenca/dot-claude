@@ -61,16 +61,34 @@ double = lambda x: x * 2     # wrong - use def for named functions
 
 ### Comments
 
-- Explain WHY, not WHAT
-- Contradictory comments are worse than none
-- Obvious comments distract rather than clarify
+> **"Code tells you *how*. Comments tell you *why*."**
+
+For the complete philosophy, see [decision-based-comments.md](./decision-based-comments.md).
+
+**Quick Reference:**
+
+| Scenario | Action |
+|----------|--------|
+| Standard Python idiom | DELETE comment |
+| Type information | Use type hints instead |
+| Non-obvious/intentional code | REQUIRED - explain WHY |
+| Workaround for external bug | REQUIRED - include ticket |
 
 ```python
-# Bad: increments i by 1
+# BAD: Translation comment (describes WHAT)
+i += 1  # Increment i by 1
+
+# GOOD: Decision comment (explains WHY)
+# Skip the header row which contains column names, not data
 i += 1
 
-# Good: skip header row in CSV processing
-i += 1
+# BAD: Missing context for weird code
+time.sleep(2)
+
+# GOOD: Prevents future "optimization" that would break things
+# Legacy auth server race condition requires delay before reconnect.
+# See JIRA-402, fixed in auth-server v3.2+
+time.sleep(2)
 ```
 
 ## Modern Type Hints (3.10+)

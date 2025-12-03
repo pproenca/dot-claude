@@ -40,7 +40,12 @@ def test_exception_raised():
 ```python
 @pytest.fixture
 def db():
-    """Provides connected database, auto-disconnects after test."""
+    """
+    Provides isolated database connection for test isolation.
+
+    Using in-memory SQLite prevents test pollution across runs and
+    guarantees each test starts with known state.
+    """
     database = Database("sqlite:///:memory:")
     database.connect()
     yield database
@@ -50,7 +55,8 @@ def test_query(db):
     results = db.query("SELECT * FROM users")
     assert len(results) >= 0
 
-# Scope options: function (default), class, module, session
+# Session scope shares fixture across all tests for expensive resources
+# (e.g., one DB schema creation for all tests vs per-test).
 @pytest.fixture(scope="session")
 def app_config():
     return {"debug": True, "db_url": "sqlite:///:memory:"}

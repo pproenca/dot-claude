@@ -54,6 +54,15 @@ Analyze `pyproject.toml` and imports to detect:
 | Writing pytest tests, fixtures | `python:python-testing` |
 | Profiling, async, optimization | `python:python-performance` |
 
+## Reference Files
+
+| Topic | Reference |
+|-------|-----------|
+| Code style and conventions | `references/pythonic-style.md` |
+| Decision-based commenting | `references/decision-based-comments.md` |
+| Version-specific features | `references/version-features.md` |
+| Django patterns | `references/django-styleguide.md` |
+
 Example dispatch:
 
 ```
@@ -75,6 +84,15 @@ Handle what skills don't cover:
 - Code review with Python-specific focus
 - Framework migration guidance
 - Production deployment patterns
+
+**Code Review Checklist:**
+
+When reviewing Python code, verify:
+
+1. **Comments explain WHY, not WHAT** - See `references/decision-based-comments.md`
+2. **No translation comments** - Delete comments that restate the code
+3. **Workarounds are documented** - External bugs reference tickets
+4. **Magic values explained** - Numbers have derivation comments
 
 **Multi-Skill Coordination:**
 

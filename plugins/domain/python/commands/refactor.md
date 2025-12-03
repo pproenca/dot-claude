@@ -66,12 +66,20 @@ Task tool with:
 - prompt: "REVIEW the Python file at <target_file_path> for modern Python 3.12+ patterns, type hints, async patterns if applicable, and overall code quality"
 ```
 
+### Comment analysis
+
+Review comments against `references/decision-based-comments.md`:
+
+- **Translation comments**: Comments that restate what the code does (DELETE)
+- **Missing decision comments**: Non-obvious code without WHY explanation (ADD)
+- **Outdated comments**: Comments that contradict the code (FIX or DELETE)
+
 Combine findings. For each issue note:
 
 - Line number
 - Current code
 - Recommended fix
-- Rule reference (ruff code or pattern name)
+- Rule reference (ruff code, pattern name, or "comment-philosophy")
 
 ## Step 3: Propose Changes
 
@@ -81,6 +89,7 @@ Present summary:
 - Ruff violations: N
 - Type errors: N
 - Pattern improvements: N
+- Comment issues: N
 
 Use AskUserQuestion:
 
@@ -97,7 +106,8 @@ Use Edit tool to apply approved changes in order:
 
 1. Critical fixes (type errors, security issues)
 2. Ruff auto-fixes (formatting, linting)
-3. Pattern improvements (modern Python idioms)
+3. Comment cleanup (delete translation comments, add decision comments)
+4. Pattern improvements (modern Python idioms)
 
 ## Step 5: Verify and Report
 
