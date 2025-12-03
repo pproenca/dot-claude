@@ -7,12 +7,15 @@ Catches regressions like:
   2. Stale plugin prefixes (super: instead of workflow:)
   3. Skill/agent references that don't exist
   4. Orphaned templates (files nothing references)
+  5. Skill-vs-agent confusion (using wrong tool type)
+  6. Leaf name found but wrong prefix (e.g., wrong:mermaid-expert)
 
 Run: python3 scripts/validate-references.py
 """
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -24,6 +27,14 @@ class ValidationError(NamedTuple):
     line_num: int
     message: str
     severity: str  # "error" or "warning"
+
+
+class ComponentInfo(NamedTuple):
+    """Info about a skill or agent."""
+    full_name: str  # e.g., "doc:mermaid-expert"
+    leaf_name: str  # e.g., "mermaid-expert"
+    plugin: str     # e.g., "doc"
+    kind: str       # "skill" or "agent"
 
 
 def err(msg: str) -> None:
@@ -41,53 +52,74 @@ def find_all_markdown_files(plugins_dir: Path) -> list[Path]:
     return list(plugins_dir.rglob("*.md"))
 
 
-def find_all_skill_names(plugins_dir: Path) -> set[str]:
-    """Find all valid skill names (plugin:skill-name format)."""
-    skills: set[str] = set()
+def build_component_registry(plugins_dir: Path) -> tuple[
+    set[str],  # valid_skills
+    set[str],  # valid_agents
+    dict[str, list[ComponentInfo]],  # leaf_to_components (for ambiguity detection)
+]:
+    """Build registry of all skills and agents with leaf-name index.
 
+    Returns:
+        - valid_skills: set of "plugin:skill-name" strings
+        - valid_agents: set of "plugin:agent-name" strings
+        - leaf_to_components: maps leaf names to all components with that leaf
+    """
+    valid_skills: set[str] = set()
+    valid_agents: set[str] = set()
+    leaf_to_components: dict[str, list[ComponentInfo]] = {}
+
+    def register(full_name: str, leaf_name: str, plugin: str, kind: str) -> None:
+        """Register a component and index by leaf name."""
+        info = ComponentInfo(full_name, leaf_name, plugin, kind)
+        if leaf_name not in leaf_to_components:
+            leaf_to_components[leaf_name] = []
+        leaf_to_components[leaf_name].append(info)
+
+    # Find skills
     for skill_file in plugins_dir.rglob("skills/*/SKILL.md"):
-        # Parse the skill name from frontmatter
         content = skill_file.read_text()
         match = re.search(r"^name:\s*(.+)$", content, re.MULTILINE)
         if match:
             skill_name = match.group(1).strip()
+            plugin_dir = skill_file.parent.parent.parent
+            plugin_json = plugin_dir / ".claude-plugin" / "plugin.json"
+            if plugin_json.exists():
+                plugin_data = json.loads(plugin_json.read_text())
+                plugin_name = plugin_data.get("name", plugin_dir.name)
+                full_name = f"{plugin_name}:{skill_name}"
+                valid_skills.add(full_name)
+                register(full_name, skill_name, plugin_name, "skill")
 
-            # Determine plugin name from path
-            # Path like: plugins/methodology/workflow/skills/foo/SKILL.md
-            parts = skill_file.relative_to(plugins_dir).parts
-            if len(parts) >= 2:
-                # Could be plugins/tier/plugin/... or plugins/plugin/...
-                plugin_dir = skill_file.parent.parent.parent
-                plugin_json = plugin_dir / ".claude-plugin" / "plugin.json"
-                if plugin_json.exists():
-                    import json
-                    plugin_data = json.loads(plugin_json.read_text())
-                    plugin_name = plugin_data.get("name", plugin_dir.name)
-                    skills.add(f"{plugin_name}:{skill_name}")
+    # Find agents
+    for agent_file in plugins_dir.rglob("agents/*.md"):
+        # Skip files in subdirectories like references/
+        if agent_file.parent.name != "agents":
+            continue
+        content = agent_file.read_text()
+        match = re.search(r"^name:\s*(.+)$", content, re.MULTILINE)
+        if match:
+            agent_name = match.group(1).strip()
+            plugin_dir = agent_file.parent.parent
+            plugin_json = plugin_dir / ".claude-plugin" / "plugin.json"
+            if plugin_json.exists():
+                plugin_data = json.loads(plugin_json.read_text())
+                plugin_name = plugin_data.get("name", plugin_dir.name)
+                full_name = f"{plugin_name}:{agent_name}"
+                valid_agents.add(full_name)
+                register(full_name, agent_name, plugin_name, "agent")
 
+    return valid_skills, valid_agents, leaf_to_components
+
+
+def find_all_skill_names(plugins_dir: Path) -> set[str]:
+    """Find all valid skill names (plugin:skill-name format)."""
+    skills, _, _ = build_component_registry(plugins_dir)
     return skills
 
 
 def find_all_agent_names(plugins_dir: Path) -> set[str]:
     """Find all valid agent names (plugin:agent-name format)."""
-    agents: set[str] = set()
-
-    for agent_file in plugins_dir.rglob("agents/*.md"):
-        # Parse the agent name from frontmatter
-        content = agent_file.read_text()
-        match = re.search(r"^name:\s*(.+)$", content, re.MULTILINE)
-        if match:
-            agent_name = match.group(1).strip()
-
-            # Determine plugin name from path
-            plugin_dir = agent_file.parent.parent
-            plugin_json = plugin_dir / ".claude-plugin" / "plugin.json"
-            if plugin_json.exists():
-                import json
-                plugin_data = json.loads(plugin_json.read_text())
-                plugin_name = plugin_data.get("name", plugin_dir.name)
-                agents.add(f"{plugin_name}:{agent_name}")
-
+    _, agents, _ = build_component_registry(plugins_dir)
     return agents
 
 
@@ -215,6 +247,121 @@ def check_agent_references(
     return errors
 
 
+def check_component_confusion(
+    file_path: Path,
+    content: str,
+    valid_skills: set[str],
+    valid_agents: set[str],
+    leaf_to_components: dict[str, list[ComponentInfo]],
+) -> list[ValidationError]:
+    """Smart validation that detects skill-vs-agent confusion and wrong prefixes.
+
+    Algorithm (leaf detection):
+    1. Find all plugin:name references in content
+    2. If the full reference doesn't exist, extract the leaf name
+    3. Look up the leaf in our registry to find what DOES exist
+    4. Provide actionable suggestions:
+       - Wrong prefix: "Did you mean doc:mermaid-expert?"
+       - Wrong tool: "mermaid-expert is an agent, use Task tool not Skill tool"
+    """
+    errors: list[ValidationError] = []
+
+    # Pattern to find any plugin:component reference
+    ref_pattern = re.compile(r"(\w+):(\w[\w-]*)")
+
+    # Patterns that indicate Skill tool usage
+    skill_tool_patterns = [
+        r"[Uu]se (?:Skill tool|skill)[:\s]+[`'\"]?(\w+:\w[\w-]*)",
+        r"Skill[:\s]+[`'\"]?(\w+:\w[\w-]*)",
+        r"skill\s*=\s*['\"]?(\w+:\w[\w-]*)",
+    ]
+
+    # Patterns that indicate Task tool / subagent usage
+    task_tool_patterns = [
+        r"Task tool.*?(\w+:\w[\w-]*)",
+        r"subagent_type[=:]\s*['\"]?(\w+:\w[\w-]*)",
+    ]
+
+    all_valid = valid_skills | valid_agents
+
+    for line_num, line in enumerate(content.split("\n"), 1):
+        # Check Skill tool usage patterns
+        for pattern in skill_tool_patterns:
+            matches = re.findall(pattern, line, re.IGNORECASE)
+            for ref in matches:
+                ref = ref.strip()
+                if ref in all_valid:
+                    # Reference exists - but is it the right type?
+                    if ref in valid_agents:
+                        errors.append(ValidationError(
+                            file=file_path,
+                            line_num=line_num,
+                            message=(
+                                f"'{ref}' is an AGENT, not a skill. "
+                                f"Use Task tool with subagent_type='{ref}' instead of Skill tool"
+                            ),
+                            severity="error"
+                        ))
+                elif ":" in ref:
+                    # Reference doesn't exist - try to find what they meant
+                    prefix, leaf = ref.split(":", 1)
+                    if leaf in leaf_to_components:
+                        actual = leaf_to_components[leaf]
+                        suggestions = [c.full_name for c in actual]
+                        kinds = set(c.kind for c in actual)
+                        if "agent" in kinds and "skill" not in kinds:
+                            errors.append(ValidationError(
+                                file=file_path,
+                                line_num=line_num,
+                                message=(
+                                    f"'{ref}' not found. '{leaf}' exists as an AGENT: {suggestions}. "
+                                    f"Use Task tool with subagent_type instead of Skill tool"
+                                ),
+                                severity="error"
+                            ))
+                        else:
+                            errors.append(ValidationError(
+                                file=file_path,
+                                line_num=line_num,
+                                message=f"'{ref}' not found. Did you mean: {suggestions}?",
+                                severity="error"
+                            ))
+
+        # Check Task tool usage patterns
+        for pattern in task_tool_patterns:
+            matches = re.findall(pattern, line, re.IGNORECASE)
+            for ref in matches:
+                ref = ref.strip()
+                if ref == "general-purpose":
+                    continue
+                if ref in all_valid:
+                    # Reference exists - but is it the right type?
+                    if ref in valid_skills:
+                        errors.append(ValidationError(
+                            file=file_path,
+                            line_num=line_num,
+                            message=(
+                                f"'{ref}' is a SKILL, not an agent. "
+                                f"Use Skill tool instead of Task tool"
+                            ),
+                            severity="error"
+                        ))
+                elif ":" in ref:
+                    # Reference doesn't exist - try to find what they meant
+                    prefix, leaf = ref.split(":", 1)
+                    if leaf in leaf_to_components:
+                        actual = leaf_to_components[leaf]
+                        suggestions = [c.full_name for c in actual]
+                        errors.append(ValidationError(
+                            file=file_path,
+                            line_num=line_num,
+                            message=f"Agent '{ref}' not found. Did you mean: {suggestions}?",
+                            severity="error"
+                        ))
+
+    return errors
+
+
 def find_orphaned_templates(
     plugins_dir: Path, all_files: list[Path]
 ) -> list[ValidationError]:
@@ -315,11 +462,11 @@ def main() -> int:
 
     print("Validating plugin cross-references...\n")
 
-    # Collect valid names
-    valid_skills = find_all_skill_names(plugins_dir)
-    valid_agents = find_all_agent_names(plugins_dir)
+    # Build component registry with leaf-name index
+    valid_skills, valid_agents, leaf_to_components = build_component_registry(plugins_dir)
 
-    print(f"Found {len(valid_skills)} skills, {len(valid_agents)} agents\n")
+    print(f"Found {len(valid_skills)} skills, {len(valid_agents)} agents")
+    print(f"Indexed {len(leaf_to_components)} unique leaf names\n")
 
     # Find all markdown files
     all_files = find_all_markdown_files(plugins_dir)
@@ -339,13 +486,26 @@ def main() -> int:
         all_errors.extend(check_skill_references(file_path, content, valid_skills))
         all_errors.extend(check_agent_references(file_path, content, valid_agents))
         all_errors.extend(check_required_sections(file_path, content))
+        # Smart validation for skill-vs-agent confusion
+        all_errors.extend(check_component_confusion(
+            file_path, content, valid_skills, valid_agents, leaf_to_components
+        ))
 
     # Check for orphaned templates
     all_errors.extend(find_orphaned_templates(plugins_dir, all_files))
 
+    # Deduplicate errors (same file, line, message)
+    seen: set[tuple[Path, int, str]] = set()
+    unique_errors: list[ValidationError] = []
+    for e in all_errors:
+        key = (e.file, e.line_num, e.message)
+        if key not in seen:
+            seen.add(key)
+            unique_errors.append(e)
+
     # Report results
-    errors = [e for e in all_errors if e.severity == "error"]
-    warnings = [e for e in all_errors if e.severity == "warning"]
+    errors = [e for e in unique_errors if e.severity == "error"]
+    warnings = [e for e in unique_errors if e.severity == "warning"]
 
     if warnings:
         print("Warnings:")
