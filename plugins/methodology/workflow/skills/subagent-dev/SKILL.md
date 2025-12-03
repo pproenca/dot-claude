@@ -35,7 +35,9 @@ Execute plan by dispatching fresh subagent per task, with code review after each
 
 ### 1. Load Plan
 
-Read plan file, create TodoWrite with all tasks.
+Read plan file, create TodoWrite with:
+- All tasks from the plan
+- **MANDATORY FINAL TODO:** "Complete development (finish-branch)" - this ensures finish-branch is invoked after all tasks complete
 
 ### 2. Execute Task with Subagent
 
@@ -62,6 +64,8 @@ Task tool (general-purpose):
 ```
 
 **Subagent reports back** with summary of work.
+
+**Note:** Subagents implement individual tasks only. The parent (you) handles finish-branch after ALL tasks complete - subagents don't need to know about it.
 
 ### 3. Review Subagent's Work
 
@@ -122,16 +126,20 @@ After all tasks complete, dispatch final code-reviewer:
 
 After final review passes:
 
-- Announce: "I'm using the finish-branch skill to complete this work."
-- **REQUIRED SUB-SKILL:** Use workflow:finish-branch
-- Follow that skill to verify tests, present options, execute choice
+1. Mark the "Complete development (finish-branch)" todo as **in_progress**
+2. Announce: "I'm using the finish-branch skill to complete this work."
+3. **REQUIRED:** Use `Skill("workflow:finish-branch")`
+4. Follow that skill to verify tests, present options, execute choice
+5. Mark the "Complete development (finish-branch)" todo as **completed**
+
+**This step is NOT optional.** The mandatory final todo ensures this step is visible throughout execution.
 
 ## Example Workflow
 
 ```
 You: I'm using Subagent-Driven Development to execute this plan.
 
-[Load plan, create TodoWrite]
+[Load plan, create TodoWrite with tasks + "Complete development (finish-branch)"]
 
 Task 1: Hook installation script
 
@@ -161,6 +169,13 @@ Fix subagent: Added progress every 100 conversations
 [After all tasks]
 [Dispatch final code-reviewer]
 Final reviewer: All requirements met, ready to merge
+
+[Mark "Complete development (finish-branch)" as in_progress]
+You: I'm using the finish-branch skill to complete this work.
+[Use Skill("workflow:finish-branch")]
+[Present 4 options: merge, PR, keep, discard]
+[User chooses option, execute it]
+[Mark "Complete development (finish-branch)" as completed]
 
 Done!
 ```

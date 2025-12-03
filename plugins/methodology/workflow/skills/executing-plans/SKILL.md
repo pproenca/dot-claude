@@ -47,7 +47,9 @@ Before loading plan:
 1. Read plan file
 2. Review critically - identify any questions or concerns about the plan
 3. If concerns: Raise them with your human partner before starting
-4. If no concerns: Create TodoWrite and proceed
+4. If no concerns: Create TodoWrite with:
+   - All tasks from the plan
+   - **MANDATORY FINAL TODO:** "Complete development (finish-branch)" - this ensures finish-branch is invoked after all tasks complete
 
 ### Step 2: Execute Batch
 
@@ -130,11 +132,15 @@ Based on feedback:
 
 ### Step 6: Complete Development
 
-After all tasks complete and verified:
+After all plan tasks complete and verified:
 
-- Announce: "I'm using the finish-branch skill to complete this work."
-- **REQUIRED SUB-SKILL:** Use workflow:finish-branch
-- Follow that skill to verify tests, present options, execute choice
+1. Mark the "Complete development (finish-branch)" todo as **in_progress**
+2. Announce: "I'm using the finish-branch skill to complete this work."
+3. **REQUIRED:** Use `Skill("workflow:finish-branch")`
+4. Follow that skill to verify tests, present options, execute choice
+5. Mark the "Complete development (finish-branch)" todo as **completed**
+
+**This step is NOT optional.** The mandatory final todo ensures this step is visible throughout execution.
 
 ## When to Stop and Ask for Help
 
