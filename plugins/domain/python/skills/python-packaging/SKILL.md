@@ -279,10 +279,10 @@ my-tool = "my_package.cli:main"
 
 **Usage:**
 ```bash
-pip install -e .
-my-tool greet World
-my-tool greet Alice --greeting="Hi"
-my-tool repeat --count=3
+uv sync  # Install in development mode
+uv run my-tool greet World
+uv run my-tool greet Alice --greeting="Hi"
+uv run my-tool repeat --count=3
 ```
 
 ### Pattern 7: CLI with argparse
@@ -335,11 +335,8 @@ if __name__ == "__main__":
 ### Pattern 8: Build Package Locally
 
 ```bash
-# Install build tools
-pip install build twine
-
-# Build distribution
-python -m build
+# Build distribution with uv (recommended)
+uv build
 
 # This creates:
 # dist/
@@ -347,23 +344,20 @@ python -m build
 #   my_package-1.0.0-py3-none-any.whl (wheel)
 
 # Check the distribution
-twine check dist/*
+uv run twine check dist/*
 ```
 
 ### Pattern 9: Publishing to PyPI
 
 ```bash
-# Install publishing tools
-pip install twine
-
-# Test on TestPyPI first
-twine upload --repository testpypi dist/*
+# Publish with uv (recommended)
+uv publish --repository testpypi  # Test first
 
 # Install from TestPyPI to test
-pip install --index-url https://test.pypi.org/simple/ my-package
+uv pip install --index-url https://test.pypi.org/simple/ my-package
 
 # If all good, publish to PyPI
-twine upload dist/*
+uv publish
 ```
 
 **Using API tokens (recommended):**
@@ -398,28 +392,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          pip install build twine
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
 
       - name: Build package
-        run: python -m build
+        run: uv build
 
       - name: Check package
-        run: twine check dist/*
+        run: uv run twine check dist/*
 
       - name: Publish to PyPI
         env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: twine upload dist/*
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: uv publish
 ```
 
 ## Testing Installation
@@ -427,12 +414,11 @@ jobs:
 ### Pattern 16: Editable Install
 
 ```bash
-# Install in development mode
-pip install -e .
+# Install in development mode with uv (recommended)
+uv sync
 
 # With optional dependencies
-pip install -e ".[dev]"
-pip install -e ".[dev,docs]"
+uv sync --all-extras
 
 # Now changes to source code are immediately reflected
 ```
@@ -440,13 +426,12 @@ pip install -e ".[dev,docs]"
 ### Pattern 17: Testing in Isolated Environment
 
 ```bash
-# Create virtual environment
-python -m venv test-env
+# Create isolated environment with uv
+uv venv test-env
 source test-env/bin/activate  # Linux/Mac
-# test-env\Scripts\activate  # Windows
 
-# Install package
-pip install dist/my_package-1.0.0-py3-none-any.whl
+# Install package from wheel
+uv pip install dist/my_package-1.0.0-py3-none-any.whl
 
 # Test it works
 python -c "import my_package; print(my_package.__version__)"
