@@ -7,6 +7,7 @@ allowed-tools: [Read, Glob, Grep, Bash, Task, Skill, TodoWrite, Edit]
 Analyze plugins in the marketplace to identify quality improvements.
 
 **Scope:**
+
 - If no argument provided, analyze all plugins in `plugins/` directory
 - If plugin name provided ($ARGUMENTS), analyze only that plugin
 

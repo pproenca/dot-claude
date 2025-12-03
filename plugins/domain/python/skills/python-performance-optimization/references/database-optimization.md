@@ -1,6 +1,7 @@
 # Database Optimization
 
 ## Table of Contents
+
 - [Pattern 16: Batch Database Operations](#pattern-16-batch-database-operations)
 - [Pattern 17: Query Optimization](#pattern-17-query-optimization)
 

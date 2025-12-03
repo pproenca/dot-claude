@@ -21,6 +21,7 @@ Load plan, review critically, execute tasks in batches, report for review betwee
 Before loading plan:
 
 1. Check current git context:
+
    ```bash
    git branch --show-current
    git worktree list
@@ -28,6 +29,7 @@ Before loading plan:
 
 2. **If on main/master without worktree:**
    Use AskUserQuestion:
+
    ```
    Question: "You're on the main branch. Plans should execute in isolated worktrees to protect main."
    Header: "Isolation"
@@ -41,15 +43,18 @@ Before loading plan:
 5. **If already in worktree or feature branch:** Proceed normally
 
 ### Step 1: Load and Review Plan
+
 1. Read plan file
 2. Review critically - identify any questions or concerns about the plan
 3. If concerns: Raise them with your human partner before starting
 4. If no concerns: Create TodoWrite and proceed
 
 ### Step 2: Execute Batch
+
 **Default: First 3 tasks**
 
 For each task:
+
 1. Mark as in_progress
 2. Follow each step exactly (plan has bite-sized steps)
 3. Run verifications as specified
@@ -85,16 +90,20 @@ Task tool (review:code-reviewer):
 **Code reviewer returns:** Strengths, Issues (Critical/Important/Minor), Assessment
 
 **If Critical or Important issues found:**
+
 1. Address issues before proceeding
 2. Re-run verification after fixes
 3. Do NOT proceed to user feedback until resolved
 
 **If only Minor issues:**
+
 - Note for later
 - Proceed to Step 4
 
 ### Step 4: Report and Request Feedback
+
 After code review passes:
+
 - Show what was implemented
 - Show verification output
 - **Show code review summary** (issues found and resolved)
@@ -112,7 +121,9 @@ Options:
 Wait for user response before proceeding.
 
 ### Step 5: Continue
+
 Based on feedback:
+
 - Apply changes if needed
 - Execute next batch
 - Repeat until complete
@@ -120,6 +131,7 @@ Based on feedback:
 ### Step 6: Complete Development
 
 After all tasks complete and verified:
+
 - Announce: "I'm using the finish-branch skill to complete this work."
 - **REQUIRED SUB-SKILL:** Use workflow:finish-branch
 - Follow that skill to verify tests, present options, execute choice
@@ -127,6 +139,7 @@ After all tasks complete and verified:
 ## When to Stop and Ask for Help
 
 **STOP executing immediately when:**
+
 - Hit a blocker mid-batch (missing dependency, test fails, instruction unclear)
 - Plan has critical gaps preventing starting
 - You don't understand an instruction
@@ -137,12 +150,14 @@ After all tasks complete and verified:
 ## When to Revisit Earlier Steps
 
 **Return to Review (Step 1) when:**
+
 - Partner updates the plan based on your feedback
 - Fundamental approach needs rethinking
 
 **Don't force through blockers** - stop and ask.
 
 ## Remember
+
 - Review plan critically first
 - Follow plan steps exactly
 - Don't skip verifications

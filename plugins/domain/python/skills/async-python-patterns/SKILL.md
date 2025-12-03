@@ -207,15 +207,18 @@ async def test_with_timeout():
 ## Workflow Integration
 
 **Use with `debug:systematic`** for async issues:
+
 - Async bugs are notoriously hard to trace - follow the 4-phase framework
 - Add logging at coroutine boundaries to trace data flow
 - Check for missing awaits, blocked event loops, race conditions
 
 **Use with `testing:condition-wait`** instead of arbitrary sleeps:
+
 - Replace `await asyncio.sleep(N)` with condition polling when waiting for state changes
 - Eliminates flaky tests from timing guesses
 
 **Use with `python:python-testing-patterns`** for async test patterns:
+
 - pytest-asyncio setup and fixtures
 - Testing concurrent operations
 

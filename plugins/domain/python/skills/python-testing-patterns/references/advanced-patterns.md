@@ -1,6 +1,7 @@
 # Advanced Testing Patterns
 
 ## Table of Contents
+
 - [Pattern 6: Testing Async Code](#pattern-6-testing-async-code)
 - [Pattern 7: Monkeypatch for Testing](#pattern-7-monkeypatch-for-testing)
 - [Pattern 8: Temporary Files and Directories](#pattern-8-temporary-files-and-directories)

@@ -15,6 +15,7 @@ Analyze plugin SKILL.md files and agent definitions to identify manual workflow 
 ## Analysis Process
 
 ### Phase 1: Discovery
+
 1. Read the target plugin's structure:
    - Locate and read all `SKILL.md` files in `plugins/<name>/skills/*/`
    - Review all agent definitions in `plugins/<name>/agents/*.md`
@@ -49,18 +50,21 @@ Before proposing any automation, you MUST validate against official Claude Code 
 For each automation opportunity, evaluate:
 
 **Efficiency Gains:**
+
 - Time saved per execution
 - Reduction in manual steps
 - Consistency improvements
 - Error prevention potential
 
 **Reliability Impact:**
+
 - False positive risk (blocking valid operations)
 - False negative risk (missing invalid operations)
 - Edge case handling
 - Failure mode graceful degradation
 
 **Risk Factors:**
+
 - Complexity introduced
 - Maintenance burden
 - Debugging difficulty
@@ -110,6 +114,7 @@ If user approves an automation:
 4. **For SessionStart hooks:** Create initialization scripts for context setup
 
 Script requirements:
+
 - Use `$CLAUDE_PLUGIN_ROOT` for relative paths
 - Handle errors gracefully with clear messages
 - Output valid JSON to stdout

@@ -63,6 +63,7 @@ git log --format='%B---' $BRANCH_POINT..HEAD
 Analyze the commits to determine the primary type for the PR title.
 
 **Type priority** (use the most significant):
+
 1. `feat` - Any new feature makes this a feature PR
 2. `fix` - Bug fixes if no features
 3. `refactor` - Restructuring if no features/fixes
@@ -93,6 +94,7 @@ The PR title should follow Conventional Commits format:
 Add ! before the colon for breaking changes (e.g., feat!: remove API).
 
 **Rules:**
+
 - Use dominant type from Step 2
 - Include ! if any commit is a breaking change
 - Imperative mood ("add", not "adding")
@@ -165,6 +167,7 @@ Structure the description following this template:
 Present the generated title and description, then validate with AskUserQuestion:
 
 ### PR Validation
+
 - Header: "PR"
 - Question: "Does this PR title and description accurately describe your changes?"
 - Options:

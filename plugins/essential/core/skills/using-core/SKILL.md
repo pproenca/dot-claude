@@ -54,6 +54,7 @@ If a skill for your task exists, you must use it or you will fail at your task.
 If a skill has a checklist, YOU MUST create TodoWrite todos for EACH item.
 
 **Don't:**
+
 - Work through checklist mentally
 - Skip creating todos "to save time"
 - Batch multiple items into one todo
@@ -67,6 +68,7 @@ Before using a skill, announce that you are using it.
 "I'm using [Skill Name] to [what you're doing]."
 
 **Examples:**
+
 - "I'm using the brainstorming skill to refine your idea into a design."
 - "I'm using the tdd skill to implement this feature."
 
@@ -93,6 +95,7 @@ Your human partner's specific instructions describe WHAT to do, not HOW.
 ## Summary
 
 **Starting any task:**
+
 1. If relevant skill exists → Use the skill
 3. Announce you're using it
 4. Follow what it says

@@ -10,6 +10,7 @@ Generate comprehensive lookup-optimized documentation using the specialized refe
 ## What This Command Does
 
 Dispatches the `reference-builder` agent to create:
+
 - Exhaustive parameter tables
 - Configuration matrices with defaults and constraints
 - Error code references
@@ -19,6 +20,7 @@ Dispatches the `reference-builder` agent to create:
 ## Before Dispatching
 
 Gather the following from the user:
+
 1. **Scope**: Single endpoint, module, entire API, or CLI
 2. **Format**: Tables, structured lists, or searchable index
 3. **Categories**: How to organize parameters (by function, by type, alphabetical)

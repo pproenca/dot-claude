@@ -5,6 +5,7 @@ The 1-pager is a condensed narrative document for straightforward topics requiri
 ## When to Use
 
 Use a 1-pager when:
+
 - The topic is relatively straightforward
 - Only a few key points need to be understood
 - Executive leadership needs a quick overview
@@ -12,6 +13,7 @@ Use a 1-pager when:
 - Time constraints prevent full 6-pager development
 
 Use a 6-pager instead when:
+
 - Complex issues require detailed analysis
 - Multiple data points need examination
 - Technical teams need comprehensive information
@@ -33,6 +35,7 @@ A clear, descriptive title that immediately communicates the topic. The headline
 ### 2. Why (Context/Problem)
 
 Explain why this topic matters:
+
 - The problem or opportunity being addressed
 - Why action is needed now
 - Impact if no action is taken
@@ -43,6 +46,7 @@ Keep this brief but compelling. The reader should understand the urgency and imp
 ### 3. What (Solution/Proposal)
 
 Describe what is being proposed:
+
 - The recommended action or decision
 - Key components of the proposal
 - Expected outcomes
@@ -53,6 +57,7 @@ Be specific and concrete. Avoid vague recommendations.
 ### 4. How (Approach)
 
 Explain the implementation approach:
+
 - Key steps to execute
 - Resources required
 - Timeline overview
@@ -63,6 +68,7 @@ Focus on the critical path, not every detail.
 ### 5. Next Steps
 
 Provide clear, actionable recommendations:
+
 - Specific actions needed
 - Who is responsible
 - Decision points required
@@ -75,6 +81,7 @@ Decision-makers should understand exactly what they need to do after reading.
 ### Extreme Conciseness
 
 Every word must earn its place:
+
 - Remove redundant phrases
 - Eliminate filler words
 - Combine related ideas
@@ -83,6 +90,7 @@ Every word must earn its place:
 ### Front-Load Important Information
 
 Put the most critical information first:
+
 - Lead with the recommendation
 - Follow with key supporting points
 - End with actionable next steps
@@ -92,6 +100,7 @@ Executives often read only the first few paragraphs. Ensure they get essential i
 ### Actionability
 
 The 1-pager must drive action:
+
 - Clear recommendation stated upfront
 - Specific next steps defined
 - Decision points identified
@@ -100,6 +109,7 @@ The 1-pager must drive action:
 ### Data Density
 
 Despite brevity, include key data:
+
 - Most important metrics
 - Critical evidence
 - Essential benchmarks
@@ -127,6 +137,7 @@ and immediate priorities for decision-makers]
 ## Relationship to 6-Pager
 
 The 1-pager can serve as:
+
 - **Standalone document**: For simple decisions
 - **Executive summary**: Preceding a detailed 6-pager
 - **Pre-read**: Before a longer discussion

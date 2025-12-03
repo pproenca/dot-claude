@@ -17,11 +17,13 @@ Dispatch review:code-reviewer subagent to catch issues before they cascade.
 ### When to Request
 
 **Mandatory:**
+
 - After each task in subagent-driven development
 - After completing major feature
 - Before merge to main
 
 **Optional but valuable:**
+
 - When stuck (fresh perspective)
 - Before refactoring (baseline check)
 - After fixing complex bug
@@ -29,6 +31,7 @@ Dispatch review:code-reviewer subagent to catch issues before they cascade.
 ### How to Request
 
 **1. Get git SHAs:**
+
 ```bash
 BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
 HEAD_SHA=$(git rev-parse HEAD)
@@ -39,6 +42,7 @@ HEAD_SHA=$(git rev-parse HEAD)
 Use Task tool with `review:code-reviewer` type. See dispatch template at `plugins/methodology/review/templates/code-reviewer-dispatch.md`.
 
 **Placeholders:**
+
 - `{WHAT_WAS_IMPLEMENTED}` - What you just built
 - `{PLAN_OR_REQUIREMENTS}` - What it should do
 - `{BASE_SHA}` - Starting commit
@@ -46,6 +50,7 @@ Use Task tool with `review:code-reviewer` type. See dispatch template at `plugin
 - `{DESCRIPTION}` - Brief summary
 
 **Example dispatch:**
+
 ```
 Task tool (review:code-reviewer):
   description: "Review Task 2 implementation"
@@ -66,6 +71,7 @@ Task tool (review:code-reviewer):
 ```
 
 **3. Act on feedback:**
+
 - Fix Critical issues immediately
 - Fix Important issues before proceeding
 - Note Minor issues for later
@@ -93,11 +99,13 @@ WHEN receiving code review feedback:
 ### Forbidden Responses
 
 **NEVER:**
+
 - "You're absolutely right!" (explicit CLAUDE.md violation)
 - "Great point!" / "Excellent feedback!" (performative)
 - "Let me implement that now" (before verification)
 
 **INSTEAD:**
+
 - Restate the technical requirement
 - Ask clarifying questions
 - Push back with technical reasoning if wrong
@@ -116,6 +124,7 @@ WHY: Items may be related. Partial understanding = wrong implementation.
 ### When To Push Back
 
 Push back when:
+
 - Suggestion breaks existing functionality
 - Reviewer lacks full context
 - Violates YAGNI (unused feature)
@@ -124,6 +133,7 @@ Push back when:
 - Conflicts with architectural decisions
 
 **How to push back:**
+
 - Use technical reasoning, not defensiveness
 - Ask specific questions
 - Reference working tests/code
@@ -132,12 +142,14 @@ Push back when:
 ### Source-Specific Handling
 
 #### From Human Partner
+
 - **Trusted** - implement after understanding
 - **Still ask** if scope unclear
 - **No performative agreement**
 - **Skip to action** or technical acknowledgment
 
 #### From External Reviewers
+
 ```
 BEFORE implementing:
   1. Check: Technically correct for THIS codebase?
@@ -166,6 +178,7 @@ IF reviewer suggests "implementing properly":
 ### Acknowledging Correct Feedback
 
 When feedback IS correct:
+
 ```
 ✅ "Fixed. [Brief description of what changed]"
 ✅ "Good catch - [specific issue]. Fixed in [location]."
@@ -181,6 +194,7 @@ When feedback IS correct:
 ### Gracefully Correcting Your Pushback
 
 If you pushed back and were wrong:
+
 ```
 ✅ "You were right - I checked [X] and it does [Y]. Implementing now."
 ✅ "Verified this and you're correct. My initial understanding was wrong because [reason]. Fixing."
@@ -195,6 +209,7 @@ State the correction factually and move on.
 ### When You Can't Easily Verify
 
 If you can't verify the feedback:
+
 ```
 "I can't verify this without [X]. Should I [investigate/ask/proceed]?"
 ```
@@ -238,11 +253,14 @@ FOR multi-item feedback:
 ## Integration
 
 **Tool usage:**
+
 - Uses `Task` tool with `review:code-reviewer` subagent type
 
 **Called by:**
+
 - **workflow:subagent-dev** - Review after each task
 - **workflow:executing-plans** - Review after each batch
 
 **Pairs with:**
+
 - **core:verification** - Verify claims before requesting final review

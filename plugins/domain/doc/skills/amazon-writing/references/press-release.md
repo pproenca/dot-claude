@@ -11,6 +11,7 @@ Create a catchy, simple product name that customers immediately understand. No t
 ### 2. Sub-Heading
 
 Write a single sentence describing:
+
 - The target customer
 - The primary benefit they receive
 
@@ -25,6 +26,7 @@ Describe the customer problem from the customer's point of view. Use customer la
 ### 5. Solution Paragraph(s)
 
 Detail how the product solves the problem:
+
 - What the product does
 - How it addresses the specific pain points
 - What makes it different from alternatives
@@ -33,6 +35,7 @@ Detail how the product solves the problem:
 ### 6. Spokesperson Quote
 
 Include a quote from a company spokesperson that:
+
 - Expresses excitement about the product
 - Reinforces the customer benefit
 - Adds credibility and human element
@@ -40,6 +43,7 @@ Include a quote from a company spokesperson that:
 ### 7. Customer Quote
 
 Include a hypothetical customer quote that:
+
 - Describes their experience with the product
 - Highlights specific benefits they received
 - Uses natural, conversational language
@@ -48,6 +52,7 @@ Include a hypothetical customer quote that:
 ### 8. How to Get Started
 
 Explain how easy it is to begin using the product:
+
 - Simple steps to get started
 - What the customer needs to do
 - Timeline for seeing results
@@ -55,6 +60,7 @@ Explain how easy it is to begin using the product:
 ### 9. Call to Action
 
 Direct readers where to go for more information:
+
 - Website URL
 - Sign-up instructions
 - Contact information
@@ -64,6 +70,7 @@ Direct readers where to go for more information:
 ### "Oprah-speak" (No Geek-Speak)
 
 Use language simple enough for a general audience. Imagine explaining the product on a talk show:
+
 - No acronyms without explanation
 - No technical specifications unless essential
 - Focus on benefits, not features

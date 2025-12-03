@@ -1,6 +1,7 @@
 # Advanced UV Workflows
 
 ## Table of Contents
+
 - [Pattern 12: Monorepo Support](#pattern-12-monorepo-support)
 - [Pattern 13: CI/CD Integration](#pattern-13-cicd-integration)
 - [Pattern 14: Docker Integration](#pattern-14-docker-integration)

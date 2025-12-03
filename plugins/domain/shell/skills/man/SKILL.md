@@ -87,6 +87,7 @@ man <command> | col -b
 The `col -b` filter strips backspace formatting codes, producing clean plain text.
 
 **Alternatives:**
+
 ```bash
 PAGER=cat man <command>    # Force no pager (may include escape codes)
 man <command> | cat        # Simple but less clean on some systems

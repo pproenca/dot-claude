@@ -44,27 +44,32 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 ### Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/pedroproenca/dot-claude.git
 cd dot-claude
 ```
 
 2. Install Python dependencies:
+
 ```bash
 uv sync
 ```
 
 3. Validate plugins:
+
 ```bash
 uv run python scripts/validate-plugins.py
 ```
 
 4. (Optional) Install pre-commit hooks for development:
+
 ```bash
 uv run pre-commit install
 ```
 
 5. Sync configuration (from within Claude Code):
+
 ```
 /sync-claude-config
 ```
@@ -149,20 +154,24 @@ The `commit` plugin validates git commits:
 ### core (Essential Workflows)
 
 **Skills (3):**
+
 - `tdd` - Write tests first, watch fail, write minimal code to pass
 - `brainstorming` - Socratic method design refinement before implementation
 - `verification` - Evidence-based success claims with test/build output
 
 **Commands (1):**
+
 - `/core:context` - Show project context for resuming work
 
 **Hooks:**
+
 - TDD Guard (PreToolUse) - Blocks production edits without test file changes first
 - Verification (Stop) - Requires evidence before completion claims
 
 ### workflow (Planning & Execution)
 
 **Skills (6):**
+
 - `writing-plans` - Detailed implementation plans with exact file paths
 - `executing-plans` - Execute plans in controlled batches with review checkpoints
 - `git-worktrees` - Create isolated git worktrees for feature work
@@ -171,47 +180,57 @@ The `commit` plugin validates git commits:
 - `parallel-agents` - Concurrent agent deployment for independent failures
 
 **Commands (2):**
+
 - `/workflow:plan` - Create detailed implementation plan
 - `/workflow:exec` - Execute plan with review checkpoints
 
 **Hooks:**
+
 - Worktree Guard (PreToolUse) - Warns about git worktree awareness
 
 ### review (Code Review)
 
 **Skills (1):**
+
 - `code-review` - Dispatch code-reviewer subagent and handle feedback with technical rigor
 
 **Agents (2):**
+
 - `code-reviewer` - Reviews code against plans and standards
 - `security-reviewer` - Security vulnerability assessment (OWASP, CWE)
 
 ### testing (Test Patterns)
 
 **Skills (2):**
+
 - `anti-patterns` - Prevent testing mock behavior and production pollution
 - `condition-wait` - Replace arbitrary timeouts with condition polling
 
 ### debug (Debugging)
 
 **Skills (3):**
+
 - `systematic` - Four-phase framework: investigate, analyze, hypothesize, implement
 - `root-cause` - Trace bugs backward through call stack with instrumentation
 - `defense-in-depth` - Validate at entry, business logic, and environment layers
 
 **Agents (2):**
+
 - `devops-troubleshooter` - Incident response and infrastructure debugging
 - `error-detective` - Search logs and correlate errors across systems
 
 ### commit (Git Workflows)
 
 **Skills (1):**
+
 - `git-commit` - Safe commit wrapper with signed commits support
 
 **Agents (1):**
+
 - `commit-organizer` - Reorganizes commits following Conventional Commits
 
 **Commands (3):**
+
 - `/commit:new` - Create commit from staged changes
 - `/commit:pr [base-branch]` - Generate PR title and description
 - `/commit:reset` - Reset and reorganize commits
@@ -219,6 +238,7 @@ The `commit` plugin validates git commits:
 ### python (Python Development)
 
 **Skills (5):**
+
 - `async-python-patterns` - asyncio and concurrent programming
 - `python-packaging` - pyproject.toml, PyPI publishing
 - `python-performance-optimization` - Profiling and optimization
@@ -226,17 +246,21 @@ The `commit` plugin validates git commits:
 - `uv-package-manager` - Fast dependency management
 
 **Agents (1):**
+
 - `python-expert` - Python 3.12+ expert with FastAPI and Django knowledge
 
 **Commands (1):**
+
 - `/python:refactor` - Refactor Python file with ruff, mypy, and modern patterns
 
 ### doc (Documentation)
 
 **Skills (1):**
+
 - `amazon-writing` - Narrative writing (6-pagers, PRFAQs, memos)
 
 **Agents (5):**
+
 - `api-documenter` - OpenAPI/REST documentation
 - `docs-architect` - Documentation strategy
 - `mermaid-expert` - Diagrams and flowcharts
@@ -244,6 +268,7 @@ The `commit` plugin validates git commits:
 - `tutorial-engineer` - Step-by-step tutorials
 
 **Commands (7):**
+
 - `/doc:explain` - Code explanation
 - `/doc:rewrite [type]` - Rewrite following Amazon standards
 - `/doc:gen` - Automated documentation generation
@@ -255,37 +280,45 @@ The `commit` plugin validates git commits:
 ### shell (Shell Scripting)
 
 **Skills (2):**
+
 - `google-shell-style` - Google Shell Style Guide enforcement
 - `man` - Unix man page lookup
 
 **Agents (1):**
+
 - `shell-expert` - Shell scripting specialist
 
 **Commands (1):**
+
 - `/shell:refactor path/to/script.sh` - Refactor following Google style
 
 ### debug (Distributed Systems)
 
 **Agents (2):**
+
 - `devops-troubleshooter` - Log analysis and correlation
 - `error-detective` - Stack trace analysis
 
 **Commands (1):**
+
 - `/debug:trace` - Debug and trace configuration
 
 ### meta (Plugin Development)
 
 **Skills (3):**
+
 - `writing-skills` - Guide for creating effective skills with YAML frontmatter
 - `testing-skills` - Test skills with subagents using RED-GREEN-REFACTOR
 - `marketplace-analysis` - Systematic DX, architecture, and capability analysis
 
 **Agents (3):**
+
 - `capability-analyzer` - Analyze plugin capabilities and features
 - `marketplace-orchestrator` - Orchestrate marketplace analysis workflows
 - `structure-analyzer` - Analyze plugin structure and architecture
 
 **Commands (1):**
+
 - `/meta:marketplace` - Analyze plugin for marketplace quality standards
 
 ### blackbox (Flight Recorder)
@@ -367,6 +400,7 @@ The `.claude/settings.json` file controls tool permissions:
 ### Status Line
 
 Custom status line shows session metrics:
+
 ```
 [model] directory | duration | +lines -lines | $cost
 ```

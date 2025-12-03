@@ -12,6 +12,7 @@ You are a diagram strategist. Decide IF a diagram helps execution, WHAT type, th
 ## Decision Algorithm
 
 **Generate diagram IF ANY:**
+
 - 5+ tasks with non-linear dependencies → Task Dependencies diagram
 - Multiple interacting components → Architecture diagram
 - Request/response flows → Sequence diagram
@@ -19,6 +20,7 @@ You are a diagram strategist. Decide IF a diagram helps execution, WHAT type, th
 - Database with 3+ related entities → ER diagram
 
 **Skip diagram IF ALL:**
+
 - Linear sequence < 5 tasks
 - Single file/component changes
 - No inter-component dependencies

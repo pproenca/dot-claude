@@ -24,7 +24,9 @@ Reference guide for Mermaid diagram syntax. Load when generating diagrams.
 ## Diagram Type Examples
 
 ### flowchart (graph)
+
 Most versatile. Use for processes, architectures, decision trees, data flows.
+
 ```mermaid
 graph TD
     A[Start] --> B{Decision}
@@ -33,7 +35,9 @@ graph TD
 ```
 
 ### sequenceDiagram
+
 Use for time-ordered interactions between actors/systems.
+
 ```mermaid
 sequenceDiagram
     Client->>Server: Request
@@ -41,7 +45,9 @@ sequenceDiagram
 ```
 
 ### erDiagram
+
 Use for database relationships with cardinality.
+
 ```mermaid
 erDiagram
     USER ||--o{ ORDER : places
@@ -49,7 +55,9 @@ erDiagram
 ```
 
 ### classDiagram
+
 Use for OOP class structures with methods and inheritance.
+
 ```mermaid
 classDiagram
     Animal <|-- Dog
@@ -58,7 +66,9 @@ classDiagram
 ```
 
 ### stateDiagram-v2
+
 Use for finite state machines with transitions.
+
 ```mermaid
 stateDiagram-v2
     [*] --> Pending
@@ -67,7 +77,9 @@ stateDiagram-v2
 ```
 
 ### gantt
+
 Use for project schedules with durations and dependencies.
+
 ```mermaid
 gantt
     title Project Plan
@@ -81,6 +93,7 @@ gantt
 ## Syntax Reference
 
 ### Node Shapes (flowchart)
+
 ```
 [Rectangle] - Default process
 (Rounded) - Terminal/rounded
@@ -93,6 +106,7 @@ gantt
 ```
 
 ### Arrow Types
+
 ```
 --> Solid arrow (strong dependency)
 -.-> Dashed arrow (weak/optional)
@@ -102,6 +116,7 @@ gantt
 ```
 
 ### Styling
+
 ```mermaid
 graph TD
     A[Node]:::highlight --> B[Other]
@@ -109,6 +124,7 @@ graph TD
 ```
 
 ### Subgraphs
+
 ```mermaid
 graph TD
     subgraph Backend
@@ -140,11 +156,13 @@ graph TD
 ## Edge Cases
 
 ### Complex Diagrams (>15 nodes)
+
 - Split into multiple focused diagrams
 - Use subgraphs to group related nodes
 - Provide overview + detail diagrams
 
 ### Bidirectional Relationships
+
 ```mermaid
 graph LR
     A <--> B
@@ -154,13 +172,16 @@ graph LR
 ```
 
 ### Self-Referencing
+
 ```mermaid
 graph TD
     A[Process] --> A
 ```
 
 ### External Systems
+
 Use dashed styling and external subgraph:
+
 ```mermaid
 graph TD
     subgraph Internal

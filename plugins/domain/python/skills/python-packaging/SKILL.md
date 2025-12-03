@@ -40,11 +40,13 @@ my-package/
 ```
 
 **Advantages:**
+
 - Prevents accidentally importing from source
 - Cleaner test imports
 - Better isolation
 
 **pyproject.toml for source layout:**
+
 ```toml
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -64,6 +66,7 @@ my-package/
 ```
 
 **Simpler but:**
+
 - Can import package without installing
 - Less professional for libraries
 
@@ -226,7 +229,8 @@ version = {attr = "my_package.__version__"}
 write_to = "src/my_package/_version.py"
 ```
 
-**In __init__.py:**
+**In **init**.py:**
+
 ```python
 # src/my_package/__init__.py
 __version__ = "1.0.0"
@@ -272,12 +276,14 @@ if __name__ == "__main__":
 ```
 
 **Register in pyproject.toml:**
+
 ```toml
 [project.scripts]
 my-tool = "my_package.cli:main"
 ```
 
 **Usage:**
+
 ```bash
 uv sync  # Install in development mode
 uv run my-tool greet World
@@ -361,6 +367,7 @@ uv publish
 ```
 
 **Using API tokens (recommended):**
+
 ```bash
 # Create ~/.pypirc
 [distutils]
@@ -463,16 +470,19 @@ rm -rf test-env
 ## Workflow Integration
 
 **Use with `core:verification`** before publishing:
+
 - Test installation in clean virtual environment
 - Verify CLI tools work (if applicable)
 - Run full test suite against installed package
 
 **Use with `python:python-testing-patterns`** for package tests:
+
 - Test imports work correctly
 - Test entry points are registered
 - Test package metadata is correct
 
 **Use with `python:uv-package-manager`** for modern workflows:
+
 - `uv build` for fast package building
 - `uv publish` for publishing
 
