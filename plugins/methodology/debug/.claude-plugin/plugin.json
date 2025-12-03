@@ -1,6 +1,6 @@
 {
   "name": "debug",
-  "version": "3.2.0",
+  "version": "1.0.0",
   "description": "Systematic debugging: root cause analysis, defense-in-depth validation, log correlation, and distributed systems troubleshooting",
   "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/methodology/debug",
   "repository": "https://github.com/pedroproenca/dot-claude",

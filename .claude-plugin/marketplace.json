@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Claude Code plugins for productivity workflows - skills, agents, commands, and hooks",
-    "version": "3.1.0"
+    "version": "1.0.0"
   },
   "repository": "https://github.com/pedroproenca/dot-claude",
   "plugins": [
@@ -14,7 +14,7 @@
       "name": "blackbox",
       "description": "Zero-dependency telemetry plugin for Claude Code - captures file modifications for dataset generation and disaster recovery",
       "source": "./plugins/specialized/blackbox",
-      "version": "3.1.0",
+      "version": "1.0.0",
       "keywords": [
         "telemetry",
         "file-tracking",
@@ -27,7 +27,7 @@
       "name": "blackbox-flight-recorder",
       "source": "./plugins/specialized/blackbox",
       "description": "Zero-dependency telemetry plugin for Claude Code - captures file modifications for dataset generation and disaster recovery",
-      "version": "3.1.0",
+      "version": "1.0.0",
       "keywords": [
         "telemetry",
         "file-tracking",
@@ -40,7 +40,7 @@
       "name": "commit",
       "description": "Git workflows: worktrees, branches, and commit organization",
       "source": "./plugins/essential/commit",
-      "version": "3.1.0",
+      "version": "1.0.0",
       "keywords": [
         "git",
         "worktrees",
@@ -66,7 +66,7 @@
       "name": "debug",
       "description": "Systematic debugging: root cause analysis, defense-in-depth validation, log correlation, and distributed systems troubleshooting",
       "source": "./plugins/methodology/debug",
-      "version": "3.2.0",
+      "version": "1.0.0",
       "keywords": [
         "debugging",
         "root-cause",
@@ -81,7 +81,7 @@
       "name": "doc",
       "description": "Documentation: API docs, tutorials, memos, architecture guides, Mermaid diagrams",
       "source": "./plugins/domain/doc",
-      "version": "3.1.0",
+      "version": "1.0.0",
       "keywords": [
         "documentation",
         "api-docs",
@@ -110,7 +110,7 @@
       "name": "python",
       "description": "Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django and production-ready practices",
       "source": "./plugins/domain/python",
-      "version": "3.1.0",
+      "version": "1.0.0",
       "keywords": [
         "python",
         "uv",
@@ -137,7 +137,7 @@
       "name": "shell",
       "description": "Shell scripting toolkit with Google Style Guide refactoring and Unix man page expertise",
       "source": "./plugins/domain/shell",
-      "version": "3.1.0",
+      "version": "1.0.0",
       "keywords": [
         "shell",
         "bash",
