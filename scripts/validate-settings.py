@@ -206,11 +206,15 @@ def validate_permission_patterns(
             # Validate Skill references
             if tool == "Skill" and ref:
                 # ref should be either "plugin:skill" or "plugin:*"
-                if ref.endswith(":*"):
+                if ":" not in ref:
+                    # Simple plugin reference like Skill(commit)
+                    if ref not in registry['plugins']:
+                        errors.append(f"{path}: Skill pattern references unknown plugin: {pattern}")
+                elif ref.endswith(":*"):
                     plugin = ref[:-2]  # Remove ":*"
                     if plugin not in registry['plugins']:
                         errors.append(f"{path}: Skill pattern references unknown plugin: {pattern}")
-                elif ":" in ref:
+                else:
                     if ref not in registry['skills']:
                         errors.append(f"{path}: Skill pattern references unknown skill: {pattern}")
 

@@ -42,7 +42,6 @@
       "Bash(pnpm:*)",
       "Bash(npx:*)",
       "Skill(commit:*)",
-      "Skill(super:*)",
       "Skill(doc:*)",
       "Skill(shell:*)",
       "Skill(debug:*)"
