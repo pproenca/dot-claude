@@ -58,9 +58,13 @@ Before loading plan:
 For each task:
 
 1. Mark as in_progress
-2. Follow each step exactly (plan has bite-sized steps)
-3. Run verifications as specified
-4. Mark as completed
+2. **Use core:tdd skill** - Write failing test FIRST, then implement
+3. Follow each step exactly (plan has bite-sized steps)
+4. Run verifications as specified
+5. **Use core:verification skill** - Verify tests pass before claiming task complete
+6. Mark as completed
+
+**IMPORTANT:** You MUST use the core:tdd skill for each task. Write the test first, see it fail, then write minimal code to pass. Use core:verification before marking any task complete.
 
 ### Step 3: Code Review After Batch
 
@@ -170,3 +174,20 @@ After all plan tasks complete and verified:
 - Reference skills when plan says to
 - Between batches: use AskUserQuestion to get explicit feedback
 - Stop when blocked, don't guess
+
+## Integration
+
+**Required skills for task execution:**
+
+- **tdd** - **REQUIRED:** Use core:tdd for each task (write test first)
+- **verification** - **REQUIRED:** Use core:verification before marking tasks complete
+
+**Required workflow skills:**
+
+- **git-worktrees** - Use workflow:git-worktrees for isolation when on main/master (see Step 0)
+- **code-review** - Use review:code-review after each batch (see Step 3)
+- **finish-branch** - **REQUIRED:** Use workflow:finish-branch after all tasks (see Step 6)
+
+**Alternative workflow:**
+
+- **subagent-dev** - Use for same-session execution with fresh subagents per task
