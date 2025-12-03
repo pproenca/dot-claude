@@ -55,20 +55,67 @@ Before loading plan:
 
 **Default: First 3 tasks**
 
-For each task:
+For each task, check its **Complexity** tag and execute accordingly:
+
+#### TRIVIAL Tasks (delete, rename, typo, config)
+
+1. Mark as in_progress
+2. Execute the change directly (no TDD - nothing to test)
+3. Verify with `git diff` that change is correct
+4. Mark as completed
+5. **Skip code review** - parent agent verifies git diff directly
+
+**Rationale:** TDD/review overhead exceeds task value for trivial changes.
+
+#### SIMPLE Tasks (small refactor, single-file)
+
+1. Mark as in_progress
+2. **If modifying production code:** Use core:tdd skill (write test first)
+3. **If config/docs only:** Skip TDD
+4. Run verifications as specified
+5. Mark as completed
+6. **Lightweight review:** Check git diff, no subagent needed
+
+#### MODERATE Tasks (features, bug fixes)
 
 1. Mark as in_progress
 2. **Use core:tdd skill** - Write failing test FIRST, then implement
-3. Follow each step exactly (plan has bite-sized steps)
+3. Follow each step exactly
 4. Run verifications as specified
-5. **Use core:verification skill** - Verify tests pass before claiming task complete
+5. **Use core:verification skill** - Verify tests pass
 6. Mark as completed
+7. **Dispatch code-reviewer** (Sonnet model)
 
-**IMPORTANT:** You MUST use the core:tdd skill for each task. Write the test first, see it fail, then write minimal code to pass. Use core:verification before marking any task complete.
+#### COMPLEX Tasks (multi-file, architectural)
+
+1. Mark as in_progress
+2. **Use core:tdd skill** - Write failing test FIRST, then implement
+3. Follow each step exactly
+4. Run verifications as specified
+5. **Use core:verification skill** - Verify tests pass
+6. Mark as completed
+7. **Dispatch code-reviewer** (Opus model for thorough review)
+
+**IMPORTANT:** Match execution overhead to task complexity. TRIVIAL tasks should complete in 2-3 tool uses, not 11.
 
 ### Step 3: Code Review After Batch
 
-When batch execution complete:
+**Review strategy based on batch complexity:**
+
+#### Batches with TRIVIAL/SIMPLE tasks only
+
+- Parent agent reviews git diff directly
+- Verify changes match plan requirements
+- No subagent dispatch needed
+
+```bash
+git diff --stat [BASE_SHA]..[HEAD_SHA]
+git diff [BASE_SHA]..[HEAD_SHA]
+```
+
+Check: Does the diff match what was requested? Any unintended changes?
+
+#### Batches with MODERATE/COMPLEX tasks
 
 **Dispatch code-reviewer subagent:**
 
@@ -94,6 +141,10 @@ Task tool (review:code-reviewer):
 ```
 
 **Code reviewer returns:** Strengths, Issues (Critical/Important/Minor), Assessment
+
+#### Mixed batches
+
+Review at the level of the most complex task in the batch.
 
 **If Critical or Important issues found:**
 
