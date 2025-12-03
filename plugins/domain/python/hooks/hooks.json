@@ -1,4 +1,5 @@
 {
+  "description": "Python plugin hooks for context detection and test automation",
   "hooks": {
     "SessionStart": [
       {
@@ -14,6 +15,7 @@
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
+        "comment": "Script filters internally: only runs pytest for test_*.py or *_test.py files",
         "hooks": [
           {
             "type": "command",

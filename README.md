@@ -25,7 +25,6 @@ dot-claude is a collection of plugins that extend Claude Code with specialized c
 | **shell** | Shell scripting with Google Shell Style Guide |
 | **debug** | Distributed systems debugging and log correlation |
 | **meta** | Plugin development: writing skills, testing skills, marketplace analysis |
-| **blackbox** | Flight recorder hooks for telemetry and recovery |
 
 > **Note:** The `super` plugin has been split into focused modules: `core`, `workflow`, `review`, `testing`, and `debug`. See [MIGRATION.md](MIGRATION.md) for migration guide.
 
@@ -147,7 +146,6 @@ The `commit` plugin validates git commits:
 | Commit Validation | commit | PostToolUse | Enforces Conventional Commits format |
 | Shell Validation | shell | PreToolUse | Checks shell syntax before file creation |
 | Context Preservation | shell | PreCompact | Preserves important context during compaction |
-| Flight Recorder | blackbox | PreToolUse | Captures file modifications for telemetry |
 
 ## Plugin Details
 
@@ -320,12 +318,6 @@ The `commit` plugin validates git commits:
 **Commands (1):**
 
 - `/meta:marketplace` - Analyze plugin for marketplace quality standards
-
-### blackbox (Flight Recorder)
-
-Zero-dependency telemetry plugin for Claude Code. Captures file modifications for dataset generation and disaster recovery.
-
-**Hooks:** Captures Write/Edit/MultiEdit operations, user prompts, and session events for telemetry.
 
 ## Architecture
 

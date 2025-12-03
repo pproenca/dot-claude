@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Detect Python version from project files
-# Outputs detected version for skill awareness
+# Detect Python project context from project files
+# Outputs version, framework, and package manager for skill awareness
 
 set -euo pipefail
 
@@ -13,7 +13,6 @@ detect_version() {
 
     # 2. Check pyproject.toml for requires-python
     if [[ -f "pyproject.toml" ]]; then
-        # Extract version like ">=3.10" or ">=3.12,<4"
         local version
         version=$(grep -oP 'requires-python\s*=\s*"[><=]*\K[0-9]+\.[0-9]+' pyproject.toml 2>/dev/null | head -1)
         if [[ -n "$version" ]]; then
@@ -42,10 +41,93 @@ detect_version() {
     echo "unknown"
 }
 
-version=$(detect_version)
+detect_framework() {
+    local frameworks=""
 
-if [[ "$version" != "unknown" ]]; then
-    echo "Python version: $version"
-else
-    echo "Python version: not detected (skills should ask user)"
-fi
+    # Check pyproject.toml dependencies
+    if [[ -f "pyproject.toml" ]]; then
+        if grep -qiE '^\s*(fastapi|"fastapi)' pyproject.toml 2>/dev/null; then
+            frameworks="${frameworks:+$frameworks,}fastapi"
+        fi
+        if grep -qiE '^\s*(django|"django)' pyproject.toml 2>/dev/null; then
+            frameworks="${frameworks:+$frameworks,}django"
+        fi
+        if grep -qiE '^\s*(flask|"flask)' pyproject.toml 2>/dev/null; then
+            frameworks="${frameworks:+$frameworks,}flask"
+        fi
+        if grep -qiE '^\s*(starlette|"starlette)' pyproject.toml 2>/dev/null; then
+            frameworks="${frameworks:+$frameworks,}starlette"
+        fi
+    fi
+
+    # Check requirements.txt
+    if [[ -f "requirements.txt" ]]; then
+        if grep -qiE '^fastapi' requirements.txt 2>/dev/null; then
+            [[ ! "$frameworks" =~ fastapi ]] && frameworks="${frameworks:+$frameworks,}fastapi"
+        fi
+        if grep -qiE '^django' requirements.txt 2>/dev/null; then
+            [[ ! "$frameworks" =~ django ]] && frameworks="${frameworks:+$frameworks,}django"
+        fi
+        if grep -qiE '^flask' requirements.txt 2>/dev/null; then
+            [[ ! "$frameworks" =~ flask ]] && frameworks="${frameworks:+$frameworks,}flask"
+        fi
+    fi
+
+    # Check for framework-specific files
+    if [[ -f "manage.py" ]] && grep -q "django" manage.py 2>/dev/null; then
+        [[ ! "$frameworks" =~ django ]] && frameworks="${frameworks:+$frameworks,}django"
+    fi
+
+    if [[ -z "$frameworks" ]]; then
+        echo "none"
+    else
+        echo "$frameworks"
+    fi
+}
+
+detect_package_manager() {
+    # Check in order of preference
+    if [[ -f "uv.lock" ]] || [[ -f ".python-version" && -f "pyproject.toml" ]]; then
+        echo "uv"
+        return
+    fi
+
+    if [[ -f "poetry.lock" ]]; then
+        echo "poetry"
+        return
+    fi
+
+    if [[ -f "Pipfile.lock" ]] || [[ -f "Pipfile" ]]; then
+        echo "pipenv"
+        return
+    fi
+
+    if [[ -f "pdm.lock" ]]; then
+        echo "pdm"
+        return
+    fi
+
+    if [[ -f "requirements.txt" ]]; then
+        echo "pip"
+        return
+    fi
+
+    if [[ -f "pyproject.toml" ]]; then
+        # Has pyproject but no lock file - could be pip or uv
+        echo "pip"
+        return
+    fi
+
+    echo "unknown"
+}
+
+# Detect all context
+version=$(detect_version)
+framework=$(detect_framework)
+package_manager=$(detect_package_manager)
+
+# Output as human-readable summary
+echo "Python context detected:"
+echo "  Version: ${version}"
+echo "  Framework(s): ${framework}"
+echo "  Package manager: ${package_manager}"

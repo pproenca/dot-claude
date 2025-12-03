@@ -5,7 +5,7 @@ Reorganizes plugins from flat structure to tier-based domains:
 - essential/   : core, commit (Tier 0: Always loaded)
 - methodology/ : workflow, review, debug, testing (Tier 1: Workflow patterns)
 - domain/      : python, doc, shell (Tier 2: Domain expertise)
-- specialized/ : meta, blackbox (Tier 3: Optional/Meta)
+- specialized/ : meta (Tier 3: Optional/Meta)
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ TIER_MAPPING: dict[str, list[str]] = {
     "essential": ["core", "commit"],
     "methodology": ["workflow", "review", "debug", "testing"],
     "domain": ["python", "doc", "shell"],
-    "specialized": ["meta", "blackbox"],
+    "specialized": ["meta"],
 }
 
 

@@ -14,7 +14,7 @@ TIER_MAPPING: dict[str, list[str]] = {
     "essential": ["core", "commit"],
     "methodology": ["workflow", "review", "debug", "testing"],
     "domain": ["python", "doc", "shell"],
-    "specialized": ["meta", "blackbox"],
+    "specialized": ["meta"],
 }
 
 # Reverse mapping: plugin -> tier

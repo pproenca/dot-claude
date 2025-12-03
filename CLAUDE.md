@@ -77,8 +77,7 @@ plugins/
 │   ├── doc/           # Documentation: API docs, memos, Mermaid
 │   └── shell/         # Shell: Google Style Guide
 └── specialized/       # Tier 3: Optional/Meta
-    ├── meta/          # Plugin development tools
-    └── blackbox/      # Telemetry: flight recorder hooks
+    └── meta/          # Plugin development tools
 ```
 
 Each plugin follows this layout:
@@ -130,7 +129,6 @@ plugins/<tier>/<name>/
 | Plugin | Purpose |
 |--------|---------|
 | **meta** | Plugin dev: writing skills, marketplace analysis |
-| **blackbox** | Telemetry: flight recorder hooks |
 
 ### Hook System
 

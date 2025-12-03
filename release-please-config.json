@@ -61,11 +61,6 @@
         },
         {
           "type": "json",
-          "path": "plugins/specialized/blackbox/.claude-plugin/plugin.json",
-          "jsonpath": "$.version"
-        },
-        {
-          "type": "json",
           "path": "plugins/specialized/meta/.claude-plugin/plugin.json",
           "jsonpath": "$.version"
         },
@@ -118,11 +113,6 @@
           "type": "json",
           "path": ".claude-plugin/marketplace.json",
           "jsonpath": "$.plugins[9].version"
-        },
-        {
-          "type": "json",
-          "path": ".claude-plugin/marketplace.json",
-          "jsonpath": "$.plugins[10].version"
         }
       ]
     }
