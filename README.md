@@ -34,11 +34,11 @@ dot-claude is a collection of plugins that extend Claude Code with specialized c
 ### Prerequisites
 
 ```bash
-# macOS
+# macOS - install system dependencies
 brew install jq yq ripgrep fd coreutils
 
-# Python 3.8+ required (3.12+ recommended)
-python3 --version
+# Install uv (fast Python package manager)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 ### Setup
@@ -49,12 +49,22 @@ git clone https://github.com/pedroproenca/dot-claude.git
 cd dot-claude
 ```
 
-2. Validate plugins:
+2. Install Python dependencies:
 ```bash
-./scripts/validate-plugins.py
+uv sync
 ```
 
-3. Sync configuration (from within Claude Code):
+3. Validate plugins:
+```bash
+uv run python scripts/validate-plugins.py
+```
+
+4. (Optional) Install pre-commit hooks for development:
+```bash
+uv run pre-commit install
+```
+
+5. Sync configuration (from within Claude Code):
 ```
 /sync-claude-config
 ```
@@ -160,10 +170,9 @@ The `commit` plugin validates git commits:
 - `subagent-driven-development` - Fresh subagent per task with code review gates
 - `dispatching-parallel-agents` - Concurrent agent deployment for independent failures
 
-**Commands (3):**
+**Commands (2):**
 - `/workflow:plan` - Create detailed implementation plan
 - `/workflow:exec` - Execute plan with review checkpoints
-- `/workflow:notes` - Add session notes to CLAUDE.md
 
 **Hooks:**
 - Worktree Guard (PreToolUse) - Warns about git worktree awareness
@@ -234,10 +243,14 @@ The `commit` plugin validates git commits:
 - `reference-builder` - Complete reference docs
 - `tutorial-engineer` - Step-by-step tutorials
 
-**Commands (3):**
+**Commands (7):**
 - `/doc:explain` - Code explanation
 - `/doc:rewrite [type]` - Rewrite following Amazon standards
 - `/doc:gen` - Automated documentation generation
+- `/doc:api-spec` - Generate OpenAPI specs and interactive API docs
+- `/doc:architecture` - Create system architecture documentation
+- `/doc:reference` - Create parameter and configuration references
+- `/doc:tutorial` - Create step-by-step tutorials
 
 ### shell (Shell Scripting)
 
@@ -382,8 +395,17 @@ Custom status line shows session metrics:
 ### Validation
 
 ```bash
+# Run full test suite
+uv run pytest tests/
+
 # Validate all plugins
-./scripts/validate-plugins.py
+uv run python scripts/validate-plugins.py
+
+# Validate cross-references
+uv run python scripts/validate-references.py
+
+# Validate settings.json files
+uv run python scripts/validate-settings.py
 ```
 
 ## Contributing
@@ -393,7 +415,7 @@ Contributions are welcome! To contribute:
 1. Fork the repository
 2. Create a feature branch
 3. Make changes following existing patterns
-4. Run validation: `./scripts/validate-plugins.py`
+4. Run validation: `uv run pytest tests/`
 5. Submit a pull request
 
 Use the `meta:writing-skills` skill when creating new skills for the marketplace.
