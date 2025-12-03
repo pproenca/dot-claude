@@ -1,7 +1,7 @@
 ---
 name: subagent-dev
 description: Use when executing implementation plans with independent tasks in the current session - dispatches fresh subagent for each task with code review between tasks, enabling fast iteration with quality gates
-allowed-tools: Task, Read, Skill
+allowed-tools: Task, Read, Skill, AskUserQuestion, Bash(git:*)
 ---
 
 # Subagent-Driven Development
@@ -32,6 +32,32 @@ Execute plan by dispatching fresh subagent per task, with code review after each
 - Plan needs revision (brainstorm first)
 
 ## The Process
+
+### Step 0: Verify Isolation Context
+
+Before loading plan:
+
+1. Check current git context:
+
+   ```bash
+   git branch --show-current
+   git worktree list
+   ```
+
+2. **If on main/master without worktree:**
+   Use AskUserQuestion:
+
+   ```
+   Question: "You're on the main branch. Subagents should work in an isolated worktree to protect main."
+   Header: "Isolation"
+   Options:
+   - "Set up worktree": Create isolated workspace first (recommended)
+   - "Continue on main": I understand the risk, proceed anyway
+   ```
+
+3. **If "Set up worktree":** Use workflow:git-worktrees skill first
+4. **If "Continue on main":** Proceed with warning logged
+5. **If already in worktree or feature branch:** Proceed normally
 
 ### 1. Load Plan
 
@@ -139,6 +165,11 @@ After final review passes:
 ```
 You: I'm using Subagent-Driven Development to execute this plan.
 
+[Check git context: on main branch, no worktree]
+[AskUserQuestion: "You're on the main branch. Subagents should work in an isolated worktree to protect main."]
+User: "Set up worktree"
+[Use workflow:git-worktrees skill to create feature/my-feature worktree]
+
 [Load plan, create TodoWrite with tasks + "Complete development (finish-branch)"]
 
 Task 1: Hook installation script
@@ -217,9 +248,10 @@ Done!
 
 **Required workflow skills:**
 
-- **writing-plans** - **REQUIRED SUB-SKILL:** Use workflow:writing-plans to create the plan that this skill executes
-- **code-review** - **REQUIRED SUB-SKILL:** Use review:code-review for review after each task (see Step 3)
-- **finish-branch** - **REQUIRED SUB-SKILL:** Use workflow:finish-branch to complete development after all tasks (see Step 7)
+- **git-worktrees** - Use workflow:git-worktrees for isolation when on main/master (see Step 0)
+- **writing-plans** - Use workflow:writing-plans to create the plan that this skill executes
+- **code-review** - Use review:code-review for review after each task (see Step 3)
+- **finish-branch** - **REQUIRED:** Use workflow:finish-branch to complete development after all tasks (see Step 7)
 
 **Subagents must use:**
 
