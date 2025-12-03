@@ -148,6 +148,24 @@ For complex plans (5+ tasks), use TodoWrite to track progress:
 - "Run the tests and make sure they pass" - step
 - "Commit" - step
 
+## Task Complexity Classification
+
+Every task MUST include a complexity tag. This enables efficient execution.
+
+| Complexity | Examples | TDD? | Code Review? |
+|------------|----------|------|--------------|
+| **TRIVIAL** | Delete file, rename, typo fix, config update | No | Parent verifies git diff |
+| **SIMPLE** | Small refactor, single-file change, add comment | If code changes | Haiku (optional) |
+| **MODERATE** | Feature implementation, bug fix with tests | Yes | Sonnet |
+| **COMPLEX** | Multi-file feature, architectural change | Yes | Opus |
+
+**Classification heuristics:**
+
+- **TRIVIAL:** No new logic, no tests needed, <10 lines changed
+- **SIMPLE:** Minor logic changes, one test file, <50 lines changed
+- **MODERATE:** New functionality, multiple test cases, 50-200 lines
+- **COMPLEX:** Multiple files, architectural decisions, >200 lines or high risk
+
 ## Plan Document Header
 
 **Every plan MUST start with this header:**
@@ -170,6 +188,8 @@ For complex plans (5+ tasks), use TodoWrite to track progress:
 
 ```markdown
 ### Task N: [Component Name]
+
+**Complexity:** [TRIVIAL | SIMPLE | MODERATE | COMPLEX]
 
 **Files:**
 - Create: `exact/path/to/file.py`
