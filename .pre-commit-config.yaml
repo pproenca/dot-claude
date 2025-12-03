@@ -21,3 +21,10 @@ repos:
         files: ^(plugins/|scripts/update_release_config.py|release-please-config.json|.claude-plugin/marketplace.json|version.txt)
         pass_filenames: false
 
+      - id: validate-settings
+        name: Validate Settings
+        entry: python3 -S scripts/validate-settings.py
+        language: python
+        files: \.claude/settings.*\.json$
+        pass_filenames: false
+
