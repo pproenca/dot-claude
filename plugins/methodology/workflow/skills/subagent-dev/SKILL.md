@@ -78,15 +78,22 @@ Task tool (general-purpose):
     You are implementing Task N from [plan-file].
 
     Read that task carefully. Your job is to:
-    1. Implement exactly what the task specifies
-    2. Write tests (following TDD if task says to)
-    3. Verify implementation works
+    1. Use core:tdd skill - write failing test FIRST, then implement
+    2. Implement exactly what the task specifies
+    3. Use core:verification skill - verify all tests pass with actual output
     4. Commit your work
     5. Report back
 
+    IMPORTANT:
+    - You MUST use core:tdd. Write the test first, see it fail, then
+      write minimal code to pass. No exceptions.
+    - You MUST use core:verification before reporting completion. Show
+      actual test output as evidence.
+
     Work from: [directory]
 
-    Report: What you implemented, what you tested, test results, files changed, any issues
+    Report: What you implemented, what you tested, test results (with output),
+    files changed, any issues
 ```
 
 **Subagent reports back** with summary of work.
@@ -255,7 +262,8 @@ Done!
 
 **Subagents must use:**
 
-- **tdd** - **REQUIRED SUB-SKILL:** Use core:tdd for TDD in each task
+- **tdd** - **REQUIRED:** Use core:tdd for TDD in each task
+- **verification** - **REQUIRED:** Use core:verification before reporting completion
 
 **Alternative workflow:**
 
