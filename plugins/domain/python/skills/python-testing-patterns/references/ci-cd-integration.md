@@ -1,6 +1,6 @@
 # CI/CD Integration
 
-## GitHub Actions Workflow
+## GitHub Actions Workflow with uv
 
 ```yaml
 # .github/workflows/test.yml
@@ -17,24 +17,24 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
 
       - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: |
-          pip install -e ".[dev]"
-          pip install pytest pytest-cov
+        run: uv sync --all-extras
 
       - name: Run tests
-        run: |
-          pytest --cov=myapp --cov-report=xml
+        run: uv run pytest --cov=myapp --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           file: ./coverage.xml
 ```
@@ -42,18 +42,18 @@ jobs:
 ## Coverage Reporting
 
 ```bash
-# Install coverage
-pip install pytest-cov
+# Ensure pytest-cov is in dev dependencies
+uv add --dev pytest-cov
 
 # Run tests with coverage
-pytest --cov=myapp tests/
+uv run pytest --cov=myapp tests/
 
 # Generate HTML report
-pytest --cov=myapp --cov-report=html tests/
+uv run pytest --cov=myapp --cov-report=html tests/
 
 # Fail if coverage below threshold
-pytest --cov=myapp --cov-fail-under=80 tests/
+uv run pytest --cov=myapp --cov-fail-under=80 tests/
 
 # Show missing lines
-pytest --cov=myapp --cov-report=term-missing tests/
+uv run pytest --cov=myapp --cov-report=term-missing tests/
 ```

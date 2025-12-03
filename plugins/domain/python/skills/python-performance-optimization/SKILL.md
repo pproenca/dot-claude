@@ -71,7 +71,7 @@ python -m pstats output.prof
 ### Pattern 2: line_profiler - Line-by-Line Profiling
 
 ```python
-# Install: pip install line-profiler
+# Install: uv add line-profiler
 
 # Add @profile decorator (line_profiler provides this)
 @profile
@@ -112,7 +112,7 @@ if __name__ == "__main__":
 ### Pattern 3: memory_profiler - Memory Usage
 
 ```python
-# Install: pip install memory-profiler
+# Install: uv add memory-profiler
 
 from memory_profiler import profile
 
@@ -133,7 +133,7 @@ if __name__ == "__main__":
 ### Pattern 4: py-spy - Production Profiling
 
 ```bash
-# Install: pip install py-spy
+# Install: uv add py-spy
 
 # Profile a running Python process
 py-spy top --pid 12345
@@ -420,7 +420,7 @@ def benchmark(func):
 ### Performance Testing with pytest-benchmark
 
 ```python
-# Install: pip install pytest-benchmark
+# Install: uv add --dev pytest-benchmark
 
 def test_list_comprehension(benchmark):
     result = benchmark(lambda: [i**2 for i in range(10000)])
