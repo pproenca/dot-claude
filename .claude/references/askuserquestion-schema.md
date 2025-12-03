@@ -5,6 +5,7 @@ Official schema reference for the Claude Code `AskUserQuestion` tool.
 ## Purpose
 
 Use this tool when you need to ask the user questions during execution:
+
 - Gather user preferences or requirements
 - Clarify ambiguous instructions
 - Get decisions on implementation choices
@@ -59,6 +60,7 @@ multiSelect: false
 ```
 
 **Key principles:**
+
 - Make instruction imperative and explicit
 - Include "(do NOT output as plain text)" to prevent text-only output
 - Use bullet format for options: `- Label: Description`
@@ -67,6 +69,7 @@ multiSelect: false
 ## When to Use vs. Conversational Questions
 
 **Use AskUserQuestion for:**
+
 - Scope and constraint gathering
 - Approach selection (after presenting options)
 - Design section validation
@@ -74,6 +77,7 @@ multiSelect: false
 - Any decision with 2-4 clear choices
 
 **Use conversational questions for:**
+
 - Context-specific clarifications
 - Deep-dive questions unique to a problem
 - Exploring edge cases and nuances

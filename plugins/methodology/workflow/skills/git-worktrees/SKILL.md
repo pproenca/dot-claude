@@ -43,6 +43,7 @@ If no directory exists and no CLAUDE.md preference, **use AskUserQuestion tool:*
 Question: "No worktree directory found. Where should I create worktrees?"
 Header: "Location"
 Options:
+
 - .worktrees/ (project-local): Hidden directory within project, ignored by git
 - Global (~/.config/superpowers/worktrees/<project>/): Outside project, shared across machines
 multiSelect: false

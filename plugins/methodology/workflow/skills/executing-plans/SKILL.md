@@ -118,6 +118,7 @@ After code review passes:
 Question: "Batch [N] complete. How should I proceed?"
 Header: "Next step"
 Options:
+
 - Continue: Proceed to next batch
 - Review changes: Show diffs or re-explain what was done
 - Make adjustments: Apply corrections before continuing

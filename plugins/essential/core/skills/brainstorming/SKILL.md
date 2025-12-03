@@ -117,6 +117,7 @@ After understanding the idea, propose 2-3 different approaches:
 Question: "Which approach would you prefer?"
 Header: "Approach"
 Options:
+
 - [Approach A name] (recommended): [Brief description of why this is recommended]
 - [Approach B name]: [Brief description and trade-off]
 - [Approach C name]: [Brief description and trade-off]
@@ -164,6 +165,7 @@ If "Minor tweaks" or "Needs rethinking" selected, pause for their input.
 Question: "How should I proceed with documentation?"
 Header: "Docs"
 Options:
+
 - Save and commit: Write design doc and commit to git
 - Save only: Write design doc without committing
 - Skip docs: Proceed without saving design document
@@ -182,6 +184,7 @@ multiSelect: false
 Question: "Ready to proceed with implementation?"
 Header: "Next step"
 Options:
+
 - Set up worktree: Create isolated workspace and write implementation plan
 - Just the plan: Write implementation plan in current workspace
 - Stop here: I will handle implementation separately

@@ -343,6 +343,7 @@ After saving the plan, **use the AskUserQuestion tool** (do NOT output as plain 
 Question: "Plan saved. How would you like to execute it?"
 Header: "Execute"
 Options:
+
 - Subagent-Driven: Execute in this session with fresh subagent per task, code review between tasks
 - Parallel Session: Open new session in worktree, batch execution with checkpoints
 - Skip: I'll execute manually later
