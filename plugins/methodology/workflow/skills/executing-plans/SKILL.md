@@ -60,13 +60,26 @@ For each task:
 When batch execution complete:
 
 **Dispatch code-reviewer subagent:**
+
+Use template at `plugins/methodology/review/templates/code-reviewer-dispatch.md`.
+
 ```
 Task tool (review:code-reviewer):
-  WHAT_WAS_IMPLEMENTED: [Summary of tasks completed in this batch]
-  PLAN_OR_REQUIREMENTS: Tasks [N-M] from [plan-file]
-  BASE_SHA: [commit before batch started]
-  HEAD_SHA: [current commit after batch]
-  DESCRIPTION: Batch [N] - [brief summary of work]
+  description: "Review Batch [N] implementation"
+  prompt: |
+    Review the implementation against requirements.
+
+    ## Context
+    - **What Was Implemented:** [Summary of tasks completed in this batch]
+    - **Requirements/Plan:** Tasks [N-M] from [plan-file]
+    - **Description:** Batch [N] - [brief summary of work]
+
+    ## Git Range
+    - **Base:** [commit before batch started]
+    - **Head:** [current commit after batch]
+
+    First run: git diff --stat [BASE_SHA]..[HEAD_SHA]
+    Then review against plugins/methodology/review/references/code-review-standards.md
 ```
 
 **Code reviewer returns:** Strengths, Issues (Critical/Important/Minor), Assessment
@@ -75,6 +88,10 @@ Task tool (review:code-reviewer):
 1. Address issues before proceeding
 2. Re-run verification after fixes
 3. Do NOT proceed to user feedback until resolved
+
+**If only Minor issues:**
+- Note for later
+- Proceed to Step 4
 
 ### Step 4: Report and Request Feedback
 After code review passes:
