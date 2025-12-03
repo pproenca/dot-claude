@@ -110,9 +110,8 @@ if [ -f package.json ]; then npm install; fi
 # Rust
 if [ -f Cargo.toml ]; then cargo build; fi
 
-# Python
-if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-if [ -f pyproject.toml ]; then poetry install; fi
+# Python (prefer uv)
+if [ -f pyproject.toml ]; then uv sync; elif [ -f requirements.txt ]; then uv pip install -r requirements.txt; fi
 
 # Go
 if [ -f go.mod ]; then go mod download; fi

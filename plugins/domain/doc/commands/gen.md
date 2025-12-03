@@ -343,17 +343,14 @@ ${QUICK_START_CODE}
 # Clone and setup
 git clone https://github.com/${GITHUB_ORG}/${REPO_NAME}.git
 cd ${REPO_NAME}
-python -m venv venv
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements-dev.txt
+# Install dependencies (creates .venv automatically)
+uv sync
 
 # Run tests
-pytest
+uv run pytest
 
 # Start development server
-python manage.py runserver
+uv run python manage.py runserver
 ```
 
 ## Testing
