@@ -165,10 +165,10 @@ The `commit` plugin validates git commits:
 **Skills (6):**
 - `writing-plans` - Detailed implementation plans with exact file paths
 - `executing-plans` - Execute plans in controlled batches with review checkpoints
-- `using-git-worktrees` - Create isolated git worktrees for feature work
-- `finishing-branch` - Guide completion with merge/PR/cleanup options
-- `subagent-driven-development` - Fresh subagent per task with code review gates
-- `dispatching-parallel-agents` - Concurrent agent deployment for independent failures
+- `git-worktrees` - Create isolated git worktrees for feature work
+- `finish-branch` - Guide completion with merge/PR/cleanup options
+- `subagent-dev` - Fresh subagent per task with code review gates
+- `parallel-agents` - Concurrent agent deployment for independent failures
 
 **Commands (2):**
 - `/workflow:plan` - Create detailed implementation plan
@@ -179,9 +179,8 @@ The `commit` plugin validates git commits:
 
 ### review (Code Review)
 
-**Skills (2):**
-- `requesting-code-review` - Dispatch code-reviewer subagent for implementation review
-- `receiving-code-review` - Handle feedback with technical rigor, not performative agreement
+**Skills (1):**
+- `code-review` - Dispatch code-reviewer subagent and handle feedback with technical rigor
 
 **Agents (2):**
 - `code-reviewer` - Reviews code against plans and standards
@@ -191,17 +190,18 @@ The `commit` plugin validates git commits:
 
 **Skills (2):**
 - `anti-patterns` - Prevent testing mock behavior and production pollution
-- `condition-based-waiting` - Replace arbitrary timeouts with condition polling
+- `condition-wait` - Replace arbitrary timeouts with condition polling
 
 ### debug (Debugging)
 
 **Skills (3):**
-- `systematic-debugging` - Four-phase framework: investigate, analyze, hypothesize, implement
-- `root-cause-tracing` - Trace bugs backward through call stack with instrumentation
+- `systematic` - Four-phase framework: investigate, analyze, hypothesize, implement
+- `root-cause` - Trace bugs backward through call stack with instrumentation
 - `defense-in-depth` - Validate at entry, business logic, and environment layers
 
-**Agents (1):**
-- `diagram-generator` - Creates architecture diagrams for debugging
+**Agents (2):**
+- `devops-troubleshooter` - Incident response and infrastructure debugging
+- `error-detective` - Search logs and correlate errors across systems
 
 ### commit (Git Workflows)
 
