@@ -10,6 +10,28 @@
             "timeout": 3
           }
         ]
+      },
+      {
+        "matcher": "Bash(git worktree:*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/worktree-guards.sh",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/plan-validator.sh",
+            "timeout": 5
+          }
+        ]
       }
     ]
   }

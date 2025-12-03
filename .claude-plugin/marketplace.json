@@ -11,32 +11,6 @@
   "repository": "https://github.com/pedroproenca/dot-claude",
   "plugins": [
     {
-      "name": "blackbox",
-      "description": "Zero-dependency telemetry plugin for Claude Code - captures file modifications for dataset generation and disaster recovery",
-      "source": "./plugins/specialized/blackbox",
-      "version": "1.0.0",
-      "keywords": [
-        "telemetry",
-        "file-tracking",
-        "dataset-generation",
-        "disaster-recovery"
-      ],
-      "license": "MIT"
-    },
-    {
-      "name": "blackbox-flight-recorder",
-      "source": "./plugins/specialized/blackbox",
-      "description": "Zero-dependency telemetry plugin for Claude Code - captures file modifications for dataset generation and disaster recovery",
-      "version": "1.0.0",
-      "keywords": [
-        "telemetry",
-        "file-tracking",
-        "dataset-generation",
-        "disaster-recovery"
-      ],
-      "license": "MIT"
-    },
-    {
       "name": "commit",
       "description": "Git workflows: worktrees, branches, and commit organization",
       "source": "./plugins/essential/commit",
