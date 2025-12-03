@@ -14,11 +14,7 @@ This repository also includes Cursor IDE equivalents of the Claude Code workflow
 
 | Command | Description |
 |---------|-------------|
-| `/superplan` | Route to correct workflow based on intent |
-| `/superexecute` | Execute an implementation plan |
 | `/brainstorm` | Start idea refinement and design |
-| `/context` | Quick project status check |
-| `/notes` | Save session notes to CLAUDE.md |
 
 ### Workflow Rules (`.cursor/rules/`)
 
@@ -59,15 +55,21 @@ These are always active in Cursor sessions:
 
 ## Commands
 
+### Running Tests
+```bash
+uv run pytest tests/
+```
+Runs the test suite to validate plugin structure and cross-references.
+
 ### Plugin Validation
 ```bash
-python3 scripts/validate-plugins.py
+uv run python scripts/validate-plugins.py
 ```
 Validates all plugins using `claude plugin validate`. Also runs automatically via pre-commit hook.
 
 ### Reference Validation
 ```bash
-python3 scripts/validate-references.py
+uv run python scripts/validate-references.py
 ```
 Validates cross-references in plugins:
 - Template file references point to existing files
@@ -77,6 +79,12 @@ Validates cross-references in plugins:
 - No orphaned template files
 
 Also runs automatically via pre-commit hook.
+
+### Settings Validation
+```bash
+uv run python scripts/validate-settings.py
+```
+Validates `.claude/settings.json` files for correct tool patterns and skill references.
 
 ### Configuration Sync
 ```
@@ -209,15 +217,17 @@ PostToolUse hooks validate git commits against Conventional Commits:
 
 ### Prerequisites
 ```bash
-# macOS
+# macOS - install system dependencies
 brew install jq yq ripgrep fd coreutils
 
-# Python 3.8+ required for validation scripts
-python3 --version
+# Install uv (Python package manager)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install pre-commit hooks (optional but recommended)
-pip install pre-commit
-pre-commit install
+# Install Python and dependencies via uv
+uv sync
+
+# Install pre-commit hooks
+uv run pre-commit install
 ```
 
 ### Creating Skills
@@ -253,3 +263,4 @@ Use `meta:writing-skills` skill when creating new skills for this marketplace.
 - Remember to make worktrees local to the project
 - Remember to use 'uv' for all python related changes/executions inside this repo
 - Run `uv run pytest tests/` to validate plugin structure before committing
+- when you make refactors and there's no test coverage that code path you are changing, write first a test (this applies to python)
