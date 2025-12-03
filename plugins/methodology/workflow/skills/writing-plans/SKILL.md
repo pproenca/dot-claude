@@ -123,6 +123,39 @@ Before writing a plan, detect if this is a Python project and what framework it 
 
 - Dispatch `python:python-expert` agent for framework-specific patterns
 
+## Domain Agent Detection
+
+Before writing each task, detect the appropriate agent based on file types.
+
+### File Extension Mapping
+
+| Extension | Agent | Review Mode |
+|-----------|-------|-------------|
+| `.py` | `python:python-expert` | `review:code-reviewer` |
+| `.sh` | `shell:shell-expert` | `shell:shell-expert` (REVIEW) |
+| `.md` | `doc:docs-architect` | `review:code-reviewer` |
+| Other | `general-purpose` | `review:code-reviewer` |
+
+### Multi-File Task Splitting
+
+When a task involves files with different extensions:
+
+1. Group files by extension
+2. Create subtasks for each group (3a, 3b, 3c...)
+3. Each subtask gets its own `**Agent:**` annotation
+4. Add dependency note if subtasks must be sequential
+
+### Detection Logic
+
+For each task, examine the files listed and:
+
+1. Identify the primary file extension
+2. Look up the corresponding agent in the mapping table
+3. Add `**Agent:** [agent-name]` to the task header
+4. If multiple file types, split into subtasks by domain
+
+---
+
 ## Optional: Track Plan Writing Phases
 
 For complex plans (5+ tasks), use TodoWrite to track progress:
@@ -190,6 +223,7 @@ Every task MUST include a complexity tag. This enables efficient execution.
 ### Task N: [Component Name]
 
 **Complexity:** [TRIVIAL | SIMPLE | MODERATE | COMPLEX]
+**Agent:** [domain:agent-name | general-purpose]
 
 **Files:**
 - Create: `exact/path/to/file.py`

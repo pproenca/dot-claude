@@ -55,6 +55,19 @@ Before loading plan:
 
 **Default: First 3 tasks**
 
+#### Domain Skill Loading (Optional)
+
+Before executing each task, check for `**Agent:**` annotation to load domain-specific guidance:
+
+1. Look for `**Agent:** [agent-name]` in the task header
+2. If present: Load corresponding domain skill for patterns
+   - `python:python-expert` → Use `python:python-testing` patterns
+   - `shell:shell-expert` → Use `shell:google-shell-style` patterns
+   - `doc:docs-architect` → Use `doc:amazon-writing` patterns
+3. If missing: Use standard execution (no domain skill needed)
+
+**Note:** `executing-plans` executes directly (parent agent). Use `subagent-dev` if you need domain agent dispatch.
+
 For each task, check its **Complexity** tag and execute accordingly:
 
 #### TRIVIAL Tasks (delete, rename, typo, config)
