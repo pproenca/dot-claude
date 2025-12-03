@@ -204,7 +204,7 @@ def check_skill_references(
                 if skill_ref not in valid_skills:
                     # Check if it's a valid prefix at least
                     prefix = skill_ref.split(":")[0] if ":" in skill_ref else ""
-                    if prefix not in ["python", "doc", "meta", "debug", "shell"]:
+                    if prefix not in ["python", "doc", "meta", "debug", "shell", "core", "workflow", "review", "testing", "commit"]:
                         # These are external/optional plugins, only warn
                         errors.append(ValidationError(
                             file=file_path,
