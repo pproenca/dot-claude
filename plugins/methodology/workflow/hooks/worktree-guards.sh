@@ -34,23 +34,25 @@ check_worktree_add() {
   local command="$1"
   local worktree_dir gitignore_path
 
-  # Extract worktree directory from command
+  # Extract worktree directory from command using proper shell word-splitting
   local args
   args="${command#*git worktree add}"
-  args="$(echo "$args" | sed 's/^[[:space:]]*//')"
 
-  # Skip -b and --branch flags with their arguments
-  while [[ "${args}" =~ ^-[bB][[:space:]] ]] || [[ "${args}" =~ ^--branch[[:space:]] ]]; do
-    args="$(echo "$args" | sed 's/^-[bB][[:space:]]*//' | sed 's/^--branch[[:space:]]*//')"
-    args="$(echo "$args" | sed 's/^[^[:space:]]*[[:space:]]*//')"
+  # Use eval set to parse shell-quoted arguments (safe here: we're validating
+  # a command that Bash will execute anyway, not running arbitrary code)
+  # shellcheck disable=SC2086  # Intentional word-splitting
+  eval set -- $args 2>/dev/null || set --
+
+  # Skip flags: -b/-B take an argument, other flags are standalone
+  while [[ $# -gt 0 && "$1" == -* ]]; do
+    case "$1" in
+      -b|-B|--branch) shift 2 ;;  # Skip flag and its argument
+      *) shift ;;                  # Skip standalone flag
+    esac
   done
 
-  # Skip other flags
-  while [[ "${args}" =~ ^- ]]; do
-    args="$(echo "$args" | sed 's/^[^[:space:]]*[[:space:]]*//')"
-  done
-
-  worktree_dir="$(echo "$args" | awk '{print $1}')"
+  # First remaining positional argument is the worktree directory
+  worktree_dir="${1:-}"
 
   if [[ -z "${worktree_dir}" ]]; then
     output_decision "allow"
@@ -98,17 +100,22 @@ check_worktree_remove() {
   local command="$1"
   local worktree_path cwd
 
-  # Extract worktree path from command
+  # Extract worktree path from command using proper shell word-splitting
   local args
   args="${command#*git worktree remove}"
-  args="$(echo "$args" | sed 's/^[[:space:]]*//')"
 
-  # Skip flags
-  while [[ "${args}" =~ ^- ]]; do
-    args="$(echo "$args" | sed 's/^[^[:space:]]*[[:space:]]*//')"
+  # Use eval set to parse shell-quoted arguments (safe here: we're validating
+  # a command that Bash will execute anyway, not running arbitrary code)
+  # shellcheck disable=SC2086  # Intentional word-splitting
+  eval set -- $args 2>/dev/null || set --
+
+  # Skip flags (arguments starting with -)
+  while [[ $# -gt 0 && "$1" == -* ]]; do
+    shift
   done
 
-  worktree_path="$(echo "$args" | awk '{print $1}')"
+  # First remaining positional argument is the worktree path
+  worktree_path="${1:-}"
 
   if [[ -z "${worktree_path}" ]]; then
     output_decision "allow"
