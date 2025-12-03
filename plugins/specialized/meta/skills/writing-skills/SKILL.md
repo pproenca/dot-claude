@@ -258,7 +258,7 @@ wc -w skills/path/SKILL.md
 
 **Name by what you DO or core insight:**
 
-- ✅ `condition-wait` > `async-test-helpers`
+- ✅ `testing:condition-wait` > `async-test-helpers`
 - ✅ `using-skills` not `skill-usage`
 - ✅ `flatten-with-flags` > `data-structure-refactoring`
 - ✅ `root-cause-tracing` > `debugging-techniques`
