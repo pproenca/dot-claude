@@ -40,7 +40,7 @@ echo "Backup: $BACKUP_BRANCH"
 
 ## Step 2: Dispatch Commit-Organizer Agent
 
-Use the Task tool with `subagent_type="commits:commit-organizer"` to analyze the branch.
+Use the Task tool with `subagent_type="commit:commit-organizer"` to analyze the branch.
 
 The agent will:
 - Run `${CLAUDE_PLUGIN_ROOT}/scripts/analyze-branch.sh` to get full diffs
