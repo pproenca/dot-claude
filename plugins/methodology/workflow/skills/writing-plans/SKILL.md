@@ -338,17 +338,15 @@ In these cases, just skip to execution handoff.
 
 ## Execution Handoff
 
-After saving the plan, use AskUserQuestion to offer execution choice:
+After saving the plan, **use the AskUserQuestion tool** (do NOT output as plain text):
 
-```
 Question: "Plan saved. How would you like to execute it?"
 Header: "Execute"
-multiSelect: false
 Options:
 - Subagent-Driven: Execute in this session with fresh subagent per task, code review between tasks
 - Parallel Session: Open new session in worktree, batch execution with checkpoints
 - Skip: I'll execute manually later
-```
+multiSelect: false
 
 **If Subagent-Driven chosen:**
 
