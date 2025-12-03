@@ -110,14 +110,14 @@ Before writing a plan, detect if this is a Python project and what framework it 
 
 **When Python detected:**
 
-1. Use Skill tool to load `python:python-testing-patterns`
-2. Use Skill tool to load `python:uv-package-manager`
+1. Use Skill tool to load `python:python-testing`
+2. Use Skill tool to load `python:python-project`
 3. Use patterns from loaded skills in plan tasks
 4. Use `uv run` prefix for all Python commands
 
-**When async code detected:**
+**When async/performance code detected:**
 
-- Use Skill tool to load `python:async-python-patterns`
+- Use Skill tool to load `python:python-performance`
 
 **When FastAPI/Django detected:**
 
@@ -225,7 +225,7 @@ When Python detected, load patterns from the python plugin instead of duplicatin
 
 ```
 
-Use Skill tool: python:python-testing-patterns
+Use Skill tool: python:python-testing
 
 ```
 
@@ -235,11 +235,11 @@ Use Skill tool: python:python-testing-patterns
 - Parameterized tests from skill → test task examples
 - Mocking patterns from skill → integration test examples
 
-**For async code detected:**
+**For async/performance code detected:**
 
 ```
 
-Use Skill tool: python:async-python-patterns
+Use Skill tool: python:python-performance
 
 ```
 
@@ -372,11 +372,9 @@ When writing Python plans, integrate these `python` plugin skills:
 
 | Skill | When to Reference | What It Provides |
 |-------|-------------------|------------------|
-| `python:python-testing-patterns` | All Python test code | Fixtures, mocking, parameterized tests, markers |
-| `python:uv-package-manager` | Python commands, dependencies | `uv run`, `uv add`, `uv sync` patterns |
-| `python:async-python-patterns` | Async code detected | asyncio, gather(), error handling, timeouts |
-| `python:python-packaging` | Creating packages/CLIs | pyproject.toml, entry points, publishing |
-| `python:python-performance-optimization` | Performance-critical code | Profiling, caching, optimization patterns |
+| `python:python-testing` | All Python test code | Fixtures, mocking, parameterized tests, markers |
+| `python:python-project` | Python commands, dependencies, packaging | `uv run`, `uv add`, pyproject.toml, publishing |
+| `python:python-performance` | Async or performance code | asyncio, profiling, caching, optimization patterns |
 
 ### Agent Dispatch
 
@@ -399,7 +397,7 @@ For Python projects, enhance the header:
 # [Feature Name] Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use workflow:executing-plans to implement this plan task-by-task.
-> **Python Skills:** Reference python:python-testing-patterns for tests, python:uv-package-manager for commands.
+> **Python Skills:** Reference python:python-testing for tests, python:python-project for uv commands.
 
 **Goal:** [One sentence describing what this builds]
 
