@@ -310,24 +310,30 @@ In these cases, just skip to execution handoff.
 
 ## Execution Handoff
 
-After saving the plan (with or without diagrams), offer execution choice:
+After saving the plan, use AskUserQuestion to offer execution choice:
 
-**"Plan complete and saved to `docs/plans/<filename>.md`. Two execution options:**
-
-**1. Subagent-Driven (this session)** - I dispatch fresh subagent per task, review between tasks, fast iteration
-
-**2. Parallel Session (separate)** - Open new session with executing-plans, batch execution with checkpoints
-
-**Which approach?"**
+```
+Question: "Plan saved. How would you like to execute it?"
+Header: "Execute"
+multiSelect: false
+Options:
+- Subagent-Driven: Execute in this session with fresh subagent per task, code review between tasks
+- Parallel Session: Open new session in worktree, batch execution with checkpoints
+- Skip: I'll execute manually later
+```
 
 **If Subagent-Driven chosen:**
-- **REQUIRED SUB-SKILL:** Use workflow:subagent-dev
+- **REQUIRED SUB-SKILL:** Use Skill tool: `workflow:subagent-dev`
 - Stay in this session
-- Fresh subagent per task + code review
+- Fresh subagent per task + code review between tasks
 
 **If Parallel Session chosen:**
 - Guide them to open new session in worktree
-- **REQUIRED SUB-SKILL:** Use workflow:executing-plans
+- **REQUIRED SUB-SKILL:** Use Skill tool: `workflow:executing-plans`
+
+**If Skip chosen:**
+- Confirm the plan file location
+- End the planning workflow
 
 ## Workflow Integration
 
