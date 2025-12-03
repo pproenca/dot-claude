@@ -7,9 +7,7 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-import pytest
-
-from conftest import count_lines, get_plugin_path, plugin_exists, skill_exists, TIER_MAPPING
+from conftest import count_lines, get_plugin_path, plugin_exists, skill_exists
 
 
 def find_all_plugins(plugins_dir: Path) -> list[Path]:

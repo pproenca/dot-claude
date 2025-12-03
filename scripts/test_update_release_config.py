@@ -23,6 +23,8 @@ MODULE_PATH = os.path.join(SCRIPTS_DIR, "update_release_config.py")
 def load_update_release_config():
     """Load the update_release_config.py module."""
     spec = importlib.util.spec_from_file_location("update_release_config", MODULE_PATH)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Cannot load module from {MODULE_PATH}")
     module = importlib.util.module_from_spec(spec)
     sys.modules["update_release_config"] = module
     spec.loader.exec_module(module)

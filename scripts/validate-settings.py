@@ -410,7 +410,7 @@ def main() -> int:
             for error in errors:
                 print(f"  ✗ {error}", file=sys.stderr)
         else:
-            print(f"  ✓ Valid")
+            print("  ✓ Valid")
 
         for warning in warnings:
             print(f"  ⚠ {warning}", file=sys.stderr)

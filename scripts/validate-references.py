@@ -266,9 +266,6 @@ def check_component_confusion(
     """
     errors: list[ValidationError] = []
 
-    # Pattern to find any plugin:component reference
-    ref_pattern = re.compile(r"(\w+):(\w[\w-]*)")
-
     # Patterns that indicate Skill tool usage
     skill_tool_patterns = [
         r"[Uu]se (?:Skill tool|skill)[:\s]+[`'\"]?(\w+:\w[\w-]*)",
@@ -308,7 +305,7 @@ def check_component_confusion(
                     if leaf in leaf_to_components:
                         actual = leaf_to_components[leaf]
                         suggestions = [c.full_name for c in actual]
-                        kinds = set(c.kind for c in actual)
+                        kinds = {c.kind for c in actual}
                         if "agent" in kinds and "skill" not in kinds:
                             errors.append(ValidationError(
                                 file=file_path,
@@ -393,7 +390,7 @@ def find_orphaned_templates(
             errors.append(ValidationError(
                 file=template,
                 line_num=0,
-                message=f"Template file appears to be orphaned (not referenced anywhere)",
+                message="Template file appears to be orphaned (not referenced anywhere)",
                 severity="warning"
             ))
 
