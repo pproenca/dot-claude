@@ -416,7 +416,7 @@ From applying TDD to TDD skill itself (2025-10-03):
 
 **REQUIRED SUB-SKILL:**
 
-- **tdd** - Foundational skill defining RED-GREEN-REFACTOR cycle
+- **core:tdd** - Foundational skill defining RED-GREEN-REFACTOR cycle
 
 **Called by:**
 

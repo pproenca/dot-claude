@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 import platform
 import re
+import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -245,8 +246,8 @@ def validate_command_executability(
 
     # Test command executability with timeout
     try:
-        # Parse command (simple split on spaces, handles most cases)
-        cmd_parts = command.split()
+        # Parse command using shlex for proper shell parsing
+        cmd_parts = shlex.split(command)
         if not cmd_parts:
             errors.append(f"{path}: statusLine command is empty")
             return errors

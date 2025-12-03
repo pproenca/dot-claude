@@ -94,7 +94,7 @@ gantt
 
 ### Node Shapes (flowchart)
 
-```
+```text
 [Rectangle] - Default process
 (Rounded) - Terminal/rounded
 ([Stadium]) - Pill shape
@@ -107,7 +107,7 @@ gantt
 
 ### Arrow Types
 
-```
+```text
 --> Solid arrow (strong dependency)
 -.-> Dashed arrow (weak/optional)
 ==> Thick arrow (important path)

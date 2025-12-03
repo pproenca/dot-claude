@@ -30,7 +30,7 @@ Gather the following from the user:
 
 Use the Task tool to dispatch the tutorial-engineer agent:
 
-```
+```text
 Task(
   subagent_type="doc:tutorial-engineer",
   prompt="[Include gathered requirements and any relevant file paths]"

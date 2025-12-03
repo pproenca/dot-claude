@@ -10,7 +10,7 @@ Use this template when dispatching diagram generation for implementation plans.
 
 Let the agent decide IF and WHAT diagrams would help:
 
-```
+```text
 Task tool with subagent_type="doc:diagram-generator":
   description: "Auto-detect useful diagrams for plan"
   prompt: |
@@ -29,7 +29,7 @@ Task tool with subagent_type="doc:diagram-generator":
 
 Request specific diagram types:
 
-```
+```text
 Task tool with subagent_type="doc:diagram-generator":
   description: "Generate [TYPE] diagram for plan"
   prompt: |
