@@ -194,7 +194,7 @@ def main() -> int:
     root_dir = Path(__file__).resolve().parent.parent
 
     print("\n=== Migration Plan ===")
-    print(f"Target structure:")
+    print("Target structure:")
     for tier, plugins in TIER_MAPPING.items():
         print(f"  {tier}/: {', '.join(plugins)}")
 
