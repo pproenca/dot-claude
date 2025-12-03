@@ -187,5 +187,5 @@ From debugging session (2025-10-03):
 - Each Task call creates an independent agent with its own context
 
 **Pairs with:**
-- **systematic-debugging** - Use for initial problem identification before parallel dispatch
-- **requesting-code-review** - Review combined changes after all agents complete
+- **debug:systematic** - Use for initial problem identification before parallel dispatch
+- **review:code-review** - Review combined changes after all agents complete
