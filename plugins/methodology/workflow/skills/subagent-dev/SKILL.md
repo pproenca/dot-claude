@@ -79,6 +79,24 @@ Read plan file, create TodoWrite with:
 
 ### 2. Execute Task with Subagent
 
+#### Parse Agent Annotation
+
+Before dispatching, extract the `**Agent:**` annotation:
+
+1. Look for `**Agent:** [agent-name]` in the task header
+2. If present: Use that agent for dispatch (e.g., `python:python-expert`)
+3. If missing: Default to `general-purpose`
+
+**Example parsing:**
+
+```
+Task header contains: **Agent:** python:python-expert
+→ Dispatch to python:python-expert
+
+Task header missing Agent field
+→ Dispatch to general-purpose (fallback)
+```
+
 Check task **Complexity** tag before dispatching:
 
 #### TRIVIAL Tasks
@@ -95,10 +113,10 @@ Check task **Complexity** tag before dispatching:
 
 #### SIMPLE Tasks
 
-**Dispatch lightweight subagent:**
+**Dispatch lightweight subagent using agent from plan:**
 
 ```
-Task tool (general-purpose):
+Task tool ([agent from plan]):
   model: haiku
   description: "Implement Task N: [task name]"
   prompt: |
@@ -126,10 +144,10 @@ Task tool (general-purpose):
 
 #### MODERATE Tasks
 
-**Dispatch standard subagent:**
+**Dispatch standard subagent using agent from plan:**
 
 ```
-Task tool (general-purpose):
+Task tool ([agent from plan]):
   model: sonnet
   description: "Implement Task N: [task name]"
   prompt: |
@@ -157,10 +175,10 @@ Task tool (general-purpose):
 
 #### COMPLEX Tasks
 
-**Dispatch thorough subagent:**
+**Dispatch thorough subagent using agent from plan:**
 
 ```
-Task tool (general-purpose):
+Task tool ([agent from plan]):
   model: sonnet
   description: "Implement Task N: [task name]"
   prompt: |

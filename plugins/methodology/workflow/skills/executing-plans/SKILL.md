@@ -55,6 +55,24 @@ Before loading plan:
 
 **Default: First 3 tasks**
 
+#### Parse Agent Annotation
+
+Before executing each task, extract the `**Agent:**` annotation:
+
+1. Look for `**Agent:** [agent-name]` in the task header
+2. If present: Use that agent for dispatch (e.g., `python:python-expert`)
+3. If missing: Default to `general-purpose`
+
+**Example parsing:**
+
+```
+Task header contains: **Agent:** python:python-expert
+→ Dispatch to python:python-expert
+
+Task header missing Agent field
+→ Dispatch to general-purpose (fallback)
+```
+
 For each task, check its **Complexity** tag and execute accordingly:
 
 #### TRIVIAL Tasks (delete, rename, typo, config)
@@ -70,31 +88,64 @@ For each task, check its **Complexity** tag and execute accordingly:
 #### SIMPLE Tasks (small refactor, single-file)
 
 1. Mark as in_progress
-2. **If modifying production code:** Use core:tdd skill (write test first)
-3. **If config/docs only:** Skip TDD
-4. Run verifications as specified
-5. Mark as completed
-6. **Lightweight review:** Check git diff, no subagent needed
+2. **Parse Agent:** Extract `**Agent:**` value from task (or use `general-purpose`)
+3. **Dispatch to domain agent:**
+
+   ```
+   Task tool ([agent from plan]):
+     model: haiku
+     description: "Implement Task N: [task name]"
+     prompt: |
+       You are implementing Task N from [plan-file]. This is a SIMPLE task.
+       If modifying production code: Use core:tdd skill (write test first).
+       If config/docs only: Skip TDD.
+       Run verifications as specified.
+   ```
+
+4. Mark as completed
+5. **Lightweight review:** Check git diff, no subagent needed
 
 #### MODERATE Tasks (features, bug fixes)
 
 1. Mark as in_progress
-2. **Use core:tdd skill** - Write failing test FIRST, then implement
-3. Follow each step exactly
-4. Run verifications as specified
-5. **Use core:verification skill** - Verify tests pass
-6. Mark as completed
-7. **Dispatch code-reviewer** (Sonnet model)
+2. **Parse Agent:** Extract `**Agent:**` value from task (or use `general-purpose`)
+3. **Dispatch to domain agent:**
+
+   ```
+   Task tool ([agent from plan]):
+     model: sonnet
+     description: "Implement Task N: [task name]"
+     prompt: |
+       You are implementing Task N from [plan-file]. This is a MODERATE task.
+       Use core:tdd skill - Write failing test FIRST, then implement.
+       Follow each step exactly.
+       Run verifications as specified.
+       Use core:verification skill - Verify tests pass.
+   ```
+
+4. Mark as completed
+5. **Dispatch code-reviewer** (Sonnet model)
 
 #### COMPLEX Tasks (multi-file, architectural)
 
 1. Mark as in_progress
-2. **Use core:tdd skill** - Write failing test FIRST, then implement
-3. Follow each step exactly
-4. Run verifications as specified
-5. **Use core:verification skill** - Verify tests pass
-6. Mark as completed
-7. **Dispatch code-reviewer** (Opus model for thorough review)
+2. **Parse Agent:** Extract `**Agent:**` value from task (or use `general-purpose`)
+3. **Dispatch to domain agent:**
+
+   ```
+   Task tool ([agent from plan]):
+     model: sonnet
+     description: "Implement Task N: [task name]"
+     prompt: |
+       You are implementing Task N from [plan-file]. This is a COMPLEX task.
+       Use core:tdd skill - Write failing test FIRST, then implement.
+       Follow each step exactly.
+       Run verifications as specified.
+       Use core:verification skill - Verify tests pass.
+   ```
+
+4. Mark as completed
+5. **Dispatch code-reviewer** (Opus model for thorough review)
 
 **IMPORTANT:** Match execution overhead to task complexity. TRIVIAL tasks should complete in 2-3 tool uses, not 11.
 
