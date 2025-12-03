@@ -189,7 +189,7 @@ Done!
 
 **Required workflow skills:**
 - **writing-plans** - **REQUIRED SUB-SKILL:** Use workflow:writing-plans to create the plan that this skill executes
-- **requesting-code-review** - **REQUIRED SUB-SKILL:** Use review:code-review for review after each task (see Step 3)
+- **code-review** - **REQUIRED SUB-SKILL:** Use review:code-review for review after each task (see Step 3)
 - **finish-branch** - **REQUIRED SUB-SKILL:** Use workflow:finish-branch to complete development after all tasks (see Step 7)
 
 **Subagents must use:**

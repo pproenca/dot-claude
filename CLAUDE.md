@@ -6,53 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 dot-claude is a collection of Claude Code plugins providing skills, agents, commands, and hooks for software engineering workflows. It extends Claude Code with specialized capabilities for TDD, debugging, git workflows, documentation, Python development, and shell scripting.
 
-## Cursor Workflows
-
-This repository also includes Cursor IDE equivalents of the Claude Code workflows.
-
-### Available Commands
-
-| Command | Description |
-|---------|-------------|
-| `/brainstorm` | Start idea refinement and design |
-
-### Workflow Rules (`.cursor/rules/`)
-
-| Rule | Use When |
-|------|----------|
-| `brainstorming-workflow.mdc` | Designing new features, refining ideas |
-| `planning-workflow.mdc` | Creating detailed implementation plans |
-| `execution-workflow.mdc` | Implementing a plan task-by-task |
-| `debugging-workflow.mdc` | Fixing bugs, investigating errors |
-| `tdd-workflow.mdc` | Any code changes (TDD) |
-| `code-reviewer.mdc` | Reviewing completed work |
-| `security-reviewer.mdc` | Security-focused reviews |
-| `diagram-generator.mdc` | Creating Mermaid diagrams |
-
-### Skills Reference (`.cursor/skills/`)
-
-| Skill | Purpose |
-|-------|---------|
-| `test-driven-development.md` | TDD protocol with examples |
-| `verification-before-completion.md` | Evidence before claims |
-| `systematic-debugging.md` | 4-phase debugging framework |
-| `code-review-standards.md` | Review dimensions and output format |
-| `using-git-worktrees.md` | Isolated development workspaces |
-| `finishing-a-development-branch.md` | Branch completion workflow |
-
-### Always-On Protocols (`.cursorrules`)
-
-These are always active in Cursor sessions:
-- **Verification Protocol**: No completion claims without running verification
-- **Branch Safety Protocol**: Warning when editing on main/master
-- **TDD Protocol**: Tests first for all code changes
-
-### Recent Context
-
-- **2025-12-01**: Converted super plugin to Cursor equivalents
-
----
-
 ## Commands
 
 ### Running Tests
