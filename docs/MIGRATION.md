@@ -84,6 +84,7 @@ The new architecture provides:
 ## Migration Complete
 
 As of v5.0.0, the `super` plugin has been fully removed. All functionality is now in:
+
 - **core** - Essential workflows (TDD, verification, brainstorming)
 - **workflow** - Planning, execution, and git workflows
 - **review** - Code review

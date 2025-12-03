@@ -1,0 +1,40 @@
+# Markdownlint configuration for Claude Code skills/agents
+# https://github.com/DavidAnson/markdownlint
+
+# Disable line length for flexibility in documentation
+MD013: false
+
+# Allow duplicate headings in different sections
+MD024:
+  siblings_only: true
+
+# Allow trailing punctuation in headings (for questions)
+MD026: false
+
+# Allow ordered lists with any numbering style (1. 2. 3. or 4. 5. 6.)
+MD029: false
+
+# Allow inline HTML (needed for some markdown features)
+MD033: false
+
+# Allow bare URLs
+MD034: false
+
+# Disable emphasis as heading check (used in skills)
+MD036: false
+
+# Allow code blocks without language specification
+# Note: CodeRabbit enforces MD040, but fixing 160+ blocks is out of scope
+MD040: false
+
+# Don't require first line to be heading (agent files have YAML frontmatter)
+MD041: false
+
+# Allow both fenced and indented code blocks
+MD046: false
+
+# Disable link fragment validation (complex anchors in skills)
+MD051: false
+
+# Allow multiple blanks in code blocks
+MD012: false

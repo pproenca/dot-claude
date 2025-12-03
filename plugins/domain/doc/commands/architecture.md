@@ -10,6 +10,7 @@ Generate long-form technical documentation using the specialized docs-architect 
 ## What This Command Does
 
 Dispatches the `docs-architect` agent to create:
+
 - System architecture documentation (10-100+ pages)
 - Design decision rationale ("why" documentation)
 - Component relationship documentation
@@ -18,6 +19,7 @@ Dispatches the `docs-architect` agent to create:
 ## Before Dispatching
 
 Gather the following from the user:
+
 1. **Scope**: Single system, microservice, or entire platform
 2. **Audience**: New engineers, architects, or external stakeholders
 3. **Focus Areas**: What aspects need most attention (data flow, security, scalability)

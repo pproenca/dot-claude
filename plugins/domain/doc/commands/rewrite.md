@@ -25,11 +25,13 @@ Rewrite content following Amazon's internal writing standards, transforming docu
 ### Step 1: Gather Input
 
 If the user provided a file path in their message or as an argument:
+
 - Read the file using the Read tool
 
 If no file was provided, use AskUserQuestion:
 
 ### Input Source
+
 - Header: "Source"
 - Question: "How would you like to provide the content to rewrite?"
 - Options:
@@ -40,11 +42,13 @@ If no file was provided, use AskUserQuestion:
 ### Step 2: Determine Document Type
 
 If document type was provided as argument (e.g., `/memo-writer:rewrite press-release`):
+
 - Use that document type
 
 If no document type specified, use AskUserQuestion:
 
 ### Document Type
+
 - Header: "Format"
 - Question: "What document type should this be rewritten as?"
 - Options:
@@ -58,6 +62,7 @@ If no document type specified, use AskUserQuestion:
 Use the Skill tool to load the `amazon-writing` skill for core writing rules.
 
 Then read the appropriate reference file for detailed document-specific guidelines:
+
 - Press Release: `${CLAUDE_PLUGIN_ROOT}/skills/amazon-writing/references/press-release.md`
 - 6-Pager: `${CLAUDE_PLUGIN_ROOT}/skills/amazon-writing/references/six-pager.md`
 - 1-Pager: `${CLAUDE_PLUGIN_ROOT}/skills/amazon-writing/references/one-pager.md`
@@ -81,6 +86,7 @@ Before rewriting, analyze the content in a scratchpad:
 ### Step 5: Rewrite Content
 
 Transform the content following:
+
 - Core Amazon writing rules (narrative structure, data over adjectives, active voice, conciseness, "so what" test, respect reader's time)
 - Document-specific structure and required sections
 - Length constraints for the document type
@@ -98,6 +104,7 @@ Output the rewritten content in a clear format:
 After presenting the rewritten content, use AskUserQuestion:
 
 ### Save Options
+
 - Header: "Save"
 - Question: "How would you like to save the rewritten document?"
 - Options:

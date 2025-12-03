@@ -45,42 +45,53 @@ Task tool (review:code-reviewer):
 The code-reviewer agent MUST structure its response as follows:
 
 ### Review Summary
+
 [2-3 sentences: What was reviewed, scope, and overall impression]
 
 ### Plan Alignment
+
 **Requirements Met:**
+
 - [x] Requirement 1: [brief how it was satisfied]
 - [ ] Requirement 2: [what's missing]
 
 **Deviations:**
+
 | Planned | Implemented | Assessment |
 |---------|-------------|------------|
 | [item] | [actual] | Beneficial/Problematic - [reason] |
 
 ### Strengths
+
 [3-5 specific positive findings with file:line references]
+
 - `path/file.ts:45-60` - [What's good and why]
 
 ### Issues
 
 #### Critical (Must Fix Before Merge)
+
 [Bugs, security issues, data loss risks, broken functionality]
 
 **Issue N:**
+
 - **Location:** `file.ts:123`
 - **Problem:** [Specific description]
 - **Impact:** [Why this matters]
 - **Fix:** [How to resolve]
 
 #### Important (Should Fix)
+
 [Architecture problems, missing tests, poor error handling]
 [Same format as Critical]
 
 #### Minor (Suggestions)
+
 [Style, optimization, documentation improvements]
 [Same format, but "Fix" becomes "Suggestion"]
 
 ### Recommendations
+
 [1-3 forward-looking improvements for future work]
 
 ### Assessment

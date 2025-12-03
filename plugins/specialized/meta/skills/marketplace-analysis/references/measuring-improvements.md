@@ -18,6 +18,7 @@ How to prove changes are better, inspired by "How to Measure Anything" by Dougla
 **If it matters, it's measurable. If it's measurable, we can measure it.**
 
 Even "intangible" qualities like elegance or developer experience can be measured through:
+
 - Decomposition into observable components
 - Proxy metrics that correlate with value
 - Before/after comparisons
@@ -28,11 +29,13 @@ Even "intangible" qualities like elegance or developer experience can be measure
 ### Step 1: Define What "Better" Means
 
 Before measuring, clarify:
+
 - What specific improvement are we claiming?
 - How would we know if we achieved it?
 - What would change in the real world?
 
 **Example:**
+
 - Claim: "This skill is easier to trigger"
 - Observable: Users find the skill more often
 - Test: Try 5 different phrasings, count hits
@@ -51,6 +54,7 @@ Not everything can be measured directly. Use proxies:
 ### Step 3: Establish Baseline
 
 Before changing anything:
+
 1. Measure current state
 2. Document the metrics
 3. Save for comparison
@@ -67,6 +71,7 @@ Before changing anything:
 ### Step 4: Measure After Change
 
 Apply the same metrics:
+
 ```markdown
 ## After: plugin-x
 - Skills: 2
@@ -85,6 +90,7 @@ Apply the same metrics:
 ### Step 5: Validate with Users
 
 Metrics tell part of the story. User validation confirms:
+
 - Does it feel better?
 - Is anything missing?
 - Would you use this over the old version?
@@ -98,6 +104,7 @@ Use `scripts/analyze-metrics.sh` for automated metric collection:
 ```
 
 This script provides:
+
 - Plugin and component counts
 - SKILL.md line counts
 - Files over 500 lines (red flags)
@@ -106,12 +113,14 @@ This script provides:
 ### Manual Metrics (when needed)
 
 **Component count:**
+
 ```bash
 find plugins -path "*/skills/*/SKILL.md" | wc -l
 find plugins -path "*/agents/*.md" | wc -l
 ```
 
 **Example coverage:**
+
 ```bash
 grep -c "<example>" plugins/*/agents/*.md
 ```
@@ -121,11 +130,13 @@ grep -c "<example>" plugins/*/agents/*.md
 ### Fresh Eyes Test
 
 Ask someone unfamiliar:
+
 - "What does this skill do?" (Should answer correctly in <30 seconds)
 - "When would you use this?" (Should match intended triggers)
 - "How would you invoke this?" (Should guess correctly)
 
 **Scoring:**
+
 - 3/3 correct: Excellent
 - 2/3 correct: Good
 - 1/3 correct: Needs work
@@ -134,6 +145,7 @@ Ask someone unfamiliar:
 ### Self-Explanation Test
 
 Can you explain the component in:
+
 - One sentence? (If not, too complex)
 - Without jargon? (If not, unclear naming)
 - To a new developer? (If not, missing context)
@@ -141,6 +153,7 @@ Can you explain the component in:
 ### Deletion Test
 
 Try removing the component:
+
 - Does anything break?
 - Is something missing?
 - Did anyone notice?
@@ -224,6 +237,7 @@ Use this template for every change:
 ### Vanity Metrics
 
 Metrics that look good but don't matter:
+
 - Total lines of documentation (more ≠ better)
 - Number of features (more ≠ better)
 - Component count (more ≠ better)
@@ -233,6 +247,7 @@ Metrics that look good but don't matter:
 ### Measuring the Wrong Thing
 
 Optimizing what's easy to measure:
+
 - Line count (but ignoring readability)
 - File count (but ignoring coherence)
 - Trigger count (but ignoring quality)
@@ -242,6 +257,7 @@ Optimizing what's easy to measure:
 ### No Baseline
 
 Claiming improvement without comparison:
+
 - "This is cleaner" (than what?)
 - "This is faster" (by how much?)
 - "This is better" (prove it)
@@ -251,6 +267,7 @@ Claiming improvement without comparison:
 ### Confirmation Bias
 
 Only looking for evidence of improvement:
+
 - Ignoring metrics that got worse
 - Testing only happy paths
 - Asking leading questions
@@ -260,21 +277,25 @@ Only looking for evidence of improvement:
 ## Quick Reference
 
 ### Must Measure
+
 - Before/after comparison on key metrics
 - User feedback on specific changes
 - Test scenarios covering main use cases
 
 ### Should Measure
+
 - Line count / component count
 - Trigger phrase quality
 - Example coverage
 
 ### Nice to Measure
+
 - Time to first success
 - Error rate
 - User preference in A/B scenarios
 
 ### Always Ask Users
+
 - "Is anything missing from the old version?"
 - "Does this feel simpler or more complex?"
 - "Would you use this over what we had before?"

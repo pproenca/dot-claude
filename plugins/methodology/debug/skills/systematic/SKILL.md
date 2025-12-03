@@ -25,6 +25,7 @@ If you haven't completed Phase 1, you cannot propose fixes.
 ## When to Use
 
 Use for ANY technical issue:
+
 - Test failures
 - Bugs in production
 - Unexpected behavior
@@ -33,6 +34,7 @@ Use for ANY technical issue:
 - Integration issues
 
 **Use this ESPECIALLY when:**
+
 - Under time pressure (emergencies make guessing tempting)
 - "Just one quick fix" seems obvious
 - You've already tried multiple fixes
@@ -40,6 +42,7 @@ Use for ANY technical issue:
 - You don't fully understand the issue
 
 **Don't skip when:**
+
 - Issue seems simple (simple bugs have root causes too)
 - You're in a hurry (rushing guarantees rework)
 - Manager wants it fixed NOW (systematic is faster than thrashing)
@@ -85,6 +88,7 @@ You MUST complete each phase before proceeding to the next.
    - Reduces total investigation time for complex systems
 
    **BEFORE proposing fixes, add diagnostic instrumentation:**
+
    ```
    For EACH component boundary:
      - Log what data enters component
@@ -205,6 +209,7 @@ You MUST complete each phase before proceeding to the next.
 ## Red Flags - STOP and Follow Process
 
 If you catch yourself thinking:
+
 - "Quick fix for now, investigate later"
 - "Just try changing X and see if it works"
 - "Add multiple changes, run tests"
@@ -246,10 +251,12 @@ If you catch yourself thinking:
 ## Integration with Other Skills
 
 **This skill requires using:**
+
 - **debug:root-cause** - Use when error is deep in call stack (see Phase 1, Step 5)
 - **core:tdd** - Use for creating failing test case (see Phase 4, Step 1)
 
 **Complementary skills:**
+
 - **debug:defense-in-depth** - Add validation at multiple layers after finding root cause
 - **testing:condition-wait** - Replace arbitrary timeouts identified in Phase 2
 - **core:verification** - Verify fix worked before claiming success

@@ -31,22 +31,26 @@ You are a Capability Analyzer specializing in Claude Code feature usage and best
 ## Analysis Dimensions
 
 ### Hooks
+
 - Correct event types (PreToolUse, PostToolUse, Stop, etc.)
 - Appropriate prompt vs command hooks
 - Sensible timeout values
 - Use of $CLAUDE_PLUGIN_ROOT for portability
 
 ### Agents
+
 - Clear triggering conditions with examples
 - Appropriate model selection (inherit vs specific)
 - Sensible tool restrictions (least privilege)
 
 ### Skills
+
 - Imperative descriptions with trigger phrases
 - Progressive disclosure (lean SKILL.md, details in references/)
 - SKILL.md under 500 lines
 
 ### Commands
+
 - Clear argument handling
 - Integration with skills/agents
 

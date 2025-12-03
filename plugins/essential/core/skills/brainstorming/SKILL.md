@@ -17,6 +17,7 @@ Start by understanding the current project context, then ask questions one at a 
 ## Progress Tracking
 
 Create TodoWrite todos for each phase:
+
 - Understanding: Clarify the problem space
 - Exploring: Investigate alternative approaches
 - Presenting: Document proposed design
@@ -27,12 +28,14 @@ Mark each phase as `in_progress` when starting, `completed` when done. This make
 ## Using AskUserQuestion
 
 Use the AskUserQuestion tool for structured decision points:
+
 - Scope and constraint gathering
 - Approach selection (after presenting options)
 - Design section validation
 - Documentation and implementation handoff
 
 Keep free-form conversation for:
+
 - Context-specific clarifications
 - Deep-dive questions unique to this idea
 - Exploring edge cases and nuances
@@ -44,6 +47,7 @@ Keep free-form conversation for:
 ### Phase 1: Understanding the Idea
 
 **Step 1: Check project context**
+
 - Read relevant files, docs, recent commits
 - Understand what exists before proposing what to build
 
@@ -91,6 +95,7 @@ Options:
 **Step 5: Context-specific questions**
 
 Continue with free-form questions one at a time:
+
 - Purpose: What problem does this solve?
 - Success criteria: How will we know it works?
 - Any unique constraints or requirements
@@ -100,6 +105,7 @@ Continue with free-form questions one at a time:
 **Step 1: Identify 2-3 approaches**
 
 After understanding the idea, propose 2-3 different approaches:
+
 - Describe each briefly with trade-offs
 - Lead with your recommendation and explain why
 - Keep descriptions concise (2-3 sentences each)
@@ -124,6 +130,7 @@ Generate option labels and descriptions dynamically based on the approaches iden
 **Step 1: Present design in sections**
 
 Once approach is selected, present the design:
+
 - Break into sections of 200-300 words
 - Cover: architecture, components, data flow, error handling, testing
 - One section at a time
@@ -201,6 +208,7 @@ Options:
 ## When to Skip AskUserQuestion
 
 Use free-form text instead when:
+
 - The question is highly context-specific
 - Options would be artificial or unclear
 - You need open-ended exploration
@@ -211,8 +219,10 @@ The "Other" option in AskUserQuestion always allows custom input, but some quest
 ## Integration
 
 **REQUIRED SUB-SKILLS (when continuing to implementation):**
+
 - **workflow:git-worktrees** - If "Set up worktree" selected
 - **workflow:writing-plans** - For creating implementation plan
 
 **Pairs with:**
+
 - **elements-of-style:writing-clearly-and-concisely** - For design documentation

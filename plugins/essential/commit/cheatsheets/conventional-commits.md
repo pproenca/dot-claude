@@ -37,11 +37,13 @@ The body explains WHY, not WHAT. Write naturally without rigid labels.
 ### Breaking Changes
 
 Mark breaking changes with ! before the colon:
+
 ```
 feat!: remove deprecated API endpoint
 ```
 
 Or use the `BREAKING CHANGE:` footer:
+
 ```
 feat: restructure authentication
 
@@ -61,6 +63,7 @@ BREAKING CHANGE: JWT tokens now use RS256 instead of HS256
 The body becomes **permanent version control history**. Code shows WHAT; body explains WHY.
 
 **Write naturally, covering these as relevant:**
+
 - What issue or need prompted this change
 - Why this approach over alternatives
 - Implementation details worth noting
@@ -90,6 +93,7 @@ Use this to determine the correct type:
 ### Auto-Detection Hints
 
 The plugin auto-detects type based on:
+
 - **test**: Only test files changed (`*_test.*`, `test_*.*`, `tests/`)
 - **docs**: Only markdown or docs/ files changed
 - **ci**: Only `.github/` files changed
@@ -117,6 +121,7 @@ IPv6 address sharing may cause false positives for shared networks.
 ```
 
 **Why it works:**
+
 - Subject: Specific component + specific feature
 - Context: Concrete numbers (10K requests)
 - Rationale: Why token bucket, why Redis
@@ -137,6 +142,7 @@ Fixes #789
 ```
 
 **Why it works:**
+
 - Subject: Exact location + condition
 - Explains the mechanism and impact
 - Shows root cause analysis
@@ -155,6 +161,7 @@ No functional changes - existing tests pass unchanged.
 ```
 
 **Why it works:**
+
 - Clear "refactor" signal in type
 - Explains the WHY (preparation + deduplication)
 - Explicitly states "no functional changes"
@@ -171,6 +178,7 @@ BREAKING CHANGE: All /api/v1/* endpoints removed. Use /api/v2/*.
 ```
 
 **Why it works:**
+
 - Breaking change marked with ! in type
 - BREAKING CHANGE footer provides details
 - Clearly states migration path
@@ -188,6 +196,7 @@ To rollback: revert this commit and restart pods.
 ```
 
 **Why it works:**
+
 - Specific values in subject (100 to 500)
 - Data-driven rationale (P99 users)
 - Includes rollback instructions
@@ -203,6 +212,7 @@ behavior and proper error propagation.
 ```
 
 **Why it works:**
+
 - Specific about what's being tested
 - Explains the WHY (silent failures in production)
 - Describes what tests verify
@@ -263,6 +273,7 @@ behavior and proper error propagation.
 ### Strategies
 
 **1. Stacking (Sequential Dependencies)**
+
 ```
 Commit 1: refactor: add interface/types for new feature
 Commit 2: feat: implement core logic
@@ -270,6 +281,7 @@ Commit 3: feat: migrate consumers to new implementation
 ```
 
 **2. Horizontal (By Layer)**
+
 ```
 Commit 1: feat: add shared types/interfaces
 Commit 2: feat: implement backend logic
@@ -277,6 +289,7 @@ Commit 3: feat: add frontend integration
 ```
 
 **3. Vertical (By Feature)**
+
 ```
 Commit 1: feat: add multiplication operator
 Commit 2: feat: add division operator
@@ -284,6 +297,7 @@ Commit 2: feat: add division operator
 ```
 
 **4. By Reviewer Expertise**
+
 ```
 Commit 1: feat: add database schema (DBA review)
 Commit 2: feat: implement backend logic (engineers)
@@ -312,6 +326,7 @@ These rules are MANDATORY and hooks will BLOCK violations:
 | Subject ends with period | BLOCKED |
 
 **Warnings (flagged but not blocked):**
+
 - Subject 72-100 chars
 - Commit > 200 lines
 - Commit > 400 lines (strongly recommended to split)

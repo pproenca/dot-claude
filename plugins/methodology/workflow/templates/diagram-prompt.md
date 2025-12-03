@@ -47,7 +47,9 @@ Task tool with subagent_type="doc:diagram-generator":
 The diagram-generator agent can create these types:
 
 ### Task Dependencies (graph LR/TD)
+
 Shows task execution order and parallelization opportunities.
+
 ```mermaid
 graph LR
     T1[Task 1] --> T2[Task 2]
@@ -57,7 +59,9 @@ graph LR
 ```
 
 ### Architecture (graph TB + subgraphs)
+
 Shows system components, data flow, and module relationships.
+
 ```mermaid
 graph TB
     subgraph Frontend
@@ -72,7 +76,9 @@ graph TB
 ```
 
 ### Sequence (sequenceDiagram)
+
 Shows API flows, service interactions, and request/response patterns.
+
 ```mermaid
 sequenceDiagram
     Client->>+Server: Request
@@ -82,7 +88,9 @@ sequenceDiagram
 ```
 
 ### State (stateDiagram-v2)
+
 Shows workflow states, object lifecycle, and state transitions.
+
 ```mermaid
 stateDiagram-v2
     [*] --> Draft
@@ -93,7 +101,9 @@ stateDiagram-v2
 ```
 
 ### Entity-Relationship (erDiagram)
+
 Shows database schema and entity relationships.
+
 ```mermaid
 erDiagram
     USER ||--o{ ORDER : places
@@ -102,7 +112,9 @@ erDiagram
 ```
 
 ### Class (classDiagram)
+
 Shows OOP design, interfaces, and inheritance.
+
 ```mermaid
 classDiagram
     class Animal {
@@ -116,7 +128,9 @@ classDiagram
 ```
 
 ### Flowchart (flowchart TD)
+
 Shows decision logic, algorithms, and process flows.
+
 ```mermaid
 flowchart TD
     A[Start] --> B{Condition?}
@@ -127,7 +141,9 @@ flowchart TD
 ```
 
 ### Git Graph (gitGraph)
+
 Shows branch strategy and merge plans.
+
 ```mermaid
 gitGraph
     commit
@@ -140,7 +156,9 @@ gitGraph
 ```
 
 ### Mindmap (mindmap)
+
 Shows feature breakdowns and concept organization.
+
 ```mermaid
 mindmap
     root((Feature))
@@ -166,12 +184,14 @@ mindmap
 | **Flowchart** | Ensures all decision paths are covered |
 
 **Auto-detect will skip diagrams when:**
+
 - Plan has < 5 tasks with linear sequence
 - Single-file changes (bug fix, refactor)
 - No inter-component dependencies
 - Configuration-only changes
 
 **Auto-detect will generate diagrams when:**
+
 - 5+ tasks with non-linear dependencies
 - Multiple components/services that interact
 - State machines with 3+ states

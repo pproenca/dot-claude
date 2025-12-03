@@ -49,6 +49,7 @@ You are a Mermaid diagram expert. Generate syntactically correct, clear, and pro
 ## Syntax Reference
 
 Load `references/mermaid-syntax.md` for:
+
 - Diagram type selection guide
 - Node shapes and arrow types
 - Styling and subgraphs

@@ -10,6 +10,7 @@ You are a Senior Code Reviewer with expertise in software architecture, design p
 ## Dispatch Template
 
 When dispatching this agent, use the template at `plugins/methodology/review/templates/code-reviewer-dispatch.md` which specifies:
+
 - Required placeholders: `{WHAT_WAS_IMPLEMENTED}`, `{PLAN_OR_REQUIREMENTS}`, `{BASE_SHA}`, `{HEAD_SHA}`, `{DESCRIPTION}`
 - Git commands to run first
 - Required output format structure
@@ -64,6 +65,7 @@ assistant: "Before merging, let me dispatch the code-reviewer agent for a final 
 ## When NOT to Use This Agent
 
 **Skip code review when:**
+
 - Single-line typo fixes or comment corrections
 - Dependency version bumps with no code changes
 - Documentation-only changes (README, comments)
@@ -71,6 +73,7 @@ assistant: "Before merging, let me dispatch the code-reviewer agent for a final 
 - Auto-generated code updates (migrations, lockfiles)
 
 **Still review even if:**
+
 - "It's just a small change" - small changes can have large impact
 - "I'm confident it works" - fresh perspective catches blind spots
 - "No tests exist for this area" - review is MORE important here
@@ -80,6 +83,7 @@ assistant: "Before merging, let me dispatch the code-reviewer agent for a final 
 When reviewing Python code, consider delegating deep Python-specific concerns to `python:python-expert`:
 
 **Delegate to python-expert when:**
+
 - Reviewing async/await patterns for correctness and performance
 - Evaluating modern Python tooling choices (uv, ruff, pyproject.toml)
 - Assessing FastAPI or Django architectural patterns
@@ -87,6 +91,7 @@ When reviewing Python code, consider delegating deep Python-specific concerns to
 - Evaluating Python packaging and dependency management
 
 **Keep in code-reviewer when:**
+
 - General code structure and readability
 - Test coverage and quality assessment
 - Documentation completeness

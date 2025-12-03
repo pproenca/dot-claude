@@ -391,18 +391,21 @@ Use `--` to prevent option injection with user-provided filenames.
 For shell-expert agent reviews, issues are classified as:
 
 ### Critical (Must Fix)
+
 - Unquoted variables in `rm`, `mv`, or path operations
 - Use of `eval` with external input
 - Missing error handling on destructive operations
 - Command injection vulnerabilities
 
 ### Important (Should Fix)
+
 - Using `[ ]` instead of `[[ ]]`
 - Missing `local` in functions
 - Backticks instead of `$()`
 - Missing `main` function in multi-function scripts
 
 ### Minor (Suggestions)
+
 - Inconsistent indentation
 - Long lines (> 80 chars)
 - Missing braces on simple variables

@@ -10,6 +10,7 @@ Generate comprehensive API documentation using the specialized api-documenter ag
 ## What This Command Does
 
 Dispatches the `api-documenter` agent to create:
+
 - OpenAPI 3.0/3.1 specifications
 - Interactive API documentation (Swagger UI, Redoc)
 - SDK templates and code samples
@@ -18,6 +19,7 @@ Dispatches the `api-documenter` agent to create:
 ## Before Dispatching
 
 Gather the following from the user:
+
 1. **API Type**: REST, GraphQL, WebSocket, or AsyncAPI
 2. **Target Audience**: Frontend devs, backend devs, third-party integrators
 3. **Scope**: Single endpoint, module, or entire API

@@ -1,6 +1,7 @@
 # Advanced Async Patterns
 
 ## Table of Contents
+
 - [Pattern 6: Async Context Managers](#pattern-6-async-context-managers)
 - [Pattern 7: Async Iterators and Generators](#pattern-7-async-iterators-and-generators)
 - [Pattern 8: Producer-Consumer Pattern](#pattern-8-producer-consumer-pattern)

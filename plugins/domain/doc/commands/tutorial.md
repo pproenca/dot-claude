@@ -10,6 +10,7 @@ Generate pedagogically-structured learning content using the specialized tutoria
 ## What This Command Does
 
 Dispatches the `tutorial-engineer` agent to create:
+
 - Getting started guides
 - Step-by-step tutorials with exercises
 - Workshop content with checkpoints
@@ -19,6 +20,7 @@ Dispatches the `tutorial-engineer` agent to create:
 ## Before Dispatching
 
 Gather the following from the user:
+
 1. **Learning Outcome**: What will readers be able to DO after this tutorial?
 2. **Format**: Quick start, deep dive, workshop, or cookbook
 3. **Audience Level**: Beginner, intermediate, or advanced

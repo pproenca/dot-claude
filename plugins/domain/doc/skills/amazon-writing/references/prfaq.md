@@ -5,6 +5,7 @@ The PRFAQ (Press Release / Frequently Asked Questions) is Amazon's "Working Back
 ## Document Structure
 
 A PRFAQ consists of two parts:
+
 1. **Press Release**: 1 to 1.5 pages describing the product announcement
 2. **FAQ Section**: Unlimited length addressing anticipated questions
 
@@ -13,6 +14,7 @@ A PRFAQ consists of two parts:
 The press release follows the standard Amazon PR format. See `references/press-release.md` for detailed guidance.
 
 Key press release sections:
+
 - Heading (product name)
 - Sub-Heading (customer + benefit)
 - Summary Paragraph
@@ -34,23 +36,27 @@ The FAQ section is the map to that destination, detailing the problems to solve 
 Address questions that press and customers would ask:
 
 **Product Understanding**
+
 - How does it work?
 - What problem does it solve?
 - Who is it for?
 
 **Practical Details**
+
 - How much does it cost?
 - What is the pricing model?
 - How do I get started?
 - What are the system requirements?
 
 **Support and Service**
+
 - What is the warranty?
 - What is the return policy?
 - How do I get help?
 - What support is available?
 
 **Comparison**
+
 - How is this different from [competitor]?
 - Why should I choose this over alternatives?
 - What makes this unique?
@@ -62,36 +68,42 @@ Write External FAQs using customer language (no corporate jargon). The details p
 Anticipate questions from senior leaders and stakeholders across the company:
 
 **Finance Questions**
+
 - What is the expected revenue?
 - What are the cost projections?
 - What is the payback period?
 - How does this affect existing revenue streams?
 
 **Technical Questions**
+
 - What technical challenges need solving?
 - What new capabilities are required?
 - What are the infrastructure needs?
 - How does this integrate with existing systems?
 
 **Operations Questions**
+
 - How will this be supported?
 - What training is needed?
 - How does this scale?
 - What are the capacity requirements?
 
 **Legal/Compliance Questions**
+
 - What regulatory considerations exist?
 - What are the privacy implications?
 - Are there intellectual property concerns?
 - What contracts or agreements are needed?
 
 **Marketing Questions**
+
 - How will customers discover this?
 - What is the go-to-market strategy?
 - How does this affect brand positioning?
 - What channels will be used?
 
 **Risk Questions**
+
 - What could go wrong?
 - What are the dependencies?
 - What happens if we're wrong about assumptions?
@@ -102,18 +114,22 @@ Anticipate questions from senior leaders and stakeholders across the company:
 An excellent FAQ demonstrates:
 
 ### Mastery
+
 Deep understanding of every aspect of the product, from customer experience to technical implementation to business model.
 
 ### Realism
+
 Optimistic but honest assessment. Acknowledge challenges and risks. Avoid rose-colored glasses. Include conditions under which the product might fail.
 
 ### Data-Based Assessment
+
 - Market size and potential with supporting data
 - Competitive analysis with evidence
 - Cost estimates with assumptions documented
 - Timeline with dependencies identified
 
 ### Thoroughness
+
 Address challenging problems that need solving, whether technical, financial, legal, or operational. Don't avoid hard questions.
 
 ## Writing Guidelines
@@ -125,6 +141,7 @@ A PRFAQ is continuously edited throughout the product development process. Versi
 ### Question Selection
 
 Include questions that:
+
 - Stakeholders will actually ask
 - Challenge assumptions
 - Reveal risks and dependencies
@@ -135,6 +152,7 @@ Don't include obvious or trivial questions just to fill space.
 ### Answer Depth
 
 Provide substantive answers:
+
 - Specific enough to be actionable
 - Honest about unknowns
 - Include data where available
@@ -143,6 +161,7 @@ Provide substantive answers:
 ### Stakeholder Capture
 
 Use the FAQ to capture perspectives from different stakeholders. When someone raises a concern, add it as a question with the agreed answer. This:
+
 - Ensures feedback is heard
 - Creates shared commitment
 - Preserves context for future reviews
@@ -165,6 +184,7 @@ Share with stakeholders. Each review generates new questions. Add them to the FA
 ### Step 4: Iteration
 
 Refine both press release and FAQ based on:
+
 - Customer research findings
 - Technical feasibility assessments
 - Business model refinements
@@ -177,6 +197,7 @@ Use the refined PRFAQ to decide whether to proceed. A strong PRFAQ demonstrates 
 ## Checklist Before Finalizing
 
 Press Release:
+
 - [ ] All required sections present
 - [ ] Customer-focused language throughout
 - [ ] Specific benefits with supporting data
@@ -184,12 +205,14 @@ Press Release:
 - [ ] 1-1.5 pages maximum
 
 External FAQs:
+
 - [ ] Cover how it works, pricing, getting started
 - [ ] Address comparison to alternatives
 - [ ] Use customer language (no jargon)
 - [ ] Answers are specific and helpful
 
 Internal FAQs:
+
 - [ ] Finance questions addressed with projections
 - [ ] Technical challenges identified and answered
 - [ ] Operations and scaling considered
@@ -197,6 +220,7 @@ Internal FAQs:
 - [ ] Risk questions honestly answered
 
 Overall:
+
 - [ ] Demonstrates mastery of the domain
 - [ ] Realistic about challenges and risks
 - [ ] Data-based where possible

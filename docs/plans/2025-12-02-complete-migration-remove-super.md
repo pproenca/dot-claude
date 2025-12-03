@@ -71,6 +71,7 @@ flowchart TD
 ### Task 1.1: Move diagram-generator to doc plugin
 
 **Files:**
+
 - Move: `plugins/super/agents/diagram-generator.md` → `plugins/doc/agents/diagram-generator.md`
 
 **Step 1: Verify doc/agents directory exists**
@@ -101,6 +102,7 @@ git commit -m "feat(doc): move diagram-generator agent from super"
 ### Task 1.2: Move security-reviewer to review plugin
 
 **Files:**
+
 - Move: `plugins/super/agents/security-reviewer.md` → `plugins/review/agents/security-reviewer.md`
 
 **Step 1: Create review/agents directory**
@@ -132,6 +134,7 @@ git commit -m "feat(review): move security-reviewer agent from super"
 ### Task 1.3: Verify code-reviewer exists in review plugin
 
 **Files:**
+
 - Verify: `plugins/review/agents/code-reviewer.md`
 
 The code-reviewer already exists in review plugin (confirmed earlier). No action needed, but verify it references updated paths.
@@ -152,6 +155,7 @@ After Task 4.1 moves references, update this file to use `plugins/review/referen
 ### Task 2.1: Move slash commands to workflow plugin
 
 **Files:**
+
 - Move: `plugins/super/commands/*.md` → `plugins/workflow/commands/*.md`
 
 **Step 1: Create workflow/commands directory**
@@ -189,6 +193,7 @@ git commit -m "feat(workflow): move slash commands from super"
 ### Task 3.1: Move worktree-guard hook to workflow plugin
 
 **Files:**
+
 - Move: `plugins/super/hooks/worktree-guard.sh` → `plugins/workflow/hooks/worktree-guard.sh`
 - Create: `plugins/workflow/hooks/hooks.json`
 
@@ -207,6 +212,7 @@ cp plugins/super/hooks/worktree-guard.sh plugins/workflow/hooks/worktree-guard.s
 **Step 3: Update reference in worktree-guard.sh**
 
 Edit `plugins/workflow/hooks/worktree-guard.sh`:
+
 - Change `super:using-git-worktrees` → `workflow:git-worktrees` on line 69
 
 **Step 4: Create hooks.json for workflow**
@@ -249,6 +255,7 @@ git commit -m "feat(workflow): move worktree-guard hook from super"
 ### Task 3.2: Move Stop hook to core plugin
 
 **Files:**
+
 - Modify: `plugins/core/hooks/hooks.json`
 
 **Step 1: Read current core hooks.json**
@@ -309,6 +316,7 @@ git commit -m "feat(core): add Stop hook for verification enforcement"
 ### Task 4.1: Move code-review-standards to review plugin
 
 **Files:**
+
 - Move: `plugins/super/references/code-review-standards.md` → `plugins/review/references/code-review-standards.md`
 
 **Step 1: Create review/references directory**
@@ -326,6 +334,7 @@ cp plugins/super/references/code-review-standards.md plugins/review/references/
 **Step 3: Update reference in code-reviewer.md**
 
 Edit `plugins/review/agents/code-reviewer.md` line 12:
+
 - Change `plugins/super/references/code-review-standards.md` → `plugins/review/references/code-review-standards.md`
 
 **Step 4: Commit**
@@ -342,6 +351,7 @@ git commit -m "feat(review): move code-review-standards reference from super"
 ### Task 5.1: Update tests for super plugin removal
 
 **Files:**
+
 - Modify: `tests/test_plugin_structure.py`
 
 **Step 1: Remove TestCurrentState.test_super_plugin_exists**
@@ -381,6 +391,7 @@ git commit -m "test: update tests for super plugin removal"
 ### Task 5.2: Add test for no deprecated references
 
 **Files:**
+
 - Modify: `tests/test_plugin_structure.py`
 
 **Step 1: Add test to verify no super:* references remain**
@@ -424,6 +435,7 @@ git commit -m "test: add tests for deprecated reference removal"
 ### Task 6.1: Update all super:* references
 
 **Files:**
+
 - All files with `super:*` references
 
 **Step 1: Find all remaining super:* references**
@@ -466,11 +478,13 @@ git commit -m "refactor: update all super:* references to new plugin names"
 ### Task 6.2: Remove super plugin directory
 
 **Files:**
+
 - Remove: `plugins/super/` (entire directory)
 
 **Step 1: Verify all assets migrated**
 
 Checklist:
+
 - [ ] Agents moved to doc/review
 - [ ] Commands moved to workflow
 - [ ] Hooks moved to workflow/core
@@ -530,11 +544,13 @@ Migration mapping:
 ### Task 7.1: Update CLAUDE.md
 
 **Files:**
+
 - Modify: `CLAUDE.md`
 
 **Step 1: Remove super from plugin table**
 
 Remove the row:
+
 ```
 | **super** | DEPRECATED: backward-compatible alias |
 ```
@@ -555,6 +571,7 @@ git commit -m "docs: remove super plugin from CLAUDE.md"
 ### Task 7.2: Update MIGRATION.md
 
 **Files:**
+
 - Modify: `docs/MIGRATION.md`
 
 **Step 1: Update migration guide**
@@ -587,6 +604,7 @@ git commit -m "docs: mark migration complete in MIGRATION.md"
 ### Task 7.3: Update marketplace.json
 
 **Files:**
+
 - Modify: `.claude-plugin/marketplace.json`
 
 **Step 1: Remove super plugin entry**
@@ -610,6 +628,7 @@ git commit -m "build: remove super from marketplace.json"
 ### Task 7.4: Update release-please-config.json
 
 **Files:**
+
 - Modify: `release-please-config.json`
 
 **Step 1: Remove super plugin references**
@@ -651,6 +670,7 @@ Expected: No output (historical docs can keep references for context)
 **Step 1: Test new skill paths work**
 
 In a Claude Code session, verify:
+
 - `Skill(skill: "core:tdd")` → Works
 - `Skill(skill: "workflow:writing-plans")` → Works
 - `Skill(skill: "review:code-review")` → Works

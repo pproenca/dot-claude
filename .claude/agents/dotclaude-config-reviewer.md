@@ -86,6 +86,7 @@ Apply these standards when evaluating:
 ## Context Awareness
 
 Consider the project context from CLAUDE.md:
+
 - Agents are subagent definitions invoked via the Task tool
 - They should align with the plugin's purpose (e.g., core = TDD/verification, workflow = planning/execution)
 - They should complement existing skills and commands
