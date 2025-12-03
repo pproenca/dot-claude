@@ -7,6 +7,7 @@ Handles post-commit checks that can't be done before execution:
 - Non-trivial commit body requirement (requires file count)
 - Breaking change detection (warns if potential breaking change lacks marker)
 """
+
 from __future__ import annotations
 
 import json
@@ -21,8 +22,7 @@ def get_current_branch() -> str:
     """Get current git branch name."""
     try:
         result = subprocess.run(
-            ["git", "branch", "--show-current"],
-            capture_output=True, text=True, timeout=5
+            ["git", "branch", "--show-current"], capture_output=True, text=True, timeout=5
         )
         return result.stdout.strip()
     except (subprocess.TimeoutExpired, OSError):
@@ -33,8 +33,7 @@ def get_commit_message() -> str:
     """Get the most recent commit message."""
     try:
         result = subprocess.run(
-            ["git", "log", "-1", "--format=%B"],
-            capture_output=True, text=True, timeout=5
+            ["git", "log", "-1", "--format=%B"], capture_output=True, text=True, timeout=5
         )
         return result.stdout.strip()
     except (subprocess.TimeoutExpired, OSError):
@@ -45,16 +44,15 @@ def get_lines_changed() -> int:
     """Get total lines changed in most recent commit."""
     try:
         result = subprocess.run(
-            ["git", "diff", "--numstat", "HEAD~1..HEAD"],
-            capture_output=True, text=True, timeout=5
+            ["git", "diff", "--numstat", "HEAD~1..HEAD"], capture_output=True, text=True, timeout=5
         )
         total = 0
-        for line in result.stdout.strip().split('\n'):
+        for line in result.stdout.strip().split("\n"):
             if line:
-                parts = line.split('\t')
+                parts = line.split("\t")
                 if len(parts) >= 2:
-                    add = int(parts[0]) if parts[0] != '-' else 0
-                    delete = int(parts[1]) if parts[1] != '-' else 0
+                    add = int(parts[0]) if parts[0] != "-" else 0
+                    delete = int(parts[1]) if parts[1] != "-" else 0
                     total += add + delete
         return total
     except (subprocess.TimeoutExpired, OSError, ValueError):
@@ -66,9 +64,11 @@ def get_file_count() -> int:
     try:
         result = subprocess.run(
             ["git", "diff", "--name-only", "HEAD~1..HEAD"],
-            capture_output=True, text=True, timeout=5
+            capture_output=True,
+            text=True,
+            timeout=5,
         )
-        return len([f for f in result.stdout.strip().split('\n') if f])
+        return len([f for f in result.stdout.strip().split("\n") if f])
     except (subprocess.TimeoutExpired, OSError):
         return 0
 
@@ -77,8 +77,7 @@ def get_diff_content() -> str:
     """Get diff content for most recent commit."""
     try:
         result = subprocess.run(
-            ["git", "diff", "HEAD~1..HEAD"],
-            capture_output=True, text=True, timeout=10
+            ["git", "diff", "HEAD~1..HEAD"], capture_output=True, text=True, timeout=10
         )
         return result.stdout
     except (subprocess.TimeoutExpired, OSError):
@@ -105,8 +104,9 @@ def check_breaking_changes(subject: str, commit_msg: str) -> str:
     indicators = []
 
     # Check for removed function/method definitions
-    if re.search(r"^-\s*(def |function |public |export (function|const|class))",
-                 diff_content, re.MULTILINE):
+    if re.search(
+        r"^-\s*(def |function |public |export (function|const|class))", diff_content, re.MULTILINE
+    ):
         indicators.append("- Removed function/method definition")
 
     # Check for removed exports
@@ -114,13 +114,17 @@ def check_breaking_changes(subject: str, commit_msg: str) -> str:
         indicators.append("- Removed export")
 
     # Check for changed function signatures (added required parameter)
-    if (re.search(r"^-.*\([^)]*\)", diff_content, re.MULTILINE) and
-        re.search(r"^\+.*\([^)]*,[^)]*\)", diff_content, re.MULTILINE)):
+    if re.search(r"^-.*\([^)]*\)", diff_content, re.MULTILINE) and re.search(
+        r"^\+.*\([^)]*,[^)]*\)", diff_content, re.MULTILINE
+    ):
         indicators.append("- Modified function signature")
 
     # Check for removed environment variables or config keys
-    if re.search(r"^-\s*(ENV|CONFIG|[A-Z_]+_KEY|[A-Z_]+_URL|[A-Z_]+_SECRET)",
-                 diff_content, re.MULTILINE | re.IGNORECASE):
+    if re.search(
+        r"^-\s*(ENV|CONFIG|[A-Z_]+_KEY|[A-Z_]+_URL|[A-Z_]+_SECRET)",
+        diff_content,
+        re.MULTILINE | re.IGNORECASE,
+    ):
         indicators.append("- Removed environment/config variable")
 
     return "\n".join(indicators)
@@ -153,14 +157,14 @@ def main() -> dict:
             return {}
 
         lines_changed = get_lines_changed()
-        subject = commit_msg.split('\n')[0]
-        body = '\n'.join(commit_msg.split('\n')[2:]) if '\n' in commit_msg else ""
+        subject = commit_msg.split("\n")[0]
+        body = "\n".join(commit_msg.split("\n")[2:]) if "\n" in commit_msg else ""
 
         warnings = []
 
         # Check for missing body on non-trivial commits
         file_count = get_file_count()
-        is_trivial = (file_count <= 1 and lines_changed < 20)
+        is_trivial = file_count <= 1 and lines_changed < 20
         if re.search(r"(typo|version|bump|import)", subject, re.IGNORECASE):
             is_trivial = True
 
@@ -181,9 +185,7 @@ def main() -> dict:
                 f"Large commit ({lines_changed} lines) - consider splitting into smaller changes"
             )
         elif lines_changed > 200:
-            warnings.append(
-                f"Commit is {lines_changed} lines - review if it could be split"
-            )
+            warnings.append(f"Commit is {lines_changed} lines - review if it could be split")
 
         # Check for potential breaking changes without marker
         breaking_indicators = check_breaking_changes(subject, commit_msg)
@@ -195,9 +197,7 @@ def main() -> dict:
             )
 
         if warnings:
-            return {
-                "systemMessage": "Post-commit review:\n" + "\n".join(warnings)
-            }
+            return {"systemMessage": "Post-commit review:\n" + "\n".join(warnings)}
 
         return {}
 

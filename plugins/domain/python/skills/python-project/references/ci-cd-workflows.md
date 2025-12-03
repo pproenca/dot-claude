@@ -162,22 +162,22 @@ repos:
 .PHONY: install test lint format check clean
 
 install:
-	uv sync --all-extras
+ uv sync --all-extras
 
 test:
-	uv run pytest -v --cov
+ uv run pytest -v --cov
 
 lint:
-	uv run ruff check .
-	uv run mypy src
+ uv run ruff check .
+ uv run mypy src
 
 format:
-	uv run ruff format .
-	uv run ruff check --fix .
+ uv run ruff format .
+ uv run ruff check --fix .
 
 check: lint test
 
 clean:
-	rm -rf dist/ .pytest_cache/ .mypy_cache/ .ruff_cache/
-	find . -type d -name __pycache__ -exec rm -rf {} +
+ rm -rf dist/ .pytest_cache/ .mypy_cache/ .ruff_cache/
+ find . -type d -name __pycache__ -exec rm -rf {} +
 ```

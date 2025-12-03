@@ -62,6 +62,7 @@ def all_skills(plugins_dir: Path) -> list[dict[str, Any]]:
         if content.startswith("---"):
             _, frontmatter, _ = content.split("---", 2)
             import yaml
+
             metadata = yaml.safe_load(frontmatter)
             if metadata:
                 metadata["path"] = skill_md

@@ -32,7 +32,7 @@ def test_validate_settings_script_runs():
         capture_output=True,
         text=True,
         timeout=10,
-        cwd=REPO_ROOT
+        cwd=REPO_ROOT,
     )
 
     # Should exit with 0 (valid settings found)
@@ -106,7 +106,7 @@ def test_script_discovers_skills():
         capture_output=True,
         text=True,
         timeout=10,
-        cwd=REPO_ROOT
+        cwd=REPO_ROOT,
     )
 
     # Should mention discovered skills
@@ -124,13 +124,13 @@ def test_script_validates_multiple_locations():
         capture_output=True,
         text=True,
         timeout=10,
-        cwd=REPO_ROOT
+        cwd=REPO_ROOT,
     )
 
     # Should validate at least one location
     assert "Validating" in result.stdout
     # Should show validation results
-    assert ("✓ Valid" in result.stdout or "passed validation" in result.stdout.lower())
+    assert "✓ Valid" in result.stdout or "passed validation" in result.stdout.lower()
 
 
 def test_tier_mapping_exists():

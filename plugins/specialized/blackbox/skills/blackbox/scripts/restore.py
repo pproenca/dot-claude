@@ -15,9 +15,7 @@ import json
 import os
 import sys
 
-DATA_DIR = os.path.expanduser(
-    "~/.claude/plugins/marketplaces/dot-claude/plugins/blackbox/data"
-)
+DATA_DIR = os.path.expanduser("~/.claude/plugins/marketplaces/dot-claude/plugins/blackbox/data")
 BUFFER_PATH = os.path.join(DATA_DIR, "buffer.jsonl")
 OBJECTS_DIR = os.path.join(DATA_DIR, "objects")
 
@@ -45,7 +43,7 @@ def search_buffer(pattern):
         sys.exit(1)
 
     matches = []
-    with open(BUFFER_PATH, "r") as f:
+    with open(BUFFER_PATH) as f:
         for line in f:
             try:
                 entry = json.loads(line)
@@ -72,10 +70,11 @@ def search_buffer(pattern):
     print(f"Found {len(matches)} snapshot(s) matching '{pattern}':\n", file=sys.stderr)
     for i, m in enumerate(matches[:10]):
         from datetime import datetime
+
         ts = datetime.fromtimestamp(m["time"]).strftime("%Y-%m-%d %H:%M:%S")
         print(f"  [{i+1}] {ts} | {m['hash'][:12]}... | {m['file']}", file=sys.stderr)
 
-    print(f"\nTo restore, run: restore.py --hash <full-hash>", file=sys.stderr)
+    print("\nTo restore, run: restore.py --hash <full-hash>", file=sys.stderr)
 
 
 def list_recent(count=10):
@@ -85,7 +84,7 @@ def list_recent(count=10):
         sys.exit(1)
 
     entries = []
-    with open(BUFFER_PATH, "r") as f:
+    with open(BUFFER_PATH) as f:
         for line in f:
             try:
                 entry = json.loads(line)
@@ -100,6 +99,7 @@ def list_recent(count=10):
     print(f"Last {len(entries)} snapshots:\n")
     for entry in entries:
         from datetime import datetime
+
         ts = datetime.fromtimestamp(entry.get("t", 0)).strftime("%Y-%m-%d %H:%M:%S")
         file_path = entry.get("d", {}).get("tool_input", {}).get("file_path", "unknown")
         print(f"  {ts} | {entry['h'][:12]}... | {file_path}")

@@ -186,6 +186,7 @@ password = pypi-...your-token...
 ## Publishing Checklist
 
 Before publishing:
+
 - [ ] Tests passing (`uv run pytest`)
 - [ ] Version updated in pyproject.toml
 - [ ] CHANGELOG updated

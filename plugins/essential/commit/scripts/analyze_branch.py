@@ -4,20 +4,17 @@ Minimal branch analysis for commit-organizer.
 
 Outputs JSON with branch point, file list, line counts, and diffs.
 """
+
 from __future__ import annotations
 
 import json
 import subprocess
-import sys
 
 
 def run_git(*args, timeout: int = 10) -> tuple[str, int]:
     """Run a git command and return (stdout, returncode)."""
     try:
-        result = subprocess.run(
-            ["git", *args],
-            capture_output=True, text=True, timeout=timeout
-        )
+        result = subprocess.run(["git", *args], capture_output=True, text=True, timeout=timeout)
         return result.stdout.strip(), result.returncode
     except (subprocess.TimeoutExpired, OSError):
         return "", 1
@@ -38,8 +35,7 @@ def get_current_branch() -> str:
 def detect_main_branch() -> str:
     """Detect the main branch (main or master)."""
     for candidate in ["main", "master"]:
-        _, code = run_git("show-ref", "--verify", "--quiet",
-                         f"refs/remotes/origin/{candidate}")
+        _, code = run_git("show-ref", "--verify", "--quiet", f"refs/remotes/origin/{candidate}")
         if code == 0:
             return candidate
 
@@ -70,7 +66,7 @@ def get_branch_point(main_branch: str) -> tuple[str, str, str]:
 def get_changed_files(branch_point: str) -> list[str]:
     """Get list of files changed since branch point."""
     stdout, _ = run_git("diff", "--name-only", branch_point, "HEAD")
-    return [f for f in stdout.split('\n') if f]
+    return [f for f in stdout.split("\n") if f]
 
 
 def get_file_stats(branch_point: str, files: list[str]) -> tuple[list[dict], int, int]:
@@ -88,17 +84,13 @@ def get_file_stats(branch_point: str, files: list[str]) -> tuple[list[dict], int
         if not stdout:
             continue
 
-        parts = stdout.split('\t')
+        parts = stdout.split("\t")
         if len(parts) >= 2:
-            add = int(parts[0]) if parts[0] != '-' else 0
-            delete = int(parts[1]) if parts[1] != '-' else 0
+            add = int(parts[0]) if parts[0] != "-" else 0
+            delete = int(parts[1]) if parts[1] != "-" else 0
             total_add += add
             total_del += delete
-            stats.append({
-                "file": file,
-                "additions": add,
-                "deletions": delete
-            })
+            stats.append({"file": file, "additions": add, "deletions": delete})
 
     return stats, total_add, total_del
 
@@ -109,10 +101,7 @@ def get_file_diffs(branch_point: str, files: list[str]) -> list[dict]:
 
     for file in files:
         stdout, _ = run_git("diff", branch_point, "HEAD", "--", file)
-        diffs.append({
-            "file": file,
-            "diff": stdout
-        })
+        diffs.append({"file": file, "diff": stdout})
 
     return diffs
 
@@ -128,9 +117,7 @@ def main() -> dict:
 
     short_hash, full_hash, msg = get_branch_point(main_branch)
     if not full_hash:
-        return {
-            "error": f"Could not find branch point. Ensure origin/{main_branch} exists."
-        }
+        return {"error": f"Could not find branch point. Ensure origin/{main_branch} exists."}
 
     files = get_changed_files(full_hash)
     stats, total_add, total_del = get_file_stats(full_hash, files)
@@ -142,16 +129,12 @@ def main() -> dict:
             "main": main_branch,
             "branch_point": short_hash,
             "branch_point_full": full_hash,
-            "branch_point_message": msg
+            "branch_point_message": msg,
         },
         "files": files,
         "stats": stats,
         "diffs": diffs,
-        "total": {
-            "files": len(files),
-            "additions": total_add,
-            "deletions": total_del
-        }
+        "total": {"files": len(files), "additions": total_add, "deletions": total_del},
     }
 
 

@@ -77,9 +77,7 @@ def update_config(root_dir: Path) -> bool:
         plugin_json_path = f"{plugin_path}/.claude-plugin/plugin.json"
         full_path = root_dir / plugin_json_path
         if full_path.exists():
-            extra_files.append(
-                {"type": "json", "path": plugin_json_path, "jsonpath": "$.version"}
-            )
+            extra_files.append({"type": "json", "path": plugin_json_path, "jsonpath": "$.version"})
             valid_plugin_paths.append(plugin_path)
         else:
             print(
@@ -190,9 +188,7 @@ def sync_marketplace_plugins(root_dir: Path) -> bool:
                 entry[field] = plugin_data[field]
 
     # 4. Rebuild plugins array sorted by name
-    marketplace["plugins"] = [
-        existing_plugins[name] for name in sorted(existing_plugins.keys())
-    ]
+    marketplace["plugins"] = [existing_plugins[name] for name in sorted(existing_plugins.keys())]
 
     # 5. Write updated marketplace.json
     marketplace_path.write_text(json.dumps(marketplace, indent=2) + "\n")

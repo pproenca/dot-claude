@@ -3,6 +3,7 @@
 > "Code is read far more often than it is written." - Guido Van Rossum, PEP 8
 
 **Authoritative Sources:**
+
 - [PEP 8](https://peps.python.org/pep-0008/) - Style Guide for Python Code
 - [PEP 703](https://peps.python.org/pep-0703/) - Making the GIL Optional (Sam Gross)
 

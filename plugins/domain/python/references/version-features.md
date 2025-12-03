@@ -5,6 +5,7 @@ Use this reference to adapt code patterns to the target Python version.
 ## Version Detection
 
 Check these files in order:
+
 1. `.python-version` (uv's pin file)
 2. `pyproject.toml` → `requires-python`
 3. `.claude/python-version` (stored preference)

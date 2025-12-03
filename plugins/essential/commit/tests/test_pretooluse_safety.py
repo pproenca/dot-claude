@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Tests for pretooluse_safety hook."""
+
 import json
 import os
 import sys
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 # Add hooks directory to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'hooks'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "hooks"))
 
 
 class TestValidateCommitMessage(unittest.TestCase):
@@ -15,6 +16,7 @@ class TestValidateCommitMessage(unittest.TestCase):
 
     def setUp(self):
         import pretooluse_safety
+
         self.module = pretooluse_safety
 
     def test_valid_feat_commit(self):
@@ -106,6 +108,7 @@ class TestCheckDestructiveCommand(unittest.TestCase):
 
     def setUp(self):
         import pretooluse_safety
+
         self.module = pretooluse_safety
 
     def test_normal_git_commit_allowed(self):
@@ -131,7 +134,7 @@ class TestCheckDestructiveCommand(unittest.TestCase):
         self.assertIsNotNone(error)
         self.assertIn("clean", error.lower())
 
-    @patch('subprocess.run')
+    @patch("subprocess.run")
     def test_git_reset_hard_without_backup_blocked(self, mock_run):
         """git reset --hard without backup should be blocked."""
         mock_run.return_value = MagicMock(stdout="", returncode=0)
@@ -139,7 +142,7 @@ class TestCheckDestructiveCommand(unittest.TestCase):
         self.assertIsNotNone(error)
         self.assertIn("backup", error.lower())
 
-    @patch('subprocess.run')
+    @patch("subprocess.run")
     def test_git_reset_hard_with_backup_allowed(self, mock_run):
         """git reset --hard with backup branch should be allowed."""
         mock_run.return_value = MagicMock(stdout="backup/main-20231201", returncode=0)
@@ -152,73 +155,67 @@ class TestMain(unittest.TestCase):
 
     def setUp(self):
         import pretooluse_safety
+
         self.module = pretooluse_safety
 
-    @patch('sys.stdin')
-    @patch('subprocess.run')
+    @patch("sys.stdin")
+    @patch("subprocess.run")
     def test_non_git_command_passes(self, mock_run, mock_stdin):
         """Non-git commands should pass through."""
         mock_run.return_value = MagicMock(stdout="main", returncode=0)
-        event = {
-            "tool_name": "Bash",
-            "tool_input": {"command": "ls -la"}
-        }
+        event = {"tool_name": "Bash", "tool_input": {"command": "ls -la"}}
         mock_stdin.read.return_value = json.dumps(event)
 
         result = self.module.main()
         self.assertEqual(result, {})
 
-    @patch('sys.stdin')
-    @patch('subprocess.run')
+    @patch("sys.stdin")
+    @patch("subprocess.run")
     def test_valid_commit_passes(self, mock_run, mock_stdin):
         """Valid commit should pass."""
         mock_run.return_value = MagicMock(stdout="main", returncode=0)
         event = {
             "tool_name": "Bash",
-            "tool_input": {"command": "git commit -m 'feat: add feature'"}
+            "tool_input": {"command": "git commit -m 'feat: add feature'"},
         }
         mock_stdin.read.return_value = json.dumps(event)
 
         result = self.module.main()
         self.assertEqual(result, {})
 
-    @patch('sys.stdin')
-    @patch('subprocess.run')
+    @patch("sys.stdin")
+    @patch("subprocess.run")
     def test_invalid_commit_blocked(self, mock_run, mock_stdin):
         """Invalid commit should be blocked."""
         mock_run.return_value = MagicMock(stdout="main", returncode=0)
-        event = {
-            "tool_name": "Bash",
-            "tool_input": {"command": "git commit -m 'bad commit'"}
-        }
+        event = {"tool_name": "Bash", "tool_input": {"command": "git commit -m 'bad commit'"}}
         mock_stdin.read.return_value = json.dumps(event)
 
         result = self.module.main()
         self.assertIn("hookSpecificOutput", result)
         self.assertEqual(result["hookSpecificOutput"]["permissionDecision"], "deny")
 
-    @patch('sys.stdin')
-    @patch('subprocess.run')
+    @patch("sys.stdin")
+    @patch("subprocess.run")
     def test_wip_branch_skips_validation(self, mock_run, mock_stdin):
         """WIP branches should skip validation."""
         mock_run.return_value = MagicMock(stdout="wip/feature", returncode=0)
-        event = {
-            "tool_name": "Bash",
-            "tool_input": {"command": "git commit -m 'wip stuff'"}
-        }
+        event = {"tool_name": "Bash", "tool_input": {"command": "git commit -m 'wip stuff'"}}
         mock_stdin.read.return_value = json.dumps(event)
 
         result = self.module.main()
         self.assertEqual(result, {})
 
-    @patch('sys.stdin')
-    @patch('subprocess.run')
+    @patch("sys.stdin")
+    @patch("subprocess.run")
     def test_printf_heredoc_pattern(self, mock_run, mock_stdin):
         """printf '%b' pattern for multiline commits should be validated."""
         mock_run.return_value = MagicMock(stdout="main", returncode=0)
         event = {
             "tool_name": "Bash",
-            "tool_input": {"command": "printf '%b' 'feat: add feature\\n\\nBody text' | git commit -F -"}
+            "tool_input": {
+                "command": "printf '%b' 'feat: add feature\\n\\nBody text' | git commit -F -"
+            },
         }
         mock_stdin.read.return_value = json.dumps(event)
 
@@ -226,5 +223,5 @@ class TestMain(unittest.TestCase):
         self.assertEqual(result, {})
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

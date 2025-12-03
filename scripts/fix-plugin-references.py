@@ -34,7 +34,9 @@ def get_actual_plugins(project_root: Path) -> set[str]:
     return project_plugins
 
 
-def check_settings_file(settings_path: Path, actual_plugins: set[str]) -> tuple[list[str], list[str]]:
+def check_settings_file(
+    settings_path: Path, actual_plugins: set[str]
+) -> tuple[list[str], list[str]]:
     """
     Check settings.json for plugin reference mismatches.
 
@@ -50,7 +52,8 @@ def check_settings_file(settings_path: Path, actual_plugins: set[str]) -> tuple[
     # Check enabledPlugins
     enabled_plugins = settings.get("enabledPlugins", {})
     missing_enabled = [
-        plugin for plugin, enabled in enabled_plugins.items()
+        plugin
+        for plugin, enabled in enabled_plugins.items()
         if enabled and "@dot-claude" in plugin and plugin not in actual_plugins
     ]
 
@@ -68,7 +71,9 @@ def check_settings_file(settings_path: Path, actual_plugins: set[str]) -> tuple[
     return missing_enabled, missing_skills
 
 
-def fix_settings_file(settings_path: Path, missing_enabled: list[str], missing_skills: list[str]) -> None:
+def fix_settings_file(
+    settings_path: Path, missing_enabled: list[str], missing_skills: list[str]
+) -> None:
     """Remove missing plugin references from settings.json."""
     with open(settings_path) as f:
         settings = json.load(f)
@@ -81,9 +86,7 @@ def fix_settings_file(settings_path: Path, missing_enabled: list[str], missing_s
     # Remove from permissions.allow
     if missing_skills:
         allow_patterns = settings.get("permissions", {}).get("allow", [])
-        settings["permissions"]["allow"] = [
-            p for p in allow_patterns if p not in missing_skills
-        ]
+        settings["permissions"]["allow"] = [p for p in allow_patterns if p not in missing_skills]
 
     # Write back with nice formatting
     with open(settings_path, "w") as f:

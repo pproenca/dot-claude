@@ -31,10 +31,11 @@ class ValidationError(NamedTuple):
 
 class ComponentInfo(NamedTuple):
     """Info about a skill or agent."""
+
     full_name: str  # e.g., "doc:mermaid-expert"
     leaf_name: str  # e.g., "mermaid-expert"
-    plugin: str     # e.g., "doc"
-    kind: str       # "skill" or "agent"
+    plugin: str  # e.g., "doc"
+    kind: str  # "skill" or "agent"
 
 
 def err(msg: str) -> None:
@@ -52,7 +53,9 @@ def find_all_markdown_files(plugins_dir: Path) -> list[Path]:
     return list(plugins_dir.rglob("*.md"))
 
 
-def build_component_registry(plugins_dir: Path) -> tuple[
+def build_component_registry(
+    plugins_dir: Path,
+) -> tuple[
     set[str],  # valid_skills
     set[str],  # valid_agents
     dict[str, list[ComponentInfo]],  # leaf_to_components (for ambiguity detection)
@@ -149,19 +152,19 @@ def check_template_references(
                     # Try relative to file's directory
                     full_path = file_path.parent / template_path
                     if not full_path.exists():
-                        errors.append(ValidationError(
-                            file=file_path,
-                            line_num=line_num,
-                            message=f"Template reference to non-existent file: {template_path}",
-                            severity="error"
-                        ))
+                        errors.append(
+                            ValidationError(
+                                file=file_path,
+                                line_num=line_num,
+                                message=f"Template reference to non-existent file: {template_path}",
+                                severity="error",
+                            )
+                        )
 
     return errors
 
 
-def check_stale_prefixes(
-    file_path: Path, content: str
-) -> list[ValidationError]:
+def check_stale_prefixes(file_path: Path, content: str) -> list[ValidationError]:
     """Check for stale plugin prefixes like 'super:'."""
     errors: list[ValidationError] = []
 
@@ -173,12 +176,14 @@ def check_stale_prefixes(
     for line_num, line in enumerate(content.split("\n"), 1):
         for pattern, old_prefix, new_suggestion in stale_patterns:
             if re.search(pattern, line):
-                errors.append(ValidationError(
-                    file=file_path,
-                    line_num=line_num,
-                    message=f"Stale prefix '{old_prefix}' found. Should be '{new_suggestion}'",
-                    severity="error"
-                ))
+                errors.append(
+                    ValidationError(
+                        file=file_path,
+                        line_num=line_num,
+                        message=f"Stale prefix '{old_prefix}' found. Should be '{new_suggestion}'",
+                        severity="error",
+                    )
+                )
 
     return errors
 
@@ -204,14 +209,27 @@ def check_skill_references(
                 if skill_ref not in valid_skills:
                     # Check if it's a valid prefix at least
                     prefix = skill_ref.split(":")[0] if ":" in skill_ref else ""
-                    if prefix not in ["python", "doc", "meta", "debug", "shell", "core", "workflow", "review", "testing", "commit"]:
+                    if prefix not in [
+                        "python",
+                        "doc",
+                        "meta",
+                        "debug",
+                        "shell",
+                        "core",
+                        "workflow",
+                        "review",
+                        "testing",
+                        "commit",
+                    ]:
                         # These are external/optional plugins, only warn
-                        errors.append(ValidationError(
-                            file=file_path,
-                            line_num=line_num,
-                            message=f"Skill reference may not exist: {skill_ref}",
-                            severity="warning"
-                        ))
+                        errors.append(
+                            ValidationError(
+                                file=file_path,
+                                line_num=line_num,
+                                message=f"Skill reference may not exist: {skill_ref}",
+                                severity="warning",
+                            )
+                        )
 
     return errors
 
@@ -237,12 +255,14 @@ def check_agent_references(
                 if agent_ref == "general-purpose":
                     continue
                 if agent_ref not in valid_agents:
-                    errors.append(ValidationError(
-                        file=file_path,
-                        line_num=line_num,
-                        message=f"Agent reference may not exist: {agent_ref}",
-                        severity="warning"
-                    ))
+                    errors.append(
+                        ValidationError(
+                            file=file_path,
+                            line_num=line_num,
+                            message=f"Agent reference may not exist: {agent_ref}",
+                            severity="warning",
+                        )
+                    )
 
     return errors
 
@@ -290,15 +310,17 @@ def check_component_confusion(
                 if ref in all_valid:
                     # Reference exists - but is it the right type?
                     if ref in valid_agents:
-                        errors.append(ValidationError(
-                            file=file_path,
-                            line_num=line_num,
-                            message=(
-                                f"'{ref}' is an AGENT, not a skill. "
-                                f"Use Task tool with subagent_type='{ref}' instead of Skill tool"
-                            ),
-                            severity="error"
-                        ))
+                        errors.append(
+                            ValidationError(
+                                file=file_path,
+                                line_num=line_num,
+                                message=(
+                                    f"'{ref}' is an AGENT, not a skill. "
+                                    f"Use Task tool with subagent_type='{ref}' instead of Skill tool"
+                                ),
+                                severity="error",
+                            )
+                        )
                 elif ":" in ref:
                     # Reference doesn't exist - try to find what they meant
                     prefix, leaf = ref.split(":", 1)
@@ -307,22 +329,26 @@ def check_component_confusion(
                         suggestions = [c.full_name for c in actual]
                         kinds = {c.kind for c in actual}
                         if "agent" in kinds and "skill" not in kinds:
-                            errors.append(ValidationError(
-                                file=file_path,
-                                line_num=line_num,
-                                message=(
-                                    f"'{ref}' not found. '{leaf}' exists as an AGENT: {suggestions}. "
-                                    f"Use Task tool with subagent_type instead of Skill tool"
-                                ),
-                                severity="error"
-                            ))
+                            errors.append(
+                                ValidationError(
+                                    file=file_path,
+                                    line_num=line_num,
+                                    message=(
+                                        f"'{ref}' not found. '{leaf}' exists as an AGENT: {suggestions}. "
+                                        f"Use Task tool with subagent_type instead of Skill tool"
+                                    ),
+                                    severity="error",
+                                )
+                            )
                         else:
-                            errors.append(ValidationError(
-                                file=file_path,
-                                line_num=line_num,
-                                message=f"'{ref}' not found. Did you mean: {suggestions}?",
-                                severity="error"
-                            ))
+                            errors.append(
+                                ValidationError(
+                                    file=file_path,
+                                    line_num=line_num,
+                                    message=f"'{ref}' not found. Did you mean: {suggestions}?",
+                                    severity="error",
+                                )
+                            )
 
         # Check Task tool usage patterns
         for pattern in task_tool_patterns:
@@ -334,34 +360,36 @@ def check_component_confusion(
                 if ref in all_valid:
                     # Reference exists - but is it the right type?
                     if ref in valid_skills:
-                        errors.append(ValidationError(
-                            file=file_path,
-                            line_num=line_num,
-                            message=(
-                                f"'{ref}' is a SKILL, not an agent. "
-                                f"Use Skill tool instead of Task tool"
-                            ),
-                            severity="error"
-                        ))
+                        errors.append(
+                            ValidationError(
+                                file=file_path,
+                                line_num=line_num,
+                                message=(
+                                    f"'{ref}' is a SKILL, not an agent. "
+                                    f"Use Skill tool instead of Task tool"
+                                ),
+                                severity="error",
+                            )
+                        )
                 elif ":" in ref:
                     # Reference doesn't exist - try to find what they meant
                     prefix, leaf = ref.split(":", 1)
                     if leaf in leaf_to_components:
                         actual = leaf_to_components[leaf]
                         suggestions = [c.full_name for c in actual]
-                        errors.append(ValidationError(
-                            file=file_path,
-                            line_num=line_num,
-                            message=f"Agent '{ref}' not found. Did you mean: {suggestions}?",
-                            severity="error"
-                        ))
+                        errors.append(
+                            ValidationError(
+                                file=file_path,
+                                line_num=line_num,
+                                message=f"Agent '{ref}' not found. Did you mean: {suggestions}?",
+                                severity="error",
+                            )
+                        )
 
     return errors
 
 
-def find_orphaned_templates(
-    plugins_dir: Path, all_files: list[Path]
-) -> list[ValidationError]:
+def find_orphaned_templates(plugins_dir: Path, all_files: list[Path]) -> list[ValidationError]:
     """Find template files that nothing references."""
     errors: list[ValidationError] = []
 
@@ -387,19 +415,19 @@ def find_orphaned_templates(
     for template in template_files:
         # Check by filename
         if template.name not in all_content:
-            errors.append(ValidationError(
-                file=template,
-                line_num=0,
-                message="Template file appears to be orphaned (not referenced anywhere)",
-                severity="warning"
-            ))
+            errors.append(
+                ValidationError(
+                    file=template,
+                    line_num=0,
+                    message="Template file appears to be orphaned (not referenced anywhere)",
+                    severity="warning",
+                )
+            )
 
     return errors
 
 
-def check_required_sections(
-    file_path: Path, content: str
-) -> list[ValidationError]:
+def check_required_sections(file_path: Path, content: str) -> list[ValidationError]:
     """Check that critical skills have required sections."""
     errors: list[ValidationError] = []
 
@@ -437,12 +465,14 @@ def check_required_sections(
     if skill_name in required_sections:
         for section in required_sections[skill_name]:
             if section.lower() not in content.lower():
-                errors.append(ValidationError(
-                    file=file_path,
-                    line_num=0,
-                    message=f"Skill '{skill_name}' missing required section: '{section}'",
-                    severity="error"
-                ))
+                errors.append(
+                    ValidationError(
+                        file=file_path,
+                        line_num=0,
+                        message=f"Skill '{skill_name}' missing required section: '{section}'",
+                        severity="error",
+                    )
+                )
 
     return errors
 
@@ -484,9 +514,11 @@ def main() -> int:
         all_errors.extend(check_agent_references(file_path, content, valid_agents))
         all_errors.extend(check_required_sections(file_path, content))
         # Smart validation for skill-vs-agent confusion
-        all_errors.extend(check_component_confusion(
-            file_path, content, valid_skills, valid_agents, leaf_to_components
-        ))
+        all_errors.extend(
+            check_component_confusion(
+                file_path, content, valid_skills, valid_agents, leaf_to_components
+            )
+        )
 
     # Check for orphaned templates
     all_errors.extend(find_orphaned_templates(plugins_dir, all_files))

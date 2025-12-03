@@ -126,9 +126,7 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
     def test_syncs_version_from_plugin_json(self):
         """Test that version is synced from plugin.json to marketplace."""
         self._create_plugin("test-plugin", version="2.5.0")
-        self._create_marketplace(
-            [{"name": "test-plugin", "source": "./plugins/test-plugin"}]
-        )
+        self._create_marketplace([{"name": "test-plugin", "source": "./plugins/test-plugin"}])
 
         update_release_config = load_update_release_config()
         from pathlib import Path
@@ -145,9 +143,7 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
     def test_syncs_keywords_from_plugin_json(self):
         """Test that keywords are synced from plugin.json to marketplace."""
         self._create_plugin("test-plugin", keywords=["testing", "automation"])
-        self._create_marketplace(
-            [{"name": "test-plugin", "source": "./plugins/test-plugin"}]
-        )
+        self._create_marketplace([{"name": "test-plugin", "source": "./plugins/test-plugin"}])
 
         update_release_config = load_update_release_config()
         from pathlib import Path
@@ -164,9 +160,7 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
     def test_syncs_license_from_plugin_json(self):
         """Test that license is synced from plugin.json to marketplace."""
         self._create_plugin("test-plugin", license_="Apache-2.0")
-        self._create_marketplace(
-            [{"name": "test-plugin", "source": "./plugins/test-plugin"}]
-        )
+        self._create_marketplace([{"name": "test-plugin", "source": "./plugins/test-plugin"}])
 
         update_release_config = load_update_release_config()
         from pathlib import Path
@@ -257,9 +251,7 @@ class TestSyncMarketplacePlugins(unittest.TestCase):
             marketplace = json.load(f)
 
         plugin_names = [p["name"] for p in marketplace["plugins"]]
-        self.assertEqual(
-            plugin_names, ["alpha-plugin", "middle-plugin", "zebra-plugin"]
-        )
+        self.assertEqual(plugin_names, ["alpha-plugin", "middle-plugin", "zebra-plugin"])
 
     def test_handles_missing_plugin_json(self):
         """Test that plugins without plugin.json are warned but not fatal."""
@@ -336,9 +328,7 @@ class TestUpdateConfig(unittest.TestCase):
         os.makedirs(self.plugins_dir)
 
         # Create release-please-config.json
-        self.release_config_path = os.path.join(
-            self.temp_dir, "release-please-config.json"
-        )
+        self.release_config_path = os.path.join(self.temp_dir, "release-please-config.json")
         with open(self.release_config_path, "w") as f:
             json.dump({"packages": {".": {"extra-files": []}}}, f)
 

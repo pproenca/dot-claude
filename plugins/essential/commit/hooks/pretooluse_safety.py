@@ -6,6 +6,7 @@ Validates:
 1. Commit messages follow Conventional Commits specification
 2. Destructive git commands have proper safety measures
 """
+
 from __future__ import annotations
 
 import json
@@ -19,10 +20,23 @@ VALID_TYPES_PATTERN = "|".join(VALID_TYPES)
 
 # Vague description patterns (case-insensitive)
 VAGUE_PATTERNS = [
-    r"^bug$", r"^build$", r"^fix$", r"^stuff$", r"^things$",
-    r"^update$", r"^updates$", r"^changes$", r"^misc$",
-    r"^wip$", r"^work in progress$", r"^done$", r"^ready$",
-    r"^final$", r"^initial$", r"^first$", r"^test$"
+    r"^bug$",
+    r"^build$",
+    r"^fix$",
+    r"^stuff$",
+    r"^things$",
+    r"^update$",
+    r"^updates$",
+    r"^changes$",
+    r"^misc$",
+    r"^wip$",
+    r"^work in progress$",
+    r"^done$",
+    r"^ready$",
+    r"^final$",
+    r"^initial$",
+    r"^first$",
+    r"^test$",
 ]
 
 MAX_STDIN_SIZE = 256 * 1024  # 256KB
@@ -30,12 +44,7 @@ MAX_STDIN_SIZE = 256 * 1024  # 256KB
 
 def output_deny(message: str) -> dict:
     """Create a deny response for the hook."""
-    return {
-        "hookSpecificOutput": {
-            "permissionDecision": "deny"
-        },
-        "systemMessage": message
-    }
+    return {"hookSpecificOutput": {"permissionDecision": "deny"}, "systemMessage": message}
 
 
 def validate_commit_message(commit_msg: str) -> str | None:
@@ -44,7 +53,7 @@ def validate_commit_message(commit_msg: str) -> str | None:
 
     Returns None if valid, or error message string if invalid.
     """
-    subject = commit_msg.split('\n')[0]
+    subject = commit_msg.split("\n")[0]
 
     # Check for valid Conventional Commits format: type[!]: description
     pattern = rf"^({VALID_TYPES_PATTERN})(!)?:\s+.+"
@@ -83,7 +92,7 @@ def validate_commit_message(commit_msg: str) -> str | None:
             return "Use imperative mood: 'add' not 'adds'"
 
     # Check for period at end
-    if subject.endswith('.'):
+    if subject.endswith("."):
         return "Subject must not end with period"
 
     return None
@@ -99,8 +108,7 @@ def check_destructive_command(command: str) -> str | None:
     if re.search(r"git\s+reset\s+--hard", command):
         try:
             result = subprocess.run(
-                ["git", "branch", "--list", "backup/*"],
-                capture_output=True, text=True, timeout=5
+                ["git", "branch", "--list", "backup/*"], capture_output=True, text=True, timeout=5
             )
             if not result.stdout.strip():
                 return "git reset --hard without backup branch"
@@ -115,8 +123,7 @@ def check_destructive_command(command: str) -> str | None:
     if re.search(r"git\s+branch\s+-D", command):
         try:
             result = subprocess.run(
-                ["git", "branch", "--show-current"],
-                capture_output=True, text=True, timeout=5
+                ["git", "branch", "--show-current"], capture_output=True, text=True, timeout=5
             )
             current_branch = result.stdout.strip()
             if current_branch and current_branch in command:
@@ -136,9 +143,9 @@ def extract_commit_message(command: str) -> str | None:
     # Try -m flag with various quote patterns
     patterns = [
         r'-m\s+["\']([^"\']+)["\']',  # -m "msg" or -m 'msg'
-        r'-m\s+"([^"]+)"',             # -m "msg"
-        r"-m\s+'([^']+)'",             # -m 'msg'
-        r'-m\s+(\S+)',                 # -m msg (no quotes)
+        r'-m\s+"([^"]+)"',  # -m "msg"
+        r"-m\s+'([^']+)'",  # -m 'msg'
+        r"-m\s+(\S+)",  # -m msg (no quotes)
     ]
 
     for pattern in patterns:
@@ -152,7 +159,7 @@ def extract_commit_message(command: str) -> str | None:
         match = re.search(r"printf\s+'%b'\s+'([^']+)'", command)
         if match:
             # Convert \n escape sequences to actual newlines
-            msg = match.group(1).replace('\\n', '\n')
+            msg = match.group(1).replace("\\n", "\n")
             return msg
 
         # Legacy: printf '%s...' patterns
@@ -171,8 +178,7 @@ def get_current_branch() -> str:
     """Get current git branch name."""
     try:
         result = subprocess.run(
-            ["git", "branch", "--show-current"],
-            capture_output=True, text=True, timeout=5
+            ["git", "branch", "--show-current"], capture_output=True, text=True, timeout=5
         )
         return result.stdout.strip()
     except (subprocess.TimeoutExpired, OSError):
@@ -187,7 +193,7 @@ def main() -> dict:
             return {}
 
         # Fast-path: exit immediately if input doesn't contain git
-        if '"git ' not in raw_input and '| git ' not in raw_input:
+        if '"git ' not in raw_input and "| git " not in raw_input:
             return {}
 
         try:

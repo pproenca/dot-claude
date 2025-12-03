@@ -91,9 +91,7 @@ def test_fix_settings_file():
             "core@dot-claude": True,
             "super@dot-claude": True,
         },
-        "permissions": {
-            "allow": ["Skill(core:*)", "Skill(super:*)"]
-        },
+        "permissions": {"allow": ["Skill(core:*)", "Skill(super:*)"]},
     }
 
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:

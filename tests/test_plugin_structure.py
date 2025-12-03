@@ -92,7 +92,9 @@ class TestCrossReferences:
             python_refs.update(refs)
 
         for ref in python_refs:
-            exists = skill_exists(plugins_dir, f"python:{ref}") or agent_exists(plugins_dir, f"python:{ref}")
+            exists = skill_exists(plugins_dir, f"python:{ref}") or agent_exists(
+                plugins_dir, f"python:{ref}"
+            )
             assert exists, f"Reference python:{ref} not found as skill or agent"
 
     def test_debug_skill_references_exist(self, plugins_dir: Path) -> None:
@@ -107,7 +109,9 @@ class TestCrossReferences:
             debug_refs.update(refs)
 
         for ref in debug_refs:
-            exists = skill_exists(plugins_dir, f"debug:{ref}") or agent_exists(plugins_dir, f"debug:{ref}")
+            exists = skill_exists(plugins_dir, f"debug:{ref}") or agent_exists(
+                plugins_dir, f"debug:{ref}"
+            )
             assert exists, f"Reference debug:{ref} not found as skill or agent"
 
     def test_core_skill_references_exist(self, plugins_dir: Path) -> None:
@@ -121,7 +125,9 @@ class TestCrossReferences:
             core_refs.update(refs)
 
         for ref in core_refs:
-            exists = skill_exists(plugins_dir, f"core:{ref}") or agent_exists(plugins_dir, f"core:{ref}")
+            exists = skill_exists(plugins_dir, f"core:{ref}") or agent_exists(
+                plugins_dir, f"core:{ref}"
+            )
             assert exists, f"Reference core:{ref} not found as skill or agent"
 
     def test_workflow_skill_references_exist(self, plugins_dir: Path) -> None:
@@ -135,7 +141,9 @@ class TestCrossReferences:
             workflow_refs.update(refs)
 
         for ref in workflow_refs:
-            exists = skill_exists(plugins_dir, f"workflow:{ref}") or agent_exists(plugins_dir, f"workflow:{ref}")
+            exists = skill_exists(plugins_dir, f"workflow:{ref}") or agent_exists(
+                plugins_dir, f"workflow:{ref}"
+            )
             assert exists, f"Reference workflow:{ref} not found as skill or agent"
 
     def test_review_skill_references_exist(self, plugins_dir: Path) -> None:
@@ -149,7 +157,9 @@ class TestCrossReferences:
             review_refs.update(refs)
 
         for ref in review_refs:
-            exists = skill_exists(plugins_dir, f"review:{ref}") or agent_exists(plugins_dir, f"review:{ref}")
+            exists = skill_exists(plugins_dir, f"review:{ref}") or agent_exists(
+                plugins_dir, f"review:{ref}"
+            )
             assert exists, f"Reference review:{ref} not found as skill or agent"
 
     def test_testing_skill_references_exist(self, plugins_dir: Path) -> None:
@@ -163,7 +173,9 @@ class TestCrossReferences:
             testing_refs.update(refs)
 
         for ref in testing_refs:
-            exists = skill_exists(plugins_dir, f"testing:{ref}") or agent_exists(plugins_dir, f"testing:{ref}")
+            exists = skill_exists(plugins_dir, f"testing:{ref}") or agent_exists(
+                plugins_dir, f"testing:{ref}"
+            )
             assert exists, f"Reference testing:{ref} not found as skill or agent"
 
     def test_meta_skill_references_exist(self, plugins_dir: Path) -> None:
@@ -177,7 +189,9 @@ class TestCrossReferences:
             meta_refs.update(refs)
 
         for ref in meta_refs:
-            exists = skill_exists(plugins_dir, f"meta:{ref}") or agent_exists(plugins_dir, f"meta:{ref}")
+            exists = skill_exists(plugins_dir, f"meta:{ref}") or agent_exists(
+                plugins_dir, f"meta:{ref}"
+            )
             assert exists, f"Reference meta:{ref} not found as skill or agent"
 
 
@@ -204,7 +218,9 @@ class TestPhase1TokenEfficiency:
 
     def test_mermaid_reference_exists(self, plugins_dir: Path) -> None:
         """Mermaid syntax reference file should exist."""
-        ref_path = get_plugin_path(plugins_dir, "doc") / "agents" / "references" / "mermaid-syntax.md"
+        ref_path = (
+            get_plugin_path(plugins_dir, "doc") / "agents" / "references" / "mermaid-syntax.md"
+        )
         assert ref_path.exists(), "mermaid-syntax.md reference not found"
 
     def test_devops_troubleshooter_under_80_lines(self, plugins_dir: Path) -> None:
@@ -252,7 +268,9 @@ class TestPhase3Debugging:
         """Super should not have debugging skills after move."""
         old_skills = ["systematic-debugging", "root-cause-tracing", "defense-in-depth"]
         for skill in old_skills:
-            assert not skill_exists(plugins_dir, f"super:{skill}"), f"super:{skill} should be removed"
+            assert not skill_exists(
+                plugins_dir, f"super:{skill}"
+            ), f"super:{skill} should be removed"
 
 
 class TestPhase4SplitSuper:
@@ -274,7 +292,14 @@ class TestPhase4SplitSuper:
 
     def test_workflow_has_planning_skills(self, plugins_dir: Path) -> None:
         """Workflow should have planning skills."""
-        planning = ["writing-plans", "executing-plans", "subagent-dev", "git-worktrees", "finish-branch", "parallel-agents"]
+        planning = [
+            "writing-plans",
+            "executing-plans",
+            "subagent-dev",
+            "git-worktrees",
+            "finish-branch",
+            "parallel-agents",
+        ]
         for skill in planning:
             assert skill_exists(plugins_dir, f"workflow:{skill}"), f"workflow:{skill} not found"
 
@@ -312,10 +337,11 @@ class TestPhase5Degradation:
 
     def test_python_has_fallback_text(self, plugins_dir: Path) -> None:
         """Python skills should have fallback text for core dependency."""
-        python_skill = get_plugin_path(plugins_dir, "python") / "skills" / "python-testing" / "SKILL.md"
+        python_skill = (
+            get_plugin_path(plugins_dir, "python") / "skills" / "python-testing" / "SKILL.md"
+        )
         content = python_skill.read_text()
         # Either has fallback text or doesn't reference core:verification
         has_fallback = "If the `core` plugin is installed" in content
         no_reference = "core:verification" not in content
         assert has_fallback or no_reference, "Python skill references core without fallback"
-

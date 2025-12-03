@@ -42,9 +42,7 @@ def validate_marketplace(repo_root: Path) -> bool:
     return run_command(["claude", "plugin", "validate", str(repo_root)])
 
 
-def validate_marketplace_references(
-    repo_root: Path, marketplace_data: dict[str, Any]
-) -> bool:
+def validate_marketplace_references(repo_root: Path, marketplace_data: dict[str, Any]) -> bool:
     """Validate that marketplace.json plugin references exist on disk."""
     print("\nValidating marketplace.json plugin references...")
     has_error = False
@@ -94,9 +92,7 @@ def find_plugin_dirs(plugins_dir: Path) -> list[tuple[str, Path]]:
     return plugins
 
 
-def validate_all_plugins_listed(
-    repo_root: Path, marketplace_data: dict[str, Any]
-) -> bool:
+def validate_all_plugins_listed(repo_root: Path, marketplace_data: dict[str, Any]) -> bool:
     """Validate all plugin directories are listed in marketplace.json."""
     print("Validating all plugin directories are listed...")
     has_error = False
@@ -112,17 +108,13 @@ def validate_all_plugins_listed(
     for relative_path, _ in find_plugin_dirs(plugins_dir):
         # O(1) lookup in set
         if relative_path not in marketplace_sources:
-            err(
-                f"Plugin directory not listed in marketplace.json: {relative_path}"
-            )
+            err(f"Plugin directory not listed in marketplace.json: {relative_path}")
             has_error = True
 
     return not has_error
 
 
-def validate_release_config_consistency(
-    repo_root: Path, marketplace_data: dict[str, Any]
-) -> bool:
+def validate_release_config_consistency(repo_root: Path, marketplace_data: dict[str, Any]) -> bool:
     """Validate release-please-config.json includes all plugins."""
     print("Validating release-please-config.json consistency...")
     has_error = False
@@ -142,9 +134,7 @@ def validate_release_config_consistency(
 
     # Traverse config structure: packages -> . -> extra-files
     try:
-        extra_files = (
-            release_config.get("packages", {}).get(".", {}).get("extra-files", [])
-        )
+        extra_files = release_config.get("packages", {}).get(".", {}).get("extra-files", [])
         for file_entry in extra_files:
             if isinstance(file_entry, dict):
                 path = file_entry.get("path")

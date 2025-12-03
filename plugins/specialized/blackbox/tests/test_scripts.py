@@ -3,6 +3,7 @@
 
 TDD: Tests written first, verified to fail, now implementing scripts.
 """
+
 import json
 import os
 import shutil
@@ -12,9 +13,7 @@ import unittest
 from unittest.mock import patch
 
 # Will import scripts after they exist
-SCRIPTS_DIR = os.path.join(
-    os.path.dirname(__file__), "..", "skills", "blackbox", "scripts"
-)
+SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "skills", "blackbox", "scripts")
 
 
 class TestRestoreScript(unittest.TestCase):
@@ -59,9 +58,7 @@ class TestRestoreScript(unittest.TestCase):
 
             # Patch DATA_DIR to use temp
             with patch.object(restore, "DATA_DIR", self.data_dir):
-                with patch.object(
-                    restore, "OBJECTS_DIR", self.objects_dir
-                ):
+                with patch.object(restore, "OBJECTS_DIR", self.objects_dir):
                     blob_path = restore.get_blob_path(self.test_hash)
                     self.assertTrue(os.path.exists(blob_path))
         finally:

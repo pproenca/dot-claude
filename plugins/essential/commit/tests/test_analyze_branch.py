@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Tests for analyze_branch script."""
-import json
+
 import os
 import sys
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'scripts'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 
 class TestAnalyzeBranch(unittest.TestCase):
@@ -14,9 +14,10 @@ class TestAnalyzeBranch(unittest.TestCase):
 
     def setUp(self):
         import analyze_branch
+
         self.module = analyze_branch
 
-    @patch('subprocess.run')
+    @patch("subprocess.run")
     def test_not_git_repo_returns_error(self, mock_run):
         """Should return error when not in git repo."""
         # Return non-zero exit code indicating not a git repo
@@ -24,9 +25,10 @@ class TestAnalyzeBranch(unittest.TestCase):
         result = self.module.main()
         self.assertIn("error", result)
 
-    @patch('subprocess.run')
+    @patch("subprocess.run")
     def test_returns_branch_info(self, mock_run):
         """Should return branch information."""
+
         def run_side_effect(cmd, **kwargs):
             if "rev-parse" in cmd and "--git-dir" in cmd:
                 return MagicMock(stdout=".git", returncode=0)
@@ -54,9 +56,10 @@ class TestAnalyzeBranch(unittest.TestCase):
         self.assertIn("branch", result)
         self.assertEqual(result["branch"]["current"], "feature-branch")
 
-    @patch('subprocess.run')
+    @patch("subprocess.run")
     def test_returns_file_stats(self, mock_run):
         """Should return file statistics."""
+
         def run_side_effect(cmd, **kwargs):
             if "rev-parse" in cmd and "--git-dir" in cmd:
                 return MagicMock(stdout=".git", returncode=0)
@@ -86,9 +89,10 @@ class TestAnalyzeBranch(unittest.TestCase):
         self.assertEqual(result["total"]["additions"], 10)
         self.assertEqual(result["total"]["deletions"], 5)
 
-    @patch('subprocess.run')
+    @patch("subprocess.run")
     def test_handles_no_changes(self, mock_run):
         """Should handle branches with no changes."""
+
         def run_side_effect(cmd, **kwargs):
             if "rev-parse" in cmd and "--git-dir" in cmd:
                 return MagicMock(stdout=".git", returncode=0)
@@ -113,5 +117,5 @@ class TestAnalyzeBranch(unittest.TestCase):
         self.assertEqual(result["total"]["files"], 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
