@@ -41,6 +41,8 @@ All components require YAML frontmatter.
 
 **Valid tools:** `Read`, `Write`, `Edit`, `Bash`, `Glob`, `Grep`, `Task`, `TodoWrite`, `AskUserQuestion`, `Skill`, `WebFetch`, `WebSearch`, `NotebookRead`, `NotebookEdit`, `LS`
 
+**MCP tools:** Use `mcp__*` wildcard to grant access to all MCP server tools, or `mcp__<server>__<tool>` for specific tools (e.g., `mcp__plugin_serena_serena__find_symbol`).
+
 **Skills** (`skills/<name>/SKILL.md`):
 ```yaml
 ---
