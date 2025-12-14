@@ -1,7 +1,7 @@
 ---
 name: python-performance
 description: |
-  Use when profiling Python code, optimizing performance, implementing async patterns, or working with concurrent I/O - covers cProfile, line_profiler, asyncio patterns, and multiprocessing for CPU-bound tasks (plugin:python@dot-claude)
+  Use when profiling Python code, optimizing performance, implementing async patterns, or working with concurrent I/O - covers cProfile, line_profiler, asyncio patterns, and multiprocessing for CPU-bound tasks (plugin:dev-python@pproenca)
 allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit
 ---
 

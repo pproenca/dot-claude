@@ -1,7 +1,7 @@
 ---
 name: python-project
 description: |
-  Use when setting up Python projects, managing dependencies with uv, configuring pyproject.toml, creating project structure, or publishing packages - provides modern Python 3.12+ tooling patterns with uv package manager (plugin:python@dot-claude)
+  Use when setting up Python projects, managing dependencies with uv, configuring pyproject.toml, creating project structure, or publishing packages - provides modern Python 3.12+ tooling patterns with uv package manager (plugin:dev-python@pproenca)
 allowed-tools: Bash(uv:*), Bash(python:*), Read, Edit
 ---
 

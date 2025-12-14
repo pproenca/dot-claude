@@ -1,7 +1,7 @@
 ---
 name: python-testing
 description: |
-  Use when writing pytest tests, creating fixtures, mocking dependencies, or testing async code - provides patterns that verify actual behavior with proper fixtures and parametrization; prevents testing mocks instead of code (plugin:python@dot-claude)
+  Use when writing pytest tests, creating fixtures, mocking dependencies, or testing async code - provides patterns that verify actual behavior with proper fixtures and parametrization; prevents testing mocks instead of code (plugin:dev-python@pproenca)
 allowed-tools: Bash(pytest:*), Bash(uv:*), Read, Edit
 ---
 
