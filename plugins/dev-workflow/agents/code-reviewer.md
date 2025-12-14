@@ -46,7 +46,6 @@ description: |
   </example>
 model: opus
 color: cyan
-tools: Glob, Grep, LS, Read, Bash, mcp__*
 skills: dev-workflow:testing-anti-patterns, dev-workflow:pragmatic-architecture
 ---
 
