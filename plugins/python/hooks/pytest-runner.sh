@@ -1,94 +1,98 @@
-#!/usr/bin/env bash
-# Pytest Runner - PostToolUse hook for automatic test execution
-# Runs pytest after test file edits to provide immediate feedback
-
+#!/bin/bash
 set -euo pipefail
 
-main() {
-  local input
-  local file_path
-  local tool_name
+# PostToolUse hook: Auto-run pytest when test files are modified
+# Triggered after Write or Edit operations on Python test files
 
-  input="$(cat)"
-  file_path="$(jq -r '.tool_input.file_path // .tool_input.path // ""' <<< "${input}")"
-  tool_name="$(jq -r '.tool_name // ""' <<< "${input}")"
+# Get the file path from the tool input
+# The hook receives context via environment variables
+FILE_PATH="${TOOL_INPUT_file_path:-}"
+TOOL_NAME="${TOOL_NAME:-}"
 
-  # Only run for Write/Edit operations
-  if [[ "${tool_name}" != "Write" && "${tool_name}" != "Edit" ]]; then
+# Only proceed for Write/Edit operations
+if [[ "$TOOL_NAME" != "Write" && "$TOOL_NAME" != "Edit" ]]; then
     exit 0
-  fi
+fi
 
-  # If no file path found, skip
-  if [[ -z "${file_path}" ]]; then
+# Check if it's a Python file
+if [[ ! "$FILE_PATH" =~ \.py$ ]]; then
     exit 0
-  fi
+fi
 
-  # Only run for Python test files
-  if [[ ! "${file_path}" =~ \.py$ ]]; then
+# Check if it's a test file (test_*.py or *_test.py)
+BASENAME=$(basename "$FILE_PATH")
+if [[ ! "$BASENAME" =~ ^test_.*\.py$ && ! "$BASENAME" =~ .*_test\.py$ ]]; then
     exit 0
-  fi
+fi
 
-  # Check if this is a test file
-  if [[ ! "${file_path}" =~ (test_|_test\.py$|tests/|/test[^/]*\.py$) ]]; then
+# Verify file exists
+if [[ ! -f "$FILE_PATH" ]]; then
     exit 0
-  fi
+fi
 
-  # Check if file exists
-  if [[ ! -f "${file_path}" ]]; then
-    exit 0
-  fi
-
-  # Find project root (look for pyproject.toml, setup.py, or pytest.ini)
-  local project_root
-  project_root="$(dirname "${file_path}")"
-  while [[ "${project_root}" != "/" ]]; do
-    if [[ -f "${project_root}/pyproject.toml" ]] || \
-       [[ -f "${project_root}/setup.py" ]] || \
-       [[ -f "${project_root}/pytest.ini" ]] || \
-       [[ -f "${project_root}/setup.cfg" ]]; then
-      break
-    fi
-    project_root="$(dirname "${project_root}")"
-  done
-
-  # If no project root found, use file directory
-  if [[ "${project_root}" == "/" ]]; then
-    project_root="$(dirname "${file_path}")"
-  fi
-
-  # Check for pytest availability
-  local pytest_cmd=""
-  if [[ -f "${project_root}/uv.lock" ]] || [[ -f "${project_root}/.venv/bin/uv" ]]; then
-    pytest_cmd="uv run pytest"
-  elif [[ -f "${project_root}/.venv/bin/pytest" ]]; then
-    pytest_cmd="${project_root}/.venv/bin/pytest"
-  elif command -v pytest &> /dev/null; then
-    pytest_cmd="pytest"
-  else
-    echo "ℹ️  pytest not found - install with: uv add --dev pytest"
-    exit 0
-  fi
-
-  # Run pytest on the specific test file
-  echo ""
-  echo "🧪 Running tests: ${file_path##*/}"
-  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-  cd "${project_root}"
-
-  # Run pytest with verbose output, capture exit code
-  local exit_code=0
-  ${pytest_cmd} "${file_path}" -v --tb=short 2>&1 || exit_code=$?
-
-  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-  if [[ ${exit_code} -eq 0 ]]; then
-    echo "✅ Tests passed"
-  else
-    echo "❌ Tests failed (exit code: ${exit_code})"
-  fi
-
-  exit 0
+# Find project root by looking for pyproject.toml, setup.py, pytest.ini, or setup.cfg
+find_project_root() {
+    local dir="$1"
+    while [[ "$dir" != "/" ]]; do
+        if [[ -f "$dir/pyproject.toml" || -f "$dir/setup.py" || \
+              -f "$dir/pytest.ini" || -f "$dir/setup.cfg" ]]; then
+            echo "$dir"
+            return 0
+        fi
+        dir=$(dirname "$dir")
+    done
+    return 1
 }
 
-main "$@"
+# Get directory containing the test file
+FILE_DIR=$(dirname "$FILE_PATH")
+
+# Find project root
+PROJECT_ROOT=$(find_project_root "$FILE_DIR") || {
+    echo "⚠️  Could not find project root for pytest"
+    exit 0
+}
+
+cd "$PROJECT_ROOT"
+
+# Determine pytest command
+get_pytest_cmd() {
+    # Prefer uv if pyproject.toml exists and uv is available
+    if [[ -f "pyproject.toml" ]] && command -v uv &>/dev/null; then
+        echo "uv run pytest"
+        return 0
+    fi
+
+    # Check for venv pytest
+    if [[ -f ".venv/bin/pytest" ]]; then
+        echo ".venv/bin/pytest"
+        return 0
+    fi
+
+    # Check for system pytest
+    if command -v pytest &>/dev/null; then
+        echo "pytest"
+        return 0
+    fi
+
+    return 1
+}
+
+PYTEST_CMD=$(get_pytest_cmd) || {
+    echo "⚠️  pytest not found. Install with: uv add --dev pytest"
+    exit 0
+}
+
+# Run pytest on the specific test file
+echo "🧪 Running tests for: $FILE_PATH"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# Run pytest with verbose output and short traceback
+if $PYTEST_CMD "$FILE_PATH" -v --tb=short; then
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "✅ Tests passed"
+else
+    EXIT_CODE=$?
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "❌ Tests failed (exit code: $EXIT_CODE)"
+fi

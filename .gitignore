@@ -1,6 +1,6 @@
 # Claude Code local settings
-# .claude/*.local.md
-# **/.claude/*.local.md
+.claude/*.local.md
+**/.claude/*.local.md
 
 # Sensitive files - NEVER commit
 .env

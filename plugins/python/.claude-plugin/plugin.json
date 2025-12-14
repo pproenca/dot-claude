@@ -1,9 +1,9 @@
 {
   "name": "python",
-  "version": "3.1.0",
+  "version": "1.0.0",
   "description": "Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django and production-ready practices",
-  "homepage": "https://github.com/pedroproenca/dot-claude/tree/main/plugins/python",
-  "repository": "https://github.com/pedroproenca/dot-claude",
+  "homepage": "https://github.com/pproenca/dot-claude/tree/master/plugins/python",
+  "repository": "https://github.com/pproenca/dot-claude",
   "license": "MIT",
   "keywords": [
     "python",

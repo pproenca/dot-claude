@@ -1,0 +1,18 @@
+{
+  "name": "pproenca",
+  "description": "Pedro Proenca's Claude Code plugins",
+  "plugins": [
+    {
+      "name": "python",
+      "description": "Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django and production-ready practices",
+      "version": "1.0.0",
+      "path": "plugins/python"
+    },
+    {
+      "name": "dev-workflow",
+      "description": "Development workflow with TDD, debugging, and collaboration skills",
+      "version": "2.4.2",
+      "path": "plugins/dev-workflow"
+    }
+  ]
+}

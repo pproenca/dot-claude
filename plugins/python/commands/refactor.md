@@ -1,127 +1,187 @@
 ---
-description: Refactor a Python file using ruff, mypy, and modern patterns
-argument-hint: "<path/to/file.py>"
-allowed-tools: [Bash, Read, Edit, Glob, AskUserQuestion, Task, Skill]
+name: refactor
+description: Modernize a Python file with ruff, mypy, and expert review for Python 3.12+ patterns
+argument-hint: <file_path>
+allowed-tools: Bash(ruff:*), Bash(mypy:*), Bash(uv:*), Bash(python:*), Read, Edit, Task, Glob
 ---
 
 # Refactor Python File
 
-Refactor the specified Python file to follow modern Python patterns and best practices.
+Modernize a Python file using automated tools and expert review.
 
-## Progress Tracking
+## Workflow
 
-Create TodoWrite with each step:
-1. Identify and read target file
-2. Analyze (ruff + mypy + python-expert in parallel)
-3. Propose changes
-4. Apply refactoring
-5. Verify and report
+### Step 1: Locate Target File
 
-## Step 1: Identify and Read Target File
+If `$ARGUMENTS` is provided, use that file path. Otherwise:
 
-If `$ARGUMENTS` is provided, use it as the target file path.
+1. Use Glob to find Python files in the current directory
+2. Ask the user which file to refactor using AskUserQuestion
 
-Otherwise, find Python files and prompt user:
+### Step 2: Run Analysis (Parallel)
 
-```bash
-fd -e py --type f 2>/dev/null | head -20
+Run these checks concurrently:
+
+1. **Ruff Analysis**
+   ```bash
+   uv run ruff check <file> --output-format=json
+   uv run ruff format <file> --check --diff
+   ```
+
+2. **Mypy Type Check**
+   ```bash
+   uv run mypy <file> --show-error-codes
+   ```
+
+3. **Python Expert Task**
+   Use the Task tool with `python:python-expert` agent to analyze:
+   - Modern Python 3.12+ patterns that could be applied
+   - Pythonic idioms that could improve readability
+   - Type hint improvements
+
+4. **Comment Review**
+   Check comments against `references/decision-based-comments.md`:
+   - Flag translation comments (describe WHAT) for removal
+   - Verify non-obvious code has decision comments (explain WHY)
+   - Ensure workarounds reference external tickets
+
+### Step 3: Present Findings
+
+Consolidate all findings and present to user:
+
+```
+## Refactoring Analysis for <file>
+
+### Critical Issues (ruff errors, type errors)
+- Issue 1
+- Issue 2
+
+### Style Improvements (ruff suggestions)
+- Suggestion 1
+- Suggestion 2
+
+### Modernization Opportunities (3.12+ patterns)
+- Pattern 1
+- Pattern 2
+
+### Comment Quality
+- Comments to remove: X
+- Missing decision comments: Y
 ```
 
-Use AskUserQuestion:
-- Header: "File"
-- Question: "Which Python file would you like to refactor?"
-- Options: [up to 4 files from fd results]
+Ask user: "Apply all changes, critical fixes only, or cancel?"
 
-Read the file content to understand its structure.
+### Step 4: Apply Changes
 
-## Step 2: Analyze
+Based on user choice:
 
-Run these in parallel:
+**All changes:**
+1. Apply ruff fixes: `uv run ruff check <file> --fix`
+2. Apply ruff format: `uv run ruff format <file>`
+3. Apply comment improvements via Edit tool
+4. Apply modernization patterns via Edit tool
 
-### Ruff check
-```bash
-ruff check "<target_file_path>" 2>&1 || true
-```
+**Critical only:**
+1. Apply only ruff error fixes (not style suggestions)
+2. Apply type fixes
 
-### Ruff format diff
-```bash
-ruff format --diff "<target_file_path>" 2>&1 || true
-```
+### Step 5: Verify
 
-### Mypy (if installed)
-```bash
-mypy "<target_file_path>" --ignore-missing-imports 2>&1 || true
-```
+After applying changes:
 
-### Python-expert dispatch
-```
-Task tool with:
-- subagent_type: "python:python-expert"
-- prompt: "REVIEW the Python file at <target_file_path> for modern Python 3.12+ patterns, type hints, async patterns if applicable, and overall code quality"
-```
+1. Run syntax check: `python -m py_compile <file>`
+2. Run ruff again to confirm no new issues
+3. Run mypy again to confirm type improvements
 
-Combine findings. For each issue note:
-- Line number
-- Current code
-- Recommended fix
-- Rule reference (ruff code or pattern name)
-
-## Step 3: Propose Changes
-
-Present summary:
-- Total issues: N
-- Ruff violations: N
-- Type errors: N
-- Pattern improvements: N
-
-Use AskUserQuestion:
-- Header: "Refactor"
-- Question: "How would you like to proceed?"
-- Options:
-  - Apply all: Apply all changes
-  - Critical only: Only apply ruff errors and type fixes
-  - Cancel: Do not make changes
-
-## Step 4: Apply Refactoring
-
-Use Edit tool to apply approved changes in order:
-1. Critical fixes (type errors, security issues)
-2. Ruff auto-fixes (formatting, linting)
-3. Pattern improvements (modern Python idioms)
-
-## Step 5: Verify and Report
-
-### Syntax check
-```bash
-python -m py_compile "<target_file_path>"
-```
-
-### Ruff comparison
-```bash
-ruff check "<target_file_path>" 2>&1 || true
-```
-
-### Final Report
-
+Report:
 ```
 ## Refactoring Complete
 
-**File:** [path]
+Before: X issues
+After: Y issues
 
-### Changes Applied
-- [key changes by category]
-
-### Ruff Comparison
-| Metric | Before | After | Delta |
-|--------|--------|-------|-------|
-| Errors | N | N | -N |
-| Warnings | N | N | -N |
-
-### Verification
-- Syntax check: [PASS/FAIL]
-- Ruff delta: [Improved/Same/Regressed]
-
-### Python Expert Assessment
-- **Initial Review:** [summary]
-- **Recommendation:** [PASS/NEEDS_FIXES]
+Changes applied:
+- Ruff fixes: N
+- Format changes: Y/N
+- Comment updates: N
+- Pattern modernizations: N
 ```
+
+## Comment Philosophy
+
+When reviewing comments, apply Guido's philosophy:
+
+> "Code tells you *how*. Comments tell you *why*."
+
+**Remove:**
+- `i += 1  # Increment i by 1` (translation comment)
+- `# Loop through users` (obvious from code)
+- Type information in comments (use type hints)
+
+**Keep/Add:**
+- Why a non-obvious approach was chosen
+- Workarounds with ticket references
+- Business logic that may outlive tribal knowledge
+- Magic numbers with derivation
+
+## Modern Patterns to Apply
+
+### Type Hints (3.10+)
+```python
+# Old
+from typing import List, Dict, Optional
+def func(items: List[str]) -> Optional[Dict[str, int]]: ...
+
+# New
+def func(items: list[str]) -> dict[str, int] | None: ...
+```
+
+### Match Statements (3.10+)
+```python
+# Old
+if status == "pending":
+    ...
+elif status == "active":
+    ...
+
+# New
+match status:
+    case "pending":
+        ...
+    case "active":
+        ...
+```
+
+### Dataclasses
+```python
+# Old
+class Config:
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
+
+# New
+from dataclasses import dataclass
+
+@dataclass
+class Config:
+    host: str
+    port: int = 8080
+```
+
+### F-strings
+```python
+# Old
+"Hello, {}".format(name)
+"Hello, %s" % name
+
+# New
+f"Hello, {name}"
+```
+
+## Safety
+
+- Always verify syntax after changes
+- Run existing tests if available
+- Create backup recommendation for large changes
+- Don't change public API signatures without explicit approval
