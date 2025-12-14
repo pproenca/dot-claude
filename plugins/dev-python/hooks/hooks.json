@@ -1,25 +1,27 @@
 {
-  "SessionStart": [
-    {
-      "hooks": [
-        {
-          "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/detect-python-version.sh",
-          "timeout": 5000
-        }
-      ]
-    }
-  ],
-  "PostToolUse": [
-    {
-      "matcher": "Write|Edit",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pytest-runner.sh",
-          "timeout": 60000
-        }
-      ]
-    }
-  ]
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/detect-python-version.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pytest-runner.sh",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
 }
