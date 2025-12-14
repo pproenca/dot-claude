@@ -297,13 +297,13 @@ asyncio_mode = "auto"
 
 ## Workflow Integration
 
-If the `core` plugin is installed, use these skills:
+If the `dev-workflow` plugin is installed, use these skills:
 
 | Task | Skill |
 |------|-------|
-| Full TDD methodology | `core:tdd` |
-| Debug test failures | `debug:systematic` |
-| Before claiming done | `core:verification` |
+| Full TDD methodology | `dev-workflow:test-driven-development` |
+| Debug test failures | `dev-workflow:systematic-debugging` |
+| Before claiming done | `dev-workflow:verification-before-completion` |
 
 ## Best Practices
 

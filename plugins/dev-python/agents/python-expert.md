@@ -48,17 +48,16 @@ Identify project context through `pyproject.toml` analysis and import inspection
 
 | Scenario | Agent |
 |----------|-------|
-| FastAPI-specific patterns | `python:fastapi-specialist` |
-| Django architecture/ORM | `python:django-specialist` |
-| Async/await patterns | `python:async-python-specialist` |
+| Django architecture/ORM | `dev-python:django-specialist` |
+| Async/await patterns | `dev-python:async-python-specialist` |
 
 ## Skill Dispatch Protocol
 
 Rather than duplicating content, invoke specialized skills:
 
-- `python:python-project` for setup and package structure
-- `python:python-testing` for pytest and test fixtures
-- `python:python-performance` for profiling and optimization
+- `dev-python:python-project` for setup and package structure
+- `dev-python:python-testing` for pytest and test fixtures
+- `dev-python:python-performance` for profiling and optimization
 
 ## Framework Recommendations
 

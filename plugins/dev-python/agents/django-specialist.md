@@ -269,6 +269,6 @@ def send_order_confirmation(self, order_id: int) -> None:
 
 | Task | Skill |
 |------|-------|
-| Project setup | `python:python-project` |
-| Writing tests | `python:python-testing` |
-| Query profiling | `python:python-performance` |
+| Project setup | `dev-python:python-project` |
+| Writing tests | `dev-python:python-testing` |
+| Query profiling | `dev-python:python-performance` |

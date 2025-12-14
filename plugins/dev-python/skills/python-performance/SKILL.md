@@ -298,9 +298,9 @@ def test_performance(benchmark):
 
 | Task | Skill |
 |------|-------|
-| Writing async tests | `python:python-testing` |
-| Root cause analysis | `debug:systematic` |
-| Before claiming done | `core:verification` |
+| Writing async tests | `dev-python:python-testing` |
+| Root cause analysis | `dev-workflow:systematic-debugging` |
+| Before claiming done | `dev-workflow:verification-before-completion` |
 
 ## Best Practices
 

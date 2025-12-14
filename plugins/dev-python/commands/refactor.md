@@ -33,7 +33,7 @@ Run these checks concurrently:
    ```
 
 3. **Python Expert Task**
-   Use the Task tool with `python:python-expert` agent to analyze:
+   Use the Task tool with `dev-python:python-expert` agent to analyze:
    - Modern Python 3.12+ patterns that could be applied
    - Pythonic idioms that could improve readability
    - Type hint improvements

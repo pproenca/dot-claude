@@ -443,10 +443,10 @@ async def fetch_with_timeout(url: str, timeout: float = 10.0) -> dict:
 
 | Task | Skill to Use |
 |------|--------------|
-| Project setup | `python:python-project` |
-| Writing tests | `python:python-testing` |
-| Profiling | `python:python-performance` |
-| Debugging | `debug:systematic` |
+| Project setup | `dev-python:python-project` |
+| Writing tests | `dev-python:python-testing` |
+| Profiling | `dev-python:python-performance` |
+| Debugging | `dev-workflow:systematic-debugging` |
 
 ## Best Practices
 

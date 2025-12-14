@@ -215,9 +215,9 @@ uv lock --upgrade
 
 | Task | Skill |
 |------|-------|
-| Writing tests | `python:python-testing` |
-| Profiling, async | `python:python-performance` |
-| Before claiming done | `core:verification` |
+| Writing tests | `dev-python:python-testing` |
+| Profiling, async | `dev-python:python-performance` |
+| Before claiming done | `dev-workflow:verification-before-completion` |
 
 ## Best Practices
 
