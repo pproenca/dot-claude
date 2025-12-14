@@ -106,6 +106,12 @@ lint:  ## Check code with shellcheck (no auto-fix)
 
 .PHONY: validate
 validate:  ## Run plugin-specific validation (JSON, frontmatter, permissions)
+	@echo "=== Claude Plugin Validation ==="
+	@for dir in $(PLUGIN_DIR)/*/; do \
+		echo "Validating $$(basename $$dir)..."; \
+		claude plugin validate "$$dir" || exit 1; \
+	done
+	@echo ""
 	@echo "=== Validating dev-workflow ==="
 	@$(DEV_WORKFLOW)/scripts/validate.sh
 	@echo ""

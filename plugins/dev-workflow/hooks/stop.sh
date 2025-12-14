@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-# shellcheck source=scripts/hook-helpers.sh
+# shellcheck disable=SC1091
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
 
 STATE_FILE="$(get_state_file 2>/dev/null)" || exit 0

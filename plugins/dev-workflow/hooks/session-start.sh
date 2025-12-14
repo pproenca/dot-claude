@@ -7,7 +7,7 @@ set -euo pipefail
 # Try to source hook-helpers.sh if available (for state file detection)
 HELPERS="${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
 if [[ -f "$HELPERS" ]]; then
-  # shellcheck source=scripts/hook-helpers.sh
+  # shellcheck disable=SC1090,SC1091
   source "$HELPERS"
 
   # Check for active workflow FIRST (resume capability)
