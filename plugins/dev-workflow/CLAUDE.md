@@ -100,3 +100,23 @@ tests/           # Bats tests for hooks and scripts
 
 **Required:** `git`
 **Optional:** `jq`, `bats-core`, `shellcheck`, `pre-commit`
+
+## MCP Integration
+
+This plugin bundles [cclsp](https://github.com/ktnyt/cclsp) for LSP-based code navigation. Configuration in `.mcp.json`.
+
+**Setup:** `npx cclsp@latest setup --user` (one-time), then set `CCLSP_CONFIG_PATH` env var.
+
+**cclsp tools:**
+| Tool | Purpose |
+|------|---------|
+| `mcp__cclsp__find_definition` | Jump to symbol definitions |
+| `mcp__cclsp__find_references` | Find all usages of a symbol |
+| `mcp__cclsp__get_diagnostics` | Check for type errors/warnings |
+| `mcp__cclsp__rename_symbol` | Safe refactoring across codebase |
+
+**Usage by component:**
+- **code-explorer**: Symbol navigation during codebase survey
+- **code-architect**: Validating integration points, finding references
+- **code-reviewer**: Running diagnostics on changed files, checking for broken references
+- **execute-plan tasks**: Type checking before commits, safe refactoring

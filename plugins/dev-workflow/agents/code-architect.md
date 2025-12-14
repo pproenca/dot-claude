@@ -97,6 +97,10 @@ Before proposing ANY design, verify you are NOT:
 - Find similar features for reference
 - **Count existing abstractions** — Note which patterns appear 3+ times
 - **Library documentation** — Use Context7 MCP tools (`mcp__context7__resolve-library-id`, `mcp__context7__get-library-docs`) to fetch up-to-date docs for unfamiliar libraries
+- **Symbol navigation** — Use cclsp LSP tools for precise code understanding:
+  - `mcp__cclsp__find_definition` — Locate where key symbols are defined
+  - `mcp__cclsp__find_references` — Find all usages of interfaces, classes, functions
+  - `mcp__cclsp__get_diagnostics` — Check for type errors in files you're analyzing
 
 **Phase 2: Architecture Design**
 
@@ -106,6 +110,7 @@ Before proposing ANY design, verify you are NOT:
 - Consider error handling, security, performance
 - **Apply Rule of Three** — Only abstract patterns that exist 3+ times
 - **Apply Colocation** — Propose minimum viable file structure
+- **Validate integration points** — Use `mcp__cclsp__find_references` to verify proposed changes won't break existing consumers
 
 **Phase 3: Implementation Blueprint**
 

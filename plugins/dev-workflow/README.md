@@ -89,6 +89,8 @@ PostPlanModeExit hook
 | `code-architect` | Design implementation approach |
 | `code-reviewer` | Review completed work |
 
+All agents leverage cclsp LSP tools for precise symbol navigation (`find_definition`, `find_references`, `get_diagnostics`).
+
 ## Installation
 
 ```bash
@@ -105,6 +107,28 @@ git clone https://github.com/pproenca/dev-workflow ~/.claude/plugins/dev-workflo
 
 **Required:** `git`
 **Optional:** `jq`, `bats-core`, `shellcheck`, `pre-commit`
+
+### MCP Servers
+
+This plugin bundles [cclsp](https://github.com/ktnyt/cclsp) for LSP-based code navigation. One-time setup:
+
+```bash
+# Run the interactive setup wizard
+npx cclsp@latest setup --user
+
+# Set the environment variable (add to your shell profile)
+export CCLSP_CONFIG_PATH="$HOME/.config/claude/cclsp.json"
+```
+
+The plugin automatically starts cclsp via `npx -y cclsp@latest` — no global installation required.
+
+**Tools provided:**
+| Tool | Purpose |
+|------|---------|
+| `mcp__cclsp__find_definition` | Jump to symbol definitions |
+| `mcp__cclsp__find_references` | Find all usages across codebase |
+| `mcp__cclsp__get_diagnostics` | Type errors and warnings |
+| `mcp__cclsp__rename_symbol` | Safe refactoring |
 
 ## Usage
 

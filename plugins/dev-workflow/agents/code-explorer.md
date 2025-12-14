@@ -91,6 +91,12 @@ Use Grep to find similar implementations:
 - Find shared utilities and common abstractions
 - Check for existing type definitions and interfaces
 
+**Use cclsp LSP tools for precise symbol navigation:**
+
+- `mcp__cclsp__find_definition` — Jump to where a symbol is defined (faster than grep for known symbols)
+- `mcp__cclsp__find_references` — Find all usages of a function, class, or interface across the codebase
+- `mcp__cclsp__get_diagnostics` — Check if files have type errors or warnings that indicate patterns to follow
+
 ### Phase 3: Integration Analysis
 
 Read key files to understand boundaries:
@@ -100,6 +106,11 @@ Read key files to understand boundaries:
 - Map module boundaries and dependency directions
 - Note any dependency injection or service locator patterns
 - Find configuration and environment variable patterns
+
+**Use cclsp for integration mapping:**
+
+- When you find an integration point (e.g., a service registry), use `mcp__cclsp__find_references` to see all existing integrations
+- Use `mcp__cclsp__find_definition` to trace imports back to their source modules
 
 ### Phase 4: Test Convention Discovery
 

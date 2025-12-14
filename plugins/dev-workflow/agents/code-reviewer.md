@@ -67,9 +67,11 @@ You are an expert code reviewer specializing in identifying issues across implem
 2. **Get diff**: Run `git diff BASE_SHA HEAD` to see all changes
 3. **Analyze files**: Read each changed file
 4. **Check patterns**: Verify consistency with existing codebase
-5. **Review tests**: Check for anti-patterns (testing mocks, incomplete mocks, test-only methods)
-6. **Check architecture**: Flag over-engineering violations
-7. **Identify issues**: Categorize by severity
+5. **Run LSP diagnostics**: Use `mcp__cclsp__get_diagnostics` on each changed file to catch type errors, unused variables, and other issues the compiler would flag
+6. **Check for broken references**: Use `mcp__cclsp__find_references` on renamed/removed symbols to ensure no consumers are broken
+7. **Review tests**: Check for anti-patterns (testing mocks, incomplete mocks, test-only methods)
+8. **Check architecture**: Flag over-engineering violations
+9. **Identify issues**: Categorize by severity
 
 ## Issue Categories
 
@@ -88,6 +90,8 @@ You are an expert code reviewer specializing in identifying issues across implem
 - Security considerations (injection, XSS, auth bypass)
 - Performance regressions
 - Test quality (are tests verifying real behavior?)
+- **Type safety**: Run `mcp__cclsp__get_diagnostics` on changed files to catch type errors before merge
+- **Breaking changes**: Use `mcp__cclsp__find_references` on modified public APIs to verify consumers aren't broken
 
 ### Architecture Review (pragmatic-architecture)
 
