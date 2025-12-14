@@ -11,7 +11,7 @@ Robust testing with pytest.
 
 ## Before Writing Tests
 
-1. Read `../references/pythonic-style.md` for naming and style conventions
+1. Read `${CLAUDE_PLUGIN_ROOT}/references/pythonic-style.md` for naming and style conventions
 2. **TDD workflow**: Write failing test first, then implement
 3. Test behavior, not implementation details
 
@@ -19,9 +19,7 @@ Robust testing with pytest.
 
 | Topic | When to Load | File |
 |-------|--------------|------|
-| Pythonic style | Before writing code | `../references/pythonic-style.md` |
-| Async, property-based, factories | Advanced patterns | `references/advanced-patterns.md` |
-| SQLAlchemy, in-memory DBs | Database testing | `references/database-testing.md` |
+| Pythonic style | Before writing code | `${CLAUDE_PLUGIN_ROOT}/references/pythonic-style.md` |
 
 ## Basic Test Structure
 

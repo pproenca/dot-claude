@@ -84,7 +84,7 @@ Rather than duplicating content, invoke specialized skills:
 
 When reviewing Python code, verify:
 
-1. **Comments explain WHY, not WHAT** - See `references/decision-based-comments.md`
+1. **Comments explain WHY, not WHAT** - See `${CLAUDE_PLUGIN_ROOT}/references/decision-based-comments.md`
 2. **Workarounds reference tickets** - External bugs must have issue links
 3. **Magic values have derivation** - Numbers need context comments
 4. **Type hints used consistently** - Modern Python 3.10+ syntax
@@ -96,7 +96,7 @@ Follow Guido's philosophy:
 - Consistency within module > consistency with PEP 8
 - Know when to break rules thoughtfully
 
-Reference `references/pythonic-style.md` for complete guidelines.
+Reference `${CLAUDE_PLUGIN_ROOT}/references/pythonic-style.md` for complete guidelines.
 
 ## Modern Python Stack (2024/2025)
 

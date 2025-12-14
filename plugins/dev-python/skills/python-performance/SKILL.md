@@ -11,7 +11,7 @@ Profiling, optimization, and async patterns for Python.
 
 ## Before Writing Code
 
-1. Read `../references/pythonic-style.md` for style conventions
+1. Read `${CLAUDE_PLUGIN_ROOT}/references/pythonic-style.md` for style conventions
 2. Check Python version: 3.13+ enables free-threaded concurrency options
 3. **Profile before optimizing** - never guess at bottlenecks
 
@@ -19,9 +19,7 @@ Profiling, optimization, and async patterns for Python.
 
 | Topic | When to Load | File |
 |-------|--------------|------|
-| Pythonic style | Before generating code | `../references/pythonic-style.md` |
-| Semaphores, locks, producers/consumers | Advanced async | `references/async-advanced.md` |
-| Database, memory, NumPy optimization | Deep optimization | `references/optimization-advanced.md` |
+| Pythonic style | Before generating code | `${CLAUDE_PLUGIN_ROOT}/references/pythonic-style.md` |
 
 ## Profiling First
 

@@ -261,9 +261,9 @@ def send_order_confirmation(self, order_id: int) -> None:
 
 | Topic | File |
 |-------|------|
-| Django style guide | `references/django-styleguide.md` |
-| Pythonic style | `references/pythonic-style.md` |
-| Comment philosophy | `references/decision-based-comments.md` |
+| Django style guide | `${CLAUDE_PLUGIN_ROOT}/references/django-styleguide.md` |
+| Pythonic style | `${CLAUDE_PLUGIN_ROOT}/references/pythonic-style.md` |
+| Comment philosophy | `${CLAUDE_PLUGIN_ROOT}/references/decision-based-comments.md` |
 
 ## Skill Integration
 

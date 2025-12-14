@@ -11,7 +11,7 @@ Modern Python project setup and dependency management with uv.
 
 ## Before Writing Code
 
-1. Read `references/pythonic-style.md` for style conventions
+1. Read `${CLAUDE_PLUGIN_ROOT}/references/pythonic-style.md` for style conventions
 2. Check Python version: `pyproject.toml` → `.python-version` → `.claude/python-version`
 3. If unknown, ask user once and store in `.claude/python-version`
 
@@ -19,10 +19,8 @@ Modern Python project setup and dependency management with uv.
 
 | Topic | When to Load | File |
 |-------|--------------|------|
-| Pythonic style, conventions | Before generating code | `../references/pythonic-style.md` |
-| Version-specific features | When adapting to Python version | `../references/version-features.md` |
-| GitHub Actions, Docker, monorepo | CI/CD and advanced workflows | `references/ci-cd-workflows.md` |
-| Full pyproject.toml templates | Complete configuration examples | `references/pyproject-templates.md` |
+| Pythonic style, conventions | Before generating code | `${CLAUDE_PLUGIN_ROOT}/references/pythonic-style.md` |
+| Version-specific features | When adapting to Python version | `${CLAUDE_PLUGIN_ROOT}/references/version-features.md` |
 
 ## Quick Start
 

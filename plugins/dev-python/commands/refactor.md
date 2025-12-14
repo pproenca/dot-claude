@@ -1,8 +1,7 @@
 ---
-name: refactor
 description: Modernize a Python file with ruff, mypy, and expert review for Python 3.12+ patterns
 argument-hint: <file_path>
-allowed-tools: Bash(ruff:*), Bash(mypy:*), Bash(uv:*), Bash(python:*), Read, Edit, Task, Glob
+allowed-tools: Bash(ruff:*), Bash(mypy:*), Bash(uv:*), Bash(python:*), Read, Edit, Task, Glob, AskUserQuestion
 ---
 
 # Refactor Python File
@@ -40,7 +39,7 @@ Run these checks concurrently:
    - Type hint improvements
 
 4. **Comment Review**
-   Check comments against `references/decision-based-comments.md`:
+   Check comments against `${CLAUDE_PLUGIN_ROOT}/references/decision-based-comments.md`:
    - Flag translation comments (describe WHAT) for removal
    - Verify non-obvious code has decision comments (explain WHY)
    - Ensure workarounds reference external tickets

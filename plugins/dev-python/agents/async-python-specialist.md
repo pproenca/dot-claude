@@ -54,9 +54,7 @@ Load these progressively as needed:
 
 | Topic | When to Load | File |
 |-------|--------------|------|
-| Advanced async | Complex patterns | `python-performance/references/async-advanced.md` |
-| Testing | Async tests | `python-testing/references/advanced-patterns.md` |
-| Style guide | Code review | `references/pythonic-style.md` |
+| Style guide | Code review | `${CLAUDE_PLUGIN_ROOT}/references/pythonic-style.md` |
 
 ## Async Fundamentals
 
