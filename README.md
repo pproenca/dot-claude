@@ -6,7 +6,7 @@ Personal Claude Code plugins marketplace.
 
 | Plugin | Description | Version |
 |--------|-------------|---------|
-| [python](plugins/python) | Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django | 1.0.0 |
+| [dev-python](plugins/dev-python) | Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django | 1.0.0 |
 | [dev-workflow](plugins/dev-workflow) | Development workflow with TDD, debugging, and collaboration skills | 2.4.2 |
 
 ## Installation
@@ -21,7 +21,7 @@ Then install individual plugins:
 
 ```bash
 # Install Python plugin
-claude plugins install pproenca/python
+claude plugins install pproenca/dev-python
 
 # Install dev-workflow plugin
 claude plugins install pproenca/dev-workflow
@@ -29,7 +29,7 @@ claude plugins install pproenca/dev-workflow
 
 ## Plugin Details
 
-### python
+### dev-python
 
 Modern Python development plugin with:
 - uv package manager integration

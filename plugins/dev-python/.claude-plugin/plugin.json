@@ -1,8 +1,8 @@
 {
-  "name": "python",
+  "name": "dev-python",
   "version": "1.0.0",
   "description": "Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django and production-ready practices",
-  "homepage": "https://github.com/pproenca/dot-claude/tree/master/plugins/python",
+  "homepage": "https://github.com/pproenca/dot-claude/tree/master/plugins/dev-python",
   "repository": "https://github.com/pproenca/dot-claude",
   "license": "MIT",
   "keywords": [
