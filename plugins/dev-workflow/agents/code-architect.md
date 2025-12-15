@@ -47,7 +47,7 @@ description: |
   </commentary>
   assistant: "I'll use the code-architect agent to analyze cross-module integration points."
   </example>
-tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, mcp__*
+tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, mcp__plugin_serena_serena__activate_project, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__search_for_pattern, mcp__plugin_serena_serena__read_file, mcp__plugin_serena_serena__list_dir
 model: opus
 color: green
 skills: dev-workflow:defense-in-depth, dev-workflow:pragmatic-architecture

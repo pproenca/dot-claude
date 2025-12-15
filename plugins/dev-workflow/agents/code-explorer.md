@@ -44,7 +44,7 @@ description: |
   </commentary>
   assistant: "I'll use the code-explorer agent to survey the project structure and conventions."
   </example>
-tools: Glob, Grep, LS, Read, mcp__*
+tools: Glob, Grep, LS, Read, mcp__plugin_serena_serena__activate_project, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__search_for_pattern, mcp__plugin_serena_serena__read_file, mcp__plugin_serena_serena__list_dir
 model: sonnet
 color: blue
 ---

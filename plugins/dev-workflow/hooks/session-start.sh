@@ -34,6 +34,16 @@ fi
 # No active workflow - load getting-started skill
 SKILL_FILE="${CLAUDE_PLUGIN_ROOT}/skills/getting-started/SKILL.md"
 
+# Check for Serena project configuration
+SERENA_CONTEXT=""
+if [[ -f ".serena/project.yml" ]]; then
+  # Extract project name from .serena/project.yml
+  SERENA_PROJECT=$(grep -E "^name:" .serena/project.yml 2>/dev/null | sed 's/name:[[:space:]]*//' | tr -d '"' || echo "")
+  if [[ -n "$SERENA_PROJECT" ]]; then
+    SERENA_CONTEXT="\\n\\n**Serena MCP Integration:**\\nIf Serena MCP tools are available (mcp__plugin_serena_serena__*), activate the project first:\\n- Call mcp__plugin_serena_serena__activate_project with project: \\\"${SERENA_PROJECT}\\\"\\n- Use Serena symbolic tools (find_symbol, get_symbols_overview, find_referencing_symbols) for code navigation"
+  fi
+fi
+
 if [[ -f "$SKILL_FILE" ]]; then
   # Check file size (guard against large files)
   FILESIZE=$(wc -c < "$SKILL_FILE" | tr -d '[:space:]')
@@ -49,7 +59,7 @@ if [[ -f "$SKILL_FILE" ]]; then
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "<system-context>\\ndev-workflow skills available.\\n\\n**Getting Started:**\\n\\n${CONTENT}\\n</system-context>"
+    "additionalContext": "<system-context>\\ndev-workflow skills available.\\n\\n**Getting Started:**\\n\\n${CONTENT}${SERENA_CONTEXT}\\n</system-context>"
   }
 }
 EOF
