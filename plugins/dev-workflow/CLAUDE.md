@@ -41,8 +41,6 @@ All components require YAML frontmatter.
 
 **Valid tools:** `Read`, `Write`, `Edit`, `Bash`, `Glob`, `Grep`, `Task`, `TodoWrite`, `AskUserQuestion`, `Skill`, `WebFetch`, `WebSearch`, `NotebookRead`, `NotebookEdit`, `LS`
 
-**MCP tools:** Use `mcp__*` wildcard to grant access to all MCP server tools, or `mcp__<server>__<tool>` for specific tools (e.g., `mcp__plugin_serena_serena__find_symbol`).
-
 **Skills** (`skills/<name>/SKILL.md`):
 ```yaml
 ---
@@ -100,20 +98,3 @@ tests/           # Bats tests for hooks and scripts
 
 **Required:** `git`
 **Optional:** `jq`, `bats-core`, `shellcheck`, `pre-commit`
-
-## Optional: LSP Code Navigation
-
-Install the `cclsp` plugin for enhanced symbol navigation:
-
-```bash
-claude plugin add pproenca/cclsp
-/cclsp:setup
-```
-
-**Feature detection:** Agents check for `mcp__cclsp__*` tools at runtime. When available, LSP tools are preferred over grep-based search for:
-- Symbol definitions (`find_definition` vs `Grep`)
-- Reference lookup (`find_references` vs `Grep`)
-- Type diagnostics (`get_diagnostics` — no fallback)
-- Safe refactoring (`rename_symbol` — no fallback)
-
-The plugin works fully without cclsp. LSP tools are an optional enhancement.

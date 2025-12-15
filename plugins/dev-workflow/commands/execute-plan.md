@@ -114,9 +114,6 @@ Task:
   description: "Execute Task [N]"
   prompt: |
     Execute Task [N] from plan. Follow TDD instructions exactly.
-
-    If `mcp__cclsp__*` tools are available (via cclsp plugin), use them for symbol navigation.
-
     [Task content extracted via get_task_content]
   run_in_background: true
 ```
@@ -220,9 +217,6 @@ Task:
   description: "Execute Task 1"
   prompt: |
     Execute Task 1 from plan. Follow TDD instructions exactly.
-
-    If `mcp__cclsp__*` tools are available (via cclsp plugin), use them for symbol navigation.
-
     [Task 1 content extracted via get_task_content]
   run_in_background: true
 
@@ -232,9 +226,6 @@ Task:
   description: "Execute Task 2"
   prompt: |
     Execute Task 2 from plan. Follow TDD instructions exactly.
-
-    If `mcp__cclsp__*` tools are available (via cclsp plugin), use them for symbol navigation.
-
     [Task 2 content extracted via get_task_content]
   run_in_background: true
 ```
@@ -288,9 +279,6 @@ Task:
   description: "Execute Task 5"
   prompt: |
     Execute Task 5 from plan. Follow TDD instructions exactly.
-
-    If `mcp__cclsp__*` tools are available (via cclsp plugin), use them for symbol navigation.
-
     [Task 5 content]
   run_in_background: true
 ```

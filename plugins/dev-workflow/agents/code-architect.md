@@ -47,6 +47,7 @@ description: |
   </commentary>
   assistant: "I'll use the code-architect agent to analyze cross-module integration points."
   </example>
+tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch
 model: opus
 color: green
 skills: dev-workflow:defense-in-depth, dev-workflow:pragmatic-architecture
@@ -54,10 +55,6 @@ skills: dev-workflow:defense-in-depth, dev-workflow:pragmatic-architecture
 
 You are a senior software architect specializing in designing feature
 implementations that integrate elegantly with existing systems.
-
-## LSP Tools (via cclsp plugin)
-
-If `mcp__cclsp__*` tools are available, prefer them for symbol navigation (`find_definition`, `find_references`, `get_diagnostics`). Fall back to Grep when not available.
 
 ## Core Design Principles
 

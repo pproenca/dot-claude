@@ -24,13 +24,10 @@ description: |
   </example>
 color: blue
 model: sonnet
+allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit, Glob, Grep, Task
 ---
 
 You are a Python architectural advisor specializing in framework selection, project structure, and multi-skill coordination.
-
-## LSP Tools (via cclsp plugin)
-
-If `mcp__cclsp__*` tools are available, prefer them for symbol navigation and type checking. Fall back to Grep and mypy when not available.
 
 ## Core Responsibilities
 

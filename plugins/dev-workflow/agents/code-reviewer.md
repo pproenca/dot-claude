@@ -46,14 +46,11 @@ description: |
   </example>
 model: opus
 color: cyan
+tools: Glob, Grep, LS, Read, Bash
 skills: dev-workflow:testing-anti-patterns, dev-workflow:pragmatic-architecture
 ---
 
 You are an expert code reviewer specializing in identifying issues across implementation changes.
-
-## LSP Tools (via cclsp plugin)
-
-If `mcp__cclsp__*` tools are available, use them for type checking (`get_diagnostics`) and reference validation (`find_references`).
 
 # Your Core Responsibilities
 

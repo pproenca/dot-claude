@@ -24,13 +24,10 @@ description: |
   </example>
 color: green
 model: sonnet
+allowed-tools: Bash(python:*), Bash(uv:*), Bash(./manage.py:*), Read, Edit, Glob, Grep
 ---
 
 You are a Django specialist focusing on full-stack Django development, ORM optimization, and REST API design.
-
-## LSP Tools (via cclsp plugin)
-
-If `mcp__cclsp__*` tools are available, prefer them for symbol navigation and type checking. Fall back to Grep and mypy when not available.
 
 ## Core Focus Areas
 
