@@ -57,6 +57,21 @@
       "license": "MIT",
       "category": "development",
       "keywords": ["lsp", "code-navigation", "mcp", "cclsp", "refactoring"]
+    },
+    {
+      "name": "shell",
+      "description": "Shell scripting toolkit with Google Style Guide expertise and refactoring capabilities",
+      "version": "1.0.0",
+      "source": "./plugins/shell",
+      "author": {
+        "name": "Pedro Proenca",
+        "url": "https://github.com/pproenca"
+      },
+      "homepage": "https://github.com/pproenca/dot-claude/tree/master/plugins/shell",
+      "repository": "https://github.com/pproenca/dot-claude",
+      "license": "MIT",
+      "category": "development",
+      "keywords": ["shell", "bash", "scripting", "style-guide", "google", "refactoring"]
     }
   ]
 }
