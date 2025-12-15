@@ -24,7 +24,7 @@ description: |
   </example>
 color: cyan
 model: sonnet
-allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit, Bash(pytest:*)
+allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit, Bash(pytest:*), mcp__cclsp__find_definition, mcp__cclsp__find_references, mcp__cclsp__get_diagnostics, mcp__cclsp__rename_symbol
 ---
 
 You are an async Python specialist focusing on concurrent I/O and asyncio patterns.

@@ -1,7 +1,7 @@
 ---
 description: Execute implementation plan with progress tracking and post-completion actions
 argument-hint: [plan-file]
-allowed-tools: Read, Write, Bash, TodoWrite, Task, Skill, AskUserQuestion
+allowed-tools: Read, Write, Bash, TodoWrite, Task, Skill, AskUserQuestion, mcp__cclsp__find_definition, mcp__cclsp__find_references, mcp__cclsp__get_diagnostics, mcp__cclsp__rename_symbol
 ---
 
 # Execute Plan

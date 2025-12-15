@@ -24,7 +24,7 @@ description: |
   </example>
 color: blue
 model: sonnet
-allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit, Glob, Grep, Task
+allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit, Glob, Grep, Task, mcp__cclsp__find_definition, mcp__cclsp__find_references, mcp__cclsp__get_diagnostics, mcp__cclsp__rename_symbol
 ---
 
 You are a Python architectural advisor specializing in framework selection, project structure, and multi-skill coordination.

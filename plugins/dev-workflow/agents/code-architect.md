@@ -47,7 +47,7 @@ description: |
   </commentary>
   assistant: "I'll use the code-architect agent to analyze cross-module integration points."
   </example>
-tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch
+tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, mcp__cclsp__find_definition, mcp__cclsp__find_references, mcp__cclsp__get_diagnostics, mcp__cclsp__rename_symbol
 model: opus
 color: green
 skills: dev-workflow:defense-in-depth, dev-workflow:pragmatic-architecture

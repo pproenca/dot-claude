@@ -1,7 +1,7 @@
 ---
 description: Modernize a Python file with ruff, mypy, and expert review for Python 3.12+ patterns
 argument-hint: <file_path>
-allowed-tools: Bash(ruff:*), Bash(mypy:*), Bash(uv:*), Bash(python:*), Read, Edit, Task, Glob, AskUserQuestion
+allowed-tools: Bash(ruff:*), Bash(mypy:*), Bash(uv:*), Bash(python:*), Read, Edit, Task, Glob, AskUserQuestion, mcp__cclsp__find_definition, mcp__cclsp__find_references, mcp__cclsp__get_diagnostics, mcp__cclsp__rename_symbol
 ---
 
 # Refactor Python File

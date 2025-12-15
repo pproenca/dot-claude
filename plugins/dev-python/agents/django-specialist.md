@@ -24,7 +24,7 @@ description: |
   </example>
 color: green
 model: sonnet
-allowed-tools: Bash(python:*), Bash(uv:*), Bash(./manage.py:*), Read, Edit, Glob, Grep
+allowed-tools: Bash(python:*), Bash(uv:*), Bash(./manage.py:*), Read, Edit, Glob, Grep, mcp__cclsp__find_definition, mcp__cclsp__find_references, mcp__cclsp__get_diagnostics, mcp__cclsp__rename_symbol
 ---
 
 You are a Django specialist focusing on full-stack Django development, ORM optimization, and REST API design.

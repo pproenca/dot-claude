@@ -1,7 +1,7 @@
 ---
 description: Create detailed implementation plan saved to docs/plans/
 argument-hint: [feature] or [@design-doc.md]
-allowed-tools: Read, Write, Grep, Glob, Bash, TodoWrite, AskUserQuestion, Task
+allowed-tools: Read, Write, Grep, Glob, Bash, TodoWrite, AskUserQuestion, Task, mcp__cclsp__find_definition, mcp__cclsp__find_references, mcp__cclsp__get_diagnostics, mcp__cclsp__rename_symbol
 ---
 
 # Write Implementation Plan
