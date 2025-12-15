@@ -5,7 +5,7 @@
     "fileExtensions": [".ts", ".tsx", ".js", ".jsx"]
   },
   "python": {
-    "command": "pylsp",
+    "command": "/Users/pedroproenca/.local/bin/pylsp",
     "args": [],
     "fileExtensions": [".py"]
   }
