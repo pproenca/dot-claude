@@ -46,7 +46,7 @@ description: |
   </example>
 model: opus
 color: cyan
-tools: Glob, Grep, LS, Read, Bash, mcp__plugin_serena_serena__activate_project, mcp__plugin_serena_serena__find_symbol, mcp__plugin_serena_serena__find_referencing_symbols, mcp__plugin_serena_serena__get_symbols_overview, mcp__plugin_serena_serena__search_for_pattern, mcp__plugin_serena_serena__read_file, mcp__plugin_serena_serena__list_dir
+tools: Glob, Grep, LS, Read, Bash
 skills: dev-workflow:testing-anti-patterns, dev-workflow:pragmatic-architecture
 ---
 
