@@ -89,7 +89,7 @@ PostPlanModeExit hook
 | `code-architect` | Design implementation approach |
 | `code-reviewer` | Review completed work |
 
-All agents leverage cclsp LSP tools for precise symbol navigation (`find_definition`, `find_references`, `get_diagnostics`).
+Agents can leverage optional LSP tools for precise symbol navigation. Run `/dev-workflow:setup-lsp` to enable.
 
 ## Installation
 
@@ -108,27 +108,17 @@ git clone https://github.com/pproenca/dev-workflow ~/.claude/plugins/dev-workflo
 **Required:** `git`
 **Optional:** `jq`, `bats-core`, `shellcheck`, `pre-commit`
 
-### MCP Servers
+### Optional: LSP Code Navigation
 
-This plugin bundles [cclsp](https://github.com/ktnyt/cclsp) for LSP-based code navigation. One-time setup:
+For enhanced symbol navigation, you can enable [cclsp](https://github.com/ktnyt/cclsp):
 
 ```bash
-# Run the interactive setup wizard
-npx cclsp@latest setup --user
-
-# Set the environment variable (add to your shell profile)
-export CCLSP_CONFIG_PATH="$HOME/.config/claude/cclsp.json"
+/dev-workflow:setup-lsp
 ```
 
-The plugin automatically starts cclsp via `npx -y cclsp@latest` — no global installation required.
+This guided command walks you through configuring LSP-based tools (`find_definition`, `find_references`, `get_diagnostics`, `rename_symbol`) for precise code navigation.
 
-**Tools provided:**
-| Tool | Purpose |
-|------|---------|
-| `mcp__cclsp__find_definition` | Jump to symbol definitions |
-| `mcp__cclsp__find_references` | Find all usages across codebase |
-| `mcp__cclsp__get_diagnostics` | Type errors and warnings |
-| `mcp__cclsp__rename_symbol` | Safe refactoring |
+**Note:** The plugin works fully without cclsp. LSP tools are an optional enhancement for faster symbol lookup and type-aware diagnostics.
 
 ## Usage
 

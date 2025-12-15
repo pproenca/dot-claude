@@ -115,13 +115,15 @@ Task:
   prompt: |
     Execute Task [N] from plan. Follow TDD instructions exactly.
 
-    ## LSP Tools (use these for precise code navigation)
+    ## LSP Tools (Optional - if cclsp is configured)
+    Check if `mcp__cclsp__*` tools are available. If so, prefer them:
     - `mcp__cclsp__find_definition` - Jump to symbol definitions
     - `mcp__cclsp__find_references` - Find all usages before modifying
     - `mcp__cclsp__get_diagnostics` - Check for type errors after changes
     - `mcp__cclsp__rename_symbol` - Safe refactoring across codebase
 
-    Always run `mcp__cclsp__get_diagnostics` on modified files before committing.
+    If cclsp is available, run `get_diagnostics` on modified files before committing.
+    If cclsp is not available, proceed without it (use Grep for symbol search).
 
     [Task content extracted via get_task_content]
   run_in_background: true
@@ -227,13 +229,15 @@ Task:
   prompt: |
     Execute Task 1 from plan. Follow TDD instructions exactly.
 
-    ## LSP Tools (use these for precise code navigation)
+    ## LSP Tools (Optional - if cclsp is configured)
+    Check if `mcp__cclsp__*` tools are available. If so, prefer them:
     - `mcp__cclsp__find_definition` - Jump to symbol definitions
     - `mcp__cclsp__find_references` - Find all usages before modifying
     - `mcp__cclsp__get_diagnostics` - Check for type errors after changes
     - `mcp__cclsp__rename_symbol` - Safe refactoring across codebase
 
-    Always run `mcp__cclsp__get_diagnostics` on modified files before committing.
+    If cclsp is available, run `get_diagnostics` on modified files before committing.
+    If cclsp is not available, proceed without it (use Grep for symbol search).
 
     [Task 1 content extracted via get_task_content]
   run_in_background: true
@@ -245,13 +249,15 @@ Task:
   prompt: |
     Execute Task 2 from plan. Follow TDD instructions exactly.
 
-    ## LSP Tools (use these for precise code navigation)
+    ## LSP Tools (Optional - if cclsp is configured)
+    Check if `mcp__cclsp__*` tools are available. If so, prefer them:
     - `mcp__cclsp__find_definition` - Jump to symbol definitions
     - `mcp__cclsp__find_references` - Find all usages before modifying
     - `mcp__cclsp__get_diagnostics` - Check for type errors after changes
     - `mcp__cclsp__rename_symbol` - Safe refactoring across codebase
 
-    Always run `mcp__cclsp__get_diagnostics` on modified files before committing.
+    If cclsp is available, run `get_diagnostics` on modified files before committing.
+    If cclsp is not available, proceed without it (use Grep for symbol search).
 
     [Task 2 content extracted via get_task_content]
   run_in_background: true
@@ -307,13 +313,15 @@ Task:
   prompt: |
     Execute Task 5 from plan. Follow TDD instructions exactly.
 
-    ## LSP Tools (use these for precise code navigation)
+    ## LSP Tools (Optional - if cclsp is configured)
+    Check if `mcp__cclsp__*` tools are available. If so, prefer them:
     - `mcp__cclsp__find_definition` - Jump to symbol definitions
     - `mcp__cclsp__find_references` - Find all usages before modifying
     - `mcp__cclsp__get_diagnostics` - Check for type errors after changes
     - `mcp__cclsp__rename_symbol` - Safe refactoring across codebase
 
-    Always run `mcp__cclsp__get_diagnostics` on modified files before committing.
+    If cclsp is available, run `get_diagnostics` on modified files before committing.
+    If cclsp is not available, proceed without it (use Grep for symbol search).
 
     [Task 5 content]
   run_in_background: true

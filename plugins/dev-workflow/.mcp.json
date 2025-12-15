@@ -1,9 +1,0 @@
-{
-  "cclsp": {
-    "command": "npx",
-    "args": ["-y", "cclsp@latest"],
-    "env": {
-      "CCLSP_CONFIG_PATH": "${CCLSP_CONFIG_PATH}"
-    }
-  }
-}
