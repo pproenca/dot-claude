@@ -77,6 +77,26 @@
         "google",
         "refactoring"
       ]
+    },
+    {
+      "name": "lsp-servers",
+      "description": "Language Server Protocol servers for TypeScript and Python",
+      "version": "1.0.0",
+      "source": "./plugins/lsp-servers",
+      "author": {
+        "name": "Pedro Proenca",
+        "url": "https://github.com/pproenca"
+      },
+      "homepage": "https://github.com/pproenca/dot-claude/tree/master/plugins/lsp-servers",
+      "repository": "https://github.com/pproenca/dot-claude",
+      "license": "MIT",
+      "category": "development",
+      "keywords": [
+        "lsp",
+        "language-server",
+        "typescript",
+        "python"
+      ]
     }
   ]
 }
