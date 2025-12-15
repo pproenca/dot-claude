@@ -1,7 +1,7 @@
 ---
 description: Refactor shell script to follow Google Shell Style Guide
 argument-hint: <path/to/script.sh>
-allowed-tools: Bash, Read, Edit, Glob, AskUserQuestion, Task, Skill
+allowed-tools: Bash, Read, Edit, Glob, AskUserQuestion, Task, Skill, mcp__*
 ---
 
 # Shell Script Refactoring

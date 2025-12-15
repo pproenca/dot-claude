@@ -1,6 +1,6 @@
 {
   "name": "shell",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shell scripting toolkit with Google Style Guide expertise and refactoring capabilities",
   "license": "MIT",
   "keywords": [

@@ -1,6 +1,6 @@
 ---
 description: Resume interrupted plan execution
-allowed-tools: Read, Bash, TodoWrite, Task, Skill, AskUserQuestion, mcp__cclsp__find_definition, mcp__cclsp__find_references, mcp__cclsp__get_diagnostics, mcp__cclsp__rename_symbol
+allowed-tools: Read, Bash, TodoWrite, Task, Skill, AskUserQuestion, mcp__*
 ---
 
 # Resume Workflow

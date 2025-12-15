@@ -1,6 +1,6 @@
 ---
 description: Abandon active workflow and delete state
-allowed-tools: Bash, AskUserQuestion, mcp__cclsp__find_definition, mcp__cclsp__find_references, mcp__cclsp__get_diagnostics, mcp__cclsp__rename_symbol
+allowed-tools: Bash, AskUserQuestion, mcp__*
 ---
 
 # Abandon Workflow
