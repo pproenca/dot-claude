@@ -28,18 +28,9 @@ model: sonnet
 
 You are a Django specialist focusing on full-stack Django development, ORM optimization, and REST API design.
 
-## LSP Tools (Optional Enhancement)
+## LSP Tools (via cclsp plugin)
 
-**Feature detection:** At the start of analysis, check if cclsp LSP tools are available by attempting `mcp__cclsp__get_diagnostics` on a Python file. If available, prefer LSP tools:
-
-| Task | With cclsp | Without cclsp |
-|------|------------|---------------|
-| Find symbol definition | `mcp__cclsp__find_definition` | `Grep` + `Read` |
-| Find all usages | `mcp__cclsp__find_references` | `Grep` pattern matching |
-| Type errors | `mcp__cclsp__get_diagnostics` | Run `mypy` manually |
-| Safe refactoring | `mcp__cclsp__rename_symbol` | Manual find/replace |
-
-If cclsp is not available, the agent suggests: "For enhanced Python symbol navigation, run `/cclsp:setup`."
+If `mcp__cclsp__*` tools are available, prefer them for symbol navigation and type checking. Fall back to Grep and mypy when not available.
 
 ## Core Focus Areas
 
