@@ -76,67 +76,17 @@ Then reload your shell:
 source ~/.zshrc  # or ~/.bashrc
 ```
 
-## Step 4: Add to Claude Code MCP Settings
+## Step 4: Add to Claude Code
 
-Ask the user which method they prefer:
-
-```claude
-AskUserQuestion:
-  header: "MCP config"
-  question: "How should I add cclsp to Claude Code?"
-  multiSelect: false
-  options:
-    - label: "Edit settings.json (Recommended)"
-      description: "Add to ~/.claude/settings.json for global availability"
-    - label: "Show me the config"
-      description: "Display the JSON to add manually"
-```
-
-### Option A: Edit settings.json
-
-Read the current settings:
+Use the Claude Code CLI to add the MCP server:
 
 ```bash
-cat ~/.claude/settings.json 2>/dev/null || echo "{}"
+claude mcp add cclsp --scope user -e CCLSP_CONFIG_PATH="$HOME/.config/claude/cclsp.json" -- npx -y cclsp@latest
 ```
 
-Add or merge the cclsp server configuration:
+This adds cclsp as a user-scoped MCP server available across all projects.
 
-```json
-{
-  "mcpServers": {
-    "cclsp": {
-      "command": "npx",
-      "args": ["-y", "cclsp@latest"],
-      "env": {
-        "CCLSP_CONFIG_PATH": "${CCLSP_CONFIG_PATH}"
-      }
-    }
-  }
-}
-```
-
-Write the updated settings using the Write tool.
-
-### Option B: Show config
-
-Display:
-
-```
-Add this to your Claude Code MCP settings (~/.claude/settings.json):
-
-{
-  "mcpServers": {
-    "cclsp": {
-      "command": "npx",
-      "args": ["-y", "cclsp@latest"],
-      "env": {
-        "CCLSP_CONFIG_PATH": "${CCLSP_CONFIG_PATH}"
-      }
-    }
-  }
-}
-```
+**Note:** The server config is stored in `~/.claude.json` (not settings.json).
 
 ## Step 5: Verify Installation
 
@@ -149,10 +99,14 @@ If it returns diagnostics (or empty list for clean files), cclsp is working.
 
 ## Troubleshooting
 
+**Server not showing up:**
+- Check MCP servers: `claude mcp list`
+- Verify it's in `~/.claude.json` (look for `mcpServers` field)
+- Restart Claude Code after adding
+
 **Server fails to start:**
-- Verify CCLSP_CONFIG_PATH is set: `echo $CCLSP_CONFIG_PATH`
-- Verify config file exists: `cat $CCLSP_CONFIG_PATH`
-- Try running manually: `CCLSP_CONFIG_PATH=... npx cclsp@latest`
+- Verify config file exists: `cat ~/.config/claude/cclsp.json`
+- Try running manually: `CCLSP_CONFIG_PATH=~/.config/claude/cclsp.json npx cclsp@latest`
 
 **No language support:**
 - Re-run setup: `npx cclsp@latest setup --user`
