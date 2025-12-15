@@ -118,7 +118,8 @@ validate:  ## Run plugin-specific validation (JSON, frontmatter, permissions)
 	@echo "=== All plugins validated ==="
 
 .PHONY: check
-check: lint validate test  ## Run all checks (lint + validate + test)
+check:  ## Run all validation (marketplace levels 1-6 + BATS tests)
+	@scripts/validate-all.sh
 
 ##@ Cleanup
 

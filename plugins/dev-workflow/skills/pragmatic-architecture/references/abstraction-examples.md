@@ -53,7 +53,7 @@ function formatUserName(user: User, includeTitle?: boolean) {
 ### Stage 3: More Conditionals (Problem)
 ```tsx
 function formatUserName(
-  user: User, 
+  user: User,
   includeTitle?: boolean,
   lastNameFirst?: boolean,
   abbreviated?: boolean
@@ -79,7 +79,7 @@ function formatUserName(
 // UserProfile.tsx - formal display
 `${user.title} ${user.firstName} ${user.lastName}`
 
-// UserCard.tsx - casual display  
+// UserCard.tsx - casual display
 `${user.firstName} ${user.lastName}`
 
 // UserList.tsx - compact display
@@ -104,7 +104,7 @@ class SMSChannel implements NotificationChannel { ... }
 
 class NotificationService {
   constructor(private channels: NotificationChannel[]) {}
-  
+
   async notify(message: string) {
     await Promise.all(this.channels.map(c => c.send(message)));
   }
@@ -148,7 +148,7 @@ class UserRepository extends BaseRepository<User> { ... }
 // Service that just forwards to repository
 class UserService {
   constructor(private repo: UserRepository) {}
-  
+
   getUser(id: string) { return this.repo.findById(id); }
   saveUser(user: User) { return this.repo.save(user); }
 }

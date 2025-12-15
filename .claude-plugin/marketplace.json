@@ -16,7 +16,7 @@
     {
       "name": "dev-python",
       "description": "Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django and production-ready practices",
-      "version": "1.0.0",
+      "version": "1.0.2",
       "source": "./plugins/dev-python",
       "author": {
         "name": "Pedro Proenca",
@@ -26,12 +26,19 @@
       "repository": "https://github.com/pproenca/dot-claude",
       "license": "MIT",
       "category": "development",
-      "keywords": ["python", "uv", "ruff", "pydantic", "fastapi", "django"]
+      "keywords": [
+        "python",
+        "uv",
+        "ruff",
+        "pydantic",
+        "fastapi",
+        "django"
+      ]
     },
     {
       "name": "dev-workflow",
       "description": "Development workflow with TDD, debugging, and collaboration skills",
-      "version": "2.4.2",
+      "version": "2.5.1",
       "source": "./plugins/dev-workflow",
       "author": {
         "name": "Pedro Proenca",
@@ -41,22 +48,13 @@
       "repository": "https://github.com/pproenca/dot-claude",
       "license": "MIT",
       "category": "development",
-      "keywords": ["skills", "tdd", "debugging", "collaboration", "workflow"]
-    },
-    {
-      "name": "cclsp",
-      "description": "LSP-based code navigation tools for Claude Code plugins",
-      "version": "1.0.0",
-      "source": "./plugins/cclsp",
-      "author": {
-        "name": "Pedro Proenca",
-        "url": "https://github.com/pproenca"
-      },
-      "homepage": "https://github.com/pproenca/dot-claude/tree/master/plugins/cclsp",
-      "repository": "https://github.com/pproenca/dot-claude",
-      "license": "MIT",
-      "category": "development",
-      "keywords": ["lsp", "code-navigation", "mcp", "cclsp", "refactoring"]
+      "keywords": [
+        "skills",
+        "tdd",
+        "debugging",
+        "collaboration",
+        "workflow"
+      ]
     },
     {
       "name": "shell",
@@ -71,7 +69,14 @@
       "repository": "https://github.com/pproenca/dot-claude",
       "license": "MIT",
       "category": "development",
-      "keywords": ["shell", "bash", "scripting", "style-guide", "google", "refactoring"]
+      "keywords": [
+        "shell",
+        "bash",
+        "scripting",
+        "style-guide",
+        "google",
+        "refactoring"
+      ]
     }
   ]
 }

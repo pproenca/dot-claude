@@ -14,3 +14,34 @@ repos:
       - id: shellcheck
         args: ["-x"]
         files: \.(sh|bash)$
+
+  # Marketplace validation hooks
+  - repo: local
+    hooks:
+      - id: version-sync
+        name: Version Sync Check
+        entry: scripts/sync-versions.sh --check
+        language: script
+        pass_filenames: false
+        files: ^(plugins/.*/.claude-plugin/plugin\.json|\.claude-plugin/marketplace\.json)$
+
+      - id: marketplace-level-1
+        name: Level 1 - Syntax & Structure
+        entry: scripts/level-1-syntax.sh
+        language: script
+        pass_filenames: false
+        files: ^plugins/.*\.(md|json)$
+
+      - id: marketplace-level-2
+        name: Level 2 - Frontmatter Fields
+        entry: scripts/level-2-frontmatter.sh
+        language: script
+        pass_filenames: false
+        files: ^plugins/.*\.md$
+
+      - id: marketplace-level-6
+        name: Level 6 - Bash Syntax
+        entry: scripts/level-6-bash.sh
+        language: script
+        pass_filenames: false
+        files: ^plugins/.*(commands/.*\.md|\.sh)$

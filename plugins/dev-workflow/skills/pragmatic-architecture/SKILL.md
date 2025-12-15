@@ -1,8 +1,8 @@
 ---
 name: pragmatic-architecture
 description: |
-  Prevents over-engineering by enforcing industry-proven principles: AHA (Avoid Hasty Abstractions), 
-  YAGNI, Colocation, and Rule of Three. Use when designing features, planning architecture, 
+  Prevents over-engineering by enforcing industry-proven principles: AHA (Avoid Hasty Abstractions),
+  YAGNI, Colocation, and Rule of Three. Use when designing features, planning architecture,
   "architect this", "design the structure", or when the code-architect agent is dispatched.
   Triggers: file structure, module organization, abstraction decisions, component splitting.
 allowed-tools: []
