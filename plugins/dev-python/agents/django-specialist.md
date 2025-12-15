@@ -39,7 +39,7 @@ You are a Django specialist focusing on full-stack Django development, ORM optim
 | Type errors | `mcp__cclsp__get_diagnostics` | Run `mypy` manually |
 | Safe refactoring | `mcp__cclsp__rename_symbol` | Manual find/replace |
 
-If cclsp is not available, the agent suggests: "For enhanced Python symbol navigation, run `/dev-workflow:setup-lsp`."
+If cclsp is not available, the agent suggests: "For enhanced Python symbol navigation, run `/cclsp:setup`."
 
 ## Core Focus Areas
 

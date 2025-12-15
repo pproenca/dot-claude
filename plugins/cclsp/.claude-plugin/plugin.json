@@ -1,0 +1,19 @@
+{
+  "name": "cclsp",
+  "version": "1.0.0",
+  "description": "LSP-based code navigation tools for Claude Code plugins",
+  "author": {
+    "name": "Pedro Proenca",
+    "url": "https://github.com/pproenca"
+  },
+  "homepage": "https://github.com/pproenca/dot-claude/tree/master/plugins/cclsp",
+  "repository": "https://github.com/pproenca/dot-claude",
+  "license": "MIT",
+  "keywords": [
+    "lsp",
+    "code-navigation",
+    "mcp",
+    "cclsp",
+    "refactoring"
+  ]
+}

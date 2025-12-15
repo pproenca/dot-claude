@@ -89,7 +89,7 @@ PostPlanModeExit hook
 | `code-architect` | Design implementation approach |
 | `code-reviewer` | Review completed work |
 
-Agents can leverage optional LSP tools for precise symbol navigation. Run `/dev-workflow:setup-lsp` to enable.
+Agents can leverage optional LSP tools for precise symbol navigation. Install the `cclsp` plugin and run `/cclsp:setup` to enable.
 
 ## Installation
 
@@ -110,13 +110,14 @@ git clone https://github.com/pproenca/dev-workflow ~/.claude/plugins/dev-workflo
 
 ### Optional: LSP Code Navigation
 
-For enhanced symbol navigation, you can enable [cclsp](https://github.com/ktnyt/cclsp):
+For enhanced symbol navigation, install the `cclsp` plugin:
 
 ```bash
-/dev-workflow:setup-lsp
+claude plugin add pproenca/cclsp
+/cclsp:setup
 ```
 
-This guided command walks you through configuring LSP-based tools (`find_definition`, `find_references`, `get_diagnostics`, `rename_symbol`) for precise code navigation.
+This provides LSP-based tools (`find_definition`, `find_references`, `get_diagnostics`, `rename_symbol`) for precise code navigation.
 
 **Note:** The plugin works fully without cclsp. LSP tools are an optional enhancement for faster symbol lookup and type-aware diagnostics.
 

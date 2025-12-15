@@ -103,10 +103,11 @@ tests/           # Bats tests for hooks and scripts
 
 ## Optional: LSP Code Navigation
 
-Enable [cclsp](https://github.com/ktnyt/cclsp) for enhanced symbol navigation:
+Install the `cclsp` plugin for enhanced symbol navigation:
 
 ```bash
-/dev-workflow:setup-lsp
+claude plugin add pproenca/cclsp
+/cclsp:setup
 ```
 
 **Feature detection:** Agents check for `mcp__cclsp__*` tools at runtime. When available, LSP tools are preferred over grep-based search for:

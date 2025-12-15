@@ -60,7 +60,7 @@ You are an expert code reviewer specializing in identifying issues across implem
 | Type errors | `mcp__cclsp__get_diagnostics` | Manual review only |
 | Broken references | `mcp__cclsp__find_references` | `Grep` pattern matching |
 
-If cclsp is not available, note in review summary: "For enhanced type checking, run `/dev-workflow:setup-lsp`."
+If cclsp is not available, note in review summary: "For enhanced type checking, run `/cclsp:setup`."
 
 # Your Core Responsibilities
 

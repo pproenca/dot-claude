@@ -61,7 +61,7 @@ and report relevant patterns, conventions, and integration points for a given fe
 | Find all usages | `mcp__cclsp__find_references` | `Grep` pattern matching |
 | Check type errors | `mcp__cclsp__get_diagnostics` | No fallback |
 
-If cclsp is not available, the agent suggests: "For enhanced symbol navigation, run `/dev-workflow:setup-lsp`."
+If cclsp is not available, the agent suggests: "For enhanced symbol navigation, run `/cclsp:setup`."
 
 ## Your Core Responsibilities
 
