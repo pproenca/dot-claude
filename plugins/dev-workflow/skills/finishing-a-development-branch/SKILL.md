@@ -1,7 +1,7 @@
 ---
 name: finishing-a-development-branch
 description: Guide completion of development work by presenting merge/PR options. Use when "I'm done", "merge this", "create PR", "finish up", or when implementation is complete and tests pass.
-allowed-tools: Read, Bash, AskUserQuestion
+allowed-tools: Read, Bash, AskUserQuestion, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Finishing a Development Branch

@@ -1,7 +1,7 @@
 ---
 name: getting-started
 description: This skill is loaded automatically at session start via SessionStart hook. Establishes protocols for finding and using skills, checking skills before tasks, brainstorming before coding, and creating TodoWrite for checklists.
-allowed-tools: Read, Skill, TodoWrite
+allowed-tools: Read, Skill, TodoWrite, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Getting Started with Skills

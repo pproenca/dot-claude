@@ -1,6 +1,6 @@
 ---
 description: Abandon active workflow and delete state
-allowed-tools: Bash, AskUserQuestion
+allowed-tools: Bash, AskUserQuestion, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Abandon Workflow

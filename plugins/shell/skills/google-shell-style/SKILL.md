@@ -1,7 +1,7 @@
 ---
 name: Google Shell Style Guide
 description: This skill should be used when the user asks to "refactor shell script", "fix bash style", "review shell code", "apply Google style guide", "improve shell script", mentions "shellcheck", or discusses bash/shell coding standards and best practices.
-allowed-tools: Read, Edit, Bash, Glob, Grep
+allowed-tools: Read, Edit, Bash, Glob, Grep, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Google Shell Style Guide

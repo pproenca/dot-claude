@@ -1,7 +1,7 @@
 ---
 name: systematic-debugging
 description: This skill should be used when the user reports a "bug", "not working", "fix this", "debug", "test failing", or when investigating unexpected behavior. Four-phase framework ensuring root cause understanding before attempting solutions.
-allowed-tools: Read, Bash, Grep, Skill
+allowed-tools: Read, Bash, Grep, Skill, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Systematic Debugging

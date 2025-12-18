@@ -1,7 +1,7 @@
 ---
 name: verification-before-completion
 description: This skill should be used when claiming a task is "done", "complete", "finished", "fixed", "passing", or before committing. Requires running verification commands before making success claims.
-allowed-tools: Bash
+allowed-tools: Bash, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Verification Before Completion

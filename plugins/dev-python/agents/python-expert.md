@@ -24,7 +24,7 @@ description: |
   </example>
 color: blue
 model: sonnet
-allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit, Glob, Grep, Task
+allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit, Glob, Grep, Task, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 You are a Python architectural advisor specializing in framework selection, project structure, and multi-skill coordination.

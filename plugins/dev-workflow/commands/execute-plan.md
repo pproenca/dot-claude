@@ -1,7 +1,7 @@
 ---
 description: Execute implementation plan with progress tracking and post-completion actions
 argument-hint: [plan-file]
-allowed-tools: Read, Write, Bash, TodoWrite, Task, Skill, AskUserQuestion
+allowed-tools: Read, Write, Bash, TodoWrite, Task, Skill, AskUserQuestion, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Execute Plan

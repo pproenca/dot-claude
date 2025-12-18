@@ -1,7 +1,7 @@
 ---
 description: Create detailed implementation plan saved to docs/plans/
 argument-hint: [feature] or [@design-doc.md]
-allowed-tools: Read, Write, Grep, Glob, Bash, TodoWrite, AskUserQuestion, Task
+allowed-tools: Read, Write, Grep, Glob, Bash, TodoWrite, AskUserQuestion, Task, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Write Implementation Plan

@@ -31,7 +31,7 @@ POSIX mode identifies bash-specific features that may not work on all systems.
 
 model: sonnet
 color: cyan
-tools: ["Read", "Bash", "Glob", "Grep", "Skill"]
+tools: ["Read", "Bash", "Glob", "Grep", "Skill", "mcp__plugin_serena_serena", "mcp__plugin_serena_serena_*"]
 ---
 
 You are a Senior Shell Scripting Expert with deep knowledge of bash, POSIX shell, and Google's Shell Style Guide.

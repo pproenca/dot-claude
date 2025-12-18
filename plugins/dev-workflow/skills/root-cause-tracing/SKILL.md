@@ -1,7 +1,7 @@
 ---
 name: root-cause-tracing
 description: This skill should be used when the user asks to "find the root cause", "trace the bug", "why is this happening", "where does this come from", or when errors occur deep in the call stack. Systematically traces backward to identify the source.
-allowed-tools: Read, Bash, Grep, Glob
+allowed-tools: Read, Bash, Grep, Glob, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Root Cause Tracing

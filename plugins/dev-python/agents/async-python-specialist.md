@@ -24,7 +24,7 @@ description: |
   </example>
 color: cyan
 model: sonnet
-allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit, Bash(pytest:*)
+allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit, Bash(pytest:*), mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 You are an async Python specialist focusing on concurrent I/O and asyncio patterns.

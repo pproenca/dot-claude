@@ -1,6 +1,6 @@
 ---
 description: Resume interrupted plan execution
-allowed-tools: Read, Bash, TodoWrite, Task, Skill, AskUserQuestion
+allowed-tools: Read, Bash, TodoWrite, Task, Skill, AskUserQuestion, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Resume Workflow

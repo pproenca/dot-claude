@@ -1,7 +1,7 @@
 ---
 description: Interactive design refinement using Socratic method
 argument-hint: [topic or @design-doc.md]
-allowed-tools: Read, Write, Bash, Grep, Glob, AskUserQuestion
+allowed-tools: Read, Write, Bash, Grep, Glob, AskUserQuestion, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Brainstorm Session

@@ -1,7 +1,7 @@
 ---
 description: Modernize a Python file with ruff, mypy, and expert review for Python 3.12+ patterns
 argument-hint: <file_path>
-allowed-tools: Bash(ruff:*), Bash(mypy:*), Bash(uv:*), Bash(python:*), Read, Edit, Task, Glob, AskUserQuestion
+allowed-tools: Bash(ruff:*), Bash(mypy:*), Bash(uv:*), Bash(python:*), Read, Edit, Task, Glob, AskUserQuestion, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Refactor Python File

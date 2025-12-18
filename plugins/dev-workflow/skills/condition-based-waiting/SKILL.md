@@ -1,7 +1,7 @@
 ---
 name: condition-based-waiting
 description: This skill should be used when the user mentions "flaky tests", "race condition", "timing issues", "wait for", "test sometimes fails", or when tests have inconsistent pass/fail behavior. Replaces arbitrary timeouts with condition polling.
-allowed-tools: Read, Bash
+allowed-tools: Read, Bash, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Condition-Based Waiting

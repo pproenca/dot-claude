@@ -1,7 +1,7 @@
 ---
 name: receiving-code-review
 description: This skill should be used when processing code review feedback, responding to reviewer comments, or when feedback seems unclear or technically questionable. Requires verification before implementing.
-allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Skill
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Skill, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 # Receiving Code Review

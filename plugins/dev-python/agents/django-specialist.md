@@ -24,7 +24,7 @@ description: |
   </example>
 color: green
 model: sonnet
-allowed-tools: Bash(python:*), Bash(uv:*), Bash(./manage.py:*), Read, Edit, Glob, Grep
+allowed-tools: Bash(python:*), Bash(uv:*), Bash(./manage.py:*), Read, Edit, Glob, Grep, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
 You are a Django specialist focusing on full-stack Django development, ORM optimization, and REST API design.
