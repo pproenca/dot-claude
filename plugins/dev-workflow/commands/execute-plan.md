@@ -75,7 +75,26 @@ AskUserQuestion:
 
 ## Sequential Execution
 
-Execute tasks one by one using background agents (keeps orchestrator context minimal).
+Execute tasks one by one using background agents with two-stage review after each task.
+
+### Process Flow
+
+```dot
+digraph sequential {
+    rankdir=TB;
+    "Dispatch Implementer" -> "Wait for Completion";
+    "Wait for Completion" -> "Spec Compliance Review";
+    "Spec Compliance Review" -> "Spec Issues?" [shape=diamond];
+    "Spec Issues?" -> "Implementer Fixes Spec Issues" [label="yes"];
+    "Implementer Fixes Spec Issues" -> "Spec Compliance Review";
+    "Spec Issues?" -> "Code Quality Review" [label="no"];
+    "Code Quality Review" -> "Quality Issues?" [shape=diamond];
+    "Quality Issues?" -> "Implementer Fixes Quality Issues" [label="yes"];
+    "Implementer Fixes Quality Issues" -> "Code Quality Review";
+    "Quality Issues?" -> "Mark Task Complete" [label="no"];
+    "Mark Task Complete" -> "Next Task";
+}
+```
 
 ### 3a. Check for Interrupted Dispatch (Compact Recovery)
 
@@ -120,7 +139,13 @@ Task:
 
     ## Before You Begin
     If anything is unclear about requirements, approach, or dependencies:
-    **Ask questions now.** Don't guess or make assumptions.
+    **Ask questions now.** Raise concerns before starting work.
+
+    Questions to consider:
+    - Are the requirements clear?
+    - Do I understand the approach?
+    - Are there dependencies I need to know about?
+    - Anything ambiguous in the task description?
 
     ## Your Job
     1. Follow each Step exactly as written
@@ -131,13 +156,46 @@ Task:
     If you encounter something unexpected or blockers, **ask for clarification**.
     It's always OK to pause and clarify rather than guess.
 
-    ## Before Reporting Back: Self-Review
-    - Did I implement everything in the spec?
-    - Did I watch each test fail before implementing?
-    - Did I avoid overbuilding (YAGNI)?
-    - Do tests verify real behavior, not mocks?
+    **DO NOT:**
+    - Guess at unclear requirements
+    - Make assumptions about intent
+    - Add features not in the spec
+    - Skip verification steps
 
-    If you find issues during self-review, fix them before reporting.
+    ## Before Reporting Back: Self-Review (MANDATORY)
+
+    Review your work with fresh eyes before reporting.
+
+    **Completeness:**
+    - Did I fully implement everything in the spec?
+    - Did I miss any requirements?
+    - Are there edge cases I didn't handle?
+
+    **Quality:**
+    - Is this my best work?
+    - Are names clear and accurate (describe WHAT, not HOW)?
+    - Is the code clean and maintainable?
+
+    **Discipline:**
+    - Did I avoid overbuilding (YAGNI)?
+    - Did I only build what was requested?
+    - Did I follow existing patterns in the codebase?
+
+    **Testing:**
+    - Do tests verify BEHAVIOR, not mock behavior?
+    - Did I watch each test fail before implementing?
+    - Are tests comprehensive for the requirements?
+
+    **If you find issues during self-review, fix them now before reporting.**
+
+    ## Report Format
+
+    When done, report:
+    - What you implemented (specific changes)
+    - Files changed (with paths)
+    - Test results (command and output)
+    - Self-review findings (any issues found and fixed)
+    - Any concerns or blockers
   run_in_background: true
 ```
 
@@ -158,7 +216,142 @@ TaskOutput:
   block: true
 ```
 
-### 3c. Update State After Each Task
+### 3c. Two-Stage Review (MANDATORY)
+
+After implementer completes, run two-stage review before marking task complete.
+
+**Stage 1: Spec Compliance Review**
+
+Verify implementer built exactly what was requested (nothing more, nothing less).
+
+```claude
+Task:
+  subagent_type: general-purpose
+  model: sonnet
+  description: "Spec review Task [N]"
+  prompt: |
+    You are reviewing whether an implementation matches its specification.
+
+    ## What Was Requested
+    [Task content from plan]
+
+    ## What Implementer Claims They Built
+    [From implementer's report]
+
+    ## CRITICAL: Do Not Trust the Report
+
+    The implementer may have been incomplete, inaccurate, or optimistic.
+    You MUST verify everything independently.
+
+    **DO NOT:**
+    - Take their word for what they implemented
+    - Trust their claims about completeness
+    - Assume tests passing means spec is met
+
+    **DO:**
+    - Read the actual code they wrote
+    - Compare implementation to requirements line by line
+    - Check for missing pieces
+    - Look for extra features not requested
+
+    ## Your Job
+
+    **Missing requirements:**
+    - Did they implement everything requested?
+    - Are there requirements they skipped?
+    - Did they claim something but not implement it?
+
+    **Extra/unneeded work:**
+    - Did they build things not requested?
+    - Did they over-engineer or add unnecessary features?
+
+    **Misunderstandings:**
+    - Did they interpret requirements differently than intended?
+    - Did they solve the wrong problem?
+
+    ## Report
+
+    Report ONE of:
+
+    ✅ SPEC COMPLIANT - All requirements met, no extras, no missing items.
+
+    ❌ SPEC ISSUES - List specifically:
+    - Missing: [requirement] not implemented
+    - Extra: [feature] added but not in spec
+    - Misunderstood: [requirement] interpreted as [wrong thing]
+```
+
+**If spec issues found:** Dispatch implementer to fix, then re-run spec review.
+
+```claude
+Task:
+  subagent_type: general-purpose
+  model: sonnet
+  description: "Fix spec issues Task [N]"
+  prompt: |
+    Fix the following spec compliance issues for Task [N]:
+
+    [Issues from spec reviewer]
+
+    Fix each issue. Do not add anything else.
+    Report what you fixed.
+```
+
+Loop until spec compliance passes.
+
+**Stage 2: Code Quality Review**
+
+After spec compliance passes, review implementation quality.
+
+```claude
+Task:
+  subagent_type: general-purpose
+  model: sonnet
+  description: "Quality review Task [N]"
+  prompt: |
+    Review code quality for Task [N]. Spec compliance already verified.
+
+    ## Changes to Review
+    [Files from implementer report]
+
+    ## Quality Criteria
+
+    **Code Structure:**
+    - Functions focused and single-purpose?
+    - Complexity appropriate (not over-engineered)?
+    - Follows existing codebase patterns?
+
+    **Naming:**
+    - Names describe WHAT, not HOW?
+    - Names accurate and consistent?
+
+    **Testing:**
+    - Tests verify BEHAVIOR, not mocks?
+    - Test setup minimal and clear?
+    - Test names descriptive?
+
+    ## Severity Levels
+
+    **Critical** - Must fix: Security issues, data corruption, tests that don't test behavior
+    **Important** - Should fix: Unclear naming, over-engineering, maintainability issues
+    **Minor** - Nice to fix: Style, verbosity
+
+    ## Report
+
+    ✅ APPROVED - No critical or important issues.
+
+    ⚠️ ISSUES FOUND:
+    - Critical: [issue] at [file:line] - [fix needed]
+    - Important: [issue] at [file:line] - [fix needed]
+```
+
+**If critical/important issues found:** Dispatch implementer to fix, then re-run quality review.
+
+Loop until quality review passes.
+
+### 3d. Update State After Each Task
+
+Only after BOTH reviews pass:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
@@ -175,7 +368,9 @@ Mark task `completed` in TodoWrite. Continue to next task.
 
 ## Parallel Execution (Background Agents)
 
-Uses `Task(run_in_background)` + `TaskOutput` pattern from tools.md to execute tasks in parallel while respecting dependencies.
+Uses `Task(run_in_background)` + `TaskOutput` pattern with two-stage review after each group.
+
+**Note:** In parallel mode, review happens after group completion (not per-task) to maximize parallelism while maintaining quality gates.
 
 ### 3a. Check for Interrupted Dispatch (Compact Recovery)
 
@@ -224,7 +419,7 @@ echo "TASK_GROUPS: $TASK_GROUPS"
 echo "MAX_PARALLEL: $MAX_PARALLEL"
 ```
 
-### 3b. Execute Groups Serially, Tasks in Parallel
+### 3c. Execute Groups Serially, Tasks in Parallel
 
 For each group in `TASK_GROUPS` (split by `|`):
 
@@ -245,7 +440,12 @@ Task:
     [Task 1 content extracted via get_task_content]
 
     ## Before You Begin
-    If anything is unclear: **Ask questions now.** Don't guess.
+    If anything is unclear: **Ask questions now.** Raise concerns before starting.
+
+    Questions to consider:
+    - Are the requirements clear?
+    - Do I understand the approach?
+    - Are there dependencies I need to know about?
 
     ## Your Job
     1. Follow each Step exactly as written
@@ -255,13 +455,39 @@ Task:
     ## While Working
     If blocked or unexpected, **ask for clarification** rather than guess.
 
-    ## Self-Review Before Reporting
-    - Did I implement everything in spec?
-    - Did I watch each test fail first?
-    - Did I avoid overbuilding (YAGNI)?
-    - Do tests verify real behavior?
+    **DO NOT:**
+    - Guess at unclear requirements
+    - Make assumptions about intent
+    - Add features not in the spec
+    - Skip verification steps
 
-    Fix any issues found before reporting.
+    ## Before Reporting Back: Self-Review (MANDATORY)
+
+    **Completeness:**
+    - Did I fully implement everything in the spec?
+    - Did I miss any requirements?
+    - Are there edge cases I didn't handle?
+
+    **Quality:**
+    - Is this my best work?
+    - Are names clear and accurate?
+
+    **Discipline:**
+    - Did I avoid overbuilding (YAGNI)?
+    - Did I only build what was requested?
+    - Did I follow existing patterns?
+
+    **Testing:**
+    - Do tests verify BEHAVIOR, not mocks?
+    - Did I watch each test fail first?
+
+    **Fix any issues before reporting.**
+
+    ## Report Format
+    - What you implemented
+    - Files changed (with paths)
+    - Test results
+    - Self-review findings
   run_in_background: true
 
 Task:
@@ -269,29 +495,7 @@ Task:
   model: sonnet
   description: "Execute Task 2"
   prompt: |
-    Execute Task 2 from plan.
-
-    ## Task Content
-    [Task 2 content extracted via get_task_content]
-
-    ## Before You Begin
-    If anything is unclear: **Ask questions now.** Don't guess.
-
-    ## Your Job
-    1. Follow each Step exactly as written
-    2. After each "Run test" step, verify expected output matches
-    3. Commit after tests pass
-
-    ## While Working
-    If blocked or unexpected, **ask for clarification** rather than guess.
-
-    ## Self-Review Before Reporting
-    - Did I implement everything in spec?
-    - Did I watch each test fail first?
-    - Did I avoid overbuilding (YAGNI)?
-    - Do tests verify real behavior?
-
-    Fix any issues found before reporting.
+    [Same comprehensive prompt structure as Task 1]
   run_in_background: true
 ```
 
@@ -319,7 +523,69 @@ TaskOutput:
   block: true
 ```
 
-4. Update state after group completes (clear dispatched, update current_task):
+4. **Two-Stage Group Review**
+
+After group implementation completes, run combined review for all tasks in the group.
+
+**Stage 1: Spec Compliance Review (all tasks in group)**
+
+```claude
+Task:
+  subagent_type: general-purpose
+  model: sonnet
+  description: "Spec review Group [N]"
+  prompt: |
+    Review spec compliance for Tasks [list] completed in this group.
+
+    ## Requirements for Each Task
+    [Task specs from plan]
+
+    ## Implementer Reports
+    [Reports from each implementer]
+
+    ## CRITICAL: Do Not Trust Reports
+
+    Verify each task independently:
+    - Read actual code, not just reports
+    - Check each requirement is met
+    - Look for missing pieces or extras
+
+    ## Report
+
+    For EACH task, report:
+    - ✅ Task N: SPEC COMPLIANT
+    - ❌ Task N: ISSUES - [list missing/extra/misunderstood]
+```
+
+**If any task has spec issues:** Dispatch fix agents for those specific tasks, then re-review.
+
+**Stage 2: Code Quality Review (all tasks in group)**
+
+After spec compliance passes for all tasks:
+
+```claude
+Task:
+  subagent_type: general-purpose
+  model: sonnet
+  description: "Quality review Group [N]"
+  prompt: |
+    Review code quality for Tasks [list]. Spec compliance verified.
+
+    ## Quality Criteria
+    - Code structure (focused, not over-engineered)
+    - Naming (WHAT not HOW)
+    - Testing (behavior not mocks)
+
+    ## Report
+
+    For EACH task:
+    - ✅ Task N: APPROVED
+    - ⚠️ Task N: ISSUES - [Critical/Important issues with file:line]
+```
+
+**If critical/important issues:** Dispatch fix agents, then re-review.
+
+5. Update state after group completes AND both reviews pass:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
@@ -331,80 +597,24 @@ frontmatter_set "$STATE_FILE" "agent_ids" ""
 frontmatter_set "$STATE_FILE" "current_task" "[LAST_TASK_IN_GROUP]"
 ```
 
-5. Mark completed tasks in TodoWrite.
+6. Mark completed tasks in TodoWrite.
 
 **If group has single task** (e.g., `group3:5`):
 
-Still use background execution to keep orchestrator context minimal:
+Use same pattern as sequential execution (two-stage review per task).
 
-```claude
-Task:
-  subagent_type: general-purpose
-  model: sonnet
-  description: "Execute Task 5"
-  prompt: |
-    Execute Task 5 from plan.
-
-    ## Task Content
-    [Task 5 content]
-
-    ## Before You Begin
-    If anything is unclear: **Ask questions now.** Don't guess.
-
-    ## Your Job
-    1. Follow each Step exactly as written
-    2. After each "Run test" step, verify expected output matches
-    3. Commit after tests pass
-
-    ## While Working
-    If blocked or unexpected, **ask for clarification** rather than guess.
-
-    ## Self-Review Before Reporting
-    - Did I implement everything in spec?
-    - Did I watch each test fail first?
-    - Did I avoid overbuilding (YAGNI)?
-    - Do tests verify real behavior?
-
-    Fix any issues found before reporting.
-  run_in_background: true
-```
-
-Then persist state, wait, and update (same pattern as multi-task groups):
-
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-STATE_FILE="$(get_state_file)"
-frontmatter_set "$STATE_FILE" "dispatched_group" "group3:5"
-frontmatter_set "$STATE_FILE" "agent_ids" "[agent_id]"
-```
-
-```claude
-TaskOutput:
-  task_id: [agent_id]
-  block: true
-```
-
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-STATE_FILE="$(get_state_file)"
-frontmatter_set "$STATE_FILE" "dispatched_group" ""
-frontmatter_set "$STATE_FILE" "agent_ids" ""
-frontmatter_set "$STATE_FILE" "current_task" "5"
-```
-
-Update TodoWrite after completion.
-
-### 3c. Why This Pattern Works
+### 3d. Why This Pattern Works
 
 | Aspect | Benefit |
 |--------|---------|
 | **Dependencies respected** | Groups execute serially; Task 3 waits for Task 1 |
 | **True parallelism** | Tasks in same group run simultaneously |
+| **Quality gates** | Two-stage review catches issues before next group |
 | **No context leak** | Task content passed to agents, not loaded into orchestrator |
-| **Accurate progress** | `current_task` updated after confirmed group completion |
-| **Resume works** | `current_task=2` means tasks 1-2 definitely done |
+| **Accurate progress** | `current_task` updated after confirmed completion + review |
+| **Resume works** | `current_task=2` means tasks 1-2 definitely done AND reviewed |
 
-### 3d. Extracting Task Content
+### 3e. Extracting Task Content
 
 Use helper to get task content for agent prompt:
 

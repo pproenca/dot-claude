@@ -92,7 +92,34 @@ Use AskUserQuestion to confirm approach.
 
 ### Task Structure
 
-Each task MUST be self-contained with bite-sized steps (2-5 minutes each). Assume the executor has zero context and questionable taste.
+Each task MUST be self-contained with bite-sized steps.
+
+**The Golden Rule:**
+
+> **Write plans assuming the executor has zero context and questionable taste.**
+
+They are skilled developers who know almost nothing about:
+- This codebase's conventions
+- The problem domain
+- Good test design
+- When to abstract vs duplicate
+
+They will take shortcuts if the plan allows it.
+
+**Step Granularity: 2-5 minutes each**
+
+Each "Step N:" is ONE action:
+- "Write the failing test" - one step (2-5 min)
+- "Run it to verify failure" - one step (30 sec)
+- "Implement minimal code" - one step (2-5 min)
+- "Run to verify pass" - one step (30 sec)
+- "Commit" - one step (30 sec)
+
+**Why 2-5 minutes matters:**
+- Steps that take longer need to be broken down
+- Enables accurate progress tracking
+- Prevents scope creep within steps
+- Makes resume/interrupt easier
 
 ````markdown
 ### Task N: [Component Name]
@@ -104,7 +131,7 @@ Each task MUST be self-contained with bite-sized steps (2-5 minutes each). Assum
 - Modify: `exact/path/to/existing.py:50-75`
 - Test: `tests/exact/path/test_file.py`
 
-**Step 1: Write the failing test**
+**Step 1: Write the failing test** (2-5 min)
 
 ```python
 def test_specific_behavior():
@@ -116,7 +143,7 @@ def test_specific_behavior():
     assert result == expected_output
 ```
 
-**Step 2: Run test to verify it fails**
+**Step 2: Run test to verify it fails** (30 sec)
 
 ```bash
 pytest tests/exact/path/test_file.py::test_specific_behavior -v
@@ -124,7 +151,7 @@ pytest tests/exact/path/test_file.py::test_specific_behavior -v
 
 Expected: FAIL with `[specific error, e.g., "NameError: name 'function_name' is not defined"]`
 
-**Step 3: Write minimal implementation**
+**Step 3: Write minimal implementation** (2-5 min)
 
 ```python
 def function_name(input_data):
@@ -132,7 +159,7 @@ def function_name(input_data):
     return expected_output
 ```
 
-**Step 4: Run test to verify it passes**
+**Step 4: Run test to verify it passes** (30 sec)
 
 ```bash
 pytest tests/exact/path/test_file.py::test_specific_behavior -v
@@ -140,7 +167,7 @@ pytest tests/exact/path/test_file.py::test_specific_behavior -v
 
 Expected: PASS (1 passed)
 
-**Step 5: Commit**
+**Step 5: Commit** (30 sec)
 
 ```bash
 git add tests/exact/path/test_file.py src/exact/path/module.py
@@ -148,11 +175,15 @@ git commit -m "feat(scope): add specific_behavior"
 ```
 ````
 
-**Why bite-sized steps matter:**
-- Each "Step N:" is one action (2-5 minutes)
-- Expected output proves the test tests the right thing
-- Specific test target (`::test_name`) prevents running unrelated tests
-- Complete code snippets prevent "add validation" ambiguity
+**What to Document (zero context assumption):**
+
+| Item | Reason |
+|------|--------|
+| Exact file paths | Not "the auth file" |
+| Complete code snippets | Not "add validation" |
+| Specific test targets | `::test_name` prevents wrong tests |
+| Expected output | Proves test tests the right thing |
+| Commit message | Prevents "update" commits |
 
 ### Parallel Groups
 

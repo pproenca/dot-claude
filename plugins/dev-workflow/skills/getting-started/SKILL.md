@@ -30,6 +30,35 @@ Skills apply when the task involves:
 
 If a skill exists for the task type, use it.
 
+## Skill Priority
+
+When multiple skills could apply, use this order:
+
+1. **Process skills first** (brainstorming, debugging) - determine HOW to approach
+2. **Implementation skills second** (TDD, architecture) - guide execution
+3. **Verification skills last** (verification-before-completion) - confirm results
+
+**Examples:**
+- "Let's build X" → brainstorming first, then TDD
+- "Fix this bug" → systematic-debugging first, then TDD for the fix
+- "Add this feature" → TDD skill (implementation is the process)
+
+## Red Flags
+
+**Watch for these thoughts that indicate skill should be used:**
+
+| Thought | Reality |
+|---------|---------|
+| "This is just a simple question" | Questions are tasks. Check for skills. |
+| "I need more context first" | Skill check comes BEFORE clarifying questions. |
+| "Let me explore the codebase first" | Skills tell you HOW to explore. Check first. |
+| "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
+| "I can do this quickly without process" | Quick without process = slow with rework. |
+| "The skill is overkill for this" | Skills exist because simple things become complex. |
+| "I remember how this skill works" | Skills evolve. Load the current version. |
+
+**Any of these thoughts = STOP. Check for applicable skill.**
+
 ## Shortcuts That Backfire
 
 | Thought                            | Better Approach                                    |

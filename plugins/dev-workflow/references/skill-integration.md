@@ -2,6 +2,29 @@
 
 How skills work together in the development workflow.
 
+## Skill Priority Hierarchy
+
+When multiple skills could apply, use this order:
+
+```text
+1. PROCESS skills first    → HOW to approach the task
+   (brainstorming, dev-workflow:systematic-debugging)
+
+2. IMPLEMENTATION skills   → WHAT to build
+   (TDD, dev-workflow:pragmatic-architecture)
+
+3. VERIFICATION skills     → IS IT DONE
+   (dev-workflow:verification-before-completion, dev-workflow:testing-anti-patterns)
+```
+
+**Examples:**
+| Task | Skill Order |
+|------|-------------|
+| "Build X" | brainstorm → TDD → verification |
+| "Fix bug Y" | dev-workflow:systematic-debugging → TDD → verification |
+| "Add feature Z" | TDD → verification |
+| "Is this test good?" | dev-workflow:testing-anti-patterns (quality skill) |
+
 ## Native Planning Flow
 
 ```text
@@ -245,3 +268,47 @@ dev-workflow:defense-in-depth (add validation layers)
     ▼
 dev-workflow:verification-before-completion
 ```
+
+### Execute Plan (Two-Stage Review)
+
+```dot
+digraph execute_plan {
+    rankdir=TB;
+    node [shape=box];
+
+    subgraph cluster_task {
+        label="Per Task";
+        implement [label="Implementer\nExecutes Task"];
+        spec_review [label="Spec Compliance\nReview"];
+        spec_ok [label="Spec OK?" shape=diamond];
+        quality_review [label="Code Quality\nReview"];
+        quality_ok [label="Quality OK?" shape=diamond];
+        fix_spec [label="Fix Spec\nIssues"];
+        fix_quality [label="Fix Quality\nIssues"];
+    }
+
+    implement -> spec_review;
+    spec_review -> spec_ok;
+    spec_ok -> quality_review [label="yes"];
+    spec_ok -> fix_spec [label="no"];
+    fix_spec -> spec_review;
+    quality_review -> quality_ok;
+    quality_ok -> mark_complete [label="yes"];
+    quality_ok -> fix_quality [label="no"];
+    fix_quality -> quality_review;
+
+    mark_complete [label="Mark Task\nComplete"];
+    mark_complete -> next_task [label="more tasks"];
+    next_task [label="Next Task" shape=ellipse];
+    next_task -> implement;
+    mark_complete -> post_completion [label="all done"];
+
+    post_completion [label="Post-Completion\nActions"];
+}
+```
+
+**Key Points:**
+- Spec review catches missing/extra requirements BEFORE quality review
+- Quality review only runs after spec compliance passes
+- Both review loops continue until issues resolved
+- Task not marked complete until both reviews pass
