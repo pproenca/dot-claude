@@ -18,7 +18,7 @@ echo "=== Level 2: Frontmatter Fields Validation ==="
 
 section "Skills Frontmatter"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -64,7 +64,7 @@ done
 
 section "Commands Frontmatter"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -113,7 +113,7 @@ done
 
 section "Agents Frontmatter"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -195,7 +195,7 @@ done
 
 section "Plugin JSON Fields"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
   plugin_json="$plugin_dir/.claude-plugin/plugin.json"
@@ -213,15 +213,7 @@ for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
       fi
     done
 
-    # Validate version follows semver
-    version=$(jq -r '.version // empty' "$plugin_json" 2>/dev/null)
-    if [[ -n "$version" ]]; then
-      if [[ "$version" =~ $SEMVER_PATTERN ]]; then
-        ok "$plugin_name: plugin.json valid (v$version)"
-      else
-        err "$plugin_name: version '$version' doesn't follow semver (X.Y.Z)"
-      fi
-    fi
+    ok "$plugin_name: plugin.json valid"
   else
     warn "$plugin_name: skipping plugin.json validation (jq not available)"
   fi

@@ -18,7 +18,7 @@ echo "=== Level 4: Arguments Validation ==="
 
 section "Command Arguments"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -76,7 +76,7 @@ done
 
 section "Agent Parameters"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 

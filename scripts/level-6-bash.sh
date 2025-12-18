@@ -21,7 +21,7 @@ section "Command Bash Blocks"
 
 TOTAL_BLOCKS=0
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -109,7 +109,7 @@ done
 
 section "Shell Scripts"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -143,7 +143,7 @@ done
 
 section "Hook Script Existence"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
   hooks_json="$plugin_dir/hooks/hooks.json"

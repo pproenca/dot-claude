@@ -3,7 +3,7 @@
 ## Bash/Shell Scripts
 
 ### Follow Google Shell Style Guide
-Reference: `plugins/shell/skills/google-shell-style/SKILL.md`
+Reference: `domain_plugins/shell/skills/google-shell-style/SKILL.md`
 
 ### Key Rules
 1. **Shebang**: `#!/bin/bash`
@@ -84,9 +84,21 @@ allowed-tools: Tool1, Tool2
 ### Command Frontmatter
 ```yaml
 ---
+description: What the command does
+allowed-tools: Tool1, Tool2
 args:
   - name: arg_name
     description: What it does
+---
+```
+
+### Agent Frontmatter
+```yaml
+---
+name: agent-name
+description: When to dispatch via Task tool
+model: sonnet | haiku
+tools: Glob, Grep, Read
 ---
 ```
 

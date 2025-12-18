@@ -226,12 +226,12 @@ json_get() {
 # Plugin Functions
 # ============================================================================
 
-# Get list of plugin directories
+# Get list of plugin directories (from both plugins/ and domain_plugins/)
 get_plugin_dirs() {
   local root
   root=$(get_marketplace_root)
 
-  for dir in "$root"/plugins/*/; do
+  for dir in "$root"/plugins/*/ "$root"/domain_plugins/*/; do
     [[ -d "$dir" ]] && echo "$dir"
   done
 }

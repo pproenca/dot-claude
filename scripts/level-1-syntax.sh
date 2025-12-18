@@ -33,11 +33,17 @@ else
   err "marketplace.json not found at $MARKETPLACE_JSON"
 fi
 
-# Check plugins directory exists
+# Check plugin directories exist
 if [[ -d "$MARKETPLACE_ROOT/plugins" ]]; then
   ok "plugins/ directory exists"
 else
-  err "plugins/ directory not found"
+  warn "plugins/ directory not found"
+fi
+
+if [[ -d "$MARKETPLACE_ROOT/domain_plugins" ]]; then
+  ok "domain_plugins/ directory exists"
+else
+  warn "domain_plugins/ directory not found"
 fi
 
 # ============================================================================
@@ -46,7 +52,7 @@ fi
 
 section "Plugin Structure"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -86,7 +92,7 @@ done
 
 section "Skills Structure"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -125,7 +131,7 @@ done
 
 section "Commands Structure"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -158,7 +164,7 @@ done
 
 section "Agents Structure"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -191,7 +197,7 @@ done
 
 section "Script Permissions"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -215,26 +221,28 @@ done
 section "Marketplace Integrity"
 
 if has_jq && [[ -f "$MARKETPLACE_JSON" ]]; then
-  # Check all plugins in marketplace.json exist
-  mapfile -t marketplace_plugins < <(jq -r '.plugins[].name' "$MARKETPLACE_JSON")
+  # Check all plugins in marketplace.json exist (using source paths)
+  while IFS= read -r line; do
+    plugin_name=$(echo "$line" | cut -d'|' -f1)
+    plugin_source=$(echo "$line" | cut -d'|' -f2)
+    plugin_path="$MARKETPLACE_ROOT/${plugin_source#./}"
 
-  for plugin_name in "${marketplace_plugins[@]}"; do
-    if [[ -d "$MARKETPLACE_ROOT/plugins/$plugin_name" ]]; then
+    if [[ -d "$plugin_path" ]]; then
       ok "marketplace: $plugin_name directory exists"
     else
-      err "marketplace: $plugin_name listed but directory not found (orphaned entry)"
+      err "marketplace: $plugin_name listed but directory not found at $plugin_source"
     fi
-  done
+  done < <(jq -r '.plugins[] | "\(.name)|\(.source)"' "$MARKETPLACE_JSON")
 
   # Check for plugins not in marketplace
-  for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+  for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
     [[ -d "$plugin_dir" ]] || continue
     plugin_name=$(get_plugin_name "$plugin_dir")
 
     if jq -e ".plugins[] | select(.name==\"$plugin_name\")" "$MARKETPLACE_JSON" &>/dev/null; then
       : # ok, in marketplace
     else
-      warn "$plugin_name: exists in plugins/ but not listed in marketplace.json"
+      warn "$plugin_name: exists but not listed in marketplace.json"
     fi
   done
 else

@@ -32,17 +32,19 @@ shellcheck -x plugins/dev-workflow/scripts/hook-helpers.sh
 
 ## Validation
 ```bash
-# Validate all plugins (JSON, frontmatter, permissions)
+# Full validation (marketplace levels 1-7 + BATS tests)
+make check
+
+# Validate plugins with Claude CLI
 make validate
 
-# Validate single plugin
-claude plugin validate plugins/dev-workflow/
-```
-
-## Full Check
-```bash
-# Run lint + validate + test
-make check
+# Run individual validation levels
+scripts/level-1-syntax.sh      # JSON/YAML syntax
+scripts/level-2-frontmatter.sh # YAML frontmatter
+scripts/level-4-arguments.sh   # Command arguments
+scripts/level-5-file-refs.sh   # File references
+scripts/level-6-bash.sh        # Bash syntax in markdown
+scripts/level-7-integration.sh # Integration tests
 ```
 
 ## Cleanup

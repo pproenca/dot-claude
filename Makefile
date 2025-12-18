@@ -15,8 +15,9 @@ PRE_COMMIT ?= uv run pre-commit
 
 # Plugin directories
 PLUGIN_DIR := plugins
+DOMAIN_PLUGIN_DIR := domain_plugins
 DEV_WORKFLOW := $(PLUGIN_DIR)/dev-workflow
-DEV_PYTHON := $(PLUGIN_DIR)/dev-python
+DEV_PYTHON := $(DOMAIN_PLUGIN_DIR)/dev-python
 
 # ============================================================================
 # Computed Variables
@@ -108,6 +109,10 @@ lint:  ## Check code with shellcheck (no auto-fix)
 validate:  ## Run plugin-specific validation (JSON, frontmatter, permissions)
 	@echo "=== Claude Plugin Validation ==="
 	@for dir in $(PLUGIN_DIR)/*/; do \
+		echo "Validating $$(basename $$dir)..."; \
+		claude plugin validate "$$dir" || exit 1; \
+	done
+	@for dir in $(DOMAIN_PLUGIN_DIR)/*/; do \
 		echo "Validating $$(basename $$dir)..."; \
 		claude plugin validate "$$dir" || exit 1; \
 	done

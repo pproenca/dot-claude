@@ -9,7 +9,7 @@ detect_python_version() {
 
     # 1. Check .python-version (uv's pin file)
     if [[ -f ".python-version" ]]; then
-        version=$(cat ".python-version" | tr -d '[:space:]')
+        version=$(tr -d '[:space:]' < ".python-version")
         if [[ -n "$version" ]]; then
             echo "Python version: $version (from .python-version)"
             return 0
@@ -29,7 +29,7 @@ detect_python_version() {
 
     # 3. Check .claude/python-version (stored preference)
     if [[ -f ".claude/python-version" ]]; then
-        version=$(cat ".claude/python-version" | tr -d '[:space:]')
+        version=$(tr -d '[:space:]' < ".claude/python-version")
         if [[ -n "$version" ]]; then
             echo "Python version: $version (from .claude/python-version)"
             return 0

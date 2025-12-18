@@ -18,7 +18,7 @@ echo "=== Level 5: File References Validation ==="
 
 section "CLAUDE_PLUGIN_ROOT References"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
   refs_checked=0
@@ -64,7 +64,7 @@ done
 
 section "References Directories"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -100,7 +100,7 @@ done
 
 section "Hook Script References"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
   hooks_json="$plugin_dir/hooks/hooks.json"

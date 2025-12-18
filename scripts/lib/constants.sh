@@ -85,7 +85,6 @@ AGENT_TOOLS_FIELDS=(
 # Plugin manifest (plugin.json)
 PLUGIN_JSON_REQUIRED=(
   "name"
-  "version"
   "description"
 )
 

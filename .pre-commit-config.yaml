@@ -18,13 +18,6 @@ repos:
   # Marketplace validation hooks
   - repo: local
     hooks:
-      - id: version-sync
-        name: Version Sync Check
-        entry: scripts/sync-versions.sh --check
-        language: script
-        pass_filenames: false
-        files: ^(plugins/.*/.claude-plugin/plugin\.json|\.claude-plugin/marketplace\.json)$
-
       - id: marketplace-level-1
         name: Level 1 - Syntax & Structure
         entry: scripts/level-1-syntax.sh

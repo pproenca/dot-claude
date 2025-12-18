@@ -12,7 +12,7 @@ Ensures all bash scripts pass shellcheck.
 ```bash
 make validate
 ```
-Checks:
+Validates both `plugins/` and `domain_plugins/` directories:
 - JSON syntax in plugin.json files
 - Frontmatter in markdown files
 - Script permissions
@@ -27,7 +27,14 @@ Runs all bats test suites.
 ```bash
 make check
 ```
-Runs lint + validate + test in sequence.
+Runs marketplace validation levels 1-7 plus BATS tests:
+- Level 1: JSON/YAML syntax
+- Level 2: YAML frontmatter
+- Level 4: Command arguments
+- Level 5: File references
+- Level 6: Bash syntax in markdown
+- Level 7: Integration tests
+- BATS: Unit tests
 
 ## Pre-commit Hooks
 When you commit, pre-commit automatically runs:

@@ -30,7 +30,7 @@ if command -v bats &>/dev/null; then
   fi
 
   # Run per-plugin tests
-  for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+  for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
     [[ -d "$plugin_dir" ]] || continue
     plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -53,7 +53,7 @@ fi
 
 section "Per-Plugin Validation"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
@@ -75,13 +75,13 @@ done
 section "Cross-Plugin References"
 
 # Check for references between plugins (should be avoided or explicit)
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 
   # Get list of other plugin names
   other_plugins=()
-  for other_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+  for other_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
     [[ -d "$other_dir" ]] || continue
     other_name=$(get_plugin_name "$other_dir")
     [[ "$other_name" != "$plugin_name" ]] && other_plugins+=("$other_name")
@@ -104,7 +104,7 @@ ok "Cross-plugin reference check complete"
 
 section "Hook Timeouts"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
   hooks_json="$plugin_dir/hooks/hooks.json"
@@ -130,7 +130,7 @@ done
 
 section "MCP Tool References"
 
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/; do
+for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
   [[ -d "$plugin_dir" ]] || continue
   plugin_name=$(get_plugin_name "$plugin_dir")
 

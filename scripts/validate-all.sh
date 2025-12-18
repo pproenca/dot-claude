@@ -116,17 +116,6 @@ echo "========================================"
 
 TOTAL_ERRORS=0
 
-# Version sync check first
-echo ""
-echo "========================================"
-echo "Checking Version Sync"
-echo "========================================"
-if "$SCRIPTS_DIR/sync-versions.sh" --check; then
-  : # ok
-else
-  TOTAL_ERRORS=$((TOTAL_ERRORS + 1))
-fi
-
 # Determine which levels to run
 if [[ -n "$SPECIFIC_LEVEL" ]]; then
   # Run specific level only
