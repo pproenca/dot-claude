@@ -79,16 +79,20 @@ Use AskUserQuestion to confirm approach.
 ```markdown
 # [Feature Name] Implementation Plan
 
-**Goal:** [One sentence]
+> **Execution:** Use `/dev-workflow:execute-plan docs/plans/[this-file].md` to implement task-by-task.
+
+**Goal:** [One sentence describing what this builds]
 
 **Architecture:** [2-3 sentences from Step 3]
+
+**Tech Stack:** [Key technologies, libraries, frameworks]
 
 ---
 ```
 
 ### Task Structure
 
-Each task MUST be self-contained with explicit TDD instructions:
+Each task MUST be self-contained with bite-sized steps (2-5 minutes each). Assume the executor has zero context and questionable taste.
 
 ````markdown
 ### Task N: [Component Name]
@@ -98,31 +102,57 @@ Each task MUST be self-contained with explicit TDD instructions:
 **Files:**
 - Create: `exact/path/to/new.py`
 - Modify: `exact/path/to/existing.py:50-75`
-- Test: `tests/exact/path/test.py`
+- Test: `tests/exact/path/test_file.py`
 
-**TDD Instructions (MANDATORY):**
+**Step 1: Write the failing test**
 
-1. **Write test FIRST:**
-   ```python
-   def test_behavior():
-       result = function(input)
-       assert result == expected
-   ```
+```python
+def test_specific_behavior():
+    # Arrange
+    input_data = {"key": "value"}
+    # Act
+    result = function_name(input_data)
+    # Assert
+    assert result == expected_output
+```
 
-2. **Run test, verify FAILURE:**
-   ```bash
-   pytest tests/path -v
-   ```
+**Step 2: Run test to verify it fails**
 
-3. **Implement MINIMAL code**
+```bash
+pytest tests/exact/path/test_file.py::test_specific_behavior -v
+```
 
-4. **Run test, verify PASS**
+Expected: FAIL with `[specific error, e.g., "NameError: name 'function_name' is not defined"]`
 
-5. **Commit:**
-   ```bash
-   git add -A && git commit -m "feat(scope): description"
-   ```
+**Step 3: Write minimal implementation**
+
+```python
+def function_name(input_data):
+    # Minimal code to make test pass
+    return expected_output
+```
+
+**Step 4: Run test to verify it passes**
+
+```bash
+pytest tests/exact/path/test_file.py::test_specific_behavior -v
+```
+
+Expected: PASS (1 passed)
+
+**Step 5: Commit**
+
+```bash
+git add tests/exact/path/test_file.py src/exact/path/module.py
+git commit -m "feat(scope): add specific_behavior"
+```
 ````
+
+**Why bite-sized steps matter:**
+- Each "Step N:" is one action (2-5 minutes)
+- Expected output proves the test tests the right thing
+- Specific test target (`::test_name`) prevents running unrelated tests
+- Complete code snippets prevent "add validation" ambiguity
 
 ### Parallel Groups
 
@@ -178,3 +208,16 @@ Report the plan file path for manual execution.
 **If "Revise plan":**
 
 Wait for feedback, update plan, return to Step 5.
+
+## Remember
+
+Before finalizing any plan, verify:
+
+- [ ] Exact file paths (not "the auth file")
+- [ ] Complete code snippets (not "add validation")
+- [ ] Specific test commands with `::test_name` targets
+- [ ] Expected output for each verification step
+- [ ] "Step N:" labels for each action
+- [ ] DRY, YAGNI, TDD, frequent commits
+- [ ] ≤3 new files per feature (colocation)
+- [ ] No "for future use" abstractions

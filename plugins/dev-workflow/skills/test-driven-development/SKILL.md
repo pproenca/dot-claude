@@ -145,8 +145,28 @@ Can't check all boxes? Start over with TDD.
 - Rationalizing "just this once"
 - "Keep as reference" or "adapt existing code"
 - "Tests after achieve the same purpose"
+- "I already manually tested it"
+- "This is different because..."
+- "TDD is dogmatic, I'm being pragmatic"
+- "Already spent X hours, deleting is wasteful"
 
 **All of these mean: Delete code. Start over with TDD.**
+
+## Common Rationalizations (Pre-emptive Rebuttals)
+
+| Excuse | Reality |
+|--------|---------|
+| "Too simple to test" | Simple code breaks. Test takes 30 seconds. |
+| "I'll test after" | Tests passing immediately prove nothing - you never saw it fail. |
+| "Tests after achieve same goals" | Tests-after = "what does this do?" Tests-first = "what should this do?" |
+| "Already manually tested" | Ad-hoc ≠ systematic. No record, can't re-run, easy to forget cases. |
+| "Deleting X hours is wasteful" | Sunk cost fallacy. Keeping unverified code is technical debt. |
+| "Keep as reference" | You'll adapt it. That's testing after. Delete means delete. |
+| "Need to explore first" | Fine. Throw away exploration, start fresh with TDD. |
+| "Test hard = I'm stuck" | Listen to test. Hard to test = hard to use. Simplify design. |
+| "TDD will slow me down" | TDD faster than debugging. Pragmatic = test-first. |
+| "TDD is dogmatic" | TDD IS pragmatic: finds bugs before commit, prevents regressions. |
+| "This is different because..." | No it isn't. The rules apply. |
 
 ## When Stuck
 

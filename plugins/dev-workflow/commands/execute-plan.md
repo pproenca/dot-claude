@@ -113,8 +113,31 @@ Task:
   model: sonnet
   description: "Execute Task [N]"
   prompt: |
-    Execute Task [N] from plan. Follow TDD instructions exactly.
+    Execute Task [N] from plan.
+
+    ## Task Content
     [Task content extracted via get_task_content]
+
+    ## Before You Begin
+    If anything is unclear about requirements, approach, or dependencies:
+    **Ask questions now.** Don't guess or make assumptions.
+
+    ## Your Job
+    1. Follow each Step exactly as written
+    2. After each "Run test" step, verify the expected output matches
+    3. Commit after tests pass
+
+    ## While Working
+    If you encounter something unexpected or blockers, **ask for clarification**.
+    It's always OK to pause and clarify rather than guess.
+
+    ## Before Reporting Back: Self-Review
+    - Did I implement everything in the spec?
+    - Did I watch each test fail before implementing?
+    - Did I avoid overbuilding (YAGNI)?
+    - Do tests verify real behavior, not mocks?
+
+    If you find issues during self-review, fix them before reporting.
   run_in_background: true
 ```
 
@@ -216,8 +239,29 @@ Task:
   model: sonnet
   description: "Execute Task 1"
   prompt: |
-    Execute Task 1 from plan. Follow TDD instructions exactly.
+    Execute Task 1 from plan.
+
+    ## Task Content
     [Task 1 content extracted via get_task_content]
+
+    ## Before You Begin
+    If anything is unclear: **Ask questions now.** Don't guess.
+
+    ## Your Job
+    1. Follow each Step exactly as written
+    2. After each "Run test" step, verify expected output matches
+    3. Commit after tests pass
+
+    ## While Working
+    If blocked or unexpected, **ask for clarification** rather than guess.
+
+    ## Self-Review Before Reporting
+    - Did I implement everything in spec?
+    - Did I watch each test fail first?
+    - Did I avoid overbuilding (YAGNI)?
+    - Do tests verify real behavior?
+
+    Fix any issues found before reporting.
   run_in_background: true
 
 Task:
@@ -225,8 +269,29 @@ Task:
   model: sonnet
   description: "Execute Task 2"
   prompt: |
-    Execute Task 2 from plan. Follow TDD instructions exactly.
+    Execute Task 2 from plan.
+
+    ## Task Content
     [Task 2 content extracted via get_task_content]
+
+    ## Before You Begin
+    If anything is unclear: **Ask questions now.** Don't guess.
+
+    ## Your Job
+    1. Follow each Step exactly as written
+    2. After each "Run test" step, verify expected output matches
+    3. Commit after tests pass
+
+    ## While Working
+    If blocked or unexpected, **ask for clarification** rather than guess.
+
+    ## Self-Review Before Reporting
+    - Did I implement everything in spec?
+    - Did I watch each test fail first?
+    - Did I avoid overbuilding (YAGNI)?
+    - Do tests verify real behavior?
+
+    Fix any issues found before reporting.
   run_in_background: true
 ```
 
@@ -278,8 +343,29 @@ Task:
   model: sonnet
   description: "Execute Task 5"
   prompt: |
-    Execute Task 5 from plan. Follow TDD instructions exactly.
+    Execute Task 5 from plan.
+
+    ## Task Content
     [Task 5 content]
+
+    ## Before You Begin
+    If anything is unclear: **Ask questions now.** Don't guess.
+
+    ## Your Job
+    1. Follow each Step exactly as written
+    2. After each "Run test" step, verify expected output matches
+    3. Commit after tests pass
+
+    ## While Working
+    If blocked or unexpected, **ask for clarification** rather than guess.
+
+    ## Self-Review Before Reporting
+    - Did I implement everything in spec?
+    - Did I watch each test fail first?
+    - Did I avoid overbuilding (YAGNI)?
+    - Do tests verify real behavior?
+
+    Fix any issues found before reporting.
   run_in_background: true
 ```
 
