@@ -16,7 +16,7 @@
         "name": "Pedro Proenca",
         "email": "pedro@10xengs.com"
       },
-      "homepage": "https://github.com/pproenca/dot-claude/tree/master/plugins/dev-python",
+      "homepage": "https://github.com/pproenca/dot-claude/tree/master/domain_plugins/dev-python",
       "category": "development"
     },
     {
@@ -38,7 +38,7 @@
         "name": "Pedro Proenca",
         "email": "pedro@10xengs.com"
       },
-      "homepage": "https://github.com/pproenca/dot-claude/tree/master/plugins/shell",
+      "homepage": "https://github.com/pproenca/dot-claude/tree/master/domain_plugins/shell",
       "category": "development"
     }
   ]

@@ -6,8 +6,9 @@ Personal Claude Code plugins marketplace.
 
 | Plugin | Description | Version |
 |--------|-------------|---------|
-| [dev-python](plugins/dev-python) | Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django | 1.0.0 |
+| [dev-python](domain_plugins/dev-python) | Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django | 1.0.0 |
 | [dev-workflow](plugins/dev-workflow) | Development workflow with TDD, debugging, and collaboration skills | 2.4.2 |
+| [shell](domain_plugins/shell) | Shell scripting with Google Style Guide expertise | 1.0.0 |
 
 ## Installation
 
