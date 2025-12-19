@@ -206,7 +206,21 @@ git add docs/plans/
 git commit -m "docs: implementation plan for <feature>"
 ```
 
-## Step 5: Execution Handoff
+## Step 5: Import Plan into Harness
+
+After saving the plan file, import it into harness:
+
+```bash
+source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
+harness_import_plan "$PLAN_FILE"
+```
+
+This validates the DAG (cycle detection, missing dependencies) and creates
+atomic state with all tasks pending.
+
+If import fails, fix the plan and retry.
+
+## Step 6: Execution Handoff
 
 Use AskUserQuestion:
 
