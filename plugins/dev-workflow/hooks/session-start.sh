@@ -1,10 +1,38 @@
 #!/bin/bash
 # Session start hook - detects active workflow or loads getting-started skill
-# No external dependencies required
+# Queries harness daemon for active workflow state
 
 set -euo pipefail
 
-# Try to source hook-helpers.sh if available (for state file detection)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR/../scripts/ensure-harness.sh"
+
+# Check for active harness workflow FIRST
+if ensure_harness 2>/dev/null; then
+  # Query harness for active workflow
+  STATE=$(harness get-state 2>/dev/null || echo '{}')
+  TASK_COUNT=$(echo "$STATE" | jq '.tasks | length' 2>/dev/null || echo "0")
+
+  if [[ "$TASK_COUNT" -gt 0 ]]; then
+    COMPLETED=$(echo "$STATE" | jq '[.tasks[] | select(.status == "completed")] | length' 2>/dev/null || echo "0")
+    PENDING=$(echo "$STATE" | jq '[.tasks[] | select(.status == "pending")] | length' 2>/dev/null || echo "0")
+    RUNNING=$(echo "$STATE" | jq '[.tasks[] | select(.status == "running")] | length' 2>/dev/null || echo "0")
+
+    # Output harness workflow resume context
+    cat << EOF
+{
+  "hookSpecificOutput": {
+    "hookEventName": "SessionStart",
+    "additionalContext": "<system-context>\\n**ACTIVE WORKFLOW DETECTED**\\n\\nProgress: ${COMPLETED}/${TASK_COUNT} tasks completed\\n- Pending: ${PENDING}\\n- Running: ${RUNNING}\\n\\nCommands:\\n- /dev-workflow:resume - Continue execution\\n- /dev-workflow:abandon - Discard workflow state\\n</system-context>"
+  }
+}
+EOF
+    exit 0
+  fi
+fi
+
+# Fallback: Check for old state file format (backward compatibility)
 HELPERS="${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
 if [[ -f "$HELPERS" ]]; then
   # shellcheck disable=SC1090,SC1091

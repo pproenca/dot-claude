@@ -243,3 +243,63 @@ EOF
   # Based on the script using set -euo pipefail, it will exit non-zero
   [ "$status" -ne 0 ]
 }
+
+# ============================================================================
+# Harness integration (2 tests)
+# ============================================================================
+
+@test "harness integration: detects active harness workflow" {
+  cd "$TEST_DIR"
+
+  # Mock harness command to return active workflow
+  mkdir -p "$TEST_DIR/mocks"
+  cat > "$TEST_DIR/mocks/harness" << 'EOF'
+#!/bin/bash
+if [[ "$1" == "ping" ]]; then
+  echo "pong"
+  exit 0
+fi
+if [[ "$1" == "get-state" ]]; then
+  echo '{"tasks":{"task-1":{"status":"completed"},"task-2":{"status":"pending"}}}'
+  exit 0
+fi
+exit 0
+EOF
+  chmod +x "$TEST_DIR/mocks/harness"
+  export PATH="$TEST_DIR/mocks:$PATH"
+
+  run "$HOOK"
+
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -q "ACTIVE WORKFLOW DETECTED"
+  echo "$output" | grep -q "Progress: 1/2"
+}
+
+@test "harness integration: shows no workflow when harness state empty" {
+  cd "$TEST_DIR"
+
+  # Mock harness command to return empty state
+  mkdir -p "$TEST_DIR/mocks"
+  cat > "$TEST_DIR/mocks/harness" << 'EOF'
+#!/bin/bash
+if [[ "$1" == "ping" ]]; then
+  echo "pong"
+  exit 0
+fi
+if [[ "$1" == "get-state" ]]; then
+  echo '{"tasks":{}}'
+  exit 0
+fi
+exit 0
+EOF
+  chmod +x "$TEST_DIR/mocks/harness"
+  export PATH="$TEST_DIR/mocks:$PATH"
+
+  run "$HOOK"
+
+  [ "$status" -eq 0 ]
+  # Should show getting-started skill (not the workflow resume prompt)
+  echo "$output" | grep -q "dev-workflow skills available"
+  # Should NOT show the resume prompt format (Progress: N/M)
+  [[ "$output" != *"Progress:"*"tasks completed"* ]]
+}
