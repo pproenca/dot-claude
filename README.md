@@ -4,11 +4,11 @@ Personal Claude Code plugins marketplace.
 
 ## Plugins
 
-| Plugin | Description | Version |
-|--------|-------------|---------|
-| [dev-python](domain_plugins/dev-python) | Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django | 1.0.0 |
-| [dev-workflow](plugins/dev-workflow) | Development workflow with TDD, debugging, and collaboration skills | 2.4.2 |
-| [shell](domain_plugins/shell) | Shell scripting with Google Style Guide expertise | 1.0.0 |
+| Plugin | Description |
+|--------|-------------|
+| [dev-python](domain_plugins/dev-python) | Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django |
+| [dev-workflow](plugins/dev-workflow) | Development workflow with TDD, debugging, and collaboration skills |
+| [shell](domain_plugins/shell) | Shell scripting with Google Style Guide expertise |
 
 ## Installation
 
