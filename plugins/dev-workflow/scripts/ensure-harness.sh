@@ -6,7 +6,35 @@ set -euo pipefail
 
 HARNESS_TIMEOUT="${HARNESS_TIMEOUT:-5}"
 
+# Installation instructions for harness
+show_install_instructions() {
+  cat >&2 << 'EOF'
+ERROR: harness CLI not found
+
+Install harness using one of these methods:
+
+  # Quick install (recommended):
+  curl -fsSL https://raw.githubusercontent.com/pproenca/harness/master/install.sh | bash
+
+  # Or with uv directly:
+  uv tool install git+https://github.com/pproenca/harness
+
+  # Install specific version:
+  uv tool install git+https://github.com/pproenca/harness@v2.0.0
+
+After installation, ensure ~/.local/bin is in your PATH:
+  export PATH="$HOME/.local/bin:$PATH"
+
+EOF
+}
+
 ensure_harness() {
+  # Check if harness CLI is installed
+  if ! command -v harness >/dev/null 2>&1; then
+    show_install_instructions
+    return 1
+  fi
+
   # Check if daemon responds to ping
   if harness ping >/dev/null 2>&1; then
     return 0
