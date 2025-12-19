@@ -20,6 +20,24 @@ A collection of Claude Code plugins for structured development workflows, Python
 
 ## Installation
 
+### Via Plugin Marketplace (Recommended)
+
+Add the marketplace and install plugins from within Claude Code:
+
+```
+/plugin marketplace add pproenca/dot-claude
+```
+
+Then install individual plugins:
+
+```
+/plugin install dev-workflow@pproenca
+/plugin install dev-python@pproenca
+/plugin install shell@pproenca
+```
+
+### Manual Installation
+
 Clone the repository and symlink the desired plugins:
 
 ```bash
