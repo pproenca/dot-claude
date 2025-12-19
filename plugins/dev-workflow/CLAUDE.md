@@ -33,7 +33,7 @@ Tests run on commit via pre-commit hook.
 **Hooks** (`hooks/hooks.json`):
 - `SessionStart` → loads getting-started skill with planning methodology
 
-**Helper functions**: `scripts/hook-helpers.sh` provides `frontmatter_get`/`frontmatter_set` for safe YAML parsing.
+**Helper functions**: `scripts/hook-helpers.sh` provides plan parsing and harness integration functions.
 
 ## Component Frontmatter
 
@@ -96,5 +96,5 @@ tests/           # Bats tests for hooks and scripts
 
 ## Dependencies
 
-**Required:** `git`
+**Required:** `git`, `harness` (install via `uv tool install git+https://github.com/pproenca/harness`)
 **Optional:** `jq`, `bats-core`, `shellcheck`, `pre-commit`

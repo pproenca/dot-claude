@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR/../scripts/ensure-harness.sh"
 
-# Check for active harness workflow FIRST
+# Check for active harness workflow
 if ensure_harness 2>/dev/null; then
   # Query harness for active workflow
   STATE=$(harness get-state 2>/dev/null || echo '{}')
@@ -25,33 +25,6 @@ if ensure_harness 2>/dev/null; then
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
     "additionalContext": "<system-context>\\n**ACTIVE WORKFLOW DETECTED**\\n\\nProgress: ${COMPLETED}/${TASK_COUNT} tasks completed\\n- Pending: ${PENDING}\\n- Running: ${RUNNING}\\n\\nCommands:\\n- /dev-workflow:resume - Continue execution\\n- /dev-workflow:abandon - Discard workflow state\\n</system-context>"
-  }
-}
-EOF
-    exit 0
-  fi
-fi
-
-# Fallback: Check for old state file format (backward compatibility)
-HELPERS="${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-if [[ -f "$HELPERS" ]]; then
-  # shellcheck disable=SC1090,SC1091
-  source "$HELPERS"
-
-  # Check for active workflow FIRST (resume capability)
-  STATE_FILE="$(get_state_file 2>/dev/null)" || STATE_FILE=""
-
-  if [[ -n "$STATE_FILE" ]] && [[ -f "$STATE_FILE" ]]; then
-    PLAN=$(frontmatter_get "$STATE_FILE" "plan" "")
-    CURRENT=$(frontmatter_get "$STATE_FILE" "current_task" "0")
-    TOTAL=$(frontmatter_get "$STATE_FILE" "total_tasks" "0")
-
-    # Output resume context instead of getting-started skill
-    cat << EOF
-{
-  "hookSpecificOutput": {
-    "hookEventName": "SessionStart",
-    "additionalContext": "<system-context>\\n**ACTIVE WORKFLOW DETECTED**\\n\\nPlan: ${PLAN}\\nProgress: ${CURRENT}/${TOTAL} tasks\\n\\nCommands:\\n- /dev-workflow:resume - Continue execution\\n- /dev-workflow:abandon - Discard workflow state\\n</system-context>"
   }
 }
 EOF

@@ -110,14 +110,14 @@ git clone https://github.com/pproenca/dev-workflow ~/.claude/plugins/dev-workflo
 
 ## Prerequisites
 
-**Required:** `git`
+**Required:** `git`, `harness` (install via `uv tool install git+https://github.com/pproenca/harness`)
 **Optional:** `jq`, `bats-core`, `shellcheck`, `pre-commit`
 
 ## Usage
 
 Skills load automatically at session start. The `getting-started` skill establishes the protocol: before any task, check if a skill applies.
 
-State persists in `.claude/dev-workflow-state.local.md`. Sessions can crash and resume.
+State is managed by the harness daemon. Sessions can crash and resume via `/dev-workflow:resume`.
 
 ## Development
 

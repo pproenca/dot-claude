@@ -113,35 +113,6 @@ teardown_git_repo() {
   }
 }
 
-# Create state file
-create_state_file() {
-  local dir="${1:-$TEST_DIR}"
-  local current="${2:-1}"
-  local total="${3:-5}"
-  mkdir -p "$dir/.claude"
-  cat > "$dir/.claude/dev-workflow-state.local.md" << EOF
----
-workflow: swarm
-plan: /path/to/plan.md
-current_task: $current
-total_tasks: $total
-last_commit: $(git -C "$dir" rev-parse HEAD 2>/dev/null || echo "abc123")
----
-EOF
-}
-
-# Create handoff file
-create_handoff_file() {
-  local dir="${1:-$TEST_DIR}"
-  local mode="${2:-sequential}"
-  mkdir -p "$dir/.claude"
-  cat > "$dir/.claude/pending-handoff.local.md" << EOF
----
-plan: /path/to/plan.md
-mode: $mode
----
-EOF
-}
 
 # Verify JSON validity
 assert_valid_json() {

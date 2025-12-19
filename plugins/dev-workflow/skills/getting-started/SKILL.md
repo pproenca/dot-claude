@@ -312,44 +312,36 @@ Use `ExitPlanMode(launchSwarm: true, teammateCount: N)` to spawn parallel teamma
 
 ### State Persistence (Resume Capability)
 
-Before executing tasks, create a state file for resume:
+Before executing tasks, import the plan into harness:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-create_state_file "<plan_file_path>"
+harness_import_plan "<plan_file_path>"
 ```
 
-This creates `.claude/dev-workflow-state.local.md` with:
-- Plan file path
-- Current task counter (0)
-- Total tasks
-- Base commit SHA
+This creates workflow state in the harness daemon with:
+- Task definitions from the plan
+- Status tracking (pending/running/completed)
+- Worker assignment
 
-**State is updated by the orchestrator** after each group of parallel tasks completes:
+**State is managed by harness daemon.** Tasks are claimed atomically via `harness task claim` and completed via `harness task complete`.
 
-```bash
-# After group completes (all TaskOutput calls return)
-frontmatter_set "$STATE_FILE" "current_task" "[LAST_TASK_IN_GROUP]"
-```
-
-This ensures `current_task` accurately reflects which tasks are definitely complete.
-
-**If session ends unexpectedly**, the next session will detect the state file and prompt:
+**If session ends unexpectedly**, the next session will detect active workflow via harness and prompt:
 ```
 ACTIVE WORKFLOW DETECTED
-Plan: docs/plans/2025-12-14-feature.md
-Progress: 3/8 tasks
+Progress: 3/8 tasks completed
+- Pending: 5
+- Running: 0
 
 Commands:
 - /dev-workflow:resume - Continue execution
 - /dev-workflow:abandon - Discard workflow state
 ```
 
-**After workflow completes** (code review + finish branch done), delete state:
+**After workflow completes** (code review + finish branch done), clear state:
 
 ```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-delete_state_file
+harness plan reset
 ```
 
 ### Post-Execution Actions

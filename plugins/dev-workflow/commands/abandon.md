@@ -11,17 +11,27 @@ Discard the active workflow state. Use this when you want to start fresh or the 
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-STATE_FILE="$(get_state_file)"
-if [[ -f "$STATE_FILE" ]]; then
-  PLAN=$(frontmatter_get "$STATE_FILE" "plan" "")
-  CURRENT=$(frontmatter_get "$STATE_FILE" "current_task" "0")
-  TOTAL=$(frontmatter_get "$STATE_FILE" "total_tasks" "0")
-  echo "Active workflow:"
-  echo "  Plan: $PLAN"
-  echo "  Progress: $CURRENT/$TOTAL tasks"
-else
+
+# Check harness for active workflow
+PROGRESS=$(harness_get_progress 2>/dev/null) || {
   echo "No active workflow found."
+  exit 0
+}
+
+TOTAL=$(echo "$PROGRESS" | jq -r '.total // 0')
+if [[ "$TOTAL" -eq 0 ]]; then
+  echo "No active workflow found."
+  exit 0
 fi
+
+COMPLETED=$(echo "$PROGRESS" | jq -r '.completed // 0')
+PENDING=$(echo "$PROGRESS" | jq -r '.pending // 0')
+RUNNING=$(echo "$PROGRESS" | jq -r '.running // 0')
+
+echo "Active workflow:"
+echo "  Progress: $COMPLETED/$TOTAL tasks completed"
+echo "  - Pending: $PENDING"
+echo "  - Running: $RUNNING"
 ```
 
 ## Step 2: Confirm
@@ -35,7 +45,7 @@ AskUserQuestion:
   multiSelect: false
   options:
     - label: "Yes, discard"
-      description: "Delete state file and start fresh"
+      description: "Clear harness state and start fresh"
     - label: "Cancel"
       description: "Keep workflow state for later resume"
 ```
@@ -45,9 +55,15 @@ AskUserQuestion:
 **If Yes, discard:**
 
 ```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-delete_state_file
-echo "Workflow state deleted. You can start a new workflow with /dev-workflow:brainstorm or EnterPlanMode."
+# Clear harness state
+harness plan reset
+
+# Clean up legacy state file if present
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
+LEGACY_STATE="${REPO_ROOT}/.claude/dev-workflow-state.local.md"
+[[ -f "$LEGACY_STATE" ]] && rm -f "$LEGACY_STATE"
+
+echo "Workflow state cleared. You can start a new workflow with /dev-workflow:brainstorm or EnterPlanMode."
 ```
 
 **If Cancel:**
