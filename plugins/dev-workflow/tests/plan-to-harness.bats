@@ -98,6 +98,53 @@ EOF
   [ "$deps3" -eq 2 ]
 }
 
+@test "plan_to_harness handles decimal task numbers" {
+  cat > "$TEST_PLAN" << 'EOF'
+# Feature Plan
+
+**Goal:** Build feature with subtasks
+
+---
+
+### Task 1: Main Task
+
+**Step 1: Setup**
+
+### Task 1.1: Subtask A
+
+**Dependencies:** Task 1
+
+**Step 1: Do subtask A**
+
+### Task 1.2: Subtask B
+
+**Dependencies:** Task 1.1
+
+**Step 1: Do subtask B**
+
+### Task 2: Final Task
+
+**Dependencies:** Task 1.2
+
+**Step 1: Finish**
+EOF
+
+  run bash "$SCRIPT_DIR/plan-to-harness.sh" "$TEST_PLAN"
+  [ "$status" -eq 0 ]
+
+  # Should have 4 tasks including subtasks
+  task_count=$(echo "$output" | jq '.tasks | length')
+  [ "$task_count" -eq 4 ]
+
+  # Check subtask IDs and descriptions
+  echo "$output" | jq -e '.tasks["task-1.1"].description == "Subtask A"'
+  echo "$output" | jq -e '.tasks["task-1.2"].description == "Subtask B"'
+
+  # Check subtask dependencies
+  echo "$output" | jq -e '.tasks["task-1.1"].dependencies | contains(["task-1"])'
+  echo "$output" | jq -e '.tasks["task-1.2"].dependencies | contains(["task-1.1"])'
+}
+
 @test "plan_to_harness extracts instructions from steps" {
   cat > "$TEST_PLAN" << 'EOF'
 # Feature Plan

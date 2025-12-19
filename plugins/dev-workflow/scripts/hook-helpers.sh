@@ -295,12 +295,29 @@ harness_is_workflow_active() {
 harness_import_plan() {
   local plan_file="$1"
   local json
+  local temp_file
+
+  # Resolve script directory relative to this file
+  local script_dir
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
   # Convert markdown plan to harness JSON
-  json=$("$SCRIPT_DIR/plan-to-harness.sh" "$plan_file")
+  json=$("$script_dir/plan-to-harness.sh" "$plan_file")
 
-  # Import into harness
-  echo "$json" | harness plan import --stdin
+  # Write JSON to temp file wrapped in markdown code fence (harness expects this)
+  temp_file=$(mktemp)
+  cat > "$temp_file" << EOF
+\`\`\`json
+$json
+\`\`\`
+EOF
+
+  # Import into harness using --file
+  harness plan import --file "$temp_file"
+  local result=$?
+
+  rm -f "$temp_file"
+  return $result
 }
 
 # Claim next available task for current worker

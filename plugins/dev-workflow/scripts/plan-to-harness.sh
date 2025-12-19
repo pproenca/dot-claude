@@ -19,8 +19,9 @@ plan_to_harness() {
   local goal
   goal=$(echo "$content" | grep -E '^\*\*Goal:\*\*' | sed 's/\*\*Goal:\*\* *//' | head -1)
 
-  # Initialize JSON structure
-  local json='{"goal":"'"$goal"'","tasks":{}}'
+  # Initialize JSON structure (use jq for safe escaping)
+  local json
+  json=$(jq -n --arg goal "$goal" '{goal: $goal, tasks: {}}')
 
   # Extract tasks using awk
   local task_num=0
@@ -32,7 +33,7 @@ plan_to_harness() {
 
   while IFS= read -r line; do
     # Check for task header: ### Task N: Description
-    if [[ "$line" =~ ^###[[:space:]]+Task[[:space:]]+([0-9]+):[[:space:]]*(.*) ]]; then
+    if [[ "$line" =~ ^###[[:space:]]+Task[[:space:]]+([0-9]+(\.[0-9]+)?):[[:space:]]*(.*) ]]; then
       # Save previous task if exists
       if [[ -n "$current_task" ]]; then
         local deps_array="[]"
@@ -49,8 +50,9 @@ plan_to_harness() {
       fi
 
       task_num="${BASH_REMATCH[1]}"
+      # BASH_REMATCH[2] is the optional decimal part, BASH_REMATCH[3] is description
       current_task="task-$task_num"
-      current_desc="${BASH_REMATCH[2]}"
+      current_desc="${BASH_REMATCH[3]}"
       current_deps=""
       current_instructions=""
       in_task=true

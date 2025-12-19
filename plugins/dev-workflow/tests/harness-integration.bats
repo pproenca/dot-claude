@@ -75,7 +75,7 @@ EOF
   [ "$task_id" == "task-2" ]
 }
 
-@test "parallel claims return different tasks" {
+@test "sequential claims return different tasks after completion" {
   if ! command -v harness &>/dev/null; then
     skip "harness not installed"
   fi
