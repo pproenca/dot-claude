@@ -7,29 +7,35 @@ allowed-tools: Read, Bash, TodoWrite, Task, Skill, AskUserQuestion, mcp__plugin_
 
 Resume execution of an interrupted plan from where it left off.
 
-## Step 1: Read State
+## Step 1: Check Workflow State (with harness)
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-STATE_FILE="$(get_state_file)"
-PLAN=$(frontmatter_get "$STATE_FILE" "plan" "")
-CURRENT=$(frontmatter_get "$STATE_FILE" "current_task" "0")
-TOTAL=$(frontmatter_get "$STATE_FILE" "total_tasks" "0")
-BASE_SHA=$(frontmatter_get "$STATE_FILE" "base_sha" "")
-echo "PLAN:$PLAN"
-echo "CURRENT:$CURRENT"
-echo "TOTAL:$TOTAL"
-echo "BASE_SHA:$BASE_SHA"
+PROGRESS=$(harness_get_progress)
+PENDING=$(echo "$PROGRESS" | jq '.pending')
+RUNNING=$(echo "$PROGRESS" | jq '.running')
+COMPLETED=$(echo "$PROGRESS" | jq '.completed')
+TOTAL=$(echo "$PROGRESS" | jq '.total')
+
+if [[ "$PENDING" -eq 0 && "$RUNNING" -eq 0 ]]; then
+  echo "No pending tasks. Workflow complete."
+  exit 0
+fi
+
+echo "Workflow status: $COMPLETED/$TOTAL completed, $RUNNING running, $PENDING pending"
 ```
 
 ## Step 2: Verify State
 
-1. Read the plan file at `$PLAN`
-2. Check git log since `$BASE_SHA` to see completed work:
+1. Query harness for full state:
    ```bash
-   git log --oneline $BASE_SHA..HEAD
+   harness get-state
    ```
-3. Count completed tasks (should match `$CURRENT`)
+2. Check git log to see completed work:
+   ```bash
+   git log --oneline --since="1 day ago"
+   ```
+3. Identify which tasks are completed vs pending
 
 ## Step 3: Ask User
 
@@ -38,35 +44,41 @@ Use AskUserQuestion:
 ```claude
 AskUserQuestion:
   header: "Resume"
-  question: "Continue from task [CURRENT+1] of [TOTAL]?"
+  question: "Continue workflow execution? ($COMPLETED/$TOTAL tasks completed, $PENDING pending, $RUNNING running)"
   multiSelect: false
   options:
     - label: "Continue"
-      description: "Resume sequential execution from where we left off"
+      description: "Resume execution - agents will claim next available tasks"
     - label: "Review first"
       description: "Show completed work before continuing"
 ```
 
-## Step 4: Execute
+## Step 4: Execute (with harness)
 
 **If Continue:**
-1. Create TodoWrite with remaining tasks (from plan file, tasks CURRENT+1 to TOTAL)
-2. Follow "Executing Existing Plans" from getting-started skill
-3. Start from task `$((CURRENT + 1))`
+1. Re-dispatch agents - they will automatically claim uncompleted tasks
+2. Agents call `harness task claim` to get their next task
+3. Running tasks that timed out will be automatically reclaimed by harness
+4. No manual state file manipulation needed - harness handles everything
 
 **If Review first:**
-1. Show git log since base_sha with diff summary
-2. Show which tasks are marked complete
+1. Show git log with diff summary
+2. Show harness state with task statuses
 3. Then ask again if ready to continue
 
 ## Step 5: Complete Workflow
 
 After all tasks done:
-1. Run code review (Task tool with dev-workflow:code-reviewer)
-2. Use Skill("dev-workflow:receiving-code-review")
-3. Use Skill("dev-workflow:finishing-a-development-branch")
-4. Delete state file:
+1. Verify all tasks are completed:
    ```bash
-   source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-   delete_state_file
+   PROGRESS=$(harness_get_progress)
+   PENDING=$(echo "$PROGRESS" | jq '.pending')
+   if [[ "$PENDING" -gt 0 ]]; then
+     echo "Error: Workflow incomplete, $PENDING tasks pending"
+     exit 1
+   fi
    ```
+2. Run code review (Task tool with dev-workflow:code-reviewer)
+3. Use Skill("dev-workflow:receiving-code-review")
+4. Use Skill("dev-workflow:finishing-a-development-branch")
+5. No state file cleanup needed - harness manages state lifecycle
