@@ -8,8 +8,6 @@
 
 ### Task 1: Create user model
 
-**Effort:** medium
-
 **Files:**
 - Create: `src/models/user.ts`
 - Modify: `src/models/index.ts`
@@ -22,8 +20,6 @@
 ---
 
 ### Task 2: Create auth service
-
-**Effort:** medium
 
 **Files:**
 - Create: `src/services/auth.ts`
@@ -38,8 +34,6 @@
 
 ### Task 3: Create product model
 
-**Effort:** simple
-
 **Files:**
 - Create: `src/models/product.ts`
 - Modify: `src/models/index.ts`
@@ -52,8 +46,6 @@
 
 ### Task 4: Create cart service
 
-**Effort:** medium
-
 **Files:**
 - Create: `src/services/cart.ts`
 - Modify: `src/models/product.ts`
@@ -65,8 +57,6 @@
 ---
 
 ### Task 5: Create API routes
-
-**Effort:** medium
 
 **Files:**
 - Create: `src/routes/api.ts`
@@ -81,8 +71,6 @@
 
 ### Task 6: Add logging utility
 
-**Effort:** simple
-
 **Files:**
 - Create: `src/utils/logger.ts`
 
@@ -94,8 +82,6 @@
 
 ### Task 7: Add config loader
 
-**Effort:** simple
-
 **Files:**
 - Create: `src/utils/config.ts`
 
@@ -106,8 +92,6 @@
 ---
 
 ### Task 8: Integration tests
-
-**Effort:** complex
 
 **Files:**
 - Create: `tests/integration/api.test.ts`

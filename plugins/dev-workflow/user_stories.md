@@ -76,7 +76,7 @@
 | **US-2.1.1** | As a developer, I want to enter plan mode to design implementation so that I can get user approval before coding | MVP | **WORKING** (was `/dev-workflow:write-plan`, now `EnterPlanMode`) |
 | **US-2.1.2** | As a developer, I want tasks to have exact file paths, code snippets, and test commands so that execution is unambiguous | MVP | **WORKING** |
 | **US-2.1.3** | As a developer, I want tasks grouped by file dependencies so that parallel execution is safe | MVP | **WORKING** |
-| **US-2.1.4** | As a developer, I want effort estimates (simple/standard/complex) on tasks so that I can estimate total work | Nice | **WORKING** |
+| **US-2.1.4** | As a developer, I want effort estimates (simple/standard/complex) on tasks so that I can estimate total work | Nice | **REMOVED** |
 | **US-2.1.5** | As a developer, I want ambiguities clarified via AskUserQuestion BEFORE writing the plan so that execution doesn't block on decisions | MVP | **WORKING** |
 
 #### T2.2 Review plan

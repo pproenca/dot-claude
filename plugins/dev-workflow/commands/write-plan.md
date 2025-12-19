@@ -124,8 +124,6 @@ Each "Step N:" is ONE action:
 ````markdown
 ### Task N: [Component Name]
 
-**Effort:** simple (3-10 tool calls) | standard (10-15) | complex (15-25)
-
 **Files:**
 - Create: `exact/path/to/new.py`
 - Modify: `exact/path/to/existing.py:50-75`

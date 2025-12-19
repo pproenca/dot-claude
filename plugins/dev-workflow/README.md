@@ -79,7 +79,14 @@ PostPlanModeExit hook
 
 | Command | Purpose |
 |---------|---------|
-| `/dev-workflow:brainstorm` | Refine idea → design doc |
+| `/dev-workflow:brainstorm` | Refine idea → design doc via Socratic dialogue |
+| `/dev-workflow:write-plan` | Create TDD implementation plan saved to `docs/plans/` |
+| `/dev-workflow:execute-plan` | Execute plan with state tracking and post-completion actions |
+| `/dev-workflow:resume` | Resume interrupted plan execution |
+| `/dev-workflow:abandon` | Discard active workflow state |
+
+**Primary workflow:** Use native `EnterPlanMode` → `ExitPlanMode(launchSwarm: true)`.
+**Alternative workflow:** `/write-plan` → `/execute-plan` for more control and plan persistence.
 
 ### Agents
 
