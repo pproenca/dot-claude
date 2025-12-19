@@ -20,7 +20,7 @@ $ARGUMENTS
 
 ## Step 1: Initialize State
 
-Read plan and create state file for resume capability:
+Read plan and import into harness:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
@@ -32,13 +32,13 @@ if [[ ! -f "$PLAN_FILE" ]]; then
   exit 1
 fi
 
-# Create state file
-create_state_file "$PLAN_FILE"
+# Import plan into harness daemon
+harness_import_plan "$PLAN_FILE"
 
-# Read state
-STATE_FILE="$(get_state_file)"
-TOTAL=$(frontmatter_get "$STATE_FILE" "total_tasks" "0")
-echo "STATE_FILE: $STATE_FILE"
+# Get workflow state from harness
+PROGRESS=$(harness_get_progress)
+TOTAL=$(echo "$PROGRESS" | jq -r '.total')
+echo "HARNESS WORKFLOW IMPORTED"
 echo "TOTAL_TASKS: $TOTAL"
 ```
 
@@ -98,29 +98,21 @@ digraph sequential {
 
 ### 3a. Check for Interrupted Dispatch (Compact Recovery)
 
-Same as parallel execution - check if a previous task was interrupted:
+Check if a previous task was interrupted by checking harness state:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-STATE_FILE="$(get_state_file)"
-DISPATCHED_AGENTS=$(frontmatter_get "$STATE_FILE" "agent_ids" "")
+PROGRESS=$(harness_get_progress)
+RUNNING=$(echo "$PROGRESS" | jq -r '.running')
 
-if [[ -n "$DISPATCHED_AGENTS" ]]; then
-  echo "RECOVERING: Resuming interrupted task with agent $DISPATCHED_AGENTS"
+if [[ "$RUNNING" -gt 0 ]]; then
+  echo "RECOVERING: Found $RUNNING running task(s) in harness"
 fi
 ```
 
-If `DISPATCHED_AGENTS` is not empty, call `TaskOutput` for that agent, then clear state and continue.
+If tasks are running, they will be automatically reclaimed or resumed by harness. No manual recovery needed.
 
 ### 3b. Execute Each Task
-
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-STATE_FILE="$(get_state_file)"
-CURRENT=$(frontmatter_get "$STATE_FILE" "current_task" "0")
-NEXT=$((CURRENT + 1))
-echo "EXECUTING: Task $NEXT"
-```
 
 Mark task `in_progress` in TodoWrite.
 
@@ -130,12 +122,26 @@ Launch task in background:
 Task:
   subagent_type: general-purpose
   model: sonnet
-  description: "Execute Task [N]"
+  description: "Execute next task from harness"
   prompt: |
-    Execute Task [N] from plan.
+    Execute a task from the harness-managed workflow.
 
-    ## Task Content
-    [Task content extracted via get_task_content]
+    ## Step 1: Claim Your Task
+
+    ```bash
+    source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
+    TASK=$(harness_claim_task)
+    TASK_ID=$(echo "$TASK" | jq -r '.task.id')
+    INSTRUCTIONS=$(echo "$TASK" | jq -r '.task.instructions')
+
+    echo "CLAIMED TASK: $TASK_ID"
+    echo "INSTRUCTIONS:"
+    echo "$INSTRUCTIONS"
+    ```
+
+    ## Step 2: Execute the Instructions
+
+    Follow the instructions exactly as written in the task.
 
     ## Before You Begin
     If anything is unclear about requirements, approach, or dependencies:
@@ -148,7 +154,7 @@ Task:
     - Anything ambiguous in the task description?
 
     ## Your Job
-    1. Follow each Step exactly as written
+    1. Follow each Step exactly as written in the task instructions
     2. After each "Run test" step, verify the expected output matches
     3. Commit after tests pass
 
@@ -188,24 +194,26 @@ Task:
 
     **If you find issues during self-review, fix them now before reporting.**
 
+    ## Step 3: Complete the Task
+
+    After successfully implementing and verifying:
+
+    ```bash
+    source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
+    harness_complete_task "$TASK_ID"
+    echo "TASK COMPLETED: $TASK_ID"
+    ```
+
     ## Report Format
 
     When done, report:
+    - Task ID completed
     - What you implemented (specific changes)
     - Files changed (with paths)
     - Test results (command and output)
     - Self-review findings (any issues found and fixed)
     - Any concerns or blockers
   run_in_background: true
-```
-
-Persist state immediately:
-
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-STATE_FILE="$(get_state_file)"
-frontmatter_set "$STATE_FILE" "dispatched_group" "sequential:$NEXT"
-frontmatter_set "$STATE_FILE" "agent_ids" "[agent_id]"
 ```
 
 Wait for completion:
@@ -353,16 +361,7 @@ Loop until quality review passes.
 
 Only after BOTH reviews pass:
 
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-STATE_FILE="$(get_state_file)"
-CURRENT=$(frontmatter_get "$STATE_FILE" "current_task" "0")
-frontmatter_set "$STATE_FILE" "dispatched_group" ""
-frontmatter_set "$STATE_FILE" "agent_ids" ""
-frontmatter_set "$STATE_FILE" "current_task" "$((CURRENT + 1))"
-```
-
-Mark task `completed` in TodoWrite. Continue to next task.
+Mark task `completed` in TodoWrite. Task is already marked complete in harness by the agent. Continue to next task.
 
 ---
 
@@ -374,34 +373,17 @@ Uses `Task(run_in_background)` + `TaskOutput` pattern with two-stage review afte
 
 ### 3a. Check for Interrupted Dispatch (Compact Recovery)
 
-**CRITICAL:** Before analyzing groups, check if a previous dispatch was interrupted by compaction:
+Check harness state for any running tasks:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-STATE_FILE="$(get_state_file)"
-DISPATCHED_AGENTS=$(frontmatter_get "$STATE_FILE" "agent_ids" "")
-DISPATCHED_GROUP=$(frontmatter_get "$STATE_FILE" "dispatched_group" "")
+PROGRESS=$(harness_get_progress)
+RUNNING=$(echo "$PROGRESS" | jq -r '.running')
 
-echo "DISPATCHED_AGENTS: $DISPATCHED_AGENTS"
-echo "DISPATCHED_GROUP: $DISPATCHED_GROUP"
+echo "RUNNING TASKS: $RUNNING"
 ```
 
-**If `DISPATCHED_AGENTS` is not empty:** Agents were launched but TaskOutput was interrupted. Resume waiting:
-
-1. Parse agent IDs from `DISPATCHED_AGENTS` (comma-separated)
-2. Call `TaskOutput` for each agent ID (they may already be complete - results return immediately)
-3. Clear dispatched state after all TaskOutput calls return:
-
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-STATE_FILE="$(get_state_file)"
-frontmatter_set "$STATE_FILE" "dispatched_group" ""
-frontmatter_set "$STATE_FILE" "agent_ids" ""
-# Update current_task to last task in recovered group
-frontmatter_set "$STATE_FILE" "current_task" "[LAST_TASK_IN_RECOVERED_GROUP]"
-```
-
-4. Continue to next group (skip re-analyzing, use state's `current_task` to determine progress)
+If tasks are running, they will be automatically reclaimed or resumed by harness. No manual recovery needed.
 
 ### 3b. Analyze Task Groups
 
@@ -425,19 +407,33 @@ For each group in `TASK_GROUPS` (split by `|`):
 
 **If group has multiple tasks** (e.g., `group1:1,2,3`):
 
-1. Launch ALL tasks in the group simultaneously using `Task(run_in_background: true)`:
+1. Launch ALL agents in the group simultaneously using `Task(run_in_background: true)`:
 
 ```claude
 # Launch in SINGLE message for true parallelism
 Task:
   subagent_type: general-purpose
   model: sonnet
-  description: "Execute Task 1"
+  description: "Execute task from harness (agent 1)"
   prompt: |
-    Execute Task 1 from plan.
+    Execute a task from the harness-managed workflow.
 
-    ## Task Content
-    [Task 1 content extracted via get_task_content]
+    ## Step 1: Claim Your Task
+
+    ```bash
+    source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
+    TASK=$(harness_claim_task)
+    TASK_ID=$(echo "$TASK" | jq -r '.task.id')
+    INSTRUCTIONS=$(echo "$TASK" | jq -r '.task.instructions')
+
+    echo "CLAIMED TASK: $TASK_ID"
+    echo "INSTRUCTIONS:"
+    echo "$INSTRUCTIONS"
+    ```
+
+    ## Step 2: Execute the Instructions
+
+    Follow the instructions exactly as written in the task.
 
     ## Before You Begin
     If anything is unclear: **Ask questions now.** Raise concerns before starting.
@@ -448,7 +444,7 @@ Task:
     - Are there dependencies I need to know about?
 
     ## Your Job
-    1. Follow each Step exactly as written
+    1. Follow each Step exactly as written in the task instructions
     2. After each "Run test" step, verify expected output matches
     3. Commit after tests pass
 
@@ -483,7 +479,18 @@ Task:
 
     **Fix any issues before reporting.**
 
+    ## Step 3: Complete the Task
+
+    After successfully implementing and verifying:
+
+    ```bash
+    source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
+    harness_complete_task "$TASK_ID"
+    echo "TASK COMPLETED: $TASK_ID"
+    ```
+
     ## Report Format
+    - Task ID completed
     - What you implemented
     - Files changed (with paths)
     - Test results
@@ -493,24 +500,13 @@ Task:
 Task:
   subagent_type: general-purpose
   model: sonnet
-  description: "Execute Task 2"
+  description: "Execute task from harness (agent 2)"
   prompt: |
-    [Same comprehensive prompt structure as Task 1]
+    [Same comprehensive prompt structure as agent 1]
   run_in_background: true
 ```
 
-2. **IMMEDIATELY persist agent IDs to state** (before calling TaskOutput):
-
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-STATE_FILE="$(get_state_file)"
-# Persist agent IDs so they survive compaction
-frontmatter_set "$STATE_FILE" "dispatched_group" "group1:1,2"
-frontmatter_set "$STATE_FILE" "agent_ids" "agent_id_1,agent_id_2"
-echo "STATE PERSISTED: dispatched_group and agent_ids saved"
-```
-
-3. Wait for ALL agents in the group to complete:
+2. Wait for ALL agents in the group to complete:
 
 ```claude
 # Wait for all background agents
@@ -585,19 +581,9 @@ Task:
 
 **If critical/important issues:** Dispatch fix agents, then re-review.
 
-5. Update state after group completes AND both reviews pass:
+5. Mark completed tasks in TodoWrite.
 
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-STATE_FILE="$(get_state_file)"
-# Clear dispatched state now that group is complete
-frontmatter_set "$STATE_FILE" "dispatched_group" ""
-frontmatter_set "$STATE_FILE" "agent_ids" ""
-# Set to last task number in completed group
-frontmatter_set "$STATE_FILE" "current_task" "[LAST_TASK_IN_GROUP]"
-```
-
-6. Mark completed tasks in TodoWrite.
+Tasks are already marked complete in harness by the agents. No state file updates needed.
 
 **If group has single task** (e.g., `group3:5`):
 
@@ -607,24 +593,12 @@ Use same pattern as sequential execution (two-stage review per task).
 
 | Aspect | Benefit |
 |--------|---------|
-| **Dependencies respected** | Groups execute serially; Task 3 waits for Task 1 |
-| **True parallelism** | Tasks in same group run simultaneously |
+| **Dependencies respected** | Harness DAG ensures dependencies satisfied before claiming |
+| **True parallelism** | Multiple agents claim tasks simultaneously |
 | **Quality gates** | Two-stage review catches issues before next group |
-| **No context leak** | Task content passed to agents, not loaded into orchestrator |
-| **Accurate progress** | `current_task` updated after confirmed completion + review |
-| **Resume works** | `current_task=2` means tasks 1-2 definitely done AND reviewed |
-
-### 3e. Extracting Task Content
-
-Use helper to get task content for agent prompt:
-
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-TASK_CONTENT=$(get_task_content "$PLAN_FILE" 1)
-echo "$TASK_CONTENT"
-```
-
-This extracts the full task section including TDD instructions without loading entire plan.
+| **No context leak** | Task content claimed from harness, not loaded into orchestrator |
+| **Accurate progress** | Harness daemon tracks state atomically |
+| **Resume works** | Harness state survives crashes and session restarts |
 
 ---
 
@@ -670,10 +644,11 @@ Mark "Finish Branch" `completed`.
 
 ### 4c. Cleanup State
 
+No cleanup needed. Harness daemon maintains workflow state. If workflow should be cleared:
+
 ```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-delete_state_file
-echo "Workflow complete. State file deleted."
+harness reset
+echo "Workflow complete. Harness state cleared."
 ```
 
 ---
@@ -700,14 +675,18 @@ AskUserQuestion:
 
 ## Resume Capability
 
-If session ends unexpectedly, next session detects state file:
+If session ends unexpectedly, harness daemon maintains workflow state. Resume by:
 
+```bash
+source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
+PROGRESS=$(harness_get_progress)
+echo "WORKFLOW STATUS:"
+echo "$PROGRESS" | jq '.'
+
+# Resume execution by continuing to dispatch agents
+# They will claim the next available tasks from harness
 ```
-ACTIVE WORKFLOW DETECTED
-Plan: docs/plans/...
-Progress: 3/8 tasks
 
 Commands:
-- /dev-workflow:resume - Continue execution
-- /dev-workflow:abandon - Discard workflow state
-```
+- /dev-workflow:resume - Continue execution (dispatch more agents)
+- /dev-workflow:abandon - Clear harness state via `harness reset`
