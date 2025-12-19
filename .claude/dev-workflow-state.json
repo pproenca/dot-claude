@@ -1,0 +1,40 @@
+{
+  "tasks": {
+    "task-1": {
+      "id": "task-1",
+      "description": "Independent A",
+      "status": "completed",
+      "dependencies": [],
+      "started_at": "2025-12-19T20:41:26.575837Z",
+      "completed_at": "2025-12-19T20:41:26.624397Z",
+      "claimed_by": "worker-ec1f147bb3fe",
+      "timeout_seconds": 600,
+      "instructions": "**Step 1: Do A**\n\n\n",
+      "role": "backend"
+    },
+    "task-2": {
+      "id": "task-2",
+      "description": "Independent B",
+      "status": "completed",
+      "dependencies": [],
+      "started_at": "2025-12-19T20:41:26.675812Z",
+      "completed_at": "2025-12-19T20:41:26.729923Z",
+      "claimed_by": "worker-ec1f147bb3fe",
+      "timeout_seconds": 600,
+      "instructions": "**Step 1: Do B**\n\n\n",
+      "role": "backend"
+    },
+    "task-3": {
+      "id": "task-3",
+      "description": "Independent C",
+      "status": "running",
+      "dependencies": [],
+      "started_at": "2025-12-19T20:41:26.777291Z",
+      "completed_at": null,
+      "claimed_by": "worker-ec1f147bb3fe",
+      "timeout_seconds": 600,
+      "instructions": "**Step 1: Do C**\n\n",
+      "role": "backend"
+    }
+  }
+}

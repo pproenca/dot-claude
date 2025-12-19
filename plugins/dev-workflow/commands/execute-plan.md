@@ -647,7 +647,7 @@ Mark "Finish Branch" `completed`.
 No cleanup needed. Harness daemon maintains workflow state. If workflow should be cleared:
 
 ```bash
-harness reset
+harness plan reset
 echo "Workflow complete. Harness state cleared."
 ```
 

@@ -1,0 +1,38 @@
+{"event_type": "plan_import", "goal": "Test harness integration", "task_count": 2}
+{"event_type": "task_claim", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "task_complete", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe"}
+{"event_type": "task_claim", "task_id": "task-2", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "plan_import", "goal": "Test harness integration", "task_count": 2}
+{"event_type": "task_claim", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "task_complete", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe"}
+{"event_type": "task_claim", "task_id": "task-2", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "plan_import", "goal": "Test parallel claiming", "task_count": 3}
+{"event_type": "task_claim", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "task_claim", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe", "is_retry": true, "is_reclaim": false}
+{"event_type": "task_claim", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe", "is_retry": true, "is_reclaim": false}
+{"event_type": "plan_import", "goal": "Test harness integration", "task_count": 2}
+{"event_type": "task_claim", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "task_complete", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe"}
+{"event_type": "task_claim", "task_id": "task-2", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "plan_import", "goal": "Test parallel claiming", "task_count": 3}
+{"event_type": "task_claim", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "task_complete", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe"}
+{"event_type": "task_claim", "task_id": "task-2", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "task_complete", "task_id": "task-2", "worker_id": "worker-ec1f147bb3fe"}
+{"event_type": "task_claim", "task_id": "task-3", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "plan_import", "goal": "Test harness integration", "task_count": 2}
+{"event_type": "task_claim", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "task_complete", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe"}
+{"event_type": "task_claim", "task_id": "task-2", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "plan_import", "goal": "Test parallel claiming", "task_count": 3}
+{"event_type": "task_claim", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "task_complete", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe"}
+{"event_type": "task_claim", "task_id": "task-2", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "task_complete", "task_id": "task-2", "worker_id": "worker-ec1f147bb3fe"}
+{"event_type": "task_claim", "task_id": "task-3", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "plan_import", "goal": "Test parallel claiming", "task_count": 3}
+{"event_type": "task_claim", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "task_complete", "task_id": "task-1", "worker_id": "worker-ec1f147bb3fe"}
+{"event_type": "task_claim", "task_id": "task-2", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}
+{"event_type": "task_complete", "task_id": "task-2", "worker_id": "worker-ec1f147bb3fe"}
+{"event_type": "task_claim", "task_id": "task-3", "worker_id": "worker-ec1f147bb3fe", "is_retry": false, "is_reclaim": false}

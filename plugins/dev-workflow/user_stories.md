@@ -202,17 +202,17 @@
 
 | ID | Story | Priority | Status |
 |----|-------|----------|--------|
-| **US-5.1.1** | As a developer, I want workflow state in `.claude/dev-workflow-state.local.md` so that I can resume in new sessions | Critical | **BROKEN** - No state file |
-| **US-5.1.2** | As a developer, I want state scoped to worktree so that parallel sessions don't conflict | Nice | **BROKEN** - No worktree awareness |
-| **US-5.1.3** | As a developer, I want recovery instructions if state is corrupted so that I can fix issues | Nice | **BROKEN** - No state file |
+| **US-5.1.1** | As a developer, I want workflow state persisted so that I can resume in new sessions | Critical | **DONE** - Via harness daemon |
+| **US-5.1.2** | As a developer, I want state scoped to worktree so that parallel sessions don't conflict | Nice | **DONE** - harness daemon per worktree |
+| **US-5.1.3** | As a developer, I want recovery instructions if state is corrupted so that I can fix issues | Nice | **DONE** - `harness plan reset` to clear |
 
 #### T5.2 Track progress
 
 | ID | Story | Priority | Status |
 |----|-------|----------|--------|
-| **US-5.2.1** | As a developer, I want progress logged with timestamps so that I can see execution history | Nice | **BROKEN** - No progress log |
-| **US-5.2.2** | As a developer, I want phase summaries logged so that context can be quickly restored | Nice | **BROKEN** - No progress log |
-| **US-5.2.3** | As a developer, I want `get_recent_progress` helper for resume context so that I can understand where I left off | Nice | **BROKEN** - Helper removed |
+| **US-5.2.1** | As a developer, I want progress logged with timestamps so that I can see execution history | Nice | **DONE** - Via harness trajectory.jsonl |
+| **US-5.2.2** | As a developer, I want phase summaries logged so that context can be quickly restored | Nice | **DONE** - Via harness trajectory logger |
+| **US-5.2.3** | As a developer, I want `get_recent_progress` helper for resume context so that I can understand where I left off | Nice | **DONE** - Via `harness get-state` |
 
 #### T5.3 Manage worktrees
 
