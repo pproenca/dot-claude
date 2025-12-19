@@ -1003,3 +1003,56 @@ EOF
   [[ "$final_ids" == "cleared" ]] || [[ "$final_ids" == "" ]]
   [[ "$final_task" == "5" ]]
 }
+
+# ============================================================================
+# Harness Integration Functions
+# ============================================================================
+
+@test "harness_get_progress returns task counts" {
+  mkdir -p "$BATS_TEST_DIRNAME/mocks"
+  cat > "$BATS_TEST_DIRNAME/mocks/harness" << 'EOF'
+#!/bin/bash
+echo '{"tasks":{"t1":{"status":"completed"},"t2":{"status":"pending"},"t3":{"status":"running"}}}'
+EOF
+  chmod +x "$BATS_TEST_DIRNAME/mocks/harness"
+  export PATH="$BATS_TEST_DIRNAME/mocks:$PATH"
+
+  source "$BATS_TEST_DIRNAME/../scripts/hook-helpers.sh"
+
+  result=$(harness_get_progress)
+  total=$(echo "$result" | jq '.total')
+  completed=$(echo "$result" | jq '.completed')
+
+  [ "$total" -eq 3 ]
+  [ "$completed" -eq 1 ]
+}
+
+@test "harness_is_workflow_active returns true when tasks exist" {
+  mkdir -p "$BATS_TEST_DIRNAME/mocks"
+  cat > "$BATS_TEST_DIRNAME/mocks/harness" << 'EOF'
+#!/bin/bash
+echo '{"tasks":{"t1":{"status":"pending"}}}'
+EOF
+  chmod +x "$BATS_TEST_DIRNAME/mocks/harness"
+  export PATH="$BATS_TEST_DIRNAME/mocks:$PATH"
+
+  source "$BATS_TEST_DIRNAME/../scripts/hook-helpers.sh"
+
+  run harness_is_workflow_active
+  [ "$status" -eq 0 ]
+}
+
+@test "harness_is_workflow_active returns false when no tasks" {
+  mkdir -p "$BATS_TEST_DIRNAME/mocks"
+  cat > "$BATS_TEST_DIRNAME/mocks/harness" << 'EOF'
+#!/bin/bash
+echo '{"tasks":{}}'
+EOF
+  chmod +x "$BATS_TEST_DIRNAME/mocks/harness"
+  export PATH="$BATS_TEST_DIRNAME/mocks:$PATH"
+
+  source "$BATS_TEST_DIRNAME/../scripts/hook-helpers.sh"
+
+  run harness_is_workflow_active
+  [ "$status" -eq 1 ]
+}

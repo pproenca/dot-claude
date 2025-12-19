@@ -262,3 +262,54 @@ get_task_content() {
       sed '/^## [^#]/d'
   fi
 }
+
+# =============================================================================
+# Harness Integration Functions
+# =============================================================================
+
+# Get workflow progress as JSON: {total, completed, pending, running}
+harness_get_progress() {
+  local state
+  state=$(harness get-state 2>/dev/null || echo '{"tasks":{}}')
+
+  echo "$state" | jq '{
+    total: .tasks | length,
+    completed: [.tasks[] | select(.status == "completed")] | length,
+    pending: [.tasks[] | select(.status == "pending")] | length,
+    running: [.tasks[] | select(.status == "running")] | length
+  }'
+}
+
+# Check if a workflow is active (has any tasks)
+harness_is_workflow_active() {
+  local state
+  state=$(harness get-state 2>/dev/null || echo '{"tasks":{}}')
+
+  local count
+  count=$(echo "$state" | jq '.tasks | length')
+
+  [[ "$count" -gt 0 ]]
+}
+
+# Import a plan file into harness
+harness_import_plan() {
+  local plan_file="$1"
+  local json
+
+  # Convert markdown plan to harness JSON
+  json=$("$SCRIPT_DIR/plan-to-harness.sh" "$plan_file")
+
+  # Import into harness
+  echo "$json" | harness plan import --stdin
+}
+
+# Claim next available task for current worker
+harness_claim_task() {
+  harness task claim
+}
+
+# Complete a task
+harness_complete_task() {
+  local task_id="$1"
+  harness task complete --id "$task_id"
+}
