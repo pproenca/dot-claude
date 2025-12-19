@@ -86,7 +86,7 @@ PostPlanModeExit hook
 | `/dev-workflow:abandon` | Discard active workflow state |
 
 **Primary workflow:** Use native `EnterPlanMode` → `ExitPlanMode(launchSwarm: true)`.
-**Alternative workflow:** `/write-plan` → `/execute-plan` for more control and plan persistence.
+**Alternative workflow:** `/dev-workflow:write-plan` → `/dev-workflow:execute-plan` for more control and plan persistence.
 
 ### Agents
 

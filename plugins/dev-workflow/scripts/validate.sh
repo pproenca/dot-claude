@@ -113,7 +113,8 @@ for f in "$PLUGIN_ROOT"/commands/*.md "$PLUGIN_ROOT"/skills/*/SKILL.md "$PLUGIN_
     for tool in $normalized; do
       tool=$(echo "$tool" | xargs)  # trim whitespace
       [[ -z "$tool" ]] && continue
-      if [[ ! "$tool" =~ ^($VALID_TOOLS)$ ]]; then
+      # Allow standard tools and MCP tools (mcp__*)
+      if [[ ! "$tool" =~ ^($VALID_TOOLS)$ ]] && [[ ! "$tool" =~ ^mcp__ ]]; then
         invalid_tools+="$tool "
       fi
     done
