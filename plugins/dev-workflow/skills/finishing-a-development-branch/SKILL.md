@@ -49,7 +49,7 @@ AskUserQuestion:
     - label: "Create PR"
       description: "Push branch and create Pull Request"
     - label: "Keep as-is"
-      description: "Preserve branch and worktree for later"
+      description: "Preserve branch for later"
     - label: "Discard"
       description: "Delete branch and all commits"
 ```
@@ -59,22 +59,13 @@ AskUserQuestion:
 ### Option: Merge locally
 
 ```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
-
 FEATURE="$(git branch --show-current)"
-WORKTREE_PATH="$(pwd -P)"
 
 # Safety check
 if [ -n "$(git status --porcelain)" ]; then
   echo "Error: Uncommitted changes. Commit first."
   exit 1
 fi
-
-# Find main repo
-MAIN_REPO="$(get_main_worktree)"
-
-# Switch to main repo
-cd "$MAIN_REPO"
 
 # Checkout base and merge
 git checkout "$BASE"
@@ -87,12 +78,10 @@ npm test  # verify merged result
 If tests pass:
 
 ```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
-remove_worktree "$WORKTREE_PATH"
 git branch -d "$FEATURE"
 ```
 
-Skip to Step 6.
+Skip to Step 5.
 
 ### Option: Create PR
 
@@ -106,7 +95,7 @@ Proceed to Step 5.
 
 ### Option: Keep as-is
 
-Report branch and worktree location. Skip Step 5. Return.
+Report branch location. Return.
 
 ### Option: Discard
 
@@ -129,25 +118,7 @@ git checkout $BASE
 git branch -D $FEATURE
 ```
 
-Proceed to Step 5.
-
-## Step 5: Cleanup Worktree
-
-For Create PR and Discard only:
-
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
-
-WORKTREE_PATH="$(pwd -P)"
-MAIN_REPO="$(get_main_worktree)"
-
-if [[ "$WORKTREE_PATH" != "$MAIN_REPO" ]]; then
-  cd "$MAIN_REPO"
-  remove_worktree "$WORKTREE_PATH"
-fi
-```
-
-## Step 6: Report Completion
+## Step 5: Report Completion
 
 Report:
 
@@ -155,7 +126,6 @@ Report:
 Branch finished:
 - Action: [Merged / PR created / Discarded]
 - Branch: [name]
-- Worktree: [cleaned up / preserved]
 ```
 
 Return to caller.
