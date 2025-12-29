@@ -1,7 +1,14 @@
 #!/usr/bin/env bats
 # Note: harness was renamed to hyh, accessed via 'uvx hyh'
+# These are SLOW integration tests - skip by default
+# Run with: RUN_INTEGRATION_TESTS=1 bats tests/harness-integration.bats
 
 setup() {
+  # Skip integration tests by default (uvx has significant startup overhead)
+  if [[ -z "${RUN_INTEGRATION_TESTS:-}" ]]; then
+    skip "Integration tests disabled (set RUN_INTEGRATION_TESTS=1 to run)"
+  fi
+
   export TEST_PLAN="$BATS_TEST_TMPDIR/test-plan.md"
 
   # Create a test plan matching hyh expected format

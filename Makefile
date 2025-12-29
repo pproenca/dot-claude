@@ -79,8 +79,16 @@ deps:  ## Check dependencies status
 ##@ Testing
 
 .PHONY: test
-test:  ## Run all bats tests
+test:  ## Run all bats tests (fast, skips integration tests)
 	$(BATS) $(DEV_WORKFLOW)/tests/
+
+.PHONY: test-integration
+test-integration:  ## Run integration tests (slow, requires uvx hyh)
+	RUN_INTEGRATION_TESTS=1 $(BATS) $(DEV_WORKFLOW)/tests/harness-integration.bats
+
+.PHONY: test-all
+test-all:  ## Run ALL tests including slow integration tests
+	RUN_INTEGRATION_TESTS=1 $(BATS) $(DEV_WORKFLOW)/tests/
 
 .PHONY: test-verbose
 test-verbose:  ## Run tests with verbose output
