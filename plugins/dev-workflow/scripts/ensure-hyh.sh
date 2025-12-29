@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# ensure-harness.sh - Ensure hyh daemon is running
+# ensure-hyh.sh - Ensure hyh daemon is running
 # Returns 0 if daemon is running, 1 if failed to start
-# Note: harness was renamed to hyh, accessed via 'uvx hyh'
+# Accessed via 'uvx hyh'
 
 set -euo pipefail
 
-HARNESS_TIMEOUT="${HARNESS_TIMEOUT:-5}"
+HYH_TIMEOUT="${HYH_TIMEOUT:-5}"
 
 # Run hyh command via uvx
 run_hyh() {
@@ -29,7 +29,7 @@ Or install it permanently:
 EOF
 }
 
-ensure_harness() {
+ensure_hyh() {
   # Check if uvx is available
   if ! command -v uvx >/dev/null 2>&1; then
     show_install_instructions
@@ -49,8 +49,8 @@ ensure_harness() {
   while ! run_hyh ping >/dev/null 2>&1; do
     sleep 0.5
     elapsed=$((elapsed + 1))
-    if [[ $elapsed -ge $((HARNESS_TIMEOUT * 2)) ]]; then
-      echo "ERROR: hyh daemon failed to start within ${HARNESS_TIMEOUT}s" >&2
+    if [[ $elapsed -ge $((HYH_TIMEOUT * 2)) ]]; then
+      echo "ERROR: hyh daemon failed to start within ${HYH_TIMEOUT}s" >&2
       return 1
     fi
   done
@@ -60,5 +60,5 @@ ensure_harness() {
 
 # Allow sourcing without execution
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-  ensure_harness "$@"
+  ensure_hyh "$@"
 fi

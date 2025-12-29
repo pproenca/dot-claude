@@ -212,7 +212,7 @@ After saving the plan file, import it into hyh:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-harness_import_plan "$PLAN_FILE"
+hyh_import_plan "$PLAN_FILE"
 ```
 
 This validates the DAG (cycle detection, missing dependencies) and creates

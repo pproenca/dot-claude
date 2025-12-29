@@ -315,10 +315,10 @@ EOF
 }
 
 # ============================================================================
-# Hyh Integration Functions - Note: harness renamed to hyh, accessed via 'uvx hyh'
+# Hyh Integration Functions - Note: accessed via 'uvx hyh'
 # ============================================================================
 
-@test "harness_get_progress returns task counts" {
+@test "hyh_get_progress returns task counts" {
   mkdir -p "$BATS_TEST_DIRNAME/mocks"
   cat > "$BATS_TEST_DIRNAME/mocks/uvx" << 'EOF'
 #!/bin/bash
@@ -334,7 +334,7 @@ EOF
 
   source "$BATS_TEST_DIRNAME/../scripts/hook-helpers.sh"
 
-  result=$(harness_get_progress)
+  result=$(hyh_get_progress)
   total=$(echo "$result" | jq '.total')
   completed=$(echo "$result" | jq '.completed')
 

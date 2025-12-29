@@ -6,7 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck disable=SC1091
-source "$SCRIPT_DIR/../scripts/ensure-harness.sh"
+source "$SCRIPT_DIR/../scripts/ensure-hyh.sh"
 
 # Run hyh command via uvx
 _run_hyh() {
@@ -14,7 +14,7 @@ _run_hyh() {
 }
 
 # Check for active hyh workflow
-if ensure_harness 2>/dev/null; then
+if ensure_hyh 2>/dev/null; then
   # Query hyh for active workflow
   STATE=$(_run_hyh get-state 2>/dev/null || echo '{}')
   TASK_COUNT=$(echo "$STATE" | jq '.tasks | length' 2>/dev/null || echo "0")
@@ -24,7 +24,7 @@ if ensure_harness 2>/dev/null; then
     PENDING=$(echo "$STATE" | jq '[.tasks[] | select(.status == "pending")] | length' 2>/dev/null || echo "0")
     RUNNING=$(echo "$STATE" | jq '[.tasks[] | select(.status == "running")] | length' 2>/dev/null || echo "0")
 
-    # Output harness workflow resume context
+    # Output hyh workflow resume context
     cat << EOF
 {
   "hookSpecificOutput": {

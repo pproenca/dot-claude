@@ -141,8 +141,8 @@ get_max_parallel_from_groups() {
 }
 
 # =============================================================================
-# Harness (hyh) Integration Functions
-# Note: harness was renamed to hyh, accessed via 'uvx hyh'
+# Hyh Integration Functions
+# Accessed via 'uvx hyh'
 # =============================================================================
 
 # Run hyh command via uvx
@@ -151,7 +151,7 @@ _run_hyh() {
 }
 
 # Get workflow progress as JSON: {total, completed, pending, running}
-harness_get_progress() {
+hyh_get_progress() {
   local state
   state=$(_run_hyh get-state 2>/dev/null || echo '{"tasks":{}}')
 
@@ -163,8 +163,8 @@ harness_get_progress() {
   }'
 }
 
-# Import a plan file into harness
-harness_import_plan() {
+# Import a plan file into hyh
+hyh_import_plan() {
   local plan_file="$1"
   local json
   local temp_file
@@ -173,8 +173,8 @@ harness_import_plan() {
   local script_dir
   script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-  # Convert markdown plan to harness JSON
-  json=$("$script_dir/plan-to-harness.sh" "$plan_file")
+  # Convert markdown plan to hyh JSON
+  json=$("$script_dir/plan-to-hyh.sh" "$plan_file")
 
   # Write JSON to temp file wrapped in markdown code fence (hyh expects this)
   temp_file=$(mktemp)
@@ -193,12 +193,12 @@ EOF
 }
 
 # Claim next available task for current worker
-harness_claim_task() {
+hyh_claim_task() {
   _run_hyh task claim
 }
 
 # Complete a task
-harness_complete_task() {
+hyh_complete_task() {
   local task_id="$1"
   _run_hyh task complete --id "$task_id"
 }

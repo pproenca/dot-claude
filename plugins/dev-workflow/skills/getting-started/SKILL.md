@@ -316,7 +316,7 @@ Before executing tasks, import the plan into hyh:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-harness_import_plan "<plan_file_path>"
+hyh_import_plan "<plan_file_path>"
 ```
 
 This creates workflow state in the hyh daemon with:

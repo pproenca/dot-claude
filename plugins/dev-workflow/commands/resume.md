@@ -11,7 +11,7 @@ Resume execution of an interrupted plan from where it left off.
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-PROGRESS=$(harness_get_progress)
+PROGRESS=$(hyh_get_progress)
 PENDING=$(echo "$PROGRESS" | jq '.pending')
 RUNNING=$(echo "$PROGRESS" | jq '.running')
 COMPLETED=$(echo "$PROGRESS" | jq '.completed')
@@ -71,7 +71,7 @@ AskUserQuestion:
 After all tasks done:
 1. Verify all tasks are completed:
    ```bash
-   PROGRESS=$(harness_get_progress)
+   PROGRESS=$(hyh_get_progress)
    PENDING=$(echo "$PROGRESS" | jq '.pending')
    if [[ "$PENDING" -gt 0 ]]; then
      echo "Error: Workflow incomplete, $PENDING tasks pending"

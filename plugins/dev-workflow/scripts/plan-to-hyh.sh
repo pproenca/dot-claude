@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# plan-to-harness.sh - Convert markdown plan to hyh JSON format
-# Usage: plan-to-harness.sh <plan-file.md>
-# Note: harness was renamed to hyh, accessed via 'uvx hyh'
+# plan-to-hyh.sh - Convert markdown plan to hyh JSON format
+# Usage: plan-to-hyh.sh <plan-file.md>
+# Accessed via 'uvx hyh'
 
 set -euo pipefail
 
-plan_to_harness() {
+plan_to_hyh() {
   local plan_file="$1"
 
   if [[ ! -f "$plan_file" ]]; then
@@ -91,5 +91,5 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo "Usage: $0 <plan-file.md>" >&2
     exit 1
   fi
-  plan_to_harness "$1"
+  plan_to_hyh "$1"
 fi

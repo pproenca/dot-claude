@@ -1,0 +1,2 @@
+#!/bin/bash
+echo '{"tasks":{"t1":{"status":"completed"},"t2":{"status":"pending"},"t3":{"status":"running"}}}'

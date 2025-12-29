@@ -5,7 +5,7 @@ setup() {
   export TEST_PLAN="$BATS_TEST_TMPDIR/test-plan.md"
 }
 
-@test "plan_to_harness extracts goal from plan header" {
+@test "plan_to_hyh extracts goal from plan header" {
   cat > "$TEST_PLAN" << 'EOF'
 # User Authentication Implementation Plan
 
@@ -16,12 +16,12 @@ setup() {
 ### Task 1: Create User Model
 EOF
 
-  run bash "$SCRIPT_DIR/plan-to-harness.sh" "$TEST_PLAN"
+  run bash "$SCRIPT_DIR/plan-to-hyh.sh" "$TEST_PLAN"
   [ "$status" -eq 0 ]
   echo "$output" | jq -e '.goal == "Add JWT-based user authentication to the API"'
 }
 
-@test "plan_to_harness extracts tasks with descriptions" {
+@test "plan_to_hyh extracts tasks with descriptions" {
   cat > "$TEST_PLAN" << 'EOF'
 # Feature Plan
 
@@ -46,7 +46,7 @@ EOF
 **Step 1: Write test**
 EOF
 
-  run bash "$SCRIPT_DIR/plan-to-harness.sh" "$TEST_PLAN"
+  run bash "$SCRIPT_DIR/plan-to-hyh.sh" "$TEST_PLAN"
   [ "$status" -eq 0 ]
 
   # Check task count
@@ -58,7 +58,7 @@ EOF
   echo "$output" | jq -e '.tasks["task-2"].description == "Add API Endpoint"'
 }
 
-@test "plan_to_harness parses dependencies" {
+@test "plan_to_hyh parses dependencies" {
   cat > "$TEST_PLAN" << 'EOF'
 # Feature Plan
 
@@ -83,7 +83,7 @@ EOF
 **Step 1: Do something**
 EOF
 
-  run bash "$SCRIPT_DIR/plan-to-harness.sh" "$TEST_PLAN"
+  run bash "$SCRIPT_DIR/plan-to-hyh.sh" "$TEST_PLAN"
   [ "$status" -eq 0 ]
 
   # Task 1 has no dependencies
@@ -98,7 +98,7 @@ EOF
   [ "$deps3" -eq 2 ]
 }
 
-@test "plan_to_harness handles decimal task numbers" {
+@test "plan_to_hyh handles decimal task numbers" {
   cat > "$TEST_PLAN" << 'EOF'
 # Feature Plan
 
@@ -129,7 +129,7 @@ EOF
 **Step 1: Finish**
 EOF
 
-  run bash "$SCRIPT_DIR/plan-to-harness.sh" "$TEST_PLAN"
+  run bash "$SCRIPT_DIR/plan-to-hyh.sh" "$TEST_PLAN"
   [ "$status" -eq 0 ]
 
   # Should have 4 tasks including subtasks
@@ -145,7 +145,7 @@ EOF
   echo "$output" | jq -e '.tasks["task-1.2"].dependencies | contains(["task-1.1"])'
 }
 
-@test "plan_to_harness extracts instructions from steps" {
+@test "plan_to_hyh extracts instructions from steps" {
   cat > "$TEST_PLAN" << 'EOF'
 # Feature Plan
 
@@ -178,7 +178,7 @@ class User:
 ```
 EOF
 
-  run bash "$SCRIPT_DIR/plan-to-harness.sh" "$TEST_PLAN"
+  run bash "$SCRIPT_DIR/plan-to-hyh.sh" "$TEST_PLAN"
   [ "$status" -eq 0 ]
 
   # Instructions should contain the steps

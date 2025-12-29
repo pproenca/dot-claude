@@ -9,6 +9,14 @@ HOOK="$PLUGIN_ROOT/hooks/session-start.sh"
 setup() {
   setup_git_repo
   export CLAUDE_PLUGIN_ROOT="$PLUGIN_ROOT"
+  # Fast-fail hyh checks (avoid 5s timeout per test)
+  export HYH_TIMEOUT=0
+  # Mock uvx to fail fast (prevents real daemon spawn attempts)
+  mkdir -p "$TEST_DIR/mocks"
+  echo '#!/bin/bash
+exit 1' > "$TEST_DIR/mocks/uvx"
+  chmod +x "$TEST_DIR/mocks/uvx"
+  export PATH="$TEST_DIR/mocks:$PATH"
 }
 
 teardown() {
@@ -154,10 +162,10 @@ EOF
 }
 
 # ============================================================================
-# Hyh integration (2 tests) - Note: harness renamed to hyh, accessed via 'uvx hyh'
+# Hyh integration (2 tests) - Note: accessed via 'uvx hyh'
 # ============================================================================
 
-@test "harness integration: detects active harness workflow" {
+@test "hyh integration: detects active hyh workflow" {
   cd "$TEST_DIR"
 
   # Mock uvx command (hyh is accessed via 'uvx hyh')
@@ -185,7 +193,7 @@ EOF
   echo "$output" | grep -q "Progress: 1/2"
 }
 
-@test "harness integration: shows no workflow when harness state empty" {
+@test "hyh integration: shows no workflow when hyh state empty" {
   cd "$TEST_DIR"
 
   # Mock uvx command to return empty state

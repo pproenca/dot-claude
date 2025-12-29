@@ -20,7 +20,7 @@ $ARGUMENTS
 
 ## Step 1: Initialize State
 
-Read plan and import into harness:
+Read plan and import into hyh:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
@@ -32,13 +32,13 @@ if [[ ! -f "$PLAN_FILE" ]]; then
   exit 1
 fi
 
-# Import plan into harness daemon
-harness_import_plan "$PLAN_FILE"
+# Import plan into hyh daemon
+hyh_import_plan "$PLAN_FILE"
 
-# Get workflow state from harness
-PROGRESS=$(harness_get_progress)
+# Get workflow state from hyh
+PROGRESS=$(hyh_get_progress)
 TOTAL=$(echo "$PROGRESS" | jq -r '.total')
-echo "HARNESS WORKFLOW IMPORTED"
+echo "HYH WORKFLOW IMPORTED"
 echo "TOTAL_TASKS: $TOTAL"
 ```
 
@@ -98,19 +98,19 @@ digraph sequential {
 
 ### 3a. Check for Interrupted Dispatch (Compact Recovery)
 
-Check if a previous task was interrupted by checking harness state:
+Check if a previous task was interrupted by checking hyh state:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-PROGRESS=$(harness_get_progress)
+PROGRESS=$(hyh_get_progress)
 RUNNING=$(echo "$PROGRESS" | jq -r '.running')
 
 if [[ "$RUNNING" -gt 0 ]]; then
-  echo "RECOVERING: Found $RUNNING running task(s) in harness"
+  echo "RECOVERING: Found $RUNNING running task(s) in hyh"
 fi
 ```
 
-If tasks are running, they will be automatically reclaimed or resumed by harness. No manual recovery needed.
+If tasks are running, they will be automatically reclaimed or resumed by hyh. No manual recovery needed.
 
 ### 3b. Execute Each Task
 
@@ -122,15 +122,15 @@ Launch task in background:
 Task:
   subagent_type: general-purpose
   model: sonnet
-  description: "Execute next task from harness"
+  description: "Execute next task from hyh"
   prompt: |
-    Execute a task from the harness-managed workflow.
+    Execute a task from the hyh-managed workflow.
 
     ## Step 1: Claim Your Task
 
     ```bash
     source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-    TASK=$(harness_claim_task)
+    TASK=$(hyh_claim_task)
     TASK_ID=$(echo "$TASK" | jq -r '.task.id')
     INSTRUCTIONS=$(echo "$TASK" | jq -r '.task.instructions')
 
@@ -200,7 +200,7 @@ Task:
 
     ```bash
     source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-    harness_complete_task "$TASK_ID"
+    hyh_complete_task "$TASK_ID"
     echo "TASK COMPLETED: $TASK_ID"
     ```
 
@@ -361,7 +361,7 @@ Loop until quality review passes.
 
 Only after BOTH reviews pass:
 
-Mark task `completed` in TodoWrite. Task is already marked complete in harness by the agent. Continue to next task.
+Mark task `completed` in TodoWrite. Task is already marked complete in hyh by the agent. Continue to next task.
 
 ---
 
@@ -373,17 +373,17 @@ Uses `Task(run_in_background)` + `TaskOutput` pattern with two-stage review afte
 
 ### 3a. Check for Interrupted Dispatch (Compact Recovery)
 
-Check harness state for any running tasks:
+Check hyh state for any running tasks:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-PROGRESS=$(harness_get_progress)
+PROGRESS=$(hyh_get_progress)
 RUNNING=$(echo "$PROGRESS" | jq -r '.running')
 
 echo "RUNNING TASKS: $RUNNING"
 ```
 
-If tasks are running, they will be automatically reclaimed or resumed by harness. No manual recovery needed.
+If tasks are running, they will be automatically reclaimed or resumed by hyh. No manual recovery needed.
 
 ### 3b. Analyze Task Groups
 
@@ -414,15 +414,15 @@ For each group in `TASK_GROUPS` (split by `|`):
 Task:
   subagent_type: general-purpose
   model: sonnet
-  description: "Execute task from harness (agent 1)"
+  description: "Execute task from hyh (agent 1)"
   prompt: |
-    Execute a task from the harness-managed workflow.
+    Execute a task from the hyh-managed workflow.
 
     ## Step 1: Claim Your Task
 
     ```bash
     source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-    TASK=$(harness_claim_task)
+    TASK=$(hyh_claim_task)
     TASK_ID=$(echo "$TASK" | jq -r '.task.id')
     INSTRUCTIONS=$(echo "$TASK" | jq -r '.task.instructions')
 
@@ -485,7 +485,7 @@ Task:
 
     ```bash
     source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-    harness_complete_task "$TASK_ID"
+    hyh_complete_task "$TASK_ID"
     echo "TASK COMPLETED: $TASK_ID"
     ```
 
@@ -500,7 +500,7 @@ Task:
 Task:
   subagent_type: general-purpose
   model: sonnet
-  description: "Execute task from harness (agent 2)"
+  description: "Execute task from hyh (agent 2)"
   prompt: |
     [Same comprehensive prompt structure as agent 1]
   run_in_background: true
@@ -583,7 +583,7 @@ Task:
 
 5. Mark completed tasks in TodoWrite.
 
-Tasks are already marked complete in harness by the agents. No state file updates needed.
+Tasks are already marked complete in hyh by the agents. No state file updates needed.
 
 **If group has single task** (e.g., `group3:5`):
 
@@ -593,12 +593,12 @@ Use same pattern as sequential execution (two-stage review per task).
 
 | Aspect | Benefit |
 |--------|---------|
-| **Dependencies respected** | Harness DAG ensures dependencies satisfied before claiming |
+| **Dependencies respected** | hyh DAG ensures dependencies satisfied before claiming |
 | **True parallelism** | Multiple agents claim tasks simultaneously |
 | **Quality gates** | Two-stage review catches issues before next group |
-| **No context leak** | Task content claimed from harness, not loaded into orchestrator |
-| **Accurate progress** | Harness daemon tracks state atomically |
-| **Resume works** | Harness state survives crashes and session restarts |
+| **No context leak** | Task content claimed from hyh, not loaded into orchestrator |
+| **Accurate progress** | hyh daemon tracks state atomically |
+| **Resume works** | hyh state survives crashes and session restarts |
 
 ---
 
@@ -644,7 +644,7 @@ Mark "Finish Branch" `completed`.
 
 ### 4c. Cleanup State
 
-No cleanup needed. Harness daemon maintains workflow state. If workflow should be cleared:
+No cleanup needed. hyh daemon maintains workflow state. If workflow should be cleared:
 
 ```bash
 uvx hyh plan reset
@@ -675,16 +675,16 @@ AskUserQuestion:
 
 ## Resume Capability
 
-If session ends unexpectedly, harness daemon maintains workflow state. Resume by:
+If session ends unexpectedly, hyh daemon maintains workflow state. Resume by:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-PROGRESS=$(harness_get_progress)
+PROGRESS=$(hyh_get_progress)
 echo "WORKFLOW STATUS:"
 echo "$PROGRESS" | jq '.'
 
 # Resume execution by continuing to dispatch agents
-# They will claim the next available tasks from harness
+# They will claim the next available tasks from hyh
 ```
 
 Commands:

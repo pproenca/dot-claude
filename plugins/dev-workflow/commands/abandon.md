@@ -13,7 +13,7 @@ Discard the active workflow state. Use this when you want to start fresh or the 
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
 
 # Check hyh for active workflow
-PROGRESS=$(harness_get_progress 2>/dev/null) || {
+PROGRESS=$(hyh_get_progress 2>/dev/null) || {
   echo "No active workflow found."
   exit 0
 }
