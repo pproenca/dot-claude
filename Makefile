@@ -79,12 +79,12 @@ deps:  ## Check dependencies status
 ##@ Testing
 
 .PHONY: test
-test:  ## Run all bats tests (fast, skips integration tests)
-	$(BATS) $(DEV_WORKFLOW)/tests/
+test:  ## Run all bats tests (fast, skips integration and worktree tests)
+	$(BATS) $(DEV_WORKFLOW)/tests/ensure-hyh.bats $(DEV_WORKFLOW)/tests/hook-helpers.bats $(DEV_WORKFLOW)/tests/hyh-integration.bats $(DEV_WORKFLOW)/tests/plan-to-hyh.bats $(DEV_WORKFLOW)/tests/session-start.bats
 
 .PHONY: test-integration
 test-integration:  ## Run integration tests (slow, requires uvx hyh)
-	RUN_INTEGRATION_TESTS=1 $(BATS) $(DEV_WORKFLOW)/tests/harness-integration.bats
+	RUN_INTEGRATION_TESTS=1 $(BATS) $(DEV_WORKFLOW)/tests/hyh-integration.bats
 
 .PHONY: test-all
 test-all:  ## Run ALL tests including slow integration tests

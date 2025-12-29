@@ -7,7 +7,7 @@ load test_helper
 HOOK="$PLUGIN_ROOT/hooks/session-start.sh"
 
 setup() {
-  setup_git_repo
+  setup_test_dir  # Fast: no git init (session-start doesn't need git)
   export CLAUDE_PLUGIN_ROOT="$PLUGIN_ROOT"
   # Fast-fail hyh checks (avoid 5s timeout per test)
   export HYH_TIMEOUT=0
@@ -20,7 +20,7 @@ exit 1' > "$TEST_DIR/mocks/uvx"
 }
 
 teardown() {
-  teardown_git_repo
+  teardown_test_dir
 }
 
 # ============================================================================
