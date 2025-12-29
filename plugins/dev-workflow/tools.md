@@ -14,7 +14,7 @@ Complete reference for all tools available to Claude Code, extracted from system
 | `prompt` | string | Yes | The task for the agent to perform |
 | `description` | string | Yes | A short (3-5 word) description of the task |
 | `subagent_type` | string | Yes | The type of specialized agent to use |
-| `model` | enum | No | `sonnet`, `opus`, or `haiku` - model to use (inherits from parent if not specified) |
+| `model` | enum | No | `sonnet` or `opus` - model to use (inherits from parent if not specified) |
 | `resume` | string | No | Agent ID to resume from a previous invocation (continues with full previous context) |
 | `run_in_background` | boolean | No | Run agent in background, retrieve results with TaskOutput |
 

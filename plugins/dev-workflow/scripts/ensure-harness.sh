@@ -1,55 +1,56 @@
 #!/usr/bin/env bash
-# ensure-harness.sh - Ensure harness daemon is running
+# ensure-harness.sh - Ensure hyh daemon is running
 # Returns 0 if daemon is running, 1 if failed to start
+# Note: harness was renamed to hyh, accessed via 'uvx hyh'
 
 set -euo pipefail
 
 HARNESS_TIMEOUT="${HARNESS_TIMEOUT:-5}"
 
-# Installation instructions for harness
+# Run hyh command via uvx
+run_hyh() {
+  uvx hyh "$@"
+}
+
+# Installation instructions for hyh
 show_install_instructions() {
   cat >&2 << 'EOF'
-ERROR: harness CLI not found
+ERROR: uv/uvx not found (required for hyh)
 
-Install harness using one of these methods:
+Install uv first:
+  curl -LsSf https://astral.sh/uv/install.sh | sh
 
-  # Quick install (recommended):
-  curl -fsSL https://raw.githubusercontent.com/pproenca/harness/master/install.sh | bash
+Then hyh will be available via:
+  uvx hyh <command>
 
-  # Or with uv directly:
-  uv tool install git+https://github.com/pproenca/harness
-
-  # Install specific version:
-  uv tool install git+https://github.com/pproenca/harness@v2.0.0
-
-After installation, ensure ~/.local/bin is in your PATH:
-  export PATH="$HOME/.local/bin:$PATH"
+Or install it permanently:
+  uv tool install hyh
 
 EOF
 }
 
 ensure_harness() {
-  # Check if harness CLI is installed
-  if ! command -v harness >/dev/null 2>&1; then
+  # Check if uvx is available
+  if ! command -v uvx >/dev/null 2>&1; then
     show_install_instructions
     return 1
   fi
 
   # Check if daemon responds to ping
-  if harness ping >/dev/null 2>&1; then
+  if run_hyh ping >/dev/null 2>&1; then
     return 0
   fi
 
-  # Daemon not running, spawn it (harness client auto-spawns daemon)
-  harness get-state >/dev/null 2>&1 || true
+  # Daemon not running, spawn it (hyh client auto-spawns daemon)
+  run_hyh get-state >/dev/null 2>&1 || true
 
   # Wait for daemon to be ready
   local elapsed=0
-  while ! harness ping >/dev/null 2>&1; do
+  while ! run_hyh ping >/dev/null 2>&1; do
     sleep 0.5
     elapsed=$((elapsed + 1))
     if [[ $elapsed -ge $((HARNESS_TIMEOUT * 2)) ]]; then
-      echo "ERROR: harness daemon failed to start within ${HARNESS_TIMEOUT}s" >&2
+      echo "ERROR: hyh daemon failed to start within ${HARNESS_TIMEOUT}s" >&2
       return 1
     fi
   done

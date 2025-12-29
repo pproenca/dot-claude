@@ -647,8 +647,8 @@ Mark "Finish Branch" `completed`.
 No cleanup needed. Harness daemon maintains workflow state. If workflow should be cleared:
 
 ```bash
-harness plan reset
-echo "Workflow complete. Harness state cleared."
+uvx hyh plan reset
+echo "Workflow complete. State cleared."
 ```
 
 ---
@@ -689,4 +689,4 @@ echo "$PROGRESS" | jq '.'
 
 Commands:
 - /dev-workflow:resume - Continue execution (dispatch more agents)
-- /dev-workflow:abandon - Clear harness state via `harness reset`
+- /dev-workflow:abandon - Clear state via `uvx hyh plan reset`

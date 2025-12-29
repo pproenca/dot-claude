@@ -23,7 +23,7 @@ description: |
   <commentary>DRF patterns require specialized guidance</commentary>
   </example>
 color: green
-model: sonnet
+model: opus
 allowed-tools: Bash(python:*), Bash(uv:*), Bash(./manage.py:*), Read, Edit, Glob, Grep, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 

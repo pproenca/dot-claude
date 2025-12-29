@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# plan-to-harness.sh - Convert markdown plan to harness JSON format
+# plan-to-harness.sh - Convert markdown plan to hyh JSON format
 # Usage: plan-to-harness.sh <plan-file.md>
+# Note: harness was renamed to hyh, accessed via 'uvx hyh'
 
 set -euo pipefail
 

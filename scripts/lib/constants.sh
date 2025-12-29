@@ -38,7 +38,6 @@ VALID_BUILTIN_TOOLS=(
 VALID_MODELS=(
   "sonnet"
   "opus"
-  "haiku"
 )
 
 # Valid color values for agents (Claude Code UI colors)

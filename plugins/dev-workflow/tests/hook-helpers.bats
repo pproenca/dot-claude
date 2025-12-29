@@ -315,16 +315,21 @@ EOF
 }
 
 # ============================================================================
-# Harness Integration Functions
+# Hyh Integration Functions - Note: harness renamed to hyh, accessed via 'uvx hyh'
 # ============================================================================
 
 @test "harness_get_progress returns task counts" {
   mkdir -p "$BATS_TEST_DIRNAME/mocks"
-  cat > "$BATS_TEST_DIRNAME/mocks/harness" << 'EOF'
+  cat > "$BATS_TEST_DIRNAME/mocks/uvx" << 'EOF'
 #!/bin/bash
-echo '{"tasks":{"t1":{"status":"completed"},"t2":{"status":"pending"},"t3":{"status":"running"}}}'
+# uvx receives: hyh <command>
+if [[ "$1" == "hyh" && "$2" == "get-state" ]]; then
+  echo '{"tasks":{"t1":{"status":"completed"},"t2":{"status":"pending"},"t3":{"status":"running"}}}'
+  exit 0
+fi
+exit 0
 EOF
-  chmod +x "$BATS_TEST_DIRNAME/mocks/harness"
+  chmod +x "$BATS_TEST_DIRNAME/mocks/uvx"
   export PATH="$BATS_TEST_DIRNAME/mocks:$PATH"
 
   source "$BATS_TEST_DIRNAME/../scripts/hook-helpers.sh"

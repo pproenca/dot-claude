@@ -29,7 +29,7 @@ POSIX mode identifies bash-specific features that may not work on all systems.
 </commentary>
 </example>
 
-model: sonnet
+model: opus
 color: cyan
 tools: ["Read", "Bash", "Glob", "Grep", "Skill", "mcp__plugin_serena_serena", "mcp__plugin_serena_serena_*"]
 ---

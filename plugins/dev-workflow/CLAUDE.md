@@ -33,7 +33,7 @@ Tests run on commit via pre-commit hook.
 **Hooks** (`hooks/hooks.json`):
 - `SessionStart` → loads getting-started skill with planning methodology
 
-**Helper functions**: `scripts/hook-helpers.sh` provides plan parsing and harness integration functions.
+**Helper functions**: `scripts/hook-helpers.sh` provides plan parsing and hyh integration functions.
 
 ## Component Frontmatter
 
@@ -63,7 +63,7 @@ allowed-tools: [Read, Task, TodoWrite]
 ---
 name: agent-name
 description: When to dispatch via Task tool
-model: sonnet | haiku
+model: sonnet | opus
 tools: [Glob, Grep, Read]
 ---
 ```
@@ -96,5 +96,5 @@ tests/           # Bats tests for hooks and scripts
 
 ## Dependencies
 
-**Required:** `git`, `harness` (install via `uv tool install git+https://github.com/pproenca/harness`)
+**Required:** `git`, `hyh` (install via `uv tool install hyh`)
 **Optional:** `jq`, `bats-core`, `shellcheck`, `pre-commit`

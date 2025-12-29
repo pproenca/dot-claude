@@ -2,16 +2,20 @@
 
 setup() {
   load '../scripts/ensure-harness.sh'
-  # Mock harness command
+  # Mock uvx command (hyh is accessed via 'uvx hyh')
   export PATH="$BATS_TEST_DIRNAME/mocks:$PATH"
 }
 
 @test "ensure_harness returns 0 when daemon responds to ping" {
-  # Mock harness ping succeeds
+  # Mock uvx hyh ping succeeds
   echo '#!/bin/bash
-echo "pong"
-exit 0' > "$BATS_TEST_DIRNAME/mocks/harness"
-  chmod +x "$BATS_TEST_DIRNAME/mocks/harness"
+# uvx receives: hyh <command>
+if [[ "$1" == "hyh" && "$2" == "ping" ]]; then
+  echo "pong"
+  exit 0
+fi
+exit 0' > "$BATS_TEST_DIRNAME/mocks/uvx"
+  chmod +x "$BATS_TEST_DIRNAME/mocks/uvx"
 
   run ensure_harness
   [ "$status" -eq 0 ]
@@ -20,7 +24,8 @@ exit 0' > "$BATS_TEST_DIRNAME/mocks/harness"
 @test "ensure_harness spawns daemon when ping fails then succeeds" {
   # First ping fails, second succeeds (daemon started)
   echo '#!/bin/bash
-if [[ "$1" == "ping" ]]; then
+# uvx receives: hyh <command>
+if [[ "$1" == "hyh" && "$2" == "ping" ]]; then
   if [[ ! -f /tmp/harness-started ]]; then
     touch /tmp/harness-started
     exit 1
@@ -28,8 +33,8 @@ if [[ "$1" == "ping" ]]; then
   echo "pong"
   exit 0
 fi
-exit 0' > "$BATS_TEST_DIRNAME/mocks/harness"
-  chmod +x "$BATS_TEST_DIRNAME/mocks/harness"
+exit 0' > "$BATS_TEST_DIRNAME/mocks/uvx"
+  chmod +x "$BATS_TEST_DIRNAME/mocks/uvx"
 
   run ensure_harness
   [ "$status" -eq 0 ]
@@ -38,8 +43,8 @@ exit 0' > "$BATS_TEST_DIRNAME/mocks/harness"
 
 @test "ensure_harness fails after timeout when daemon never starts" {
   echo '#!/bin/bash
-exit 1' > "$BATS_TEST_DIRNAME/mocks/harness"
-  chmod +x "$BATS_TEST_DIRNAME/mocks/harness"
+exit 1' > "$BATS_TEST_DIRNAME/mocks/uvx"
+  chmod +x "$BATS_TEST_DIRNAME/mocks/uvx"
 
   HARNESS_TIMEOUT=1 run ensure_harness
   [ "$status" -eq 1 ]

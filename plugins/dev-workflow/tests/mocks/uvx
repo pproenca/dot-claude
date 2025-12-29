@@ -1,0 +1,7 @@
+#!/bin/bash
+# uvx receives: hyh <command>
+if [[ "$1" == "hyh" && "$2" == "get-state" ]]; then
+  echo '{"tasks":{"t1":{"status":"completed"},"t2":{"status":"pending"},"t3":{"status":"running"}}}'
+  exit 0
+fi
+exit 0

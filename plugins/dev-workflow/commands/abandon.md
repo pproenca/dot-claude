@@ -12,7 +12,7 @@ Discard the active workflow state. Use this when you want to start fresh or the 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
 
-# Check harness for active workflow
+# Check hyh for active workflow
 PROGRESS=$(harness_get_progress 2>/dev/null) || {
   echo "No active workflow found."
   exit 0
@@ -45,7 +45,7 @@ AskUserQuestion:
   multiSelect: false
   options:
     - label: "Yes, discard"
-      description: "Clear harness state and start fresh"
+      description: "Clear hyh state and start fresh"
     - label: "Cancel"
       description: "Keep workflow state for later resume"
 ```
@@ -55,8 +55,8 @@ AskUserQuestion:
 **If Yes, discard:**
 
 ```bash
-# Clear harness state
-harness plan reset
+# Clear hyh state
+uvx hyh plan reset
 
 # Clean up legacy state file if present
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"

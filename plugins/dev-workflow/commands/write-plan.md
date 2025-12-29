@@ -206,9 +206,9 @@ git add docs/plans/
 git commit -m "docs: implementation plan for <feature>"
 ```
 
-## Step 5: Import Plan into Harness
+## Step 5: Import Plan into hyh
 
-After saving the plan file, import it into harness:
+After saving the plan file, import it into hyh:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"

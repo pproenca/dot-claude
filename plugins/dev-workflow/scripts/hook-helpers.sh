@@ -1,6 +1,6 @@
 #!/bin/bash
 # Helper functions for dev-workflow hooks and scripts
-# All state management is via harness daemon
+# All state management is via hyh daemon (accessed via 'uvx hyh')
 
 # =============================================================================
 # Plan Parsing Functions (for parallel task grouping)
@@ -141,13 +141,19 @@ get_max_parallel_from_groups() {
 }
 
 # =============================================================================
-# Harness Integration Functions
+# Harness (hyh) Integration Functions
+# Note: harness was renamed to hyh, accessed via 'uvx hyh'
 # =============================================================================
+
+# Run hyh command via uvx
+_run_hyh() {
+  uvx hyh "$@"
+}
 
 # Get workflow progress as JSON: {total, completed, pending, running}
 harness_get_progress() {
   local state
-  state=$(harness get-state 2>/dev/null || echo '{"tasks":{}}')
+  state=$(_run_hyh get-state 2>/dev/null || echo '{"tasks":{}}')
 
   echo "$state" | jq '{
     total: .tasks | length,
@@ -170,7 +176,7 @@ harness_import_plan() {
   # Convert markdown plan to harness JSON
   json=$("$script_dir/plan-to-harness.sh" "$plan_file")
 
-  # Write JSON to temp file wrapped in markdown code fence (harness expects this)
+  # Write JSON to temp file wrapped in markdown code fence (hyh expects this)
   temp_file=$(mktemp)
   cat > "$temp_file" << EOF
 \`\`\`json
@@ -178,8 +184,8 @@ $json
 \`\`\`
 EOF
 
-  # Import into harness using --file
-  harness plan import --file "$temp_file"
+  # Import into hyh using --file
+  _run_hyh plan import --file "$temp_file"
   local result=$?
 
   rm -f "$temp_file"
@@ -188,11 +194,11 @@ EOF
 
 # Claim next available task for current worker
 harness_claim_task() {
-  harness task claim
+  _run_hyh task claim
 }
 
 # Complete a task
 harness_complete_task() {
   local task_id="$1"
-  harness task complete --id "$task_id"
+  _run_hyh task complete --id "$task_id"
 }

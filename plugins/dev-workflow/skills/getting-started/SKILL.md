@@ -312,21 +312,21 @@ Use `ExitPlanMode(launchSwarm: true, teammateCount: N)` to spawn parallel teamma
 
 ### State Persistence (Resume Capability)
 
-Before executing tasks, import the plan into harness:
+Before executing tasks, import the plan into hyh:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
 harness_import_plan "<plan_file_path>"
 ```
 
-This creates workflow state in the harness daemon with:
+This creates workflow state in the hyh daemon with:
 - Task definitions from the plan
 - Status tracking (pending/running/completed)
 - Worker assignment
 
-**State is managed by harness daemon.** Tasks are claimed atomically via `harness task claim` and completed via `harness task complete`.
+**State is managed by hyh daemon.** Tasks are claimed atomically via `uvx hyh task claim` and completed via `uvx hyh task complete`.
 
-**If session ends unexpectedly**, the next session will detect active workflow via harness and prompt:
+**If session ends unexpectedly**, the next session will detect active workflow via hyh and prompt:
 ```
 ACTIVE WORKFLOW DETECTED
 Progress: 3/8 tasks completed
@@ -341,7 +341,7 @@ Commands:
 **After workflow completes** (code review + finish branch done), clear state:
 
 ```bash
-harness plan reset
+uvx hyh plan reset
 ```
 
 ### Post-Execution Actions

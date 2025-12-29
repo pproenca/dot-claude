@@ -23,7 +23,7 @@ description: |
   <commentary>Python-specific review requires deep language knowledge</commentary>
   </example>
 color: blue
-model: sonnet
+model: opus
 allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit, Glob, Grep, Task, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 

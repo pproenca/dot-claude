@@ -97,7 +97,7 @@ args:
 ---
 name: agent-name
 description: When to dispatch via Task tool
-model: sonnet | haiku
+model: sonnet | opus
 tools: Glob, Grep, Read
 ---
 ```

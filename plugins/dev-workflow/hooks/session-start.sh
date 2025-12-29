@@ -1,6 +1,6 @@
 #!/bin/bash
 # Session start hook - detects active workflow or loads getting-started skill
-# Queries harness daemon for active workflow state
+# Queries hyh daemon for active workflow state (harness renamed to hyh)
 
 set -euo pipefail
 
@@ -8,10 +8,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR/../scripts/ensure-harness.sh"
 
-# Check for active harness workflow
+# Run hyh command via uvx
+_run_hyh() {
+  uvx hyh "$@"
+}
+
+# Check for active hyh workflow
 if ensure_harness 2>/dev/null; then
-  # Query harness for active workflow
-  STATE=$(harness get-state 2>/dev/null || echo '{}')
+  # Query hyh for active workflow
+  STATE=$(_run_hyh get-state 2>/dev/null || echo '{}')
   TASK_COUNT=$(echo "$STATE" | jq '.tasks | length' 2>/dev/null || echo "0")
 
   if [[ "$TASK_COUNT" -gt 0 ]]; then

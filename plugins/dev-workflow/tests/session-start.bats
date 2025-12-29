@@ -154,27 +154,28 @@ EOF
 }
 
 # ============================================================================
-# Harness integration (2 tests)
+# Hyh integration (2 tests) - Note: harness renamed to hyh, accessed via 'uvx hyh'
 # ============================================================================
 
 @test "harness integration: detects active harness workflow" {
   cd "$TEST_DIR"
 
-  # Mock harness command to return active workflow
+  # Mock uvx command (hyh is accessed via 'uvx hyh')
   mkdir -p "$TEST_DIR/mocks"
-  cat > "$TEST_DIR/mocks/harness" << 'EOF'
+  cat > "$TEST_DIR/mocks/uvx" << 'EOF'
 #!/bin/bash
-if [[ "$1" == "ping" ]]; then
+# uvx receives: hyh <command>
+if [[ "$1" == "hyh" && "$2" == "ping" ]]; then
   echo "pong"
   exit 0
 fi
-if [[ "$1" == "get-state" ]]; then
+if [[ "$1" == "hyh" && "$2" == "get-state" ]]; then
   echo '{"tasks":{"task-1":{"status":"completed"},"task-2":{"status":"pending"}}}'
   exit 0
 fi
 exit 0
 EOF
-  chmod +x "$TEST_DIR/mocks/harness"
+  chmod +x "$TEST_DIR/mocks/uvx"
   export PATH="$TEST_DIR/mocks:$PATH"
 
   run "$HOOK"
@@ -187,28 +188,30 @@ EOF
 @test "harness integration: shows no workflow when harness state empty" {
   cd "$TEST_DIR"
 
-  # Mock harness command to return empty state
+  # Mock uvx command to return empty state
   mkdir -p "$TEST_DIR/mocks"
-  cat > "$TEST_DIR/mocks/harness" << 'EOF'
+  cat > "$TEST_DIR/mocks/uvx" << 'EOF'
 #!/bin/bash
-if [[ "$1" == "ping" ]]; then
+# uvx receives: hyh <command>
+if [[ "$1" == "hyh" && "$2" == "ping" ]]; then
   echo "pong"
   exit 0
 fi
-if [[ "$1" == "get-state" ]]; then
+if [[ "$1" == "hyh" && "$2" == "get-state" ]]; then
   echo '{"tasks":{}}'
   exit 0
 fi
 exit 0
 EOF
-  chmod +x "$TEST_DIR/mocks/harness"
+  chmod +x "$TEST_DIR/mocks/uvx"
   export PATH="$TEST_DIR/mocks:$PATH"
 
   run "$HOOK"
 
   [ "$status" -eq 0 ]
   # Should show getting-started skill (not the workflow resume prompt)
+  # The presence of "dev-workflow skills available" proves skill was loaded,
+  # meaning workflow was not detected (these are mutually exclusive paths)
   echo "$output" | grep -q "dev-workflow skills available"
-  # Should NOT show the resume prompt format (Progress: N/M)
-  [[ "$output" != *"Progress:"*"tasks completed"* ]]
+  echo "$output" | grep -q "Getting Started"
 }

@@ -7,7 +7,7 @@ allowed-tools: Read, Bash, TodoWrite, Task, Skill, AskUserQuestion, mcp__plugin_
 
 Resume execution of an interrupted plan from where it left off.
 
-## Step 1: Check Workflow State (with harness)
+## Step 1: Check Workflow State (with hyh)
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
@@ -27,9 +27,9 @@ echo "Workflow status: $COMPLETED/$TOTAL completed, $RUNNING running, $PENDING p
 
 ## Step 2: Verify State
 
-1. Query harness for full state:
+1. Query hyh for full state:
    ```bash
-   harness get-state
+   uvx hyh get-state
    ```
 2. Check git log to see completed work:
    ```bash
@@ -53,17 +53,17 @@ AskUserQuestion:
       description: "Show completed work before continuing"
 ```
 
-## Step 4: Execute (with harness)
+## Step 4: Execute (with hyh)
 
 **If Continue:**
 1. Re-dispatch agents - they will automatically claim uncompleted tasks
-2. Agents call `harness task claim` to get their next task
-3. Running tasks that timed out will be automatically reclaimed by harness
-4. No manual state file manipulation needed - harness handles everything
+2. Agents call `uvx hyh task claim` to get their next task
+3. Running tasks that timed out will be automatically reclaimed by hyh
+4. No manual state file manipulation needed - hyh handles everything
 
 **If Review first:**
 1. Show git log with diff summary
-2. Show harness state with task statuses
+2. Show hyh state with task statuses
 3. Then ask again if ready to continue
 
 ## Step 5: Complete Workflow
@@ -81,4 +81,4 @@ After all tasks done:
 2. Run code review (Task tool with dev-workflow:code-reviewer)
 3. Use Skill("dev-workflow:receiving-code-review")
 4. Use Skill("dev-workflow:finishing-a-development-branch")
-5. No state file cleanup needed - harness manages state lifecycle
+5. No state file cleanup needed - hyh manages state lifecycle

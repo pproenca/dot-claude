@@ -23,7 +23,7 @@ description: |
   <commentary>Sync/async bridging is a common pain point</commentary>
   </example>
 color: cyan
-model: sonnet
+model: opus
 allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit, Bash(pytest:*), mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
 
