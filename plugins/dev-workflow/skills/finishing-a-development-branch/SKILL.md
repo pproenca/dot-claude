@@ -49,7 +49,7 @@ AskUserQuestion:
     - label: "Create PR"
       description: "Push branch and create Pull Request"
     - label: "Keep as-is"
-      description: "Preserve branch for later"
+      description: "Preserve branch and worktree for later"
     - label: "Discard"
       description: "Delete branch and all commits"
 ```
@@ -59,12 +59,22 @@ AskUserQuestion:
 ### Option: Merge locally
 
 ```bash
+source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
+
 FEATURE="$(git branch --show-current)"
 
 # Safety check
 if [ -n "$(git status --porcelain)" ]; then
   echo "Error: Uncommitted changes. Commit first."
   exit 1
+fi
+
+# Get main repo path
+MAIN_REPO="$(get_main_worktree)"
+
+# If in worktree, go to main repo
+if ! is_main_repo; then
+  cd "$MAIN_REPO"
 fi
 
 # Checkout base and merge
@@ -75,9 +85,14 @@ git merge "$FEATURE"
 npm test  # verify merged result
 ```
 
-If tests pass:
+If tests pass and was in worktree:
 
 ```bash
+source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
+# Clean up worktree if we were in one
+if [[ -n "${WORKTREE_PATH:-}" ]]; then
+  git worktree remove --force "$WORKTREE_PATH" 2>/dev/null || true
+fi
 git branch -d "$FEATURE"
 ```
 
@@ -95,7 +110,7 @@ Proceed to Step 5.
 
 ### Option: Keep as-is
 
-Report branch location. Return.
+Report branch and worktree location. Skip Step 5. Return.
 
 ### Option: Discard
 
@@ -114,9 +129,18 @@ AskUserQuestion:
 ```
 
 ```bash
-git checkout $BASE
-git branch -D $FEATURE
+source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
+
+# If in worktree, remove it first
+if ! is_main_repo; then
+  remove_worktree
+else
+  git checkout $BASE
+  git branch -D $FEATURE
+fi
 ```
+
+Proceed to Step 5.
 
 ## Step 5: Report Completion
 
@@ -126,6 +150,7 @@ Report:
 Branch finished:
 - Action: [Merged / PR created / Discarded]
 - Branch: [name]
+- Worktree: [cleaned up / preserved]
 ```
 
 Return to caller.
