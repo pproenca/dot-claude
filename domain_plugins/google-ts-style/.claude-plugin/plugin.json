@@ -1,0 +1,8 @@
+{
+  "name": "google-ts-style",
+  "description": "Google TypeScript Style Guide for writing TypeScript following Google's conventions",
+  "author": {
+    "name": "Pedro Proenca",
+    "email": "pedro@10xengs.com"
+  }
+}
