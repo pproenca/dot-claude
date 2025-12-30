@@ -153,9 +153,8 @@
     },
     {
       "name": "agentic-workflow",
-      "source": "./plugins/methodology/agentic-workflow",
+      "source": "./plugins/agentic-workflow",
       "description": "Multi-agent orchestration with anti-abandonment patterns - Explore, Plan, Delegate, Verify, Synthesize",
-      "version": "1.0.0",
       "keywords": [
         "orchestration",
         "multi-agent",
@@ -164,8 +163,7 @@
         "anti-abandonment",
         "verification",
         "task-decomposition"
-      ],
-      "license": "MIT"
+      ]
     }
   ]
 }
