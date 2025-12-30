@@ -13,6 +13,26 @@ Run the verification layer to check implementation quality.
 Arguments: $ARGUMENTS
 - `--fix` flag: Create remediation tasks for issues found
 
+## Validation
+
+1. **Parse flags** from arguments:
+   ```
+   flags = parse_flags($ARGUMENTS)
+   ```
+
+2. **Validate flags**:
+   - If any flag is provided that is not `--fix`:
+     ```
+     Error: Unknown flag '${flag}'
+
+     Valid flags:
+     - --fix: Create remediation tasks for issues found
+     - (no flag): Run verification only, report issues
+
+     Usage: /verify [--fix]
+     ```
+     Stop execution.
+
 ## Workflow
 
 ### Step 1: Identify Files to Verify

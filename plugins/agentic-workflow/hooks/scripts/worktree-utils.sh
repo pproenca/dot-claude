@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # Worktree utilities for agentic-workflow plugin
 # Provides functions to create, manage, and clean up git worktrees
 # Worktrees are stored at ~/.dot-claude-worktrees/<project>--<branch>

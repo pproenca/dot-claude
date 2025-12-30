@@ -1,12 +1,22 @@
 #!/bin/bash
+set -euo pipefail
 # PostToolUse hook for AskUserQuestion: Detect plan approval
 # Automatically sets approval file when user approves the plan
 
-TOOL_INPUT_FILE="$1"
-TOOL_OUTPUT_FILE="$2"
+TOOL_INPUT_FILE="${1:-}"
+TOOL_OUTPUT_FILE="${2:-}"
 
-PHASE_FILE=".claude/workflow-phase"
-APPROVAL_FILE=".claude/plan-approved"
+# Source worktree utilities for state directory awareness
+SCRIPT_DIR="$(dirname "$0")"
+if [ -f "${SCRIPT_DIR}/worktree-utils.sh" ]; then
+    source "${SCRIPT_DIR}/worktree-utils.sh"
+    STATE_DIR=$(worktree_state_dir 2>/dev/null || echo ".claude")
+else
+    STATE_DIR=".claude"
+fi
+
+PHASE_FILE="${STATE_DIR}/workflow-phase"
+APPROVAL_FILE="${STATE_DIR}/plan-approved"
 
 # Get current phase
 CURRENT_PHASE="IDLE"
@@ -28,7 +38,7 @@ if [ -f "$TOOL_OUTPUT_FILE" ]; then
         # Check it's not a rejection
         if ! echo "$OUTPUT" | grep -iq "reject\|cancel\|no\|stop\|don't\|modify"; then
             echo "=== PLAN APPROVED ==="
-            mkdir -p .claude
+            mkdir -p "$STATE_DIR"
             echo "approved" > "$APPROVAL_FILE"
             echo "DELEGATE" > "$PHASE_FILE"
             echo "Approval recorded. Task tool now unblocked."

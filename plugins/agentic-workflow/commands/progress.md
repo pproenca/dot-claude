@@ -15,6 +15,27 @@ Action: $ARGUMENTS
 - `update`: Interactive update of state files
 - `reset`: Clear state files for fresh start
 
+## Validation
+
+1. **Parse action** from arguments (case-insensitive):
+   ```
+   action = lowercase(first_word($ARGUMENTS)) or "show"
+   ```
+
+2. **Validate action**:
+   - If action not in [show, update, reset]:
+     ```
+     Error: Invalid action '${action}'
+
+     Valid options:
+     - show (default): Display current state
+     - update: Interactive update
+     - reset: Clear state files
+
+     Usage: /progress [show|update|reset]
+     ```
+     Stop execution.
+
 ## Worktree Awareness
 
 This command is worktree-aware. Source utilities first:

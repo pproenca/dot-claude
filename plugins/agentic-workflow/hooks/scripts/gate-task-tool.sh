@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # PreToolUse hook: Gate the Task tool during PLAN_WAITING phase
 # Blocks subagent spawning until user approval is recorded
 # Worktree-aware: uses correct state directory

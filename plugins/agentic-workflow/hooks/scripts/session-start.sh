@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # SessionStart hook: Check for incomplete work from previous sessions
 # Worktree-aware: detects if running in a worktree and shows context
 

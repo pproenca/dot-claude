@@ -15,6 +15,39 @@ Action: $ARGUMENTS
 - `read <name>`: Display specific artifact
 - `clean`: Remove old artifacts
 
+## Validation
+
+1. **Parse action** from arguments (case-insensitive):
+   ```
+   action = lowercase(first_word($ARGUMENTS)) or "list"
+   name = remaining_words($ARGUMENTS)  # for read action
+   ```
+
+2. **Validate action**:
+   - If action not in [list, read, clean]:
+     ```
+     Error: Invalid action '${action}'
+
+     Valid options:
+     - list (default): Show all artifacts
+     - read <name>: Display specific artifact
+     - clean: Remove old artifacts
+
+     Usage: /artifact [list|read|clean] [name]
+     ```
+     Stop execution.
+
+3. **Validate read action**:
+   - If action is "read" and name is empty:
+     ```
+     Error: 'read' requires an artifact name
+
+     Usage: /artifact read <name>
+
+     Example: /artifact read token
+     ```
+     Stop execution.
+
 ## Actions
 
 ### list (default)

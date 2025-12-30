@@ -17,6 +17,53 @@ Action: $ARGUMENTS
 - `cleanup` - Remove stale/old worktrees
 - `status` (default) - Show current worktree context
 
+## Validation
+
+1. **Parse action** from arguments (case-insensitive):
+   ```
+   action = lowercase(first_word($ARGUMENTS)) or "status"
+   branch = remaining_words($ARGUMENTS)
+   ```
+
+2. **Validate action**:
+   - If action not in [create, remove, list, cleanup, status]:
+     ```
+     Error: Invalid action '${action}'
+
+     Valid options:
+     - status (default): Show current worktree context
+     - create <branch>: Create a new worktree
+     - remove [branch]: Remove a worktree
+     - list: List all worktrees
+     - cleanup: Remove stale worktrees
+
+     Usage: /worktree [create|remove|list|cleanup|status] [branch-name]
+     ```
+     Stop execution.
+
+3. **Validate create action**:
+   - If action is "create" and branch is empty:
+     ```
+     Error: 'create' requires a branch name
+
+     Usage: /worktree create <branch-name>
+
+     Example: /worktree create feature-auth
+     ```
+     Stop execution.
+
+4. **Validate branch name** (for create):
+   - If branch contains spaces or invalid git ref characters:
+     ```
+     Error: Invalid branch name '${branch}'
+
+     Branch names cannot contain spaces or special characters.
+     Use hyphens or underscores instead.
+
+     Example: /worktree create my-feature
+     ```
+     Stop execution.
+
 ## Setup
 
 First, source the worktree utilities:

@@ -1,7 +1,8 @@
 #!/bin/bash
+set -euo pipefail
 # PostToolUse hook: Auto-run checks after Write/Edit on Python files
 
-TOOL_INPUT_FILE="$1"
+TOOL_INPUT_FILE="${1:-}"
 
 # Extract the file path from tool input if available
 # This is a simplified version - actual implementation may need to parse JSON

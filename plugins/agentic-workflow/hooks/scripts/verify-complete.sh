@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # Stop hook: Phase-aware completion verification
 # Only runs during DELEGATE/VERIFY phases of orchestrated workflow
 # Worktree-aware: uses correct state directory
