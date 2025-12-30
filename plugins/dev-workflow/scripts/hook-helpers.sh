@@ -169,12 +169,8 @@ hyh_import_plan() {
   local json
   local temp_file
 
-  # Resolve script directory relative to this file
-  local script_dir
-  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-  # Convert markdown plan to hyh JSON
-  json=$("$script_dir/plan-to-hyh.sh" "$plan_file")
+  # Convert markdown plan to hyh JSON (use CLAUDE_PLUGIN_ROOT, not BASH_SOURCE)
+  json=$("${CLAUDE_PLUGIN_ROOT}/scripts/plan-to-hyh.sh" "$plan_file")
 
   # Write JSON to temp file wrapped in markdown code fence (hyh expects this)
   temp_file=$(mktemp)
