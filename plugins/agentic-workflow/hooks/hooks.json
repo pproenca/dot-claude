@@ -31,26 +31,6 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/post-tool-use.sh \"$TOOL_INPUT_FILE\"",
-            "timeout": 30000
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit|Bash|Task|Read",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/track-turns.sh",
-            "timeout": 5000
-          }
-        ]
-      },
-      {
         "matcher": "AskUserQuestion",
         "hooks": [
           {
