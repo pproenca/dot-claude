@@ -1,7 +1,7 @@
 ---
 description: Manage subagent handoff artifacts in .claude/artifacts/
 argument-hint: [list|read|clean] [name]
-allowed-tools: Read, Write, Glob, Bash
+allowed-tools: Read, Write, Glob, Bash, AskUserQuestion
 ---
 
 # /artifact - Artifact Management
@@ -121,6 +121,10 @@ Handle responses:
 - "All artifacts" → Clear entire directory
 - "Cancel" → Exit without changes
 - "Other" (custom input) → Process user's custom request
+
+**Error Handling**: If AskUserQuestion fails or returns empty/invalid response:
+- Report: "Unable to process response. Cancelling cleanup for safety."
+- Fallback: Do not remove anything, ask user to confirm manually
 
 4. **Execute cleanup**:
    ```bash

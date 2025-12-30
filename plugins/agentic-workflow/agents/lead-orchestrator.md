@@ -118,6 +118,48 @@ Plan format:
 - Integration tests
 ```
 
+5b. **Validate plan before requesting approval**:
+
+Check for issues:
+- All files mentioned exist or will be created?
+- Dependencies form valid DAG (no cycles)?
+- Success criteria are measurable?
+- Task packets would have all 7 required fields?
+
+If validation fails:
+
+```
+AskUserQuestion({
+  questions: [{
+    question: "Plan validation found issues: [list issues]. How should I proceed?",
+    header: "Validation",
+    multiSelect: false,
+    options: [
+      {
+        label: "Fix issues (Recommended)",
+        description: "I'll automatically resolve these issues and show updated plan"
+      },
+      {
+        label: "Override warnings",
+        description: "Proceed despite warnings - I accept the risks"
+      },
+      {
+        label: "Start over",
+        description: "Return to exploration with this new understanding"
+      }
+    ]
+  }]
+})
+```
+
+Handle responses:
+- "Fix issues" → Auto-resolve issues, update plan, re-validate
+- "Override warnings" → Proceed to approval with warnings noted
+- "Start over" → Return to EXPLORE phase
+- "Other" → Process user's specific guidance
+
+**Error Handling**: If AskUserQuestion fails, proceed with fix attempt.
+
 6. **Set phase to PLAN_WAITING before asking for approval**:
 ```bash
 echo "PLAN_WAITING" > "${STATE_DIR}/workflow-phase"
@@ -135,7 +177,7 @@ AskUserQuestion({
     multiSelect: false,
     options: [
       {
-        label: "Approve and proceed",
+        label: "Approve and proceed (Recommended)",
         description: "Plan looks good, start delegating to task-executor subagents"
       },
       {
@@ -153,9 +195,45 @@ AskUserQuestion({
 
 Handle responses:
 - "Approve and proceed" → Continue to DELEGATE phase
-- "Modify plan" → Update plan based on feedback, ask again
+- "Modify plan" → Ask follow-up question (see below), update plan, ask again
 - "Reject and start over" → Return to EXPLORE phase
 - "Other" (custom input) → Process user's specific feedback
+
+**If user selects "Modify plan"**, ask follow-up question:
+
+```
+AskUserQuestion({
+  questions: [{
+    question: "What aspect of the plan would you like to modify?",
+    header: "Modify",
+    multiSelect: false,
+    options: [
+      {
+        label: "Task breakdown (Recommended)",
+        description: "Adjust how tasks are divided or their dependencies"
+      },
+      {
+        label: "Technical approach",
+        description: "Change the implementation strategy or architecture"
+      },
+      {
+        label: "Scope",
+        description: "Add, remove, or adjust what's included"
+      },
+      {
+        label: "Success criteria",
+        description: "Modify how we'll know tasks are complete"
+      }
+    ]
+  }]
+})
+```
+
+Then: Update plan based on feedback, present updated plan for approval again.
+
+**Error Handling**: If AskUserQuestion fails or returns empty/invalid response:
+- Report: "Unable to process response. Let me try a different approach."
+- Fallback: Show plan summary and ask user to type "approve", "modify", or "reject" directly
 
 **ENFORCEMENT**: A PreToolUse hook BLOCKS the Task tool during PLAN_WAITING phase. You literally cannot spawn subagents until user approves. The hook will automatically:
 - Detect approval and set `.claude/plan-approved`

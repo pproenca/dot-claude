@@ -104,7 +104,7 @@ AskUserQuestion({
     multiSelect: false,
     options: [
       {
-        label: "Approve and proceed",
+        label: "Approve and proceed (Recommended)",
         description: "Plan looks good, start delegating to task-executor subagents"
       },
       {
@@ -124,9 +124,41 @@ AskUserQuestion({
 
 Handle responses:
 - "Approve and proceed" → Continue to DELEGATE phase
-- "Modify plan" → Update plan based on feedback, ask again
+- "Modify plan" → Ask follow-up question (see below), update plan, ask again
 - "Reject and start over" → Return to EXPLORE phase
 - "Other" (custom input) → Process user's specific feedback
+
+**If user selects "Modify plan"**, ask follow-up question:
+
+```
+AskUserQuestion({
+  questions: [{
+    question: "What aspect of the plan would you like to modify?",
+    header: "Modify",
+    multiSelect: false,
+    options: [
+      {
+        label: "Task breakdown (Recommended)",
+        description: "Adjust how tasks are divided or their dependencies"
+      },
+      {
+        label: "Technical approach",
+        description: "Change the implementation strategy or architecture"
+      },
+      {
+        label: "Scope",
+        description: "Add, remove, or adjust what's included"
+      },
+      {
+        label: "Success criteria",
+        description: "Modify how we'll know tasks are complete"
+      }
+    ]
+  }]
+})
+```
+
+Then: Update plan based on feedback, present updated plan for approval again.
 
 ## Phase 3: DELEGATE
 

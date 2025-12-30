@@ -116,6 +116,10 @@ Handle responses:
 - "Cancel" → Exit without action
 - "Other" (custom input) → Process user's custom request
 
+**Error Handling**: If AskUserQuestion fails or returns empty/invalid response:
+- Report: "Unable to process response. Cancelling removal for safety."
+- Fallback: Do not remove anything, ask user to confirm manually
+
 3. **Execute**:
    ```bash
    source "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/worktree-utils.sh"
@@ -192,6 +196,10 @@ Handle responses:
 - "Select specific worktrees" → Follow up with list of worktrees to select
 - "Cancel" → Exit without changes
 - "Other" (custom input) → Process user's custom request
+
+**Error Handling**: If AskUserQuestion fails or returns empty/invalid response:
+- Report: "Unable to process response. Cancelling cleanup for safety."
+- Fallback: Do not clean up anything, ask user to confirm manually
 
 ## Examples
 

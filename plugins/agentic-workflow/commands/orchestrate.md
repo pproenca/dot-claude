@@ -46,6 +46,73 @@ Analyze the task to determine complexity level:
 | Large | 10+ files, architectural | 5+ subagents + milestones |
 | Huge | Cross-system scope | 10+ subagents + phases |
 
+### Step 2b: Progressive Disclosure (If Complexity is Ambiguous)
+
+If task complexity is ambiguous or you want to give user control, ask preference:
+
+```
+AskUserQuestion({
+  questions: [{
+    question: "How would you like to approach this task?",
+    header: "Approach",
+    multiSelect: false,
+    options: [
+      {
+        label: "Quick (Recommended)",
+        description: "Use recommended defaults, minimal questions"
+      },
+      {
+        label: "Guided",
+        description: "Step-by-step with explanations at each stage"
+      },
+      {
+        label: "Custom",
+        description: "Configure all options - task breakdown, verification level, etc."
+      }
+    ]
+  }]
+})
+```
+
+Handle responses:
+- "Quick" → Apply complexity defaults, minimal user interaction, proceed to Step 4
+- "Guided" → Extra explanation at each phase, more checkpoints
+- "Custom" → Ask about task breakdown, verification agents, integration approach (see Step 2c)
+- "Other" → Process user's specific preference
+
+**Error Handling**: If AskUserQuestion fails or returns empty/invalid response:
+- Fallback: Use "Quick" approach with defaults
+
+### Step 2c: Custom Configuration (If "Custom" Selected)
+
+If user selected "Custom" in Step 2b, gather detailed configuration:
+
+```
+AskUserQuestion({
+  questions: [{
+    question: "Which verification agents should run after implementation?",
+    header: "Verification",
+    multiSelect: true,
+    options: [
+      {
+        label: "Code Reviewer",
+        description: "Security, performance, pattern compliance"
+      },
+      {
+        label: "Anti-Overfit Checker",
+        description: "Detect hardcoded values, narrow solutions"
+      },
+      {
+        label: "Integration Tester",
+        description: "Full test suite, typecheck, lint"
+      }
+    ]
+  }]
+})
+```
+
+Store selected verification agents for use in Step 4.
+
 ### Step 3: If Trivial
 
 Provide direct guidance without spawning agents:

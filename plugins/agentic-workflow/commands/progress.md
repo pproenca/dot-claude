@@ -1,7 +1,7 @@
 ---
 description: Manage external state files - show, update, or reset todo.md and progress.txt
 argument-hint: [show|update|reset]
-allowed-tools: Read, Write, Bash, Edit
+allowed-tools: Read, Write, Bash, Edit, AskUserQuestion
 ---
 
 # /progress - External State Management
@@ -137,13 +137,40 @@ AskUserQuestion({
 ```
 
 Handle responses:
-- "Mark task complete" → Show pending tasks, ask which to mark done
+- "Mark task complete" → Show pending tasks with multiSelect (see below)
 - "Add new task" → Ask for task description
 - "Update progress notes" → Ask what to record
 - "Record decision" → Ask for decision details
 - "Other" (custom input) → Process user's specific request
 
-2. **Based on response, gather details** (may require follow-up questions)
+**Error Handling**: If AskUserQuestion fails or returns empty/invalid response:
+- Report: "Unable to process response. Let me try a different approach."
+- Fallback: Proceed with "Mark task complete" as default, or ask user to type preference directly
+
+2. **If "Mark task complete"**, use multiSelect for batch completion:
+
+Read pending tasks from todo.md, then ask:
+
+```
+AskUserQuestion({
+  questions: [{
+    question: "Which tasks have been completed?",
+    header: "Completed",
+    multiSelect: true,
+    options: [
+      // Dynamically populated from pending tasks in todo.md
+      // Example:
+      { label: "Token service", description: "Implement JWT token generation" },
+      { label: "Session service", description: "Session management implementation" },
+      { label: "API endpoints", description: "REST API for auth flow" }
+    ]
+  }]
+})
+```
+
+Mark all selected tasks as complete in todo.md.
+
+3. **Based on response, gather details** (may require follow-up questions)
 
 3. **Make changes**:
    - Edit todo.md as needed
@@ -167,12 +194,12 @@ AskUserQuestion({
     multiSelect: false,
     options: [
       {
-        label: "Reset everything",
-        description: "Delete all state files including .claude/artifacts/"
-      },
-      {
         label: "Keep artifacts (Recommended)",
         description: "Reset workflow but preserve .claude/artifacts/ for reference"
+      },
+      {
+        label: "Reset everything",
+        description: "Delete all state files including .claude/artifacts/"
       },
       {
         label: "Cancel",
@@ -184,10 +211,14 @@ AskUserQuestion({
 ```
 
 Handle responses:
-- "Reset everything" → Delete todo.md, progress.txt, .claude/workflow-phase, .claude/plan-approved, .claude/artifacts/, and all worktrees
 - "Keep artifacts" → Delete todo.md, progress.txt, .claude/workflow-phase, .claude/plan-approved only (keep artifacts and worktrees)
+- "Reset everything" → Delete todo.md, progress.txt, .claude/workflow-phase, .claude/plan-approved, .claude/artifacts/, and all worktrees
 - "Cancel" → Exit without changes
 - "Other" (custom input) → Process user's custom request
+
+**Error Handling**: If AskUserQuestion fails or returns empty/invalid response:
+- Report: "Unable to process response. Cancelling reset for safety."
+- Fallback: Do not reset anything, ask user to confirm manually
 
 3. **Clean up worktrees** (if resetting everything):
    ```bash
