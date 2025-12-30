@@ -83,7 +83,7 @@ get_main_worktree() {
 }
 
 # CLI interface
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [[ "${BASH_SOURCE[0]:-}" == "${0}" ]]; then
   case "${1:-help}" in
     create)
       create_worktree "${2:?Branch name required}"
