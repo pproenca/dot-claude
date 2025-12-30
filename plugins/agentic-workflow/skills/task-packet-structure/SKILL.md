@@ -196,7 +196,7 @@ Breakdown:
 Use Task tool:
 - subagent_type: task-executor
 - prompt: [Full task packet above]
-- model: sonnet (for implementation) or haiku (for verification)
+- model: opus
 ```
 
 ---

@@ -17,7 +17,7 @@ whenToUse: |
   Before marking task complete, integration-tester verifies
   type check and lint are clean across the project.
   </example>
-model: haiku
+model: opus
 color: blue
 tools:
   - Bash

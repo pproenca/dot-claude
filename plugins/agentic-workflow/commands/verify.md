@@ -32,7 +32,7 @@ Spawn three verification agents simultaneously:
 ```
 Task tool:
 - subagent_type: code-reviewer
-- model: haiku
+- model: opus
 - prompt: Review [files] for security, performance, patterns, test coverage
 ```
 
@@ -40,7 +40,7 @@ Task tool:
 ```
 Task tool:
 - subagent_type: anti-overfit-checker
-- model: haiku
+- model: opus
 - prompt: Check [implementation files only, NO test files] for overfitting
 ```
 
@@ -48,7 +48,7 @@ Task tool:
 ```
 Task tool:
 - subagent_type: integration-tester
-- model: haiku
+- model: opus
 - prompt: Run full test suite, typecheck, lint on [project]
 ```
 

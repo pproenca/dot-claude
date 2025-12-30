@@ -18,7 +18,7 @@ whenToUse: |
   User runs /verify to check recent changes before committing.
   Code-reviewer examines modified files for quality issues.
   </example>
-model: haiku
+model: opus
 color: purple
 tools:
   - Read

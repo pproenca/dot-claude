@@ -17,7 +17,7 @@ whenToUse: |
   Implementation uses magic number 3600 because test expected 1-hour expiration.
   Should be configurable, not hardcoded.
   </example>
-model: haiku
+model: opus
 color: pink
 tools:
   - Read

@@ -68,17 +68,47 @@ Display current state:
 
 Interactive state update:
 
-1. **Ask what to update**:
-   - Mark task(s) complete
-   - Add new task(s)
-   - Update progress notes
-   - Record decision
+1. **Ask what to update** using AskUserQuestion tool:
 
-2. **Make changes**:
+```
+AskUserQuestion({
+  questions: [{
+    question: "What would you like to update in the workflow state?",
+    header: "Update type",
+    multiSelect: false,
+    options: [
+      {
+        label: "Mark task complete",
+        description: "Check off a completed task in todo.md"
+      },
+      {
+        label: "Add new task",
+        description: "Add a new task to todo.md"
+      },
+      {
+        label: "Update progress notes",
+        description: "Update the session state in progress.txt"
+      },
+      {
+        label: "Record decision",
+        description: "Document an important decision made"
+      }
+    ]
+  }]
+})
+```
+
+2. **Based on response, gather details** (may require follow-up questions):
+   - "Mark task complete" → Show pending tasks, ask which to mark done
+   - "Add new task" → Ask for task description
+   - "Update progress notes" → Ask what to record
+   - "Record decision" → Ask for decision details
+
+3. **Make changes**:
    - Edit todo.md as needed
    - Update progress.txt with new state
 
-3. **Confirm**:
+4. **Confirm**:
    - Show updated state
    - Verify changes are correct
 
@@ -86,15 +116,37 @@ Interactive state update:
 
 Clear state for fresh start:
 
-1. **Confirm reset** (use AskUserQuestion):
-   - "This will delete todo.md and progress.txt. Are you sure?"
+1. **Confirm reset** using AskUserQuestion tool:
 
-2. **If confirmed**:
-   - Delete todo.md
-   - Delete progress.txt
-   - Delete .claude/workflow-phase
-   - Delete .claude/plan-approved
-   - Optionally clear .claude/artifacts/
+```
+AskUserQuestion({
+  questions: [{
+    question: "This will delete todo.md, progress.txt, and workflow state. What would you like to reset?",
+    header: "Reset scope",
+    multiSelect: false,
+    options: [
+      {
+        label: "Reset everything",
+        description: "Delete all state files including .claude/artifacts/"
+      },
+      {
+        label: "Keep artifacts",
+        description: "Reset workflow but preserve .claude/artifacts/ for reference"
+      },
+      {
+        label: "Cancel",
+        description: "Don't reset anything, keep current state"
+      }
+    ]
+  }]
+})
+```
+
+2. **Based on response**:
+   - "Reset everything" → Delete todo.md, progress.txt, .claude/workflow-phase, .claude/plan-approved, .claude/artifacts/
+   - "Keep artifacts" → Delete todo.md, progress.txt, .claude/workflow-phase, .claude/plan-approved only
+   - "Cancel" → Exit without changes
+   - "Other" → Process custom user request
 
 3. **Report**:
    - "State cleared. Ready for new orchestration."
@@ -149,20 +201,19 @@ Found 1 artifact in .claude/artifacts/
 ```
 /progress update
 
-What would you like to update?
-1. Mark task complete
-2. Add new task
-3. Update progress notes
-4. Record a decision
+[AskUserQuestion: What would you like to update in the workflow state?]
+Options: Mark task complete | Add new task | Update progress notes | Record decision
 
-> 1
+User selects: "Mark task complete"
 
-Which task to mark complete?
+[Follow-up - shows pending tasks]
+Pending tasks:
 - [ ] Session service
 - [ ] API endpoints
 - [ ] Integration tests
 - [ ] Documentation
 
+Which task to mark complete?
 > Session service
 
 Updated todo.md:
@@ -180,19 +231,10 @@ Progress now: 4/7 items complete (57%)
 ```
 /progress reset
 
-This will delete:
-- todo.md
-- progress.txt
-- .claude/workflow-phase
-- .claude/plan-approved
-- Optionally: .claude/artifacts/
+[AskUserQuestion: This will delete todo.md, progress.txt, and workflow state. What would you like to reset?]
+Options: Reset everything | Keep artifacts | Cancel
 
-Are you sure?
-- Yes, reset everything
-- Yes, keep artifacts
-- Cancel
-
-> Yes, reset everything
+User selects: "Reset everything"
 
 State cleared.
 - Deleted todo.md

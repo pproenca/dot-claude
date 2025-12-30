@@ -85,18 +85,48 @@ Remove old or obsolete artifacts:
    - draft-notes.md (3 days old)
    ```
 
-2. **Ask what to clean**:
-   - All artifacts
-   - Artifacts older than X days
-   - Specific artifacts
-   - Cancel
+2. **Ask what to clean** using AskUserQuestion tool:
 
-3. **Execute cleanup**:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Which artifacts would you like to remove?",
+    header: "Clean scope",
+    multiSelect: false,
+    options: [
+      {
+        label: "Older than 3 days",
+        description: "Remove artifacts older than 3 days, keep recent ones"
+      },
+      {
+        label: "Select specific",
+        description: "Choose which specific artifacts to remove"
+      },
+      {
+        label: "All artifacts",
+        description: "Clear the entire .claude/artifacts/ directory"
+      },
+      {
+        label: "Cancel",
+        description: "Don't remove anything"
+      }
+    ]
+  }]
+})
+```
+
+3. **Based on response**:
+   - "Older than 3 days" → Remove artifacts with modification date > 3 days
+   - "Select specific" → Show list, ask user to specify which ones
+   - "All artifacts" → Clear entire directory
+   - "Cancel" → Exit without changes
+
+4. **Execute cleanup**:
    ```bash
    rm .claude/artifacts/<selected>
    ```
 
-4. **Report**:
+5. **Report**:
    ```
    Removed 2 artifacts:
    - old-experiment.md
@@ -187,13 +217,10 @@ Found 5 artifacts:
 - old-spike-auth.md (1 week old)
 - draft-design.md (5 days old)
 
-What to clean?
-1. Artifacts older than 3 days
-2. Select specific artifacts
-3. All artifacts
-4. Cancel
+[AskUserQuestion: Which artifacts would you like to remove?]
+Options: Older than 3 days | Select specific | All artifacts | Cancel
 
-> 1
+User selects: "Older than 3 days"
 
 Removing artifacts older than 3 days:
 - old-spike-auth.md

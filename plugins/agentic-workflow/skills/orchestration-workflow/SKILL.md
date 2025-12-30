@@ -94,14 +94,39 @@ echo "PLAN_WAITING" > .claude/workflow-phase
 
 6. **CRITICAL: Get human approval via AskUserQuestion**
 
-Use AskUserQuestion tool with options:
-- "Approve plan and proceed"
-- "Modify plan"
-- "Reject and start over"
+Use AskUserQuestion tool with proper structure:
+
+```
+AskUserQuestion({
+  questions: [{
+    question: "I've created the implementation plan above. Should I proceed with delegating tasks to subagents?",
+    header: "Plan",
+    multiSelect: false,
+    options: [
+      {
+        label: "Approve and proceed",
+        description: "Plan looks good, start delegating to task-executor subagents"
+      },
+      {
+        label: "Modify plan",
+        description: "I want to adjust the approach before you proceed"
+      },
+      {
+        label: "Reject and start over",
+        description: "This approach won't work, return to exploration"
+      }
+    ]
+  }]
+})
+```
 
 **DO NOT proceed until user explicitly approves.**
 
-If rejected, return to Explore phase with new understanding.
+Handle responses:
+- "Approve and proceed" → Continue to DELEGATE phase
+- "Modify plan" → Update plan based on feedback, ask again
+- "Reject and start over" → Return to EXPLORE phase
+- "Other" (custom input) → Process user's specific feedback
 
 ## Phase 3: DELEGATE
 
@@ -168,7 +193,7 @@ See context-management skill for formats.
 ## Key Principles
 
 1. **Explore before coding** - Understand what exists
-2. **Plan with approval** - Never implement without human sign-off via AskUserQuestion
+2. **Plan with approval** - Never implement without human sign-off via AskUserQuestion (use proper question/header/options structure)
 3. **Manage phases** - Update .claude/workflow-phase at each transition
 4. **Minimal context per agent** - 15-20K tokens, not full codebase
 5. **Verify independently** - Fresh context catches what you missed

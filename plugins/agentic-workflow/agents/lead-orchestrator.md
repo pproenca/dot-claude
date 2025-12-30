@@ -103,10 +103,37 @@ echo "PLAN_WAITING" > .claude/workflow-phase
 
 6. **CRITICAL: Use AskUserQuestion tool to get explicit approval**:
 
-Use the AskUserQuestion tool with options like:
-- "Approve and proceed" - User accepts, continue to delegation
-- "Modify plan" - User wants changes, update plan and ask again
-- "Reject and start over" - User rejects, return to Explore
+Use the AskUserQuestion tool with proper structure:
+
+```
+AskUserQuestion({
+  questions: [{
+    question: "I've created the implementation plan above. Should I proceed with delegating tasks to subagents?",
+    header: "Plan",
+    multiSelect: false,
+    options: [
+      {
+        label: "Approve and proceed",
+        description: "Plan looks good, start delegating to task-executor subagents"
+      },
+      {
+        label: "Modify plan",
+        description: "I want to adjust the approach before you proceed"
+      },
+      {
+        label: "Reject and start over",
+        description: "This approach won't work, return to exploration"
+      }
+    ]
+  }]
+})
+```
+
+Handle responses:
+- "Approve and proceed" → Continue to DELEGATE phase
+- "Modify plan" → Update plan based on feedback, ask again
+- "Reject and start over" → Return to EXPLORE phase
+- "Other" (custom input) → Process user's specific feedback
 
 **ENFORCEMENT**: A PreToolUse hook BLOCKS the Task tool during PLAN_WAITING phase. You literally cannot spawn subagents until user approves. The hook will automatically:
 - Detect approval and set `.claude/plan-approved`
@@ -137,7 +164,7 @@ For each task:
 2. **Spawn task-executor** via Task tool:
    ```
    subagent_type: task-executor
-   model: sonnet
+   model: opus
    prompt: [full task packet]
    ```
 

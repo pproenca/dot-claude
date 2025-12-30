@@ -18,7 +18,7 @@ whenToUse: |
   "Create session management service - Files: src/auth/session.py
    Depends on: token service artifact"
   </example>
-model: sonnet
+model: opus
 color: green
 tools:
   - Read

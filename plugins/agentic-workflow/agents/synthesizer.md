@@ -17,7 +17,7 @@ whenToUse: |
   Verification found issues. Synthesizer creates specific remediation
   task packets for the orchestrator to spawn new task-executors.
   </example>
-model: sonnet
+model: opus
 color: cyan
 tools:
   - Read
