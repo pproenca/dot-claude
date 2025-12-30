@@ -1,4 +1,5 @@
 # Claude Code local settings
+.claude/settings.json
 .claude/*.local.md
 **/.claude/*.local.md
 
@@ -43,6 +44,7 @@ temp/
 
 # Git worktrees
 .worktrees/
+.worktrees-test/
 
 # Test scripts with credentials
 script.sh
