@@ -1,17 +1,42 @@
 #!/bin/bash
-set -euo pipefail
 # PostToolUse hook: Auto-run checks after Write/Edit on code files
+# Only runs during DELEGATE/VERIFY phases to reduce noise
+#
+# Claude Code hook exit codes:
+# Exit 0 = success (always for PostToolUse - it's informational)
 
 # Source worktree utilities for config reading
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ ! -f "${SCRIPT_DIR}/worktree-utils.sh" ]; then
+    # Script not found - exit silently
+    exit 0
+fi
 source "${SCRIPT_DIR}/worktree-utils.sh"
+
+# Check workflow phase - only run during execution phases
+STATE_DIR=$(worktree_state_dir 2>/dev/null || echo ".claude")
+PHASE_FILE="${STATE_DIR}/workflow-phase"
+CURRENT_PHASE=""
+if [ -f "$PHASE_FILE" ]; then
+    CURRENT_PHASE=$(cat "$PHASE_FILE" 2>/dev/null || true)
+fi
+
+# Skip if not in execution phase (DELEGATE or VERIFY)
+if [ "$CURRENT_PHASE" != "DELEGATE" ] && [ "$CURRENT_PHASE" != "VERIFY" ]; then
+    exit 0
+fi
 
 TOOL_INPUT_FILE="${1:-}"
 
 # Extract the file path from tool input if available
 FILE_PATH=""
-if [ -f "$TOOL_INPUT_FILE" ]; then
-    FILE_PATH=$(grep -o '"file_path"[[:space:]]*:[[:space:]]*"[^"]*"' "$TOOL_INPUT_FILE" | head -1 | cut -d'"' -f4)
+if [ -n "$TOOL_INPUT_FILE" ] && [ -f "$TOOL_INPUT_FILE" ]; then
+    FILE_PATH=$(grep -o '"file_path"[[:space:]]*:[[:space:]]*"[^"]*"' "$TOOL_INPUT_FILE" 2>/dev/null | head -1 | cut -d'"' -f4 || true)
+fi
+
+# Exit if no file path
+if [ -z "$FILE_PATH" ]; then
+    exit 0
 fi
 
 # Determine file type and get configurable commands

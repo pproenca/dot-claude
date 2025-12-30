@@ -1,14 +1,20 @@
 #!/bin/bash
-set -euo pipefail
 # SessionStart hook: Check for incomplete work from previous sessions
 # Worktree-aware: detects if running in a worktree and shows context
+#
+# Claude Code hook exit codes:
+# Exit 0 = success (always for SessionStart)
 
 # Source worktree utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ ! -f "${SCRIPT_DIR}/worktree-utils.sh" ]; then
+    # Utils not found - exit silently
+    exit 0
+fi
 source "${SCRIPT_DIR}/worktree-utils.sh"
 
 # Determine state directory based on worktree context
-STATE_DIR=$(worktree_state_dir)
+STATE_DIR=$(worktree_state_dir 2>/dev/null || echo ".claude")
 WORK_DIR=$(pwd)
 
 # Show worktree context if in a worktree
@@ -61,6 +67,47 @@ if [ -f "${STATE_DIR}/workflow-phase" ]; then
         echo "Plan: approved"
     fi
     echo ""
+fi
+
+# Show wave status if tracking active
+if [ -f "${STATE_DIR}/wave-state.txt" ]; then
+    echo "=== WAVE STATUS ==="
+    CURRENT_WAVE=$(grep "^current_wave=" "${STATE_DIR}/wave-state.txt" | cut -d= -f2)
+    TOTAL_WAVES=$(grep "^total_waves=" "${STATE_DIR}/wave-state.txt" | cut -d= -f2)
+    echo "Current: Wave $CURRENT_WAVE of $TOTAL_WAVES"
+
+    # Show status of each wave
+    for i in $(seq 1 "$TOTAL_WAVES"); do
+        STATUS=$(grep "^wave_${i}_status=" "${STATE_DIR}/wave-state.txt" 2>/dev/null | cut -d= -f2)
+        TASKS=$(grep "^wave_${i}_tasks=" "${STATE_DIR}/wave-state.txt" 2>/dev/null | cut -d= -f2)
+        echo "  Wave $i: ${STATUS:-pending} - ${TASKS:-no tasks}"
+    done
+    echo ""
+fi
+
+# Show background tasks if any are running
+if [ -f "${STATE_DIR}/background-tasks.txt" ] && [ -s "${STATE_DIR}/background-tasks.txt" ]; then
+    RUNNING_COUNT=$(grep -c "|running|" "${STATE_DIR}/background-tasks.txt" 2>/dev/null || echo "0")
+    if [ "$RUNNING_COUNT" -gt 0 ]; then
+        echo "=== BACKGROUND TASKS RUNNING ==="
+        echo "$RUNNING_COUNT task(s) running. Collect results with TaskOutput:"
+        echo ""
+        grep "|running|" "${STATE_DIR}/background-tasks.txt" | while IFS='|' read -r id desc status started; do
+            echo "  TaskOutput(task_id: \"$id\", block: true)"
+            echo "    Description: $desc"
+        done
+        echo ""
+    fi
+fi
+
+# Show turn counter if active
+if [ -f "${STATE_DIR}/turn-counter" ]; then
+    TURNS=$(cat "${STATE_DIR}/turn-counter")
+    if [ "$TURNS" -gt 0 ]; then
+        echo "=== TURN COUNTER ==="
+        echo "Turns since last re-injection: $TURNS"
+        echo ""
+    fi
 fi
 
 exit 0
