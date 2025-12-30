@@ -161,3 +161,41 @@ teardown() {
   [ "$status" -eq 1 ]
   echo "$output" | grep -q "Usage"
 }
+
+@test "get_main_worktree returns correct path" {
+  local main_repo
+  main_repo="$(pwd)"
+
+  result=$(get_main_worktree)
+  [[ "$result" == "$main_repo" ]]
+}
+
+@test "get_main_worktree from within worktree returns main repo" {
+  local main_repo repo_name
+  main_repo="$(pwd)"
+  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
+
+  create_worktree "feature-test"
+  cd "${WORKTREE_BASE}/${repo_name}/feature-test"
+
+  result=$(get_main_worktree)
+  [[ "$result" == "$main_repo" ]]
+}
+
+@test "CLI: check-unpushed command with path argument" {
+  local repo_name
+  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
+
+  create_worktree "check-test"
+  local worktree_path="${WORKTREE_BASE}/${repo_name}/check-test"
+
+  # Make a commit (unpushed)
+  cd "$worktree_path"
+  echo "test" > test.txt
+  git add test.txt
+  git commit -m "test commit"
+  cd -
+
+  run "$SCRIPT" check-unpushed "$worktree_path"
+  [ "$status" -eq 1 ]
+}
