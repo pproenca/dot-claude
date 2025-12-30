@@ -44,7 +44,7 @@ description: |
   </commentary>
   assistant: "I'll use the code-explorer agent to survey the project structure and conventions."
   </example>
-tools: Glob, Grep, LS, Read, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
+tools: Glob, Grep, LS, Read, LSP
 model: opus
 color: blue
 ---
