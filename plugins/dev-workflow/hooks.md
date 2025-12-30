@@ -338,5 +338,6 @@ This plugin uses the following hooks:
 | Hook | Purpose |
 |------|---------|
 | `SessionStart` | Loads getting-started skill with planning methodology |
+| `PreCompact` | Injects guidance on what to preserve/discard during compaction |
 
 See `hooks/hooks.json` for the actual implementation.

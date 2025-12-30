@@ -16,6 +16,17 @@
           }
         ]
       }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "When compacting, preserve:\n- Architectural decisions made\n- Unresolved bugs and blockers\n- File paths and key function names\n- Test results and failure messages\n\nDiscard:\n- Redundant tool outputs\n- Exploratory conversations\n- Superseded plans"
+          }
+        ]
+      }
     ]
   }
 }
