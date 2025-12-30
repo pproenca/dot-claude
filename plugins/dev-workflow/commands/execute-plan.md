@@ -59,17 +59,21 @@ PLAN_FILE="$ARGUMENTS"
 # Extract feature name from plan filename (remove date prefix and extension)
 BRANCH_NAME=$(basename "$PLAN_FILE" .md | sed 's/^[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}-//')
 
-# Create worktree and switch to it
+# Create worktree (will be in ~/.dot-claude-worktrees/<repo>/<branch>)
 WORKTREE_PATH=$(create_worktree "$BRANCH_NAME")
-echo "WORKTREE_CREATED: $WORKTREE_PATH"
-echo "BRANCH: $BRANCH_NAME"
-
-# Change to worktree directory
-cd "$WORKTREE_PATH"
-pwd
+echo "WORKTREE_PATH=$WORKTREE_PATH"
+echo "BRANCH=$BRANCH_NAME"
 ```
 
-**If user selects "No":** Continue in current directory.
+**IMPORTANT:** The `WORKTREE_PATH` output must be captured by the orchestrator. Since bash `cd` doesn't persist across invocations (per Claude Code documentation), the orchestrator must:
+
+1. Parse the `WORKTREE_PATH=...` output from the bash command
+2. Store it for use throughout the execution
+3. Pass it to every Task agent in their prompt (see Task Agent Prompt Template)
+
+All subsequent bash commands in task agents must use: `cd "$WORKTREE_PATH" && <command>`
+
+**If user selects "No":** Continue in current directory. Set `WORKTREE_PATH=""` (empty).
 
 ## Step 2: Read Plan and Setup TodoWrite
 
@@ -177,6 +181,8 @@ TaskOutput:
 
 ### Task Agent Prompt Template
 
+**IMPORTANT:** If a worktree was created, include the `WORKTREE_PATH` in the prompt so the agent knows where to execute commands.
+
 ```claude
 Task:
   subagent_type: general-purpose
@@ -184,6 +190,19 @@ Task:
   description: "Execute Task [N]"
   prompt: |
     Execute Task [N] from the implementation plan.
+
+    ## Working Directory
+
+    WORKTREE_PATH="{{WORKTREE_PATH}}"
+
+    **CRITICAL:** All bash commands MUST use this pattern:
+    ```bash
+    cd "$WORKTREE_PATH" && <your-command>
+    ```
+
+    All file paths should be absolute, e.g., `{{WORKTREE_PATH}}/src/file.py`
+
+    If WORKTREE_PATH is empty or not set, work in the current directory.
 
     ## Task Instructions
 

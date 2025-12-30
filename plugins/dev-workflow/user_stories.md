@@ -218,9 +218,9 @@
 
 | ID | Story | Priority | Status |
 |----|-------|----------|--------|
-| **US-5.3.1** | As a developer, I want automatic worktree creation for plan execution so that my main repo stays clean | Nice | **BROKEN** - No automatic worktree |
-| **US-5.3.2** | As a developer, I want worktree cleanup after completion so that disk space is reclaimed | Nice | **BROKEN** - No worktree management |
-| **US-5.3.3** | As a developer, I want `list_worktrees` to see active workspaces so that I can manage them | Nice | **BROKEN** - Helper still exists but not integrated |
+| **US-5.3.1** | As a developer, I want automatic worktree creation for plan execution so that my main repo stays clean | Nice | **DONE** - Worktrees in ~/.dot-claude-worktrees/<repo>/<branch> |
+| **US-5.3.2** | As a developer, I want worktree cleanup after completion so that disk space is reclaimed | Nice | **DONE** - Safe removal with unpushed commit checks |
+| **US-5.3.3** | As a developer, I want `list_worktrees` to see active workspaces so that I can manage them | Nice | **DONE** - Via `list_worktrees` helper and git worktree list |
 
 ---
 
@@ -302,7 +302,7 @@ brainstorm           (explore,             (launchSwarm:         (post-swarm    
 | **US-3.3.1-3** | Batch checkpoints | Lost human-in-the-loop review during execution | Consider acceptable - swarm runs to completion |
 | **US-3.2.4-6** | Ephemeral worktrees | No git isolation for parallel subagents | Consider acceptable if native swarm handles git |
 | **US-4.3.1-2** | Commit enforcement hooks | Subagents can stop without committing | Consider acceptable - trust swarm behavior |
-| **US-5.3.1-2** | Automatic worktree management | Main repo modified directly | Consider acceptable for simpler flow |
+| **US-5.3.1-2** | Automatic worktree management | ~~Main repo modified directly~~ | **FIXED** - Now creates worktrees in ~/.dot-claude-worktrees/ |
 
 ### Acceptable Breaks
 

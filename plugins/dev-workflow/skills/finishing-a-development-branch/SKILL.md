@@ -63,11 +63,28 @@ source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
 
 FEATURE="$(git branch --show-current)"
 
-# Safety check
+# Safety check: uncommitted changes
 if [ -n "$(git status --porcelain)" ]; then
   echo "Error: Uncommitted changes. Commit first."
   exit 1
 fi
+
+# SAFETY: Push branch to remote BEFORE merge (prevents data loss)
+echo "Pushing branch to remote before merge..."
+git push -u origin "$FEATURE" || {
+  echo "ERROR: Failed to push. Cannot proceed with merge."
+  echo "This prevents data loss - all work must be on remote before merge."
+  exit 1
+}
+
+# Verify push succeeded by comparing SHAs
+LOCAL_SHA=$(git rev-parse "$FEATURE")
+REMOTE_SHA=$(git ls-remote origin "$FEATURE" | cut -f1)
+if [[ "$LOCAL_SHA" != "$REMOTE_SHA" ]]; then
+  echo "ERROR: Local and remote are out of sync. Push may have failed."
+  exit 1
+fi
+echo "Branch pushed successfully. Safe to merge."
 
 # Get main repo path
 MAIN_REPO="$(get_main_worktree)"
@@ -77,10 +94,11 @@ if ! is_main_repo; then
   cd "$MAIN_REPO"
 fi
 
-# Checkout base and merge
+# Checkout base, fetch, and merge from REMOTE (not local)
+git fetch origin
 git checkout "$BASE"
 git pull origin "$BASE" 2>/dev/null || true
-git merge "$FEATURE"
+git merge "origin/$FEATURE"  # Merge from remote, not local branch
 
 npm test  # verify merged result
 ```
@@ -89,11 +107,11 @@ If tests pass and was in worktree:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
-# Clean up worktree if we were in one
+# Clean up worktree if we were in one (remove_worktree has safety checks)
 if [[ -n "${WORKTREE_PATH:-}" ]]; then
-  git worktree remove --force "$WORKTREE_PATH" 2>/dev/null || true
+  # Use remove_worktree which checks for unpushed commits
+  cd "$WORKTREE_PATH" && remove_worktree
 fi
-git branch -d "$FEATURE"
 ```
 
 Skip to Step 5.
@@ -114,30 +132,56 @@ Report branch and worktree location. Skip Step 5. Return.
 
 ### Option: Discard
 
-Confirm with AskUserQuestion first:
-
-```claude
-AskUserQuestion:
-  header: "Confirm"
-  question: "Discard all work on this branch?"
-  multiSelect: false
-  options:
-    - label: "Yes, discard"
-      description: "Delete branch and all commits permanently"
-    - label: "Cancel"
-      description: "Return to integration options"
-```
+**First, check for unpushed commits and warn user:**
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
 
-# If in worktree, remove it first
-if ! is_main_repo; then
-  remove_worktree
-else
-  git checkout $BASE
-  git branch -D $FEATURE
+FEATURE="$(git branch --show-current)"
+
+# Check if branch has unpushed commits
+if ! git ls-remote --heads origin "$FEATURE" 2>/dev/null | grep -q .; then
+  echo "WARNING: Branch '$FEATURE' has NEVER been pushed to remote!"
+  echo "Discarding will PERMANENTLY delete all work on this branch."
+elif [[ -n "$(git log origin/$FEATURE..$FEATURE --oneline 2>/dev/null)" ]]; then
+  echo "WARNING: Branch '$FEATURE' has unpushed commits:"
+  git log "origin/$FEATURE..$FEATURE" --oneline
+  echo "Discarding will PERMANENTLY delete these commits."
 fi
+```
+
+Then confirm with AskUserQuestion:
+
+```claude
+AskUserQuestion:
+  header: "Confirm"
+  question: "Discard all work on this branch? This CANNOT be undone."
+  multiSelect: false
+  options:
+    - label: "Yes, discard permanently"
+      description: "Delete branch and all commits - NO recovery possible"
+    - label: "Cancel"
+      description: "Return to integration options"
+```
+
+**If user confirms discard:**
+
+```bash
+source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
+
+FEATURE="$(git branch --show-current)"
+MAIN_REPO="$(get_main_worktree)"
+
+# If in worktree, go to main repo and remove worktree
+if ! is_main_repo; then
+  WORKTREE_PATH="$(pwd)"
+  cd "$MAIN_REPO"
+  git worktree remove --force "$WORKTREE_PATH"
+fi
+
+# Force delete branch (user explicitly confirmed discard)
+git checkout "$BASE"
+git branch -D "$FEATURE"
 ```
 
 Proceed to Step 5.
