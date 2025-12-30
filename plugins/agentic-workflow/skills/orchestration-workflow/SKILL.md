@@ -7,6 +7,22 @@ description: This skill activates when handling complex multi-step tasks, coordi
 
 When handling complex tasks, follow the Explore → Plan → Delegate → Verify → Synthesize workflow. You are the Lead Agent (IC7 level) responsible for coordination, not direct implementation.
 
+## CRITICAL: Phase Management
+
+The workflow uses a phase file (`.claude/workflow-phase`) to prevent premature test execution. **You MUST update this file at each phase transition**:
+
+```bash
+# Set phase (must do at each transition)
+mkdir -p .claude && echo "PHASE_NAME" > .claude/workflow-phase
+```
+
+**Phase flow**:
+```
+IDLE → EXPLORE → PLAN_WAITING → (user approval) → DELEGATE → VERIFY → COMPLETE
+```
+
+**Stop hooks only run tests during**: DELEGATE, VERIFY, COMPLETE phases.
+
 ## Complexity Assessment
 
 Before starting, assess task complexity to determine the right approach:
@@ -20,6 +36,11 @@ Before starting, assess task complexity to determine the right approach:
 | **Huge** | Cross-system, multi-week scope | 10+ subagents + phased delivery |
 
 ## Phase 1: EXPLORE (No Coding)
+
+**First action**: Set phase
+```bash
+mkdir -p .claude && echo "EXPLORE" > .claude/workflow-phase
+```
 
 **Goal**: Understand before acting. Never propose changes to code you haven't read.
 
@@ -38,9 +59,6 @@ Output: Clear understanding of codebase state and integration strategy.
 2. **Define task decomposition** - Break into parallelizable units
 3. **Map dependencies** - Which tasks must complete before others?
 4. **Define success criteria** - How do we know each task is done?
-5. **Get human approval** - Present plan, wait for confirmation
-
-If rejected, return to Explore phase with new understanding.
 
 ### Plan Document Format
 
@@ -69,7 +87,28 @@ If rejected, return to Explore phase with new understanding.
 - [Risk 1]: [Mitigation]
 ```
 
+5. **Set phase to PLAN_WAITING**:
+```bash
+echo "PLAN_WAITING" > .claude/workflow-phase
+```
+
+6. **CRITICAL: Get human approval via AskUserQuestion**
+
+Use AskUserQuestion tool with options:
+- "Approve plan and proceed"
+- "Modify plan"
+- "Reject and start over"
+
+**DO NOT proceed until user explicitly approves.**
+
+If rejected, return to Explore phase with new understanding.
+
 ## Phase 3: DELEGATE
+
+**First action after approval**: Set phase
+```bash
+echo "DELEGATE" > .claude/workflow-phase
+```
 
 **Goal**: Create task packets and spawn subagents with minimal context.
 
@@ -86,6 +125,11 @@ For each task:
 - **Integration**: After all implementation waves complete
 
 ## Phase 4: VERIFY
+
+**Set phase**:
+```bash
+echo "VERIFY" > .claude/workflow-phase
+```
 
 After subagents complete, spawn verification agents:
 
@@ -105,10 +149,16 @@ Run these in parallel. Collect results.
 4. **If clean**: Synthesize final implementation
 5. **Update external state** - todo.md marked complete, progress.txt updated
 
+**Set phase to COMPLETE**:
+```bash
+echo "COMPLETE" > .claude/workflow-phase
+```
+
 ## External State Management
 
 Throughout orchestration, maintain:
 
+- **.claude/workflow-phase** - Current phase (CRITICAL for hook behavior)
 - **todo.md** - Track task progress (DONE/PENDING markers)
 - **progress.txt** - Session state for cross-session continuity
 - **.claude/artifacts/** - Subagent handoff summaries
@@ -118,11 +168,12 @@ See context-management skill for formats.
 ## Key Principles
 
 1. **Explore before coding** - Understand what exists
-2. **Plan with approval** - Never implement without human sign-off
-3. **Minimal context per agent** - 15-20K tokens, not full codebase
-4. **Verify independently** - Fresh context catches what you missed
-5. **External state** - Don't trust internal memory across compaction
-6. **Re-inject regularly** - Every 5-10 turns, re-read task checklist
+2. **Plan with approval** - Never implement without human sign-off via AskUserQuestion
+3. **Manage phases** - Update .claude/workflow-phase at each transition
+4. **Minimal context per agent** - 15-20K tokens, not full codebase
+5. **Verify independently** - Fresh context catches what you missed
+6. **External state** - Don't trust internal memory across compaction
+7. **Re-inject regularly** - Every 5-10 turns, re-read task checklist
 
 ---
 

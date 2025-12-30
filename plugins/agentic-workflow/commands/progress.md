@@ -21,7 +21,20 @@ Action: $ARGUMENTS
 
 Display current state:
 
-1. **Read todo.md** if exists:
+1. **Read workflow phase** (.claude/workflow-phase):
+   ```bash
+   cat .claude/workflow-phase 2>/dev/null || echo "No workflow active"
+   cat .claude/plan-approved 2>/dev/null || echo "Not approved"
+   ```
+
+   Display:
+   ```
+   ## Workflow Phase
+   Current: [IDLE|EXPLORE|PLAN_WAITING|DELEGATE|VERIFY|COMPLETE]
+   Plan approved: [yes/no]
+   ```
+
+2. **Read todo.md** if exists:
    ```
    ## todo.md
    [contents]
@@ -79,6 +92,8 @@ Clear state for fresh start:
 2. **If confirmed**:
    - Delete todo.md
    - Delete progress.txt
+   - Delete .claude/workflow-phase
+   - Delete .claude/plan-approved
    - Optionally clear .claude/artifacts/
 
 3. **Report**:
@@ -88,6 +103,10 @@ Clear state for fresh start:
 
 ```
 /progress
+
+## Workflow Phase
+Current: DELEGATE
+Plan approved: yes
 
 ## todo.md
 # User Authentication
@@ -161,9 +180,11 @@ Progress now: 4/7 items complete (57%)
 ```
 /progress reset
 
-⚠️ This will delete:
+This will delete:
 - todo.md
 - progress.txt
+- .claude/workflow-phase
+- .claude/plan-approved
 - Optionally: .claude/artifacts/
 
 Are you sure?
@@ -176,6 +197,8 @@ Are you sure?
 State cleared.
 - Deleted todo.md
 - Deleted progress.txt
+- Deleted .claude/workflow-phase
+- Deleted .claude/plan-approved
 - Cleared .claude/artifacts/
 
 Ready for new orchestration. Start with:
