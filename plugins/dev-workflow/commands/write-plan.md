@@ -23,6 +23,7 @@ Dispatch code-explorer to survey the codebase:
 ```claude
 Task:
   subagent_type: dev-workflow:code-explorer
+  model: opus
   description: "Explore codebase"
   prompt: |
     Survey codebase for [feature]:
@@ -56,6 +57,7 @@ For complex features (5+ files), dispatch code-architect:
 ```claude
 Task:
   subagent_type: dev-workflow:code-architect
+  model: opus
   description: "Design architecture"
   prompt: |
     Design architecture for [feature] using exploration context.

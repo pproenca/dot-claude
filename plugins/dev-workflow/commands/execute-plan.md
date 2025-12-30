@@ -10,7 +10,7 @@ Execute implementation plan with state tracking and mandatory post-completion ac
 
 **Model Requirements:**
 - Orchestrator (this command): **Opus 4.5** - handles planning decisions, state management, coordination
-- Task execution agents: **Sonnet** - handles individual task implementation (TDD cycles)
+- Task execution agents: **Opus 4.5** - handles individual task implementation (TDD cycles)
 
 ## Input
 
@@ -121,7 +121,7 @@ Launch task in background:
 ```claude
 Task:
   subagent_type: general-purpose
-  model: sonnet
+  model: opus
   description: "Execute next task from hyh"
   prompt: |
     Execute a task from the hyh-managed workflow.
@@ -235,7 +235,7 @@ Verify implementer built exactly what was requested (nothing more, nothing less)
 ```claude
 Task:
   subagent_type: general-purpose
-  model: sonnet
+  model: opus
   description: "Spec review Task [N]"
   prompt: |
     You are reviewing whether an implementation matches its specification.
@@ -294,7 +294,7 @@ Task:
 ```claude
 Task:
   subagent_type: general-purpose
-  model: sonnet
+  model: opus
   description: "Fix spec issues Task [N]"
   prompt: |
     Fix the following spec compliance issues for Task [N]:
@@ -314,7 +314,7 @@ After spec compliance passes, review implementation quality.
 ```claude
 Task:
   subagent_type: general-purpose
-  model: sonnet
+  model: opus
   description: "Quality review Task [N]"
   prompt: |
     Review code quality for Task [N]. Spec compliance already verified.
@@ -413,7 +413,7 @@ For each group in `TASK_GROUPS` (split by `|`):
 # Launch in SINGLE message for true parallelism
 Task:
   subagent_type: general-purpose
-  model: sonnet
+  model: opus
   description: "Execute task from hyh (agent 1)"
   prompt: |
     Execute a task from the hyh-managed workflow.
@@ -499,7 +499,7 @@ Task:
 
 Task:
   subagent_type: general-purpose
-  model: sonnet
+  model: opus
   description: "Execute task from hyh (agent 2)"
   prompt: |
     [Same comprehensive prompt structure as agent 1]
@@ -528,7 +528,7 @@ After group implementation completes, run combined review for all tasks in the g
 ```claude
 Task:
   subagent_type: general-purpose
-  model: sonnet
+  model: opus
   description: "Spec review Group [N]"
   prompt: |
     Review spec compliance for Tasks [list] completed in this group.
@@ -562,7 +562,7 @@ After spec compliance passes for all tasks:
 ```claude
 Task:
   subagent_type: general-purpose
-  model: sonnet
+  model: opus
   description: "Quality review Group [N]"
   prompt: |
     Review code quality for Tasks [list]. Spec compliance verified.
