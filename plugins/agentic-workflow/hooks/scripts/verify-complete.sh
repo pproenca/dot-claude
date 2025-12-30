@@ -1,15 +1,22 @@
 #!/bin/bash
-set -euo pipefail
 # Stop hook: Phase-aware completion verification
 # Only runs during DELEGATE/VERIFY phases of orchestrated workflow
 # Worktree-aware: uses correct state directory
+#
+# Claude Code hook exit codes for Stop hooks:
+# Exit 0 = allow agent to stop
+# Exit non-zero = block stop, agent continues
 
 # Source worktree utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ ! -f "${SCRIPT_DIR}/worktree-utils.sh" ]; then
+    # Utils not found - allow stop
+    exit 0
+fi
 source "${SCRIPT_DIR}/worktree-utils.sh"
 
 # Determine state directory based on worktree context
-STATE_DIR=$(worktree_state_dir)
+STATE_DIR=$(worktree_state_dir 2>/dev/null || echo ".claude")
 WORK_DIR=$(pwd)
 PHASE_FILE="${STATE_DIR}/workflow-phase"
 
@@ -47,16 +54,24 @@ fi
 # Get configurable commands (with smart defaults based on project type)
 if [ -f "${WORK_DIR}/pyproject.toml" ]; then
     DEFAULT_TEST="uv run pytest --tb=short -q"
+    DEFAULT_TYPECHECK="ty check"
+    DEFAULT_LINT="uv run ruff check ."
     DEFAULT_BUILD=""
 elif [ -f "${WORK_DIR}/package.json" ]; then
     DEFAULT_TEST="npm test"
+    DEFAULT_TYPECHECK="npx tsc --noEmit"
+    DEFAULT_LINT="npm run lint --if-present"
     DEFAULT_BUILD="npm run build --if-present"
 else
     DEFAULT_TEST=""
+    DEFAULT_TYPECHECK=""
+    DEFAULT_LINT=""
     DEFAULT_BUILD=""
 fi
 
 TEST_CMD=$(read_plugin_config test_command "$DEFAULT_TEST")
+TYPECHECK_CMD=$(read_plugin_config typecheck_command "$DEFAULT_TYPECHECK")
+LINT_CMD=$(read_plugin_config lint_command "$DEFAULT_LINT")
 BUILD_CMD=$(read_plugin_config build_command "$DEFAULT_BUILD")
 
 # Run tests
@@ -65,6 +80,22 @@ if [ -n "$TEST_CMD" ]; then
     cd "${WORK_DIR}" && eval "$TEST_CMD" 2>&1 || { ISSUES="${ISSUES}\n- Tests failing"; BLOCKED=1; }
 else
     echo "No test command configured, skipping tests"
+fi
+
+# Run typecheck
+if [ -n "$TYPECHECK_CMD" ]; then
+    echo "Running typecheck: $TYPECHECK_CMD"
+    cd "${WORK_DIR}" && eval "$TYPECHECK_CMD" 2>&1 || { ISSUES="${ISSUES}\n- Type check failing"; BLOCKED=1; }
+else
+    echo "No typecheck command configured, skipping typecheck"
+fi
+
+# Run lint
+if [ -n "$LINT_CMD" ]; then
+    echo "Running lint: $LINT_CMD"
+    cd "${WORK_DIR}" && eval "$LINT_CMD" 2>&1 || { ISSUES="${ISSUES}\n- Lint failing"; BLOCKED=1; }
+else
+    echo "No lint command configured, skipping lint"
 fi
 
 # Run build if configured

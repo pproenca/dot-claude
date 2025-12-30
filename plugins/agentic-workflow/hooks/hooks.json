@@ -67,6 +67,11 @@
         "matcher": "",
         "hooks": [
           {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/verify-subagent-complete.sh",
+            "timeout": 30000
+          },
+          {
             "type": "prompt",
             "prompt": "Before allowing this subagent to complete, verify:\n\n1. TASK PACKET OBJECTIVE: Was the single clear goal achieved?\n2. SUCCESS CRITERIA: Are all measurable criteria met?\n3. ARTIFACT WRITTEN: Was a summary artifact written to .claude/artifacts/?\n4. TESTS PASSING: Did the subagent run and pass relevant tests?\n5. SCOPE RESPECTED: Did subagent stay within defined file scope?\n\nIf any criteria not met, instruct subagent to continue with specific guidance on what's missing."
           }

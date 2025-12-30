@@ -124,7 +124,7 @@ Check for issues:
 - All files mentioned exist or will be created?
 - Dependencies form valid DAG (no cycles)?
 - Success criteria are measurable?
-- Task packets would have all 7 required fields?
+- Task packets would have all 6 required fields?
 
 If validation fails:
 
@@ -260,14 +260,15 @@ For each task:
    echo "Created worktree at: $WORKTREE_PATH"
    ```
 
-2. **Create task packet** with 7 required fields:
+2. **Create task packet** with 6 required fields:
    - Objective (single clear goal)
    - Scope (exact files)
    - Interface (input/output contract)
    - Constraints (what NOT to do)
    - Success criteria (measurable)
    - Tool allowlist
-   - **Worktree path** (where to run)
+
+   Note: Worktree context is provided separately in the prompt header (see step 3).
 
 3. **Spawn task-executor** via Task tool:
    ```
