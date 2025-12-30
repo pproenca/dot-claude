@@ -97,7 +97,7 @@ Before proposing ANY design, verify you are NOT:
 - Map module structure and boundaries
 - Find similar features for reference
 - **Count existing abstractions** — Note which patterns appear 3+ times
-- **Library documentation** — Use Context7 MCP tools (`mcp__context7__resolve-library-id`, `mcp__context7__get-library-docs`) to fetch up-to-date docs for unfamiliar libraries
+- **Library documentation** — Use WebFetch or WebSearch tools to fetch up-to-date docs for unfamiliar libraries
 
 **Phase 2: Architecture Design**
 
