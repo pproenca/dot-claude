@@ -113,6 +113,15 @@ AskUserQuestion({
 
 Store selected verification agents for use in Step 4.
 
+### Step 2d: Complexity Gate (CRITICAL)
+
+After assessing complexity:
+- **Trivial**: Direct guidance, no orchestrator needed (proceed to Step 3)
+- **Small or higher**: MUST spawn agentic-workflow:lead-orchestrator (proceed to Step 4)
+
+**DO NOT edit files directly if complexity >= Small.**
+The orchestrator handles all file modifications through subagents.
+
 ### Step 3: If Trivial
 
 Provide direct guidance without spawning agents:
@@ -123,10 +132,23 @@ Provide direct guidance without spawning agents:
 
 ### Step 4: If Small or Above
 
-1. **Create external state files**:
-   - Create `todo.md` with initial task breakdown
+1. **Create dual state tracking** (TodoWrite + files):
+   ```
+   # External files (source of truth, survive compaction)
+   - Create `todo.md` with initial phases
    - Create `progress.txt` with session state
-   - Create `.claude/artifacts/` directory if needed
+   - Create `.claude/artifacts/` directory
+   - Create `.claude/task-packets/` directory
+
+   # TodoWrite (UI visibility)
+   TodoWrite([
+     {content: "EXPLORE: Understand codebase", status: "pending", activeForm: "Exploring codebase"},
+     {content: "PLAN: Create plan and get approval", status: "pending", activeForm: "Planning"},
+     {content: "DELEGATE: Spawn task-executors", status: "pending", activeForm: "Delegating tasks"},
+     {content: "VERIFY: Run verification agents", status: "pending", activeForm: "Verifying"},
+     {content: "SYNTHESIZE: Merge and finalize", status: "pending", activeForm: "Synthesizing"}
+   ])
+   ```
 
 2. **Set workflow phase to EXPLORE**:
 ```bash
@@ -137,14 +159,19 @@ echo "EXPLORE" > .claude/workflow-phase
    ```
    Use Task tool with:
    - subagent_type: agentic-workflow:lead-orchestrator
-   - prompt: Include the task description, complexity assessment, and worktree info:
-     - WORKTREE_BASE: ~/.dot-claude-worktrees
-     - PROJECT_NAME: (from worktree_project_name)
-     - MAIN_REPO: (current working directory)
    - model: opus
+   - prompt: |
+       TASK: {task description}
+       COMPLEXITY: {assessed level}
+       WORKTREE_BASE: ~/.dot-claude-worktrees
+       PROJECT_NAME: {from worktree_project_name}
+       MAIN_REPO: {current working directory}
+
+       Start by loading EXPLORE phase instructions:
+       Read("${CLAUDE_PLUGIN_ROOT}/agents/references/phase-explore.md")
    ```
 
-   The orchestrator will create worktrees for each task-executor subagent.
+   The orchestrator uses JIT phase loading and delegates task packet creation.
 
 4. **Report to user**:
    - Complexity level assessed

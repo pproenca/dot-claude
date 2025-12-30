@@ -192,10 +192,38 @@ Breakdown:
 
 ## Spawning with Task Tool
 
+### Option A: File-Based (Recommended)
+
+Use task-packet-writer to create packet files, then reference by path:
+
+```
+# First, create packet files
+Task(
+  subagent_type: "agentic-workflow:task-packet-writer"
+  prompt: |
+    PLAN_PATH: .claude/plan.md
+    OUTPUT_DIR: .claude/task-packets/
+    WORKTREE_BASE: ~/.dot-claude-worktrees
+    PROJECT_NAME: myapp
+)
+
+# Then spawn executor with file path
+Task(
+  subagent_type: "agentic-workflow:task-executor"
+  prompt: "TASK_PACKET_PATH: .claude/task-packets/task-a-token.md"
+)
+```
+
+This keeps orchestrator context minimal.
+
+### Option B: Inline (Legacy)
+
+For simple cases or backward compatibility:
+
 ```
 Use Task tool:
 - subagent_type: agentic-workflow:task-executor
-- prompt: [Full task packet above]
+- prompt: [Full task packet content]
 - model: opus
 ```
 

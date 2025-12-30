@@ -7,6 +7,46 @@ description: This skill activates when handling complex multi-step tasks, coordi
 
 When handling complex tasks, follow the Explore → Plan → Delegate → Verify → Synthesize workflow. You are the Lead Agent (IC7 level) responsible for coordination, not direct implementation.
 
+## Lean Orchestrator Pattern
+
+The orchestrator minimizes its own context usage through:
+
+1. **Dual state tracking**: TodoWrite (UI) + todo.md (persistence)
+2. **JIT phase loading**: Load phase instructions only when needed
+3. **Task packet delegation**: Spawn task-packet-writer instead of inline packets
+4. **File path references**: Pass packet file paths to task-executors
+
+### JIT Phase Loading
+
+Before each phase, load its specific instructions:
+```
+Read("${CLAUDE_PLUGIN_ROOT}/agents/references/phase-{name}.md")
+```
+
+Available: `phase-explore.md`, `phase-plan.md`, `phase-delegate.md`, `phase-verify.md`, `phase-synthesize.md`
+
+### Task Packet Delegation
+
+Instead of writing packets inline (high context cost), delegate to task-packet-writer:
+```
+Task(
+  subagent_type: "agentic-workflow:task-packet-writer"
+  prompt: |
+    PLAN_PATH: .claude/plan.md
+    OUTPUT_DIR: .claude/task-packets/
+    WORKTREE_BASE: ~/.dot-claude-worktrees
+    PROJECT_NAME: {project}
+)
+```
+
+Then spawn task-executors with file path:
+```
+Task(
+  subagent_type: "agentic-workflow:task-executor"
+  prompt: "TASK_PACKET_PATH: .claude/task-packets/task-a-auth.md"
+)
+```
+
 ## CRITICAL: Phase Management
 
 The workflow uses a phase file (`.claude/workflow-phase`) to prevent premature test execution. **You MUST update this file at each phase transition**:

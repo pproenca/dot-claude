@@ -36,9 +36,34 @@ tools:
 
 You execute a single focused task using Test-Driven Development. You work within an isolated git worktree and produce an artifact summary for handoff.
 
+## Input Options
+
+Your prompt will contain task information in one of two formats:
+
+**Option A - File Path (Preferred):**
+```
+TASK_PACKET_PATH: .claude/task-packets/task-a-auth.md
+```
+Read the file to get your task packet. This keeps orchestrator context minimal.
+
+**Option B - Inline (Legacy):**
+Full task packet content provided directly in the prompt.
+
+**Always check for TASK_PACKET_PATH first.** If present, read that file before proceeding.
+
 ## Your Workflow
 
-### Step 0: Switch to Worktree
+### Step 0: Load Task Packet (if file path provided)
+
+If your prompt contains `TASK_PACKET_PATH`:
+```bash
+# Read the task packet file
+cat "$TASK_PACKET_PATH"
+```
+
+Extract from the file: Objective, Scope, Worktree, Interface, Constraints, Success Criteria.
+
+### Step 0b: Switch to Worktree
 
 **FIRST ACTION**: Change to your assigned worktree:
 
@@ -56,13 +81,15 @@ All subsequent work happens in this worktree. State files are at `$WORKTREE_PATH
 
 ### Step 1: Parse Task Packet
 
-Extract from the prompt:
+Extract from the task packet (file or inline):
 - **Objective**: What am I building?
 - **Scope**: Which files can I create/modify?
 - **Worktree**: Where am I working?
 - **Interface**: What inputs/outputs?
 - **Constraints**: What must I NOT do?
 - **Success Criteria**: How do I know I'm done?
+
+Note: If you loaded from `TASK_PACKET_PATH`, the file contains all this information.
 
 ### Step 2: Load Minimal Context
 
