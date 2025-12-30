@@ -12,6 +12,9 @@ if [ ! -f "${SCRIPT_DIR}/worktree-utils.sh" ]; then
 fi
 source "${SCRIPT_DIR}/worktree-utils.sh"
 
+# Disable strict mode for hook (we want lenient error handling)
+set +euo pipefail
+
 # Determine state directory
 STATE_DIR=$(worktree_state_dir 2>/dev/null || echo ".claude")
 WORK_DIR=$(pwd)
@@ -21,7 +24,7 @@ TURN_FILE="${STATE_DIR}/turn-counter"
 # Get current phase
 CURRENT_PHASE=""
 if [ -f "$PHASE_FILE" ]; then
-    CURRENT_PHASE=$(cat "$PHASE_FILE")
+    CURRENT_PHASE=$(cat "$PHASE_FILE" 2>/dev/null || true)
 fi
 
 # Only track during execution phases
