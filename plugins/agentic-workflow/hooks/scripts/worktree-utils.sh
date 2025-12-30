@@ -222,6 +222,36 @@ worktree_state_dir() {
     fi
 }
 
+# Read a configuration value from agentic-workflow.local.md YAML frontmatter
+# Usage: read_plugin_config <key> [default_value]
+# Example: read_plugin_config test_command "uv run pytest"
+read_plugin_config() {
+    local key="$1"
+    local default="${2:-}"
+    local config_file
+    config_file="$(worktree_state_dir)/agentic-workflow.local.md"
+
+    if [[ ! -f "$config_file" ]]; then
+        echo "$default"
+        return 0
+    fi
+
+    # Extract YAML frontmatter value (between --- markers)
+    local value
+    value=$(sed -n '/^---$/,/^---$/{ /^---$/d; /^'"$key"':/{ s/^'"$key"': *//; s/^ *//; s/ *$//; p; } }' "$config_file" 2>/dev/null | head -1)
+
+    if [[ -n "$value" ]]; then
+        # Remove surrounding quotes if present
+        value="${value#\"}"
+        value="${value%\"}"
+        value="${value#\'}"
+        value="${value%\'}"
+        echo "$value"
+    else
+        echo "$default"
+    fi
+}
+
 # Merge worktree branch back to target branch
 # Usage: worktree_merge <worktree-branch> [target-branch]
 worktree_merge() {
@@ -263,4 +293,5 @@ export -f worktree_list
 export -f worktree_cleanup
 export -f worktree_state_dir
 export -f worktree_merge
+export -f read_plugin_config
 export WORKTREE_BASE

@@ -39,9 +39,9 @@
         "matcher": "AskUserQuestion",
         "hooks": [
           {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/handle-approval.sh \"$TOOL_INPUT_FILE\" \"$TOOL_OUTPUT_FILE\"",
-            "timeout": 5000
+            "type": "prompt",
+            "prompt": "Analyze the user's response to determine their intent regarding plan approval.\n\nContext: During the PLAN_WAITING phase of orchestrated workflow, users are asked to approve implementation plans before subagent delegation begins.\n\nClassify the user's response as one of:\n\n1. APPROVED - User clearly approves (examples: \"yes\", \"go ahead\", \"looks good\", \"proceed\", \"approved\", \"let's do it\", \"sure\", \"sounds good\", \"LGTM\", or any affirmative without conditions)\n\n2. REJECTED - User clearly rejects or wants to cancel (examples: \"no\", \"stop\", \"cancel\", \"don't\", \"reject\", \"start over\", or clear refusal)\n\n3. MODIFICATION_REQUESTED - User approves conditionally or wants changes (examples: \"yes but...\", \"approve with changes\", \"almost, but...\", contains conditions or modifications)\n\n4. UNCLEAR - Response is ambiguous or unrelated to approval\n\nIMPORTANT: If the response indicates APPROVED during PLAN_WAITING phase:\n- Write 'approved' to .claude/plan-approved file\n- Update .claude/workflow-phase to 'DELEGATE'\n- Proceed with subagent delegation\n\nIf REJECTED:\n- Update .claude/workflow-phase to 'IDLE'\n- Ask user how they'd like to proceed\n\nIf MODIFICATION_REQUESTED:\n- Keep .claude/workflow-phase as 'PLAN_WAITING'\n- Address the user's requested changes to the plan\n\nIf UNCLEAR:\n- Ask for clarification on whether to proceed\n\nConsider context, tone, and conditional language. Handle international variations and casual speech patterns.",
+            "timeout": 20000
           }
         ]
       }

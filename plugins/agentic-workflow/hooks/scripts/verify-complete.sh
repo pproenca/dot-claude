@@ -44,12 +44,33 @@ if [ -f "${WORK_DIR}/todo.md" ]; then
     fi
 fi
 
-# Run tests (let them fail naturally if not configured)
-echo "Running tests..."
+# Get configurable commands (with smart defaults based on project type)
 if [ -f "${WORK_DIR}/pyproject.toml" ]; then
-    cd "${WORK_DIR}" && uv run pytest --tb=short -q 2>&1 || { ISSUES="${ISSUES}\n- Tests failing"; BLOCKED=1; }
+    DEFAULT_TEST="uv run pytest --tb=short -q"
+    DEFAULT_BUILD=""
 elif [ -f "${WORK_DIR}/package.json" ]; then
-    cd "${WORK_DIR}" && npm test 2>&1 || { ISSUES="${ISSUES}\n- Tests failing"; BLOCKED=1; }
+    DEFAULT_TEST="npm test"
+    DEFAULT_BUILD="npm run build --if-present"
+else
+    DEFAULT_TEST=""
+    DEFAULT_BUILD=""
+fi
+
+TEST_CMD=$(read_plugin_config test_command "$DEFAULT_TEST")
+BUILD_CMD=$(read_plugin_config build_command "$DEFAULT_BUILD")
+
+# Run tests
+if [ -n "$TEST_CMD" ]; then
+    echo "Running tests: $TEST_CMD"
+    cd "${WORK_DIR}" && eval "$TEST_CMD" 2>&1 || { ISSUES="${ISSUES}\n- Tests failing"; BLOCKED=1; }
+else
+    echo "No test command configured, skipping tests"
+fi
+
+# Run build if configured
+if [ -n "$BUILD_CMD" ]; then
+    echo "Running build: $BUILD_CMD"
+    cd "${WORK_DIR}" && eval "$BUILD_CMD" 2>&1 || { ISSUES="${ISSUES}\n- Build failing"; BLOCKED=1; }
 fi
 
 # Report
