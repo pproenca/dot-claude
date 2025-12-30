@@ -4,11 +4,16 @@ set -euo pipefail
 # Blocks subagent spawning until user approval is recorded
 # Worktree-aware: uses correct state directory
 #
+# Claude Code hook exit codes:
 # Exit 0 = allow tool call
-# Exit 1 = block tool call
+# Exit 2 = block tool call (PreToolUse specific)
 
 # Source worktree utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ ! -f "${SCRIPT_DIR}/worktree-utils.sh" ]; then
+    # Utils not found - allow by default (fail open for safety)
+    exit 0
+fi
 source "${SCRIPT_DIR}/worktree-utils.sh"
 
 # Determine state directory based on worktree context
@@ -64,4 +69,5 @@ echo "After user selects 'Approve and proceed':"
 echo "  mkdir -p '${STATE_DIR}' && echo 'approved' > '${STATE_DIR}/plan-approved'"
 echo "  echo 'DELEGATE' > '${STATE_DIR}/workflow-phase'"
 echo ""
-exit 1
+# Exit 2 = block PreToolUse (Claude Code convention)
+exit 2

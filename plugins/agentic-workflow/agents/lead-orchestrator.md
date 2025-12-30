@@ -289,21 +289,57 @@ For each task:
    - Wave 1: Launch independent tasks in parallel (different worktrees)
    - Wave 2+: Wait for dependencies, merge if needed, include artifact context
 
-5. **Background execution for long-running tasks**:
-   For complex waves, use `run_in_background: true` to continue while agents work:
-   ```
-   # Spawn agents in background
-   Task(subagent_type: "agentic-workflow:task-executor", prompt: "[Task A]", run_in_background: true)
-   Task(subagent_type: "agentic-workflow:task-executor", prompt: "[Task B]", run_in_background: true)
+5. **Parallel execution for Wave 1 (independent tasks)**:
 
+   **CRITICAL**: To run tasks in parallel, include MULTIPLE Task tool calls in a SINGLE message.
+
+   ```
+   # In ONE message, spawn all Wave 1 tasks with run_in_background: true
+   task_a_id = Task(
+     subagent_type: "agentic-workflow:task-executor",
+     prompt: "[Task A packet with worktree context]",
+     run_in_background: true
+   )
+   task_b_id = Task(
+     subagent_type: "agentic-workflow:task-executor",
+     prompt: "[Task B packet with worktree context]",
+     run_in_background: true
+   )
+   task_c_id = Task(
+     subagent_type: "agentic-workflow:task-executor",
+     prompt: "[Task C packet with worktree context]",
+     run_in_background: true
+   )
+   ```
+
+   All three execute **simultaneously** because they're in the same message.
+
+6. **Background execution for long-running tasks**:
+   Use `run_in_background: true` to continue while agents work:
+   ```
    # Continue with other work (e.g., preparing Wave 2 packets)...
 
-   # Collect results when ready
-   TaskOutput(task_id: "agent-a-id", block: true)
-   TaskOutput(task_id: "agent-b-id", block: true)
+   # Collect results when ready - order doesn't matter
+   result_a = TaskOutput(task_id: task_a_id, block: true)
+   result_b = TaskOutput(task_id: task_b_id, block: true)
+   result_c = TaskOutput(task_id: task_c_id, block: true)
    ```
 
    **CRITICAL**: Always use `TaskOutput` to collect results from background agents.
+
+   **WRONG (Sequential)**:
+   ```
+   Message 1: Task(task-executor, Task A)
+   [wait for result]
+   Message 2: Task(task-executor, Task B)
+   [wait for result]
+   ```
+
+   **RIGHT (Parallel)**:
+   ```
+   Single Message: Task(Task A) + Task(Task B) + Task(Task C)
+   [all execute simultaneously, collect with TaskOutput]
+   ```
 
 ### Phase 4: VERIFY
 

@@ -78,16 +78,32 @@ Task(
 
 ### Step 3: Collect Results with TaskOutput
 
-**CRITICAL**: Use TaskOutput to collect results from background agents:
+**CRITICAL**: Use TaskOutput to collect results from background agents.
+
+**IMPORTANT**: Collect results in any order, but wait for ALL before synthesizing:
 
 ```
+# Store the task IDs from Step 2
+code_reviewer_id = [id from Task 1]
+anti_overfit_id = [id from Task 2]
+integration_tester_id = [id from Task 3]
+
 # Wait for each agent to complete and collect results
-TaskOutput(task_id: "code-reviewer-id", block: true)
-TaskOutput(task_id: "anti-overfit-id", block: true)
-TaskOutput(task_id: "integration-tester-id", block: true)
+# The order doesn't matter - they're all running in parallel
+result_1 = TaskOutput(task_id: code_reviewer_id, block: true)
+result_2 = TaskOutput(task_id: anti_overfit_id, block: true)
+result_3 = TaskOutput(task_id: integration_tester_id, block: true)
+
+# Only proceed to Step 4 AFTER all three TaskOutput calls complete
 ```
 
-All three run simultaneously because they're in the same message with `run_in_background: true`.
+All three agents run simultaneously because they're in the same message with `run_in_background: true`.
+
+**Why this pattern works**:
+- `run_in_background: true` makes Task return immediately with an agent ID
+- All three agents start executing in parallel
+- `TaskOutput(block: true)` waits for each to complete
+- Results arrive as each finishes (order may vary)
 
 ### Step 4: Summarize Findings
 
