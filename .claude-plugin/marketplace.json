@@ -25,11 +25,11 @@
     },
     {
       "name": "dev-python",
-      "source": "./domain_plugins/dev-python",
+      "source": "./domain_plugins/dev-python"
     },
     {
       "name": "dev-typescript",
-      "source": "./domain_plugins/dev-typescript",
+      "source": "./domain_plugins/dev-typescript"
     }
   ]
 }
