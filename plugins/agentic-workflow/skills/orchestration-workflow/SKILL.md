@@ -346,6 +346,86 @@ Throughout orchestration, maintain:
 
 See context-management skill for formats.
 
+## Parallel Execution Patterns Reference
+
+### Pattern 1: Parallel File Reads
+
+Read multiple files simultaneously by including all Read calls in ONE message:
+
+```claude
+# All execute in parallel
+Read(src/auth/token.py)
+Read(src/auth/session.py)
+Read(tests/auth/test_token.py)
+```
+
+### Pattern 2: Parallel Bash Commands
+
+Run independent commands simultaneously using `run_in_background`:
+
+```claude
+# Launch ALL in ONE message
+Bash:
+  command: "uv run pytest -v --tb=short"
+  run_in_background: true
+
+Bash:
+  command: "ty check"
+  run_in_background: true
+
+Bash:
+  command: "uv run ruff check ."
+  run_in_background: true
+```
+
+Then collect:
+```claude
+TaskOutput(task_id: pytest_id, block: true)
+TaskOutput(task_id: typecheck_id, block: true)
+TaskOutput(task_id: lint_id, block: true)
+```
+
+### Pattern 3: Parallel Agent Spawning
+
+Launch multiple agents in ONE message:
+
+```claude
+# Wave 1: All independent tasks
+Task(subagent_type: "task-executor", prompt: "Task A", run_in_background: true)
+Task(subagent_type: "task-executor", prompt: "Task B", run_in_background: true)
+Task(subagent_type: "task-executor", prompt: "Task C", run_in_background: true)
+
+# Later: collect all
+TaskOutput(task_id: a_id, block: true)
+TaskOutput(task_id: b_id, block: true)
+TaskOutput(task_id: c_id, block: true)
+```
+
+### Anti-Pattern: Functionally Sequential
+
+```claude
+# WRONG - defeats parallelism!
+for each task:
+  task_id = Task(agent, run_in_background: true)
+  result = TaskOutput(task_id, block: true)  # Blocks immediately!
+```
+
+The loop structure causes immediate blocking after each spawn.
+
+### Correct Pattern: Launch All, Then Collect All
+
+```claude
+# RIGHT - true parallelism
+task_a = Task(agent, Task A, run_in_background: true)
+task_b = Task(agent, Task B, run_in_background: true)
+task_c = Task(agent, Task C, run_in_background: true)
+# All three running simultaneously
+
+result_a = TaskOutput(task_a, block: true)
+result_b = TaskOutput(task_b, block: true)
+result_c = TaskOutput(task_c, block: true)
+```
+
 ## Key Principles
 
 1. **Explore before coding** - Understand what exists
@@ -355,6 +435,7 @@ See context-management skill for formats.
 5. **Verify independently** - Fresh context catches what you missed
 6. **External state** - Don't trust internal memory across compaction
 7. **Re-inject regularly** - Every 5-10 turns, re-read task checklist
+8. **Parallel by default** - Always look for opportunities to parallelize independent operations
 
 ## Resuming Long Workflows
 

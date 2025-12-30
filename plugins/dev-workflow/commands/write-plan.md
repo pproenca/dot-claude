@@ -16,9 +16,9 @@ $ARGUMENTS
 
 **If @file referenced:** Read it, use as context.
 
-## Step 1: Explore Codebase
+## Step 1: Explore Codebase (Background)
 
-Dispatch code-explorer to survey the codebase:
+Dispatch code-explorer in background so you can continue with clarifications:
 
 ```claude
 Task:
@@ -32,11 +32,12 @@ Task:
     3. Testing patterns - conventions and test file locations
 
     Report 10-15 essential files. Limit to 10 tool calls.
+  run_in_background: true
 ```
 
-After return: Note patterns for Step 3.
+**Store the task_id** - you'll collect results after clarifications.
 
-## Step 2: Clarify Ambiguities
+## Step 2: Clarify Ambiguities (While Explorer Runs)
 
 **Skip if:** Design doc from `/dev-workflow:brainstorm` exists AND is comprehensive.
 
@@ -50,27 +51,82 @@ Present using AskUserQuestion (one question at a time, 2-4 options each).
 
 **Wait for answers before Step 3.**
 
-## Step 3: Design Architecture
+## Step 2b: Collect Explorer Results
 
-For complex features (5+ files), dispatch code-architect:
+After clarifications, collect exploration results:
 
 ```claude
+TaskOutput:
+  task_id: explorer_task_id
+  block: true
+```
+
+Note patterns for Step 3.
+
+## Step 3: Design Architecture (Parallel Perspectives)
+
+For complex features (5+ files), dispatch MULTIPLE code-architects in parallel for different perspectives:
+
+```claude
+# Launch ALL architects in ONE message for parallel execution
+
 Task:
   subagent_type: dev-workflow:code-architect
   model: opus
-  description: "Design architecture"
+  description: "Minimal changes design"
   prompt: |
     Design architecture for [feature] using exploration context.
 
-    Present 2 approaches:
-    1. Minimal changes - smallest diff, maximum reuse
-    2. Clean architecture - best maintainability
+    Focus: MINIMAL CHANGES
+    - Smallest diff, maximum reuse of existing code
+    - Fewest new files
+    - Trade-off: may be less clean
+  run_in_background: true
 
-    For each: key files, components, trade-offs.
-    Recommend one.
+Task:
+  subagent_type: dev-workflow:code-architect
+  model: opus
+  description: "Clean architecture design"
+  prompt: |
+    Design architecture for [feature] using exploration context.
+
+    Focus: CLEAN ARCHITECTURE
+    - Best maintainability and testability
+    - Clear separation of concerns
+    - Trade-off: may require more changes
+  run_in_background: true
+
+Task:
+  subagent_type: dev-workflow:code-architect
+  model: opus
+  description: "Pragmatic balance design"
+  prompt: |
+    Design architecture for [feature] using exploration context.
+
+    Focus: PRAGMATIC BALANCE
+    - Balance between clean code and minimal changes
+    - Follow existing patterns where sensible
+    - Trade-off: compromise approach
+  run_in_background: true
 ```
 
-Use AskUserQuestion to confirm approach.
+Collect all results:
+
+```claude
+TaskOutput:
+  task_id: minimal_architect_id
+  block: true
+
+TaskOutput:
+  task_id: clean_architect_id
+  block: true
+
+TaskOutput:
+  task_id: pragmatic_architect_id
+  block: true
+```
+
+Synthesize the three perspectives and present trade-offs to user via AskUserQuestion.
 
 ## Step 4: Write Plan
 

@@ -90,15 +90,92 @@ grep -E "^### Task [0-9]+(\.[0-9]+)?:" "$PLAN_FILE" | sed 's/^### Task \([0-9.]*
 
 Create TodoWrite with all tasks as `pending`, plus "Code Review" and "Finish Branch" at the end.
 
-## Step 3: Execute Tasks Sequentially
+## Step 3: Execute Tasks in Parallel Groups
 
-For each task in the plan:
+Tasks are grouped by file dependencies - tasks with no file overlap can run in parallel.
 
-1. Mark task `in_progress` in TodoWrite
-2. Read the task section from the plan file
-3. Dispatch agent to execute
+### 3a. Parse Task Groups
 
-### 3a. Dispatch Task Agent
+```bash
+source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
+PLAN_FILE="$ARGUMENTS"
+
+# Group tasks by file dependencies (max 5 per group)
+GROUPS=$(group_tasks_by_dependency "$PLAN_FILE" 5)
+# Output format: "group1:1,2,3|group2:4,5|group3:6"
+
+echo "Task groups: $GROUPS"
+```
+
+### 3b. Execute Groups (Groups Serial, Tasks Parallel)
+
+FOR EACH group in GROUPS:
+
+1. **Parse group tasks**: Extract task IDs from group string
+2. **Mark all group tasks `in_progress`** in TodoWrite
+3. **Launch ALL tasks in group in ONE message** with `run_in_background: true`:
+
+```claude
+# Launch ALL group tasks in SINGLE message for true parallelism
+# Example: Group has tasks 1, 2, 3
+
+Task:
+  subagent_type: general-purpose
+  model: opus
+  description: "Execute Task 1"
+  prompt: |
+    [Task 1 content from plan]
+
+    ## Instructions
+    [Same instructions as below]
+  run_in_background: true
+
+Task:
+  subagent_type: general-purpose
+  model: opus
+  description: "Execute Task 2"
+  prompt: |
+    [Task 2 content from plan]
+
+    ## Instructions
+    [Same instructions as below]
+  run_in_background: true
+
+Task:
+  subagent_type: general-purpose
+  model: opus
+  description: "Execute Task 3"
+  prompt: |
+    [Task 3 content from plan]
+
+    ## Instructions
+    [Same instructions as below]
+  run_in_background: true
+```
+
+4. **Store all task IDs** returned from Task calls
+5. **AFTER launching all**, collect results with TaskOutput:
+
+```claude
+# Collect results (order doesn't matter - all run in parallel)
+TaskOutput:
+  task_id: task_1_id
+  block: true
+
+TaskOutput:
+  task_id: task_2_id
+  block: true
+
+TaskOutput:
+  task_id: task_3_id
+  block: true
+```
+
+6. **Run two-stage review** for all completed tasks in the group
+7. **Mark group tasks `completed`** in TodoWrite
+8. **Proceed to next group**
+
+### Task Agent Prompt Template
 
 ```claude
 Task:
@@ -160,12 +237,27 @@ Task:
   run_in_background: true
 ```
 
-Wait for completion:
+### WRONG Pattern (Functionally Sequential)
 
 ```claude
-TaskOutput:
-  task_id: [agent_id]
-  block: true
+# DON'T DO THIS - defeats parallelism!
+for each task:
+  task_id = Task(agent, run_in_background: true)
+  result = TaskOutput(task_id, block: true)  # Blocks immediately!
+```
+
+### CORRECT Pattern (True Parallel)
+
+```claude
+# DO THIS - launch all, then collect all
+task_1_id = Task(agent, Task 1, run_in_background: true)
+task_2_id = Task(agent, Task 2, run_in_background: true)
+task_3_id = Task(agent, Task 3, run_in_background: true)
+# All three running simultaneously
+
+result_1 = TaskOutput(task_1_id, block: true)
+result_2 = TaskOutput(task_2_id, block: true)
+result_3 = TaskOutput(task_3_id, block: true)
 ```
 
 ### 3b. Two-Stage Review (MANDATORY)

@@ -16,10 +16,13 @@ cat "${STATE_DIR}/plan-approved"       # Should show approved
 
 ## Activities
 
-### 1. Spawn Task Packet Writer
-Instead of writing task packets inline, delegate to task-packet-writer:
+### 1. Spawn Task Packet Writer AND Create Worktrees (Parallel)
+
+Launch packet-writer and create worktrees in ONE message for parallel execution:
 
 ```
+# All in ONE assistant message - executes in parallel
+
 Task(
   subagent_type: "agentic-workflow:task-packet-writer"
   prompt: |
@@ -27,17 +30,35 @@ Task(
     OUTPUT_DIR: .claude/task-packets/
     WORKTREE_BASE: ~/.dot-claude-worktrees
     PROJECT_NAME: {project_name}
+  run_in_background: true
+)
+
+Bash(
+  command: |
+    source "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/worktree-utils.sh"
+    worktree_create "task-a-component"
+  run_in_background: true
+)
+
+Bash(
+  command: |
+    source "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/worktree-utils.sh"
+    worktree_create "task-b-service"
+  run_in_background: true
 )
 ```
 
-Result: List of task packet file paths.
+### 2. Collect Results
 
-### 2. Create Worktrees for Each Task
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/worktree-utils.sh"
-WORKTREE_PATH=$(worktree_create "task-a-component")
-echo "Created worktree at: $WORKTREE_PATH"
+After launching all, collect with TaskOutput:
+
 ```
+packet_writer_result = TaskOutput(task_id: packet_writer_id, block: true)
+worktree_a_result = TaskOutput(task_id: worktree_a_id, block: true)
+worktree_b_result = TaskOutput(task_id: worktree_b_id, block: true)
+```
+
+This reduces setup time by running packet-writer and worktree creation simultaneously.
 
 ### 3. Spawn Task Executors
 

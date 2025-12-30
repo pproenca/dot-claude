@@ -89,15 +89,61 @@ Check for project files:
 - `package.json` → Node project
 - `Cargo.toml` → Rust project
 
-### Step 2: Run All Checks
+### Step 2: Run All Checks in Parallel
 
-Execute each check and capture output:
+Launch all verification commands simultaneously using `run_in_background`:
 
+```claude
+# Launch ALL checks in ONE message for parallel execution
+
+Bash:
+  command: "uv run pytest -v --tb=short 2>&1"
+  description: "Run test suite"
+  run_in_background: true
+
+Bash:
+  command: "ty check 2>&1"
+  description: "Run type checker"
+  run_in_background: true
+
+Bash:
+  command: "uv run ruff check . 2>&1"
+  description: "Run linter"
+  run_in_background: true
+```
+
+Then collect all results:
+
+```claude
+# Collect results (all ran in parallel)
+TaskOutput:
+  task_id: pytest_task_id
+  block: true
+
+TaskOutput:
+  task_id: typecheck_task_id
+  block: true
+
+TaskOutput:
+  task_id: lint_task_id
+  block: true
+```
+
+This runs pytest, type check, and lint simultaneously instead of sequentially.
+
+**WRONG (Sequential):**
 ```bash
-# Example for Python
 echo "=== TESTS ===" && uv run pytest -v --tb=short 2>&1
 echo "=== TYPE CHECK ===" && ty check 2>&1
 echo "=== LINT ===" && uv run ruff check . 2>&1
+```
+
+**RIGHT (Parallel):**
+```
+Bash(pytest, run_in_background: true)
+Bash(ty check, run_in_background: true)
+Bash(ruff, run_in_background: true)
+# Then collect with TaskOutput
 ```
 
 ### Step 3: Report Results

@@ -91,14 +91,25 @@ Extract from the task packet (file or inline):
 
 Note: If you loaded from `TASK_PACKET_PATH`, the file contains all this information.
 
-### Step 2: Load Minimal Context
+### Step 2: Load Minimal Context (Parallel Reads)
 
-Read only what you need:
+Read all scope files in ONE message for parallel loading:
+
+```claude
+# All Read calls in SINGLE message - execute simultaneously
+Read(src/auth/token.py)
+Read(src/auth/session.py)
+Read(tests/auth/test_token.py)
+```
+
+All files load simultaneously, reducing context loading time.
+
+**What to read:**
 1. Files in scope (create/modify)
 2. Interface definitions from artifacts if dependent task
 3. Existing code patterns to follow
 
-Do NOT read:
+**Do NOT read:**
 - Full codebase
 - Unrelated modules
 - Other task packets
