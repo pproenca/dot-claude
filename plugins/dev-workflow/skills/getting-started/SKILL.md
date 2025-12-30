@@ -312,37 +312,18 @@ Use `ExitPlanMode(launchSwarm: true, teammateCount: N)` to spawn parallel teamma
 
 ### State Persistence (Resume Capability)
 
-Before executing tasks, import the plan into hyh:
+**State is managed by TodoWrite.** Tasks are tracked as pending/in_progress/completed in the todo list.
 
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-hyh_import_plan "<plan_file_path>"
-```
+The plan file in `docs/plans/` is the source of truth for task definitions.
 
-This creates workflow state in the hyh daemon with:
-- Task definitions from the plan
-- Status tracking (pending/running/completed)
-- Worker assignment
-
-**State is managed by hyh daemon.** Tasks are claimed atomically via `uvx hyh task claim` and completed via `uvx hyh task complete`.
-
-**If session ends unexpectedly**, the next session will detect active workflow via hyh and prompt:
-```
-ACTIVE WORKFLOW DETECTED
-Progress: 3/8 tasks completed
-- Pending: 5
-- Running: 0
+**If session ends unexpectedly:**
+1. Re-run `/dev-workflow:execute-plan [plan-file]`
+2. TodoWrite shows which tasks are complete
+3. Skip completed tasks, continue from first pending
 
 Commands:
-- /dev-workflow:resume - Continue execution
-- /dev-workflow:abandon - Discard workflow state
-```
-
-**After workflow completes** (code review + finish branch done), clear state:
-
-```bash
-uvx hyh plan reset
-```
+- /dev-workflow:resume - Continue execution from TodoWrite state
+- /dev-workflow:abandon - Clear TodoWrite and stop
 
 ### Post-Execution Actions
 

@@ -1,43 +1,9 @@
 #!/bin/bash
-# Session start hook - detects active workflow or loads getting-started skill
-# Queries hyh daemon for active workflow state (harness renamed to hyh)
+# Session start hook - loads getting-started skill
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck disable=SC1091
-source "$SCRIPT_DIR/../scripts/ensure-hyh.sh"
-
-# Run hyh command via uvx
-_run_hyh() {
-  uvx hyh "$@"
-}
-
-# Check for active hyh workflow
-if ensure_hyh 2>/dev/null; then
-  # Query hyh for active workflow
-  STATE=$(_run_hyh get-state 2>/dev/null || echo '{}')
-  TASK_COUNT=$(echo "$STATE" | jq '.tasks | length' 2>/dev/null || echo "0")
-
-  if [[ "$TASK_COUNT" -gt 0 ]]; then
-    COMPLETED=$(echo "$STATE" | jq '[.tasks[] | select(.status == "completed")] | length' 2>/dev/null || echo "0")
-    PENDING=$(echo "$STATE" | jq '[.tasks[] | select(.status == "pending")] | length' 2>/dev/null || echo "0")
-    RUNNING=$(echo "$STATE" | jq '[.tasks[] | select(.status == "running")] | length' 2>/dev/null || echo "0")
-
-    # Output hyh workflow resume context
-    cat << EOF
-{
-  "hookSpecificOutput": {
-    "hookEventName": "SessionStart",
-    "additionalContext": "<system-context>\\n**ACTIVE WORKFLOW DETECTED**\\n\\nProgress: ${COMPLETED}/${TASK_COUNT} tasks completed\\n- Pending: ${PENDING}\\n- Running: ${RUNNING}\\n\\nCommands:\\n- /dev-workflow:resume - Continue execution\\n- /dev-workflow:abandon - Discard workflow state\\n</system-context>"
-  }
-}
-EOF
-    exit 0
-  fi
-fi
-
-# No active workflow - load getting-started skill
+# Load getting-started skill
 SKILL_FILE="${CLAUDE_PLUGIN_ROOT}/skills/getting-started/SKILL.md"
 
 if [[ -f "$SKILL_FILE" ]]; then

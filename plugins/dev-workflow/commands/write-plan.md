@@ -208,21 +208,7 @@ git add docs/plans/
 git commit -m "docs: implementation plan for <feature>"
 ```
 
-## Step 5: Import Plan into hyh
-
-After saving the plan file, import it into hyh:
-
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-hyh_import_plan "$PLAN_FILE"
-```
-
-This validates the DAG (cycle detection, missing dependencies) and creates
-atomic state with all tasks pending.
-
-If import fails, fix the plan and retry.
-
-## Step 6: Execution Handoff
+## Step 5: Execution Handoff
 
 Use AskUserQuestion:
 
@@ -252,7 +238,7 @@ Report the plan file path for manual execution.
 
 **If "Revise plan":**
 
-Wait for feedback, update plan, return to Step 5.
+Wait for feedback, update plan, return to Step 4.
 
 ## Remember
 

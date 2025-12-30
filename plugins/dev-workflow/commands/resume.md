@@ -7,78 +7,59 @@ allowed-tools: Read, Bash, TodoWrite, Task, Skill, AskUserQuestion, mcp__plugin_
 
 Resume execution of an interrupted plan from where it left off.
 
-## Step 1: Check Workflow State (with hyh)
+## Step 1: Check Current State
 
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
-PROGRESS=$(hyh_get_progress)
-PENDING=$(echo "$PROGRESS" | jq '.pending')
-RUNNING=$(echo "$PROGRESS" | jq '.running')
-COMPLETED=$(echo "$PROGRESS" | jq '.completed')
-TOTAL=$(echo "$PROGRESS" | jq '.total')
+Check TodoWrite for current progress:
 
-if [[ "$PENDING" -eq 0 && "$RUNNING" -eq 0 ]]; then
-  echo "No pending tasks. Workflow complete."
-  exit 0
-fi
-
-echo "Workflow status: $COMPLETED/$TOTAL completed, $RUNNING running, $PENDING pending"
+```claude
+# Check TodoWrite state - the existing todo list shows current progress
+# Pending tasks are those not yet completed
+# Count completed vs total to show progress
 ```
 
-## Step 2: Verify State
+Check git log for recent work:
 
-1. Query hyh for full state:
-   ```bash
-   uvx hyh get-state
-   ```
-2. Check git log to see completed work:
-   ```bash
-   git log --oneline --since="1 day ago"
-   ```
-3. Identify which tasks are completed vs pending
+```bash
+git log --oneline --since="1 day ago" | head -20
+```
 
-## Step 3: Ask User
+## Step 2: Ask User
 
 Use AskUserQuestion:
 
 ```claude
 AskUserQuestion:
   header: "Resume"
-  question: "Continue workflow execution? ($COMPLETED/$TOTAL tasks completed, $PENDING pending, $RUNNING running)"
+  question: "Continue workflow execution?"
   multiSelect: false
   options:
     - label: "Continue"
-      description: "Resume execution - agents will claim next available tasks"
+      description: "Resume execution from first pending task"
     - label: "Review first"
       description: "Show completed work before continuing"
 ```
 
-## Step 4: Execute (with hyh)
+## Step 3: Execute
 
 **If Continue:**
-1. Re-dispatch agents - they will automatically claim uncompleted tasks
-2. Agents call `uvx hyh task claim` to get their next task
-3. Running tasks that timed out will be automatically reclaimed by hyh
-4. No manual state file manipulation needed - hyh handles everything
+
+1. Read the original plan file
+2. Check TodoWrite for pending tasks
+3. Continue with `/dev-workflow:execute-plan [plan-file]`
+4. The command will detect completed tasks in TodoWrite and skip them
 
 **If Review first:**
-1. Show git log with diff summary
-2. Show hyh state with task statuses
-3. Then ask again if ready to continue
 
-## Step 5: Complete Workflow
+1. Show git log with diff summary:
+   ```bash
+   git log --oneline --stat --since="1 day ago"
+   ```
+2. Then ask again if ready to continue
+
+## Step 4: Complete Workflow
 
 After all tasks done:
-1. Verify all tasks are completed:
-   ```bash
-   PROGRESS=$(hyh_get_progress)
-   PENDING=$(echo "$PROGRESS" | jq '.pending')
-   if [[ "$PENDING" -gt 0 ]]; then
-     echo "Error: Workflow incomplete, $PENDING tasks pending"
-     exit 1
-   fi
-   ```
-2. Run code review (Task tool with dev-workflow:code-reviewer)
-3. Use Skill("dev-workflow:receiving-code-review")
-4. Use Skill("dev-workflow:finishing-a-development-branch")
-5. No state file cleanup needed - hyh manages state lifecycle
+
+1. Run code review (Task tool with dev-workflow:code-reviewer)
+2. Use Skill("dev-workflow:receiving-code-review")
+3. Use Skill("dev-workflow:finishing-a-development-branch")

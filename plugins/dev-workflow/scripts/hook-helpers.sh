@@ -1,6 +1,5 @@
 #!/bin/bash
 # Helper functions for dev-workflow hooks and scripts
-# All state management is via hyh daemon (accessed via 'uvx hyh')
 
 # =============================================================================
 # Plan Parsing Functions (for parallel task grouping)
@@ -140,72 +139,3 @@ get_max_parallel_from_groups() {
   echo "$max_parallel"
 }
 
-# =============================================================================
-# Hyh Integration Functions
-# Accessed via 'uvx hyh'
-# =============================================================================
-
-# Run hyh command via uvx
-_run_hyh() {
-  uvx hyh "$@"
-}
-
-# Get workflow progress as JSON: {total, completed, pending, running}
-hyh_get_progress() {
-  local state
-  state=$(_run_hyh get-state 2>/dev/null || echo '{"tasks":{}}')
-
-  echo "$state" | jq '{
-    total: .tasks | length,
-    completed: [.tasks[] | select(.status == "completed")] | length,
-    pending: [.tasks[] | select(.status == "pending")] | length,
-    running: [.tasks[] | select(.status == "running")] | length
-  }'
-}
-
-# Import a plan file into hyh
-hyh_import_plan() {
-  local plan_file="$1"
-  local json
-  local temp_file
-
-  # Convert markdown plan to hyh JSON (use CLAUDE_PLUGIN_ROOT, not BASH_SOURCE)
-  json=$("${CLAUDE_PLUGIN_ROOT}/scripts/plan-to-hyh.sh" "$plan_file")
-
-  # Write JSON to temp file wrapped in markdown code fence (hyh expects this)
-  temp_file=$(mktemp)
-  cat > "$temp_file" << EOF
-\`\`\`json
-$json
-\`\`\`
-EOF
-
-  # Import into hyh using --file
-  _run_hyh plan import --file "$temp_file"
-  local result=$?
-
-  rm -f "$temp_file"
-  return $result
-}
-
-# Claim next available task for current worker
-hyh_claim_task() {
-  _run_hyh task claim
-}
-
-# Complete a task
-hyh_complete_task() {
-  local task_id="$1"
-  _run_hyh task complete --id "$task_id"
-}
-
-# Force-complete a task (for recovery when work was done but hyh wasn't updated)
-hyh_force_complete_task() {
-  local task_id="$1"
-  _run_hyh task complete --id "$task_id" --force
-}
-
-# Get list of pending task IDs
-hyh_get_pending_tasks() {
-  _run_hyh get-state 2>/dev/null | jq -r '.tasks | to_entries[] | select(.value.status == "pending") | .key'
-}

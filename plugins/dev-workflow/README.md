@@ -110,14 +110,14 @@ git clone https://github.com/pproenca/dev-workflow ~/.claude/plugins/dev-workflo
 
 ## Prerequisites
 
-**Required:** `git`, `hyh` (install via `uv tool install hyh`)
+**Required:** `git`
 **Optional:** `jq`, `bats-core`, `shellcheck`, `pre-commit`
 
 ## Usage
 
 Skills load automatically at session start. The `getting-started` skill establishes the protocol: before any task, check if a skill applies.
 
-State is managed by the hyh daemon. Sessions can crash and resume via `/dev-workflow:resume`.
+State is managed by TodoWrite. Sessions can resume via `/dev-workflow:resume`.
 
 ## Development
 

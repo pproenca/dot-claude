@@ -9,14 +9,6 @@ HOOK="$PLUGIN_ROOT/hooks/session-start.sh"
 setup() {
   setup_test_dir  # Fast: no git init (session-start doesn't need git)
   export CLAUDE_PLUGIN_ROOT="$PLUGIN_ROOT"
-  # Fast-fail hyh checks (avoid 5s timeout per test)
-  export HYH_TIMEOUT=0
-  # Mock uvx to fail fast (prevents real daemon spawn attempts)
-  mkdir -p "$TEST_DIR/mocks"
-  echo '#!/bin/bash
-exit 1' > "$TEST_DIR/mocks/uvx"
-  chmod +x "$TEST_DIR/mocks/uvx"
-  export PATH="$TEST_DIR/mocks:$PATH"
 }
 
 teardown() {
@@ -161,65 +153,3 @@ EOF
   [ "$status" -ne 0 ]
 }
 
-# ============================================================================
-# Hyh integration (2 tests) - Note: accessed via 'uvx hyh'
-# ============================================================================
-
-@test "hyh integration: detects active hyh workflow" {
-  cd "$TEST_DIR"
-
-  # Mock uvx command (hyh is accessed via 'uvx hyh')
-  mkdir -p "$TEST_DIR/mocks"
-  cat > "$TEST_DIR/mocks/uvx" << 'EOF'
-#!/bin/bash
-# uvx receives: hyh <command>
-if [[ "$1" == "hyh" && "$2" == "ping" ]]; then
-  echo "pong"
-  exit 0
-fi
-if [[ "$1" == "hyh" && "$2" == "get-state" ]]; then
-  echo '{"tasks":{"task-1":{"status":"completed"},"task-2":{"status":"pending"}}}'
-  exit 0
-fi
-exit 0
-EOF
-  chmod +x "$TEST_DIR/mocks/uvx"
-  export PATH="$TEST_DIR/mocks:$PATH"
-
-  run "$HOOK"
-
-  [ "$status" -eq 0 ]
-  echo "$output" | grep -q "ACTIVE WORKFLOW DETECTED"
-  echo "$output" | grep -q "Progress: 1/2"
-}
-
-@test "hyh integration: shows no workflow when hyh state empty" {
-  cd "$TEST_DIR"
-
-  # Mock uvx command to return empty state
-  mkdir -p "$TEST_DIR/mocks"
-  cat > "$TEST_DIR/mocks/uvx" << 'EOF'
-#!/bin/bash
-# uvx receives: hyh <command>
-if [[ "$1" == "hyh" && "$2" == "ping" ]]; then
-  echo "pong"
-  exit 0
-fi
-if [[ "$1" == "hyh" && "$2" == "get-state" ]]; then
-  echo '{"tasks":{}}'
-  exit 0
-fi
-exit 0
-EOF
-  chmod +x "$TEST_DIR/mocks/uvx"
-  export PATH="$TEST_DIR/mocks:$PATH"
-
-  run "$HOOK"
-
-  [ "$status" -eq 0 ]
-  # Should show getting-started skill (not the workflow resume prompt)
-  # The presence of "dev-workflow skills available" proves skill was loaded,
-  # meaning workflow was not detected (these are mutually exclusive paths)
-  echo "$output" | grep -q "dev-workflow skills available"
-  echo "$output" | grep -q "Getting Started"
-}

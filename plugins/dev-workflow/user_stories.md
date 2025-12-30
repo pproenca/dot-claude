@@ -202,17 +202,17 @@
 
 | ID | Story | Priority | Status |
 |----|-------|----------|--------|
-| **US-5.1.1** | As a developer, I want workflow state persisted so that I can resume in new sessions | Critical | **DONE** - Via hyh daemon |
-| **US-5.1.2** | As a developer, I want state scoped to worktree so that parallel sessions don't conflict | Nice | **DONE** - hyh daemon per worktree |
-| **US-5.1.3** | As a developer, I want recovery instructions if state is corrupted so that I can fix issues | Nice | **DONE** - `uvx hyh plan reset` to clear |
+| **US-5.1.1** | As a developer, I want workflow state persisted so that I can resume in new sessions | Critical | **DONE** - Via TodoWrite |
+| **US-5.1.2** | As a developer, I want state scoped to worktree so that parallel sessions don't conflict | Nice | **DONE** - TodoWrite per session |
+| **US-5.1.3** | As a developer, I want recovery instructions if state is corrupted so that I can fix issues | Nice | **DONE** - `/dev-workflow:abandon` to clear |
 
 #### T5.2 Track progress
 
 | ID | Story | Priority | Status |
 |----|-------|----------|--------|
-| **US-5.2.1** | As a developer, I want progress logged with timestamps so that I can see execution history | Nice | **DONE** - Via hyh trajectory.jsonl |
-| **US-5.2.2** | As a developer, I want phase summaries logged so that context can be quickly restored | Nice | **DONE** - Via hyh trajectory logger |
-| **US-5.2.3** | As a developer, I want `get_recent_progress` helper for resume context so that I can understand where I left off | Nice | **DONE** - Via `uvx hyh get-state` |
+| **US-5.2.1** | As a developer, I want progress logged with timestamps so that I can see execution history | Nice | **DONE** - Via git log |
+| **US-5.2.2** | As a developer, I want phase summaries logged so that context can be quickly restored | Nice | **DONE** - Via TodoWrite state |
+| **US-5.2.3** | As a developer, I want progress helper for resume context so that I can understand where I left off | Nice | **DONE** - Via TodoWrite |
 
 #### T5.3 Manage worktrees
 

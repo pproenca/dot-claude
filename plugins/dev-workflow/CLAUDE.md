@@ -33,7 +33,7 @@ Tests run on commit via pre-commit hook.
 **Hooks** (`hooks/hooks.json`):
 - `SessionStart` → loads getting-started skill with planning methodology
 
-**Helper functions**: `scripts/hook-helpers.sh` provides plan parsing and hyh integration functions.
+**Helper functions**: `scripts/hook-helpers.sh` provides plan parsing and task grouping functions.
 
 ## Component Frontmatter
 
@@ -96,5 +96,5 @@ tests/           # Bats tests for hooks and scripts
 
 ## Dependencies
 
-**Required:** `git`, `hyh` (install via `uv tool install hyh`)
+**Required:** `git`
 **Optional:** `jq`, `bats-core`, `shellcheck`, `pre-commit`
