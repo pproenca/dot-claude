@@ -164,6 +164,19 @@
         "verification",
         "task-decomposition"
       ]
+    },
+    {
+      "name": "dev-workflow",
+      "source": "./plugins/dev-workflow",
+      "description": "TDD enforcement, systematic debugging, and code review with planning methodology loaded at session start",
+      "keywords": [
+        "tdd",
+        "debugging",
+        "code-review",
+        "planning",
+        "methodology",
+        "verification"
+      ]
     }
   ]
 }
