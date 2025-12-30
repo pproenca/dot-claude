@@ -314,3 +314,26 @@ EOF
   echo "$result" | grep -q "group2:1.1"
 }
 
+# ============================================================================
+# get_max_parallel_from_groups() tests
+# ============================================================================
+
+@test "get_max_parallel_from_groups: returns largest group size" {
+  result=$(get_max_parallel_from_groups "group1:1,2,3|group2:4,5|group3:6")
+  [[ "$result" == "3" ]]
+}
+
+@test "get_max_parallel_from_groups: single group" {
+  result=$(get_max_parallel_from_groups "group1:1,2")
+  [[ "$result" == "2" ]]
+}
+
+@test "get_max_parallel_from_groups: single task groups" {
+  result=$(get_max_parallel_from_groups "group1:1|group2:2|group3:3")
+  [[ "$result" == "1" ]]
+}
+
+@test "get_max_parallel_from_groups: handles decimal task numbers" {
+  result=$(get_max_parallel_from_groups "group1:1,1.1,1.2|group2:2")
+  [[ "$result" == "3" ]]
+}
