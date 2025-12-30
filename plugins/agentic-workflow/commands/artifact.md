@@ -95,7 +95,7 @@ AskUserQuestion({
     multiSelect: false,
     options: [
       {
-        label: "Older than 3 days",
+        label: "Older than 3 days (Recommended)",
         description: "Remove artifacts older than 3 days, keep recent ones"
       },
       {
@@ -115,11 +115,12 @@ AskUserQuestion({
 })
 ```
 
-3. **Based on response**:
-   - "Older than 3 days" → Remove artifacts with modification date > 3 days
-   - "Select specific" → Show list, ask user to specify which ones
-   - "All artifacts" → Clear entire directory
-   - "Cancel" → Exit without changes
+Handle responses:
+- "Older than 3 days" → Remove artifacts with modification date > 3 days
+- "Select specific" → Show list, ask user to specify which ones
+- "All artifacts" → Clear entire directory
+- "Cancel" → Exit without changes
+- "Other" (custom input) → Process user's custom request
 
 4. **Execute cleanup**:
    ```bash

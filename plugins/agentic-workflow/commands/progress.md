@@ -15,16 +15,38 @@ Action: $ARGUMENTS
 - `update`: Interactive update of state files
 - `reset`: Clear state files for fresh start
 
+## Worktree Awareness
+
+This command is worktree-aware. Source utilities first:
+```bash
+source "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/worktree-utils.sh"
+STATE_DIR=$(worktree_state_dir)
+```
+
+State files are scoped to the current context (main repo or worktree).
+
 ## Actions
 
 ### show (default)
 
 Display current state:
 
-1. **Read workflow phase** (.claude/workflow-phase):
+1. **Show worktree context** (if in worktree):
    ```bash
-   cat .claude/workflow-phase 2>/dev/null || echo "No workflow active"
-   cat .claude/plan-approved 2>/dev/null || echo "Not approved"
+   source "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/worktree-utils.sh"
+   if worktree_is_worktree; then
+       echo "## Worktree Context"
+       echo "Name: $(worktree_current)"
+       echo "Branch: $(worktree_current_branch)"
+       echo "Main repo: $(worktree_main_repo)"
+   fi
+   ```
+
+2. **Read workflow phase** (.claude/workflow-phase):
+   ```bash
+   STATE_DIR=$(worktree_state_dir)
+   cat "${STATE_DIR}/workflow-phase" 2>/dev/null || echo "No workflow active"
+   cat "${STATE_DIR}/plan-approved" 2>/dev/null || echo "Not approved"
    ```
 
    Display:
@@ -50,15 +72,31 @@ Display current state:
    ```
 
 3. **Check artifacts**:
+   ```bash
+   STATE_DIR=$(worktree_state_dir)
+   ls "${STATE_DIR}/artifacts/" 2>/dev/null
+   ```
    ```
    ## Artifacts
    Found X artifacts in .claude/artifacts/
    - [list filenames]
    ```
 
-4. **Summary**:
+4. **List active worktrees** (from main repo only):
+   ```bash
+   source "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/worktree-utils.sh"
+   worktree_list
+   ```
+   ```
+   ## Active Worktrees
+   - myapp--task-a [in progress]
+   - myapp--task-b [in progress]
+   ```
+
+5. **Summary**:
    ```
    ## Status Summary
+   - Context: [main repo | worktree name]
    - Phase: [current phase]
    - Progress: [X/Y complete]
    - Next action: [recommendation]
@@ -78,7 +116,7 @@ AskUserQuestion({
     multiSelect: false,
     options: [
       {
-        label: "Mark task complete",
+        label: "Mark task complete (Recommended)",
         description: "Check off a completed task in todo.md"
       },
       {
@@ -98,11 +136,14 @@ AskUserQuestion({
 })
 ```
 
-2. **Based on response, gather details** (may require follow-up questions):
-   - "Mark task complete" → Show pending tasks, ask which to mark done
-   - "Add new task" → Ask for task description
-   - "Update progress notes" → Ask what to record
-   - "Record decision" → Ask for decision details
+Handle responses:
+- "Mark task complete" → Show pending tasks, ask which to mark done
+- "Add new task" → Ask for task description
+- "Update progress notes" → Ask what to record
+- "Record decision" → Ask for decision details
+- "Other" (custom input) → Process user's specific request
+
+2. **Based on response, gather details** (may require follow-up questions)
 
 3. **Make changes**:
    - Edit todo.md as needed
@@ -130,7 +171,7 @@ AskUserQuestion({
         description: "Delete all state files including .claude/artifacts/"
       },
       {
-        label: "Keep artifacts",
+        label: "Keep artifacts (Recommended)",
         description: "Reset workflow but preserve .claude/artifacts/ for reference"
       },
       {
@@ -142,19 +183,27 @@ AskUserQuestion({
 })
 ```
 
-2. **Based on response**:
-   - "Reset everything" → Delete todo.md, progress.txt, .claude/workflow-phase, .claude/plan-approved, .claude/artifacts/
-   - "Keep artifacts" → Delete todo.md, progress.txt, .claude/workflow-phase, .claude/plan-approved only
-   - "Cancel" → Exit without changes
-   - "Other" → Process custom user request
+Handle responses:
+- "Reset everything" → Delete todo.md, progress.txt, .claude/workflow-phase, .claude/plan-approved, .claude/artifacts/, and all worktrees
+- "Keep artifacts" → Delete todo.md, progress.txt, .claude/workflow-phase, .claude/plan-approved only (keep artifacts and worktrees)
+- "Cancel" → Exit without changes
+- "Other" (custom input) → Process user's custom request
 
-3. **Report**:
+3. **Clean up worktrees** (if resetting everything):
+   ```bash
+   source "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/worktree-utils.sh"
+   worktree_cleanup
+   ```
+
+4. **Report**:
    - "State cleared. Ready for new orchestration."
 
-## Example: show
+## Example: show (from main repo)
 
 ```
 /progress
+
+## Worktrees for project: myapp
 
 ## Workflow Phase
 Current: DELEGATE
@@ -190,10 +239,46 @@ Current phase: 2 of 3
 Found 1 artifact in .claude/artifacts/
 - task-a-token-service.md
 
+## Active Worktrees
+~/.dot-claude-worktrees/myapp--token-service    [completed]
+~/.dot-claude-worktrees/myapp--session-service  [in progress]
+
 ## Status Summary
-- Phase: 2 (Implementation)
+- Context: main repo
+- Phase: DELEGATE
 - Progress: 43% complete
+- Active worktrees: 2
 - Next action: Continue with session service implementation
+```
+
+## Example: show (from worktree)
+
+```
+/progress
+
+## Worktree Context
+Name: myapp--session-service
+Branch: session-service
+Main repo: /Users/pedro/Projects/myapp
+
+## Workflow Phase
+Current: DELEGATE
+Plan approved: yes
+
+## todo.md
+# Session Service Implementation
+- [x] Create session model
+- [ ] Implement session store
+- [ ] Add session middleware
+
+Progress: 1/3 items complete (33%)
+Next incomplete: Implement session store
+
+## Status Summary
+- Context: worktree (myapp--session-service)
+- Phase: DELEGATE
+- Progress: 33% complete
+- Next action: Implement session store
 ```
 
 ## Example: update
