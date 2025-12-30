@@ -199,6 +199,71 @@ Use Task tool:
 - model: opus
 ```
 
+## Background Execution Pattern
+
+For long-running tasks where you want to continue working while waiting:
+
+### Launch in Background
+
+```
+Task tool with:
+- subagent_type: task-executor
+- prompt: [task packet]
+- run_in_background: true  ← KEY PARAMETER
+```
+
+Returns immediately with `task_id`. The subagent runs asynchronously.
+
+### Retrieve Results Later
+
+```
+TaskOutput tool with:
+- task_id: [returned task_id]
+- block: true  ← Wait for completion
+- timeout: 300000  ← 5 minutes max
+```
+
+### When to Use Background vs Foreground
+
+| Scenario | Use Background? |
+|----------|-----------------|
+| Single task, need result immediately | No |
+| Multiple independent tasks (Wave 1) | Yes - launch all, then wait for all |
+| Task while preparing next wave | Yes |
+| Verification agents | Optional - parallel foreground is usually fine |
+
+### Pattern: Launch Multiple, Then Collect
+
+```
+# Launch 3 tasks in background
+task_a_id = Task(executor, Task A, run_in_background: true)
+task_b_id = Task(executor, Task B, run_in_background: true)
+task_c_id = Task(executor, Task C, run_in_background: true)
+
+# Continue with other prep work here...
+# (e.g., prepare Wave 2 task packets)
+
+# Collect results when ready
+result_a = TaskOutput(task_a_id, block: true)
+result_b = TaskOutput(task_b_id, block: true)
+result_c = TaskOutput(task_c_id, block: true)
+```
+
+### Alternative: Parallel Foreground (Simpler)
+
+For most cases, parallel foreground is simpler - just include multiple Task tool calls in a single message:
+
+```
+Single message with multiple Task tool calls:
+- Task(executor, Task A)
+- Task(executor, Task B)
+- Task(executor, Task C)
+
+All three execute simultaneously and results arrive together.
+```
+
+Use background execution when you need to do other work while waiting.
+
 ---
 
 For complete task packet examples, see examples/task-packet-example.md

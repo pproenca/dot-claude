@@ -196,6 +196,58 @@ After subagents complete, spawn verification agents:
 
 Run these in parallel. Collect results.
 
+### Parallel Invocation Pattern (CRITICAL)
+
+To run agents in parallel, include MULTIPLE Task tool calls in a SINGLE assistant message:
+
+**Example: Verification Phase**
+```
+In your response, invoke ALL THREE tools at once:
+
+[Task tool call 1]
+- description: "Security and patterns review"
+- subagent_type: "code-reviewer"
+- prompt: [task packet with implementation + tests]
+
+[Task tool call 2]
+- description: "Generalization check"
+- subagent_type: "anti-overfit-checker"
+- prompt: [task packet with implementation ONLY - no tests]
+
+[Task tool call 3]
+- description: "Full test suite"
+- subagent_type: "integration-tester"
+- prompt: [task packet with full project]
+```
+
+All three execute **simultaneously** because they're in the same message.
+
+**Example: Wave 1 Delegation**
+For independent tasks in Wave 1, spawn multiple task-executors in one message:
+```
+[Task tool call 1]
+- subagent_type: "task-executor"
+- prompt: [Task A packet - token service]
+
+[Task tool call 2]
+- subagent_type: "task-executor"
+- prompt: [Task B packet - session service]
+```
+
+**WRONG (Sequential):**
+```
+Message 1: Task(task-executor, Task A)
+[wait for result]
+Message 2: Task(task-executor, Task B)
+[wait for result]
+```
+
+**RIGHT (Parallel):**
+```
+Single Message: Task(task-executor, Task A) + Task(task-executor, Task B)
+[both execute simultaneously]
+```
+
 ## Phase 5: SYNTHESIZE
 
 **Goal**: Collect artifacts, resolve issues, finalize implementation.

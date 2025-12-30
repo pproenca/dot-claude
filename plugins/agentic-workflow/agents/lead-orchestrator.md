@@ -296,13 +296,43 @@ For each task:
 echo "VERIFY" > "${STATE_DIR}/workflow-phase"
 ```
 
-After subagents complete, spawn verification:
+After subagents complete, spawn ALL THREE verification agents in a **SINGLE message**:
 
-1. **code-reviewer** - Security, performance, patterns
-2. **anti-overfit-checker** - Generalization check
-3. **integration-tester** - Full test suite
+**In your response, include THREE Task tool invocations:**
 
-Run these in parallel. Collect results.
+```
+Task 1:
+- description: "Security and patterns review"
+- subagent_type: code-reviewer
+- prompt: |
+    Review implementation for security, performance, and patterns.
+    Files: [list modified files from artifacts]
+    Tests: [list test files]
+    Focus: OWASP vulnerabilities, N+1 queries, error handling
+
+Task 2:
+- description: "Generalization check"
+- subagent_type: anti-overfit-checker
+- prompt: |
+    Check for overfitting to specific inputs.
+    Files: [list modified files - NO TEST FILES]
+    Look for: hardcoded values, narrow edge-case handling, magic numbers
+
+Task 3:
+- description: "Full test suite"
+- subagent_type: integration-tester
+- prompt: |
+    Run full test suite, typecheck, lint.
+    Commands: uv run pytest, ty check, uv run ruff check
+    Report: Pass/fail status for each
+```
+
+**CRITICAL**: All three MUST be in the SAME assistant message to execute in parallel.
+If you spawn them in separate messages, they will run sequentially (3x slower).
+
+Collect and synthesize results after all three complete.
+
+**Note**: SubagentStop hooks provide initial verification, but always RE-CHECK artifacts and test results in your orchestrator context after collecting results.
 
 ### Phase 5: SYNTHESIZE
 
