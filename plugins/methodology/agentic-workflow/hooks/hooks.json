@@ -1,0 +1,62 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/post-tool-use.sh \"$TOOL_INPUT_FILE\"",
+            "timeout": 30000
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before compacting context, preserve these critical elements:\n\n1. KEY DECISIONS: Any architectural decisions, technology choices, or design patterns chosen\n2. BUGS/ISSUES FOUND: Any bugs discovered during implementation that need attention\n3. CRITICAL FILE PATHS: Files that were modified or are essential for current task\n4. CURRENT TASK STATE: What step are we on? What's next?\n5. INTERFACE CONTRACTS: Any APIs or interfaces that were defined\n\nDO NOT preserve:\n- Exploratory file reads that led nowhere\n- Superseded approaches that were abandoned\n- Verbose error messages (keep just the error type)\n\nAfter compaction, immediately re-read todo.md and progress.txt to restore external state."
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before allowing this subagent to complete, verify:\n\n1. TASK PACKET OBJECTIVE: Was the single clear goal achieved?\n2. SUCCESS CRITERIA: Are all measurable criteria met?\n3. ARTIFACT WRITTEN: Was a summary artifact written to .claude/artifacts/?\n4. TESTS PASSING: Did the subagent run and pass relevant tests?\n5. SCOPE RESPECTED: Did subagent stay within defined file scope?\n\nIf any criteria not met, instruct subagent to continue with specific guidance on what's missing."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/verify-complete.sh",
+            "timeout": 120000
+          }
+        ]
+      }
+    ]
+  }
+}

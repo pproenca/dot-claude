@@ -1,0 +1,8 @@
+{
+  "name": "agentic-workflow",
+  "description": "Multi-agent orchestration with anti-abandonment patterns - Explore, Plan, Delegate, Verify, Synthesize",
+  "author": {
+    "name": "Pedro Proenca",
+    "email": "pedro@10xengs.com"
+  }
+}

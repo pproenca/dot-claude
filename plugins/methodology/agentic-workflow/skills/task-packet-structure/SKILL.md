@@ -1,0 +1,204 @@
+---
+name: task-packet-structure
+description: This skill activates when creating tasks for subagents, delegating work, structuring handoffs, or when phrases like "task packet", "delegate task", "subagent handoff", "create task", "spawn agent" are used. Provides the standard task packet format for subagent delegation.
+---
+
+# Task Packet Structure
+
+Task packets are the atomic units of work delegated to subagents. They contain everything a subagent needs to complete a focused task independently.
+
+## Required Fields
+
+Every task packet MUST include these 6 fields:
+
+### 1. Objective
+
+Single clear goal in one sentence. The subagent should know exactly what success looks like.
+
+✅ Good: "Implement JWT token generation that returns signed tokens with user claims"
+❌ Bad: "Work on the auth system"
+
+### 2. Scope
+
+Exact files and modules the subagent is allowed to modify.
+
+```
+Files to create:
+- src/auth/token.py
+
+Files to modify:
+- src/auth/__init__.py (add export)
+
+Files to read (context only):
+- src/models/user.py
+- src/config.py
+```
+
+### 3. Interface
+
+Input and output contracts. What does this component receive? What does it produce?
+
+```python
+# Input
+class UserCredentials(Struct):
+    user_id: str
+    email: str
+
+# Output
+def generate_token(credentials: UserCredentials) -> str:
+    """Returns JWT token string"""
+```
+
+### 4. Constraints
+
+What the subagent should NOT do. Critical for preventing scope creep.
+
+```
+DO NOT:
+- Modify API endpoints (separate task)
+- Implement session management (separate task)
+- Add refresh token logic (deferred)
+- Change user model structure
+- Add new dependencies without approval
+```
+
+### 5. Success Criteria
+
+Measurable completion conditions. How do we know the task is done?
+
+```
+Success when:
+- [ ] generate_token function implemented
+- [ ] validate_token function implemented
+- [ ] Unit tests pass (minimum 5 tests)
+- [ ] Handles expired tokens
+- [ ] Handles invalid signatures
+- [ ] Type check passes
+- [ ] Lint clean
+```
+
+### 6. Tool Allowlist
+
+Which tools the subagent may use.
+
+```
+Allowed tools:
+- Read (for reading context files)
+- Write (for creating new files)
+- Edit (for modifying existing files)
+- Bash (for running tests, type check, lint)
+- Grep (for finding patterns)
+- Glob (for finding files)
+
+NOT allowed:
+- Task (no spawning sub-subagents)
+- WebSearch/WebFetch (work with local context only)
+```
+
+## Complete Example
+
+```markdown
+# Task Packet: Token Service Implementation
+
+## Objective
+Implement JWT token generation and validation service that creates signed tokens with user claims and validates incoming tokens.
+
+## Scope
+Create:
+- src/auth/token.py
+
+Modify:
+- src/auth/__init__.py (add exports)
+
+Read only:
+- src/models/user.py (for UserCredentials type)
+- src/config.py (for SECRET_KEY)
+
+## Interface
+
+```python
+# Input type (from src/models/user.py)
+class UserCredentials(Struct):
+    user_id: str
+    email: str
+
+# Functions to implement
+def generate_token(credentials: UserCredentials) -> str:
+    """
+    Generate JWT token for user.
+    Token contains: sub (user_id), email, exp (1 hour from now)
+    """
+
+def validate_token(token: str) -> TokenPayload | None:
+    """
+    Validate JWT token.
+    Returns TokenPayload if valid, None if invalid/expired.
+    """
+
+# Output type to define
+class TokenPayload(Struct):
+    sub: str
+    email: str
+    exp: datetime
+```
+
+## Constraints
+DO NOT:
+- Implement session management (Task B)
+- Add API endpoints (Task C)
+- Implement refresh tokens (deferred)
+- Modify user model
+- Add database operations
+- Use any external APIs
+
+## Success Criteria
+- [ ] generate_token implemented and tested
+- [ ] validate_token implemented and tested
+- [ ] TokenPayload struct defined
+- [ ] Minimum 5 unit tests
+- [ ] Tests cover: valid token, expired token, invalid signature
+- [ ] uv run pytest passes
+- [ ] ty check passes
+- [ ] uv run ruff check passes
+- [ ] Artifact written to .claude/artifacts/task-a-token.md
+
+## Tool Allowlist
+- Read, Write, Edit, Bash, Grep, Glob
+```
+
+## What NOT to Include
+
+Keep task packets focused. Do NOT include:
+
+- Full codebase context
+- Other task packets
+- Previous conversation history
+- Unrelated module contents
+- The full plan.md
+
+If subagent needs context from another task, reference the artifact:
+"Read .claude/artifacts/task-a-token.md for the TokenPayload interface"
+
+## Context Budget
+
+Target: 15-20K tokens per implementation agent
+
+Breakdown:
+- System prompt: ~2K
+- Task packet: ~1-2K
+- Interface definitions: ~1K
+- Relevant existing code: ~5-10K
+- Buffer for exploration: ~5K
+
+## Spawning with Task Tool
+
+```
+Use Task tool:
+- subagent_type: task-executor
+- prompt: [Full task packet above]
+- model: sonnet (for implementation) or haiku (for verification)
+```
+
+---
+
+For complete task packet examples, see examples/task-packet-example.md
