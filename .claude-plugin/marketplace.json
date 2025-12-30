@@ -11,161 +11,6 @@
   "repository": "https://github.com/pedroproenca/dot-claude",
   "plugins": [
     {
-      "name": "commit",
-      "description": "Git workflows: worktrees, branches, and commit organization",
-      "source": "./plugins/essential/commit",
-      "version": "1.0.0",
-      "keywords": [
-        "git",
-        "worktrees",
-        "branches",
-        "commits"
-      ],
-      "license": "MIT"
-    },
-    {
-      "name": "core",
-      "source": "./plugins/essential/core",
-      "description": "Core workflows: TDD, verification, brainstorming - essential capabilities always loaded",
-      "version": "1.0.0",
-      "keywords": [
-        "tdd",
-        "verification",
-        "brainstorming",
-        "core"
-      ],
-      "license": "MIT"
-    },
-    {
-      "name": "debug",
-      "description": "Systematic debugging: root cause analysis, defense-in-depth validation, log correlation, and distributed systems troubleshooting",
-      "source": "./plugins/methodology/debug",
-      "version": "1.0.0",
-      "keywords": [
-        "debugging",
-        "root-cause",
-        "defense-in-depth",
-        "distributed-systems",
-        "logs",
-        "error-correlation"
-      ],
-      "license": "MIT"
-    },
-    {
-      "name": "doc",
-      "description": "Documentation: API docs, tutorials, memos, architecture guides, Mermaid diagrams",
-      "source": "./plugins/domain/doc",
-      "version": "1.0.0",
-      "keywords": [
-        "documentation",
-        "api-docs",
-        "tutorials",
-        "mermaid",
-        "architecture",
-        "memos",
-        "amazon-style"
-      ],
-      "license": "MIT"
-    },
-    {
-      "name": "meta",
-      "source": "./plugins/specialized/meta",
-      "description": "Plugin development: writing skills, testing skills, marketplace analysis",
-      "version": "1.0.0",
-      "keywords": [
-        "plugin-development",
-        "skills",
-        "marketplace",
-        "meta"
-      ],
-      "license": "MIT"
-    },
-    {
-      "name": "python",
-      "description": "Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django and production-ready practices",
-      "source": "./plugins/domain/python",
-      "version": "1.0.0",
-      "keywords": [
-        "python",
-        "uv",
-        "ruff",
-        "pydantic",
-        "fastapi",
-        "django"
-      ],
-      "license": "MIT"
-    },
-    {
-      "name": "review",
-      "source": "./plugins/methodology/review",
-      "description": "Code review workflows: requesting reviews, receiving feedback, review best practices",
-      "version": "1.0.0",
-      "keywords": [
-        "code-review",
-        "feedback",
-        "review"
-      ],
-      "license": "MIT"
-    },
-    {
-      "name": "shell",
-      "description": "Shell scripting toolkit with Google Style Guide refactoring and Unix man page expertise",
-      "source": "./plugins/domain/shell",
-      "version": "1.0.0",
-      "keywords": [
-        "shell",
-        "bash",
-        "style",
-        "refactor",
-        "google",
-        "man",
-        "unix",
-        "manual"
-      ],
-      "license": "MIT"
-    },
-    {
-      "name": "testing",
-      "source": "./plugins/methodology/testing",
-      "description": "Testing patterns: anti-patterns to avoid, condition-based waiting for async tests",
-      "version": "1.0.0",
-      "keywords": [
-        "testing",
-        "anti-patterns",
-        "async",
-        "flaky-tests"
-      ],
-      "license": "MIT"
-    },
-    {
-      "name": "workflow",
-      "source": "./plugins/methodology/workflow",
-      "description": "Planning and execution workflows: plans, subagents, git worktrees, branch completion",
-      "version": "1.0.0",
-      "keywords": [
-        "planning",
-        "execution",
-        "subagents",
-        "worktrees",
-        "workflow"
-      ],
-      "license": "MIT"
-    },
-    {
-      "name": "agentic-workflow",
-      "source": "./plugins/agentic-workflow",
-      "description": "Multi-agent orchestration with anti-abandonment patterns - Explore, Plan, Delegate, Verify, Synthesize",
-      "keywords": [
-        "orchestration",
-        "multi-agent",
-        "subagents",
-        "tdd",
-        "anti-abandonment",
-        "verification",
-        "task-decomposition"
-      ]
-    },
-    {
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "TDD enforcement, systematic debugging, and code review with planning methodology loaded at session start",
@@ -177,6 +22,14 @@
         "methodology",
         "verification"
       ]
+    },
+    {
+      "name": "dev-python",
+      "source": "./domain_plugins/dev-python",
+    },
+    {
+      "name": "dev-typescript",
+      "source": "./domain_plugins/google-ts-style",
     }
   ]
 }
