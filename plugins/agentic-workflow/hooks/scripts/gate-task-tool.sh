@@ -1,12 +1,19 @@
 #!/bin/bash
 # PreToolUse hook: Gate the Task tool during PLAN_WAITING phase
 # Blocks subagent spawning until user approval is recorded
+# Worktree-aware: uses correct state directory
 #
 # Exit 0 = allow tool call
 # Exit 1 = block tool call
 
-PHASE_FILE=".claude/workflow-phase"
-APPROVAL_FILE=".claude/plan-approved"
+# Source worktree utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/worktree-utils.sh"
+
+# Determine state directory based on worktree context
+STATE_DIR=$(worktree_state_dir)
+PHASE_FILE="${STATE_DIR}/workflow-phase"
+APPROVAL_FILE="${STATE_DIR}/plan-approved"
 
 # Get current phase
 CURRENT_PHASE="IDLE"
@@ -32,14 +39,18 @@ fi
 echo ""
 echo "=== BLOCKED: PLAN APPROVAL REQUIRED ==="
 echo ""
+if worktree_is_worktree; then
+    echo "Worktree: $(worktree_current)"
+fi
 echo "Current phase: PLAN_WAITING"
+echo "State dir: ${STATE_DIR}"
 echo ""
 echo "You MUST get user approval before spawning subagents."
 echo ""
 echo "Required actions:"
 echo "1. Use AskUserQuestion tool to present the plan"
 echo "2. Wait for user to approve"
-echo "3. After approval, create .claude/plan-approved with content 'approved'"
+echo "3. After approval, create ${STATE_DIR}/plan-approved with content 'approved'"
 echo "4. Then you can proceed with Task tool calls"
 echo ""
 echo "Example approval flow:"
@@ -49,7 +60,7 @@ echo "    - 'Modify plan'"
 echo "    - 'Reject'"
 echo ""
 echo "After user selects 'Approve and proceed':"
-echo "  mkdir -p .claude && echo 'approved' > .claude/plan-approved"
-echo "  echo 'DELEGATE' > .claude/workflow-phase"
+echo "  mkdir -p '${STATE_DIR}' && echo 'approved' > '${STATE_DIR}/plan-approved'"
+echo "  echo 'DELEGATE' > '${STATE_DIR}/workflow-phase'"
 echo ""
 exit 1

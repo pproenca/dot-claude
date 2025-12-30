@@ -12,12 +12,25 @@ You are initiating the orchestrated workflow for a complex task.
 
 Task description: $ARGUMENTS
 
+## Worktree Isolation
+
+This workflow uses git worktrees to isolate subagent work:
+- **Location**: `~/.dot-claude-worktrees/<project>--<branch>`
+- **State files**: Each worktree has its own `.claude/` state directory
+- **Naming**: Worktree names match branch names for consistency
+
+Source worktree utilities for all worktree operations:
+```bash
+source "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/worktree-utils.sh"
+```
+
 ## Workflow
 
 ### Step 1: Initialize Workflow Phase
 
 **First action - ALWAYS do this**:
 ```bash
+source "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/worktree-utils.sh"
 mkdir -p .claude && echo "IDLE" > .claude/workflow-phase
 ```
 
@@ -57,9 +70,14 @@ echo "EXPLORE" > .claude/workflow-phase
    ```
    Use Task tool with:
    - subagent_type: lead-orchestrator
-   - prompt: Include the task description and complexity assessment
+   - prompt: Include the task description, complexity assessment, and worktree info:
+     - WORKTREE_BASE: ~/.dot-claude-worktrees
+     - PROJECT_NAME: (from worktree_project_name)
+     - MAIN_REPO: (current working directory)
    - model: opus
    ```
+
+   The orchestrator will create worktrees for each task-executor subagent.
 
 4. **Report to user**:
    - Complexity level assessed
@@ -89,6 +107,8 @@ Assessment: Medium complexity
 - Estimated: 3 subagents for implementation
 
 Initializing workflow...
+- Project: myapp
+- Worktree base: ~/.dot-claude-worktrees
 - Created .claude/workflow-phase = IDLE
 - Created todo.md with task breakdown
 - Created progress.txt with session state
@@ -98,13 +118,20 @@ Setting phase to EXPLORE...
 Launching lead-orchestrator agent (opus) with task:
 "Implement user authentication with JWT tokens"
 
+Worktree context:
+- WORKTREE_BASE: ~/.dot-claude-worktrees
+- PROJECT_NAME: myapp
+- MAIN_REPO: /Users/pedro/Projects/myapp
+
 The orchestrator will:
 1. Explore the codebase
 2. Create a plan for your approval (using AskUserQuestion)
 3. Wait for your explicit approval before any implementation
-4. Coordinate implementation across focused subagents
+4. Create isolated worktrees for each task-executor subagent
+5. Merge changes back to main after verification
 
 Check progress anytime with: /progress
+Manage worktrees with: /worktree list
 ```
 
 ## Phase Flow
