@@ -29,7 +29,7 @@
     },
     {
       "name": "dev-typescript",
-      "source": "./domain_plugins/google-ts-style",
+      "source": "./domain_plugins/dev-typescript",
     }
   ]
 }
