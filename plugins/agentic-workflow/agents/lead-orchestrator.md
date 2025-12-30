@@ -271,7 +271,7 @@ For each task:
 
 3. **Spawn task-executor** via Task tool:
    ```
-   subagent_type: task-executor
+   subagent_type: agentic-workflow:task-executor
    model: sonnet
    prompt: |
      ## Worktree Context
@@ -289,6 +289,22 @@ For each task:
    - Wave 1: Launch independent tasks in parallel (different worktrees)
    - Wave 2+: Wait for dependencies, merge if needed, include artifact context
 
+5. **Background execution for long-running tasks**:
+   For complex waves, use `run_in_background: true` to continue while agents work:
+   ```
+   # Spawn agents in background
+   Task(subagent_type: "agentic-workflow:task-executor", prompt: "[Task A]", run_in_background: true)
+   Task(subagent_type: "agentic-workflow:task-executor", prompt: "[Task B]", run_in_background: true)
+
+   # Continue with other work (e.g., preparing Wave 2 packets)...
+
+   # Collect results when ready
+   TaskOutput(task_id: "agent-a-id", block: true)
+   TaskOutput(task_id: "agent-b-id", block: true)
+   ```
+
+   **CRITICAL**: Always use `TaskOutput` to collect results from background agents.
+
 ### Phase 4: VERIFY
 
 **Set phase**:
@@ -303,7 +319,7 @@ After subagents complete, spawn ALL THREE verification agents in a **SINGLE mess
 ```
 Task 1:
 - description: "Security and patterns review"
-- subagent_type: code-reviewer
+- subagent_type: agentic-workflow:code-reviewer
 - prompt: |
     Review implementation for security, performance, and patterns.
     Files: [list modified files from artifacts]
@@ -312,7 +328,7 @@ Task 1:
 
 Task 2:
 - description: "Generalization check"
-- subagent_type: anti-overfit-checker
+- subagent_type: agentic-workflow:anti-overfit-checker
 - prompt: |
     Check for overfitting to specific inputs.
     Files: [list modified files - NO TEST FILES]
@@ -320,7 +336,7 @@ Task 2:
 
 Task 3:
 - description: "Full test suite"
-- subagent_type: integration-tester
+- subagent_type: agentic-workflow:integration-tester
 - prompt: |
     Run full test suite, typecheck, lint.
     Commands: uv run pytest, ty check, uv run ruff check

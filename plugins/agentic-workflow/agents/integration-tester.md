@@ -22,6 +22,8 @@ color: blue
 tools:
   - Bash
   - Read
+  - Grep
+  - Glob
 ---
 
 # Integration Tester Agent

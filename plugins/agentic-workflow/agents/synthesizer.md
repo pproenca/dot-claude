@@ -23,6 +23,7 @@ tools:
   - Read
   - Write
   - Glob
+  - Grep
 ---
 
 # Synthesizer Agent

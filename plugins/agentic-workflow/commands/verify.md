@@ -46,35 +46,48 @@ Otherwise, verify the current working directory.
 
 ### Step 2: Launch Verification Agents in Parallel
 
-Spawn three verification agents simultaneously:
+**CRITICAL**: Include ALL THREE Task tool calls in a SINGLE assistant message for true parallel execution:
 
-**Agent 1: Code Reviewer**
 ```
-Task tool:
-- subagent_type: code-reviewer
-- model: opus
-- prompt: Review [files] for security, performance, patterns, test coverage
+# In ONE message, invoke all three:
+
+Task(
+  description: "Security and patterns review"
+  subagent_type: "agentic-workflow:code-reviewer"
+  model: opus
+  prompt: "Review [files] for security, performance, patterns, test coverage"
+  run_in_background: true
+)
+
+Task(
+  description: "Generalization check"
+  subagent_type: "agentic-workflow:anti-overfit-checker"
+  model: opus
+  prompt: "Check [implementation files only, NO test files] for overfitting"
+  run_in_background: true
+)
+
+Task(
+  description: "Full test suite"
+  subagent_type: "agentic-workflow:integration-tester"
+  model: opus
+  prompt: "Run full test suite, typecheck, lint on [project]"
+  run_in_background: true
+)
 ```
 
-**Agent 2: Anti-Overfit Checker**
+### Step 3: Collect Results with TaskOutput
+
+**CRITICAL**: Use TaskOutput to collect results from background agents:
+
 ```
-Task tool:
-- subagent_type: anti-overfit-checker
-- model: opus
-- prompt: Check [implementation files only, NO test files] for overfitting
+# Wait for each agent to complete and collect results
+TaskOutput(task_id: "code-reviewer-id", block: true)
+TaskOutput(task_id: "anti-overfit-id", block: true)
+TaskOutput(task_id: "integration-tester-id", block: true)
 ```
 
-**Agent 3: Integration Tester**
-```
-Task tool:
-- subagent_type: integration-tester
-- model: opus
-- prompt: Run full test suite, typecheck, lint on [project]
-```
-
-### Step 3: Collect Results
-
-Wait for all three agents to complete. Collect their reports.
+All three run simultaneously because they're in the same message with `run_in_background: true`.
 
 ### Step 4: Summarize Findings
 

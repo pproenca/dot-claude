@@ -194,7 +194,7 @@ Breakdown:
 
 ```
 Use Task tool:
-- subagent_type: task-executor
+- subagent_type: agentic-workflow:task-executor
 - prompt: [Full task packet above]
 - model: opus
 ```
@@ -207,7 +207,7 @@ For long-running tasks where you want to continue working while waiting:
 
 ```
 Task tool with:
-- subagent_type: task-executor
+- subagent_type: agentic-workflow:task-executor
 - prompt: [task packet]
 - run_in_background: true  ← KEY PARAMETER
 ```

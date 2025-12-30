@@ -136,7 +136,7 @@ echo "EXPLORE" > .claude/workflow-phase
 3. **Launch lead-orchestrator agent**:
    ```
    Use Task tool with:
-   - subagent_type: lead-orchestrator
+   - subagent_type: agentic-workflow:lead-orchestrator
    - prompt: Include the task description, complexity assessment, and worktree info:
      - WORKTREE_BASE: ~/.dot-claude-worktrees
      - PROJECT_NAME: (from worktree_project_name)

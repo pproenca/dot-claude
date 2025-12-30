@@ -206,17 +206,17 @@ In your response, invoke ALL THREE tools at once:
 
 [Task tool call 1]
 - description: "Security and patterns review"
-- subagent_type: "code-reviewer"
+- subagent_type: "agentic-workflow:code-reviewer"
 - prompt: [task packet with implementation + tests]
 
 [Task tool call 2]
 - description: "Generalization check"
-- subagent_type: "anti-overfit-checker"
+- subagent_type: "agentic-workflow:anti-overfit-checker"
 - prompt: [task packet with implementation ONLY - no tests]
 
 [Task tool call 3]
 - description: "Full test suite"
-- subagent_type: "integration-tester"
+- subagent_type: "agentic-workflow:integration-tester"
 - prompt: [task packet with full project]
 ```
 
@@ -226,11 +226,11 @@ All three execute **simultaneously** because they're in the same message.
 For independent tasks in Wave 1, spawn multiple task-executors in one message:
 ```
 [Task tool call 1]
-- subagent_type: "task-executor"
+- subagent_type: "agentic-workflow:task-executor"
 - prompt: [Task A packet - token service]
 
 [Task tool call 2]
-- subagent_type: "task-executor"
+- subagent_type: "agentic-workflow:task-executor"
 - prompt: [Task B packet - session service]
 ```
 
@@ -247,6 +247,38 @@ Message 2: Task(task-executor, Task B)
 Single Message: Task(task-executor, Task A) + Task(task-executor, Task B)
 [both execute simultaneously]
 ```
+
+### Background Execution Pattern
+
+For long-running tasks where you want to continue working while agents run, use `run_in_background: true`:
+
+```
+# Spawn agents in background (non-blocking)
+Task(
+  subagent_type: "task-executor",
+  prompt: "[Task A packet]",
+  run_in_background: true
+)  # Returns immediately with agent ID
+
+Task(
+  subagent_type: "task-executor",
+  prompt: "[Task B packet]",
+  run_in_background: true
+)  # Returns immediately with agent ID
+
+# Continue with other work...
+
+# Later, collect results with TaskOutput
+TaskOutput(task_id: "agent-a-id", block: true)  # Wait for Agent A
+TaskOutput(task_id: "agent-b-id", block: true)  # Wait for Agent B
+```
+
+**CRITICAL**: When using `run_in_background: true`, you MUST use `TaskOutput` to retrieve results. Without TaskOutput, background agent results are lost.
+
+| Parameter | Use Case |
+|-----------|----------|
+| `block: true` | Wait for agent to complete (default) |
+| `block: false` | Check status without waiting |
 
 ## Phase 5: SYNTHESIZE
 
@@ -283,6 +315,29 @@ See context-management skill for formats.
 5. **Verify independently** - Fresh context catches what you missed
 6. **External state** - Don't trust internal memory across compaction
 7. **Re-inject regularly** - Every 5-10 turns, re-read task checklist
+
+## Resuming Long Workflows
+
+If a session is interrupted mid-workflow, use the `resume` parameter to continue:
+
+```
+Task(
+  subagent_type: "lead-orchestrator",
+  resume: "agent-id-from-previous",
+  prompt: "Continue from where you left off"
+)
+```
+
+**How to use:**
+1. Note the agent ID returned when spawning (e.g., `agentId: abc123`)
+2. If session ends unexpectedly, start new session
+3. Resume with: `Task(resume: "abc123", prompt: "Continue orchestration")`
+4. Agent retains full context from previous execution
+
+**External state files also help recovery:**
+- `todo.md` - Shows which tasks are complete
+- `progress.txt` - Contains session state
+- `.claude/workflow-phase` - Indicates current phase
 
 ---
 
