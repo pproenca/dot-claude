@@ -113,6 +113,16 @@ git clone https://github.com/pproenca/dev-workflow ~/.claude/plugins/dev-workflo
 **Required:** `git`
 **Optional:** `jq`, `bats-core`, `shellcheck`, `pre-commit`
 
+### Worktree Setup (Optional)
+
+To use git worktree workflows (parallel development branches), enable worktree navigation:
+
+```
+/add-dir ~/.dot-claude-worktrees
+```
+
+This allows Claude to `cd` into worktrees created by the plugin. Run once per machine.
+
 ## Usage
 
 Skills load automatically at session start. The `getting-started` skill establishes the protocol: before any task, check if a skill applies.
