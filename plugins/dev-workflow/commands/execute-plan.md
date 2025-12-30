@@ -18,7 +18,60 @@ $ARGUMENTS
 
 **If empty or file not found:** Stop with error "Plan file not found or not specified"
 
-## Step 1: Initialize State
+## Step 1: Worktree Setup
+
+Check if working in main repo and offer to create isolated worktree:
+
+```bash
+source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
+
+# Check if in main repo (not already in a worktree)
+if is_main_repo; then
+  echo "IN_MAIN_REPO=true"
+else
+  echo "IN_MAIN_REPO=false"
+  echo "Already in worktree: $(basename "$(pwd)")"
+fi
+```
+
+**If IN_MAIN_REPO=true:**
+
+```claude
+AskUserQuestion:
+  header: "Worktree"
+  question: "Create isolated worktree for this work?"
+  multiSelect: false
+  options:
+    - label: "Yes (Recommended)"
+      description: "Create worktree with feature branch - keeps main clean"
+    - label: "No"
+      description: "Work directly in main repo"
+```
+
+**If user selects "Yes":**
+
+Derive branch name from plan file (e.g., `2024-01-15-auth-feature.md` → `auth-feature`):
+
+```bash
+source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
+PLAN_FILE="$ARGUMENTS"
+
+# Extract feature name from plan filename (remove date prefix and extension)
+BRANCH_NAME=$(basename "$PLAN_FILE" .md | sed 's/^[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}-//')
+
+# Create worktree and switch to it
+WORKTREE_PATH=$(create_worktree "$BRANCH_NAME")
+echo "WORKTREE_CREATED: $WORKTREE_PATH"
+echo "BRANCH: $BRANCH_NAME"
+
+# Change to worktree directory
+cd "$WORKTREE_PATH"
+pwd
+```
+
+**If user selects "No":** Continue in current directory.
+
+## Step 2: Initialize State
 
 Read plan and import into hyh:
 
@@ -44,7 +97,7 @@ echo "TOTAL_TASKS: $TOTAL"
 
 **If TOTAL is 0:** Stop with error "No tasks found in plan. Tasks must use format: ### Task N: [Name]"
 
-## Step 2: Setup TodoWrite
+## Step 3: Setup TodoWrite
 
 Extract task titles and create TodoWrite items:
 
@@ -57,7 +110,7 @@ Create TodoWrite with:
 - "Code Review" as `pending`
 - "Finish Branch" as `pending`
 
-## Step 3: Choose Execution Mode
+## Step 4: Choose Execution Mode
 
 ```claude
 AskUserQuestion:
@@ -96,7 +149,7 @@ digraph sequential {
 }
 ```
 
-### 3a. Check for Interrupted Dispatch (Compact Recovery)
+### 4a. Check for Interrupted Dispatch (Compact Recovery)
 
 Check if a previous task was interrupted by checking hyh state:
 
@@ -112,7 +165,7 @@ fi
 
 If tasks are running, they will be automatically reclaimed or resumed by hyh. No manual recovery needed.
 
-### 3b. Execute Each Task
+### 4b. Execute Each Task
 
 Mark task `in_progress` in TodoWrite.
 
@@ -224,7 +277,7 @@ TaskOutput:
   block: true
 ```
 
-### 3c. Two-Stage Review (MANDATORY)
+### 4c. Two-Stage Review (MANDATORY)
 
 After implementer completes, run two-stage review before marking task complete.
 
@@ -357,7 +410,7 @@ Task:
 
 Loop until quality review passes.
 
-### 3d. Update State After Each Task
+### 4d. Update State After Each Task
 
 Only after BOTH reviews pass:
 
@@ -371,7 +424,7 @@ Uses `Task(run_in_background)` + `TaskOutput` pattern with two-stage review afte
 
 **Note:** In parallel mode, review happens after group completion (not per-task) to maximize parallelism while maintaining quality gates.
 
-### 3a. Check for Interrupted Dispatch (Compact Recovery)
+### 4a. Check for Interrupted Dispatch (Compact Recovery)
 
 Check hyh state for any running tasks:
 
@@ -385,7 +438,7 @@ echo "RUNNING TASKS: $RUNNING"
 
 If tasks are running, they will be automatically reclaimed or resumed by hyh. No manual recovery needed.
 
-### 3b. Analyze Task Groups
+### 4b. Analyze Task Groups
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
@@ -401,7 +454,7 @@ echo "TASK_GROUPS: $TASK_GROUPS"
 echo "MAX_PARALLEL: $MAX_PARALLEL"
 ```
 
-### 3c. Execute Groups Serially, Tasks in Parallel
+### 4c. Execute Groups Serially, Tasks in Parallel
 
 For each group in `TASK_GROUPS` (split by `|`):
 
@@ -589,7 +642,7 @@ Tasks are already marked complete in hyh by the agents. No state file updates ne
 
 Use same pattern as sequential execution (two-stage review per task).
 
-### 3d. Why This Pattern Works
+### 4d. Why This Pattern Works
 
 | Aspect | Benefit |
 |--------|---------|
@@ -602,11 +655,11 @@ Use same pattern as sequential execution (two-stage review per task).
 
 ---
 
-## Step 4: Post-Completion Actions (MANDATORY)
+## Step 5: Post-Completion Actions (MANDATORY)
 
 After ALL tasks complete:
 
-### 4a. Code Review
+### 5a. Code Review
 
 Mark "Code Review" `in_progress` in TodoWrite.
 
@@ -634,7 +687,7 @@ Use `Skill("dev-workflow:receiving-code-review")` to process feedback.
 
 Mark "Code Review" `completed`.
 
-### 4b. Finish Branch
+### 5b. Finish Branch
 
 Mark "Finish Branch" `in_progress` in TodoWrite.
 
@@ -642,7 +695,7 @@ Use `Skill("dev-workflow:finishing-a-development-branch")`.
 
 Mark "Finish Branch" `completed`.
 
-### 4c. Cleanup State
+### 5c. Cleanup State
 
 No cleanup needed. hyh daemon maintains workflow state. If workflow should be cleared:
 
