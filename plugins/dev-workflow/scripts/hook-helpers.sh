@@ -198,3 +198,14 @@ hyh_complete_task() {
   local task_id="$1"
   _run_hyh task complete --id "$task_id"
 }
+
+# Force-complete a task (for recovery when work was done but hyh wasn't updated)
+hyh_force_complete_task() {
+  local task_id="$1"
+  _run_hyh task complete --id "$task_id" --force
+}
+
+# Get list of pending task IDs
+hyh_get_pending_tasks() {
+  _run_hyh get-state 2>/dev/null | jq -r '.tasks | to_entries[] | select(.value.status == "pending") | .key'
+}

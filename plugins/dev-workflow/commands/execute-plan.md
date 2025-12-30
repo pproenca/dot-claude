@@ -97,18 +97,89 @@ echo "TOTAL_TASKS: $TOTAL"
 
 **If TOTAL is 0:** Stop with error "No tasks found in plan. Tasks must use format: ### Task N: [Name]"
 
-## Step 3: Setup TodoWrite
+## Step 2a: Recovery Detection
 
-Extract task titles and create TodoWrite items:
+Check if any pending tasks have work already completed from a previous session:
 
 ```bash
+source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
+PLAN_FILE="$ARGUMENTS"
+
+# Get pending tasks from hyh
+PENDING_TASKS=$(hyh_get_pending_tasks)
+
+for TASK_ID in $PENDING_TASKS; do
+  # Check if there's a commit mentioning this task
+  COMMIT=$(git log --oneline --grep="Task $TASK_ID" --grep="task $TASK_ID" 2>/dev/null | head -1)
+  if [[ -n "$COMMIT" ]]; then
+    echo "RECOVERY: Task $TASK_ID already committed: $COMMIT"
+  fi
+done
+```
+
+**If any tasks show "RECOVERY: Task N already committed":**
+
+```claude
+AskUserQuestion:
+  header: "Recovery"
+  question: "Found commits for pending tasks. Mark them as complete in hyh?"
+  multiSelect: false
+  options:
+    - label: "Yes - sync state (Recommended)"
+      description: "Force-complete tasks that have commits, sync hyh with reality"
+    - label: "No - re-import fresh"
+      description: "Reset hyh and start from scratch"
+```
+
+**If user selects "Yes":**
+
+For each task with a commit, force-complete it:
+
+```bash
+source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
+
+for TASK_ID in $PENDING_TASKS; do
+  COMMIT=$(git log --oneline --grep="Task $TASK_ID" --grep="task $TASK_ID" 2>/dev/null | head -1)
+  if [[ -n "$COMMIT" ]]; then
+    hyh_force_complete_task "$TASK_ID"
+    echo "Force-completed task $TASK_ID"
+  fi
+done
+
+# Show updated progress
+PROGRESS=$(hyh_get_progress)
+echo "Updated progress: $PROGRESS"
+```
+
+**If user selects "No":** Run `uvx hyh plan reset` and re-import the plan.
+
+## Step 3: Setup TodoWrite (Sync from hyh)
+
+Read hyh state and create TodoWrite items reflecting actual status:
+
+```bash
+source "${CLAUDE_PLUGIN_ROOT}/scripts/hook-helpers.sh"
+PLAN_FILE="$ARGUMENTS"
+
+# Get task titles from plan
 grep -E "^### Task [0-9]+(\.[0-9]+)?:" "$PLAN_FILE" | sed 's/^### Task \([0-9.]*\): \(.*\)/Task \1: \2/'
+
+# Get task statuses from hyh
+HYH_STATE=$(_run_hyh get-state 2>/dev/null)
+COMPLETED_TASKS=$(echo "$HYH_STATE" | jq -r '.tasks | to_entries[] | select(.value.status == "completed") | .key' | tr '\n' ' ')
+RUNNING_TASKS=$(echo "$HYH_STATE" | jq -r '.tasks | to_entries[] | select(.value.status == "running") | .key' | tr '\n' ' ')
+echo "COMPLETED_IN_HYH: $COMPLETED_TASKS"
+echo "RUNNING_IN_HYH: $RUNNING_TASKS"
 ```
 
 Create TodoWrite with:
-- All tasks from plan as `pending`
+- Tasks listed in `COMPLETED_IN_HYH` as `completed`
+- Tasks listed in `RUNNING_IN_HYH` as `in_progress`
+- Remaining tasks as `pending`
 - "Code Review" as `pending`
 - "Finish Branch" as `pending`
+
+**This ensures TodoWrite reflects hyh state from the start, preventing divergence.**
 
 ## Step 4: Choose Execution Mode
 
