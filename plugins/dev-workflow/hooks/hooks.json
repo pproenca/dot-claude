@@ -23,7 +23,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "When compacting, preserve:\n- Architectural decisions made\n- Unresolved bugs and blockers\n- File paths and key function names\n- Test results and failure messages\n\nDiscard:\n- Redundant tool outputs\n- Exploratory conversations\n- Superseded plans"
+            "prompt": "When compacting, preserve:\n- Your ROLE: ORCHESTRATOR (coordinates Task agents) or IMPLEMENTOR (executes TDD)\n- Current working directory and whether you are in a worktree or main repo\n- Architectural decisions made\n- Unresolved bugs and blockers\n- File paths and key function names\n- Test results and failure messages\n\nDiscard:\n- Redundant tool outputs\n- Exploratory conversations\n- Superseded plans"
           }
         ]
       }

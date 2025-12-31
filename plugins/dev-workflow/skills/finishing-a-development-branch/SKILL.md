@@ -45,7 +45,7 @@ AskUserQuestion:
   multiSelect: false
   options:
     - label: "Merge locally"
-      description: "Merge to base branch and delete feature branch"
+      description: "Rebase onto base, fast-forward merge (linear history)"
     - label: "Create PR"
       description: "Push branch and create Pull Request"
     - label: "Keep as-is"
@@ -58,6 +58,8 @@ AskUserQuestion:
 
 ### Option: Merge locally
 
+Uses rebase for linear history (stacked-diffs approach):
+
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
 
@@ -69,11 +71,11 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
-# SAFETY: Push branch to remote BEFORE merge (prevents data loss)
-echo "Pushing branch to remote before merge..."
+# SAFETY: Push branch to remote BEFORE rebase (prevents data loss)
+echo "Pushing branch to remote before rebase..."
 git push -u origin "$FEATURE" || {
-  echo "ERROR: Failed to push. Cannot proceed with merge."
-  echo "This prevents data loss - all work must be on remote before merge."
+  echo "ERROR: Failed to push. Cannot proceed."
+  echo "This prevents data loss - all work must be on remote before rebase."
   exit 1
 }
 
@@ -84,21 +86,68 @@ if [[ "$LOCAL_SHA" != "$REMOTE_SHA" ]]; then
   echo "ERROR: Local and remote are out of sync. Push may have failed."
   exit 1
 fi
-echo "Branch pushed successfully. Safe to merge."
+echo "Branch pushed successfully. Safe to proceed."
+
+# Store original SHA for recovery reference
+ORIGINAL_SHA="$LOCAL_SHA"
+
+# Fetch latest changes
+git fetch origin
+
+# Rebase feature branch onto base (linear history)
+echo "Rebasing $FEATURE onto origin/$BASE..."
+if ! git rebase "origin/$BASE"; then
+  echo ""
+  echo "ERROR: Rebase conflict detected. Aborting rebase."
+
+  # Abort to restore working state
+  git rebase --abort
+
+  echo ""
+  echo "Your branch has been restored to its original state."
+  echo "Original commit: $ORIGINAL_SHA"
+  echo "Remote backup: origin/$FEATURE"
+  echo ""
+  echo "To resolve manually:"
+  echo "  1. git rebase origin/$BASE"
+  echo "  2. Resolve conflicts in each file"
+  echo "  3. git add <resolved-files>"
+  echo "  4. git rebase --continue"
+  echo "  5. Re-run this merge process"
+  exit 1
+fi
+
+echo "Rebase successful."
+
+# Force push rebased branch (safe - we have backup on remote)
+echo "Force pushing rebased branch..."
+if ! git push --force-with-lease origin "$FEATURE"; then
+  echo "ERROR: Force push failed."
+  echo "This may happen if someone else pushed to this branch."
+  echo "Your rebased changes are still local."
+  echo "Remote backup exists at origin/$FEATURE (pre-rebase)"
+  exit 1
+fi
 
 # Get main repo path
 MAIN_REPO="$(get_main_worktree)"
 
-# If in worktree, go to main repo
+# If in worktree, go to main repo for the merge
 if ! is_main_repo; then
   cd "$MAIN_REPO"
 fi
 
-# Checkout base, fetch, and merge from REMOTE (not local)
-git fetch origin
+# Checkout base and fast-forward merge (no merge commit)
 git checkout "$BASE"
 git pull origin "$BASE" 2>/dev/null || true
-git merge "origin/$FEATURE"  # Merge from remote, not local branch
+
+echo "Fast-forward merging $FEATURE into $BASE..."
+if ! git merge --ff-only "origin/$FEATURE"; then
+  echo "ERROR: Fast-forward merge failed."
+  echo "This should not happen after a successful rebase."
+  echo "The base branch may have changed. Try again."
+  exit 1
+fi
 
 npm test  # verify merged result
 ```

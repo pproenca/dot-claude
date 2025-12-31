@@ -18,9 +18,9 @@ $ARGUMENTS
 
 **If empty or file not found:** Stop with error "Plan file not found or not specified"
 
-## Step 1: Worktree Setup
+## Step 1: Worktree Decision
 
-Check if working in main repo and offer to create isolated worktree:
+Check if working in main repo or already in a worktree:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
@@ -34,23 +34,28 @@ else
 fi
 ```
 
-**If IN_MAIN_REPO=true:**
+### If IN_MAIN_REPO=false (Already in Worktree)
+
+Skip worktree creation. The current session is the isolated executor.
+Proceed to **Step 1b: Orchestrator Role**.
+
+### If IN_MAIN_REPO=true
 
 ```claude
 AskUserQuestion:
   header: "Worktree"
-  question: "Create isolated worktree for this work?"
+  question: "Create isolated worktree session for this work?"
   multiSelect: false
   options:
-    - label: "Yes (Recommended)"
-      description: "Create worktree with feature branch - keeps main clean"
-    - label: "No"
-      description: "Work directly in main repo"
+    - label: "Yes - spawn new session (Recommended)"
+      description: "Creates worktree, launches new Terminal, you continue there"
+    - label: "No - work in main repo"
+      description: "Execute directly in main repo (not recommended)"
 ```
 
-**If user selects "Yes":**
+**If user selects "Yes - spawn new session":**
 
-Derive branch name from plan file (e.g., `2024-01-15-auth-feature.md` → `auth-feature`):
+Create worktree and spawn new Claude session:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
@@ -63,17 +68,49 @@ BRANCH_NAME=$(basename "$PLAN_FILE" .md | sed 's/^[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2
 WORKTREE_PATH=$(create_worktree "$BRANCH_NAME")
 echo "WORKTREE_PATH=$WORKTREE_PATH"
 echo "BRANCH=$BRANCH_NAME"
+
+# Copy plan file to worktree so it's accessible there
+cp "$PLAN_FILE" "$WORKTREE_PATH/"
+
+# Launch new Terminal session in worktree with initial prompt
+PLAN_BASENAME=$(basename "$PLAN_FILE")
+"${CLAUDE_PLUGIN_ROOT}/scripts/open-terminal.sh" "$WORKTREE_PATH" "Run /dev-workflow:execute-plan $PLAN_BASENAME"
 ```
 
-**IMPORTANT:** The `WORKTREE_PATH` output must be captured by the orchestrator. Since bash `cd` doesn't persist across invocations (per Claude Code documentation), the orchestrator must:
+**After spawning new session, STOP and report:**
 
-1. Parse the `WORKTREE_PATH=...` output from the bash command
-2. Store it for use throughout the execution
-3. Pass it to every Task agent in their prompt (see Task Agent Prompt Template)
+```text
+New session spawned in worktree.
 
-All subsequent bash commands in task agents must use: `cd "$WORKTREE_PATH" && <command>`
+Location: $WORKTREE_PATH
+Branch: $BRANCH_NAME
 
-**If user selects "No":** Continue in current directory. Set `WORKTREE_PATH=""` (empty).
+Continue in the new Terminal window.
+This session is done - the new session will orchestrate the plan.
+```
+
+**STOP EXECUTION HERE.** Do not continue to Step 2. The new session handles orchestration.
+
+**If user selects "No - work in main repo":**
+
+Continue in current directory. Proceed to Step 1b.
+
+## Step 1b: Orchestrator Role
+
+**ROLE: ORCHESTRATOR**
+
+You are the **ORCHESTRATOR** for this plan execution.
+
+Your responsibilities:
+- Coordinate task execution via Task agents
+- Collect results via TaskOutput
+- Run code reviews
+- **YOU DO NOT IMPLEMENT TASKS DIRECTLY**
+
+If you find yourself writing implementation code, STOP.
+Implementation is done by Task agents, not by you.
+
+Proceed to Step 2.
 
 ## Step 2: Read Plan and Setup TodoWrite
 
