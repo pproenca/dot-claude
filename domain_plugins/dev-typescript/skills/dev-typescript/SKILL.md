@@ -158,7 +158,7 @@ class Foo {
 
 **Braces required.** Exception: single-line `if (x) doThing();`
 
-**`===`/`!==` only.** Exception: `== null` for null+undefined check.
+**`===`/\`!==\` only.** Exception: `== null` for null+undefined check.
 
 **Iteration:**
 ```ts
@@ -191,11 +191,11 @@ if (x instanceof Foo) { x.method(); }
 (x as unknown as TargetType)
 ```
 
-**Non-null `!` assertions:** Avoid. Comment required if used.
+**Non-null \`!\` assertions:** Avoid. Comment required if used.
 
 ## Type Coercion
 
-**Allowed:** `String()`, `Boolean()`, `Number()`, template literals, `!!`
+**Allowed:** `String()`, `Boolean()`, `Number()`, template literals, \`!!\`
 
 **Enums to boolean prohibited:**
 ```ts
