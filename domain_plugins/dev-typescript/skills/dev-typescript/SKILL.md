@@ -1,24 +1,25 @@
 ---
 name: dev-typescript
 description: Write TypeScript following Google's TypeScript Style Guide. Use when creating, editing, or reviewing TypeScript code. Enforces Google's conventions for imports, exports, naming, types, classes, functions, control flow, and error handling. Read references/patterns.md for destructuring, spread, iteration, type coercion, callbacks, and accessor patterns.
+allowed-tools: Read, Edit, Bash, Glob, Grep
 ---
 
 # Google TypeScript Style
 
 ## Imports & Exports
 
-**Named exports only. No default exports.**
+<b>Named exports only. No default exports.</b>
 ```ts
 export class Foo {}
 export const BAR = 1;
 export function baz() {}
 ```
 
-**No mutable exports:** `export let` prohibited. Use getter function if mutation needed.
+<b>No mutable exports:</b> `export let` prohibited. Use getter function if mutation needed.
 
-**Minimize exported API surface.** Don't export symbols used only internally.
+<b>Minimize exported API surface.</b> Don't export symbols used only internally.
 
-**No container classes** for namespacing:
+<b>No container classes</b> for namespacing:
 ```ts
 // ✗
 export class Utils {
@@ -30,13 +31,13 @@ export const FOO = 1;
 export function bar() {}
 ```
 
-**Import patterns:**
+<b>Import patterns:</b>
 - `import * as foo from './foo'` — many symbols from large APIs
 - `import {Foo} from './foo'` — frequently used symbols with clear names
 - `import type {Foo} from './foo'` — type-only (required for isolatedModules)
 - Relative imports (`./foo`) over absolute for same project
 
-**Prohibited:** `require()`, `namespace Foo {}`, `/// <reference>`
+<b>Prohibited:</b> `require()`, `namespace Foo {}`, `/// <reference>`
 
 ## Naming
 
@@ -52,17 +53,17 @@ export function bar() {}
 
 ## Types
 
-**`unknown` over `any`.** Comment required if `any` used.
+<b>`unknown` over `any`.</b> Comment required if `any` used.
 
-**`{}` type prohibited.** Use `unknown`, `object`, or `Record<string, T>`.
+<b>`{}` type prohibited.</b> Use `unknown`, `object`, or `Record<string, T>`.
 
-**Interfaces for object shapes**, not classes or type aliases:
+<b>Interfaces for object shapes</b>, not classes or type aliases:
 ```ts
 interface User { name: string; id: number }
 const user: User = { name: 'Jo', id: 1 };
 ```
 
-**Type annotations on object literals**, not assertions:
+<b>Type annotations on object literals</b>, not assertions:
 ```ts
 // ✓ Catches typos at declaration
 const cfg: Config = { porrt: 8080 }; // Error!
@@ -70,13 +71,13 @@ const cfg: Config = { porrt: 8080 }; // Error!
 const cfg = { porrt: 8080 } as Config;
 ```
 
-**Arrays:** `T[]` for simple types, `Array<T>` for complex types or unions.
+<b>Arrays:</b> `T[]` for simple types, `Array<T>` for complex types or unions.
 
-**Optional `?` over `|undefined`** for interface fields and params.
+<b>Optional `?` over `|undefined`</b> for interface fields and params.
 
-**No nullable type aliases.** Add `|null` at usage site.
+<b>No nullable type aliases.</b> Add `|null` at usage site.
 
-**Tuples over Pair interfaces:**
+<b>Tuples over Pair interfaces:</b>
 ```ts
 // ✓
 function split(s: string): [string, string] {}
@@ -85,11 +86,11 @@ const [left, right] = split(input);
 interface Pair { first: string; second: string }
 ```
 
-**Index signatures:** Prefer `Map<K,V>` over `{[key: string]: T}`. If using index signature, use meaningful key name.
+<b>Index signatures:</b> Prefer `Map<K,V>` over `{[key: string]: T}`. If using index signature, use meaningful key name.
 
-**Mapped/conditional types:** Use sparingly. Prefer explicit interfaces when possible.
+<b>Mapped/conditional types:</b> Use sparingly. Prefer explicit interfaces when possible.
 
-**Return-type-only generics:** Avoid. Always specify explicitly at call site if API has them.
+<b>Return-type-only generics:</b> Avoid. Always specify explicitly at call site if API has them.
 
 ## Variables
 
@@ -101,14 +102,14 @@ interface Pair { first: string; second: string }
 
 ## Functions
 
-**Function declarations for named functions:**
+<b>Function declarations for named functions:</b>
 ```ts
 function process(x: number) { return x * 2; }
 ```
 
-**Arrow functions for callbacks and closures.** No `function` expressions.
+<b>Arrow functions for callbacks and closures.</b> No `function` expressions.
 
-**Block body when return value unused:**
+<b>Block body when return value unused:</b>
 ```ts
 // ✓
 promise.then((v) => { console.log(v); });
@@ -116,7 +117,7 @@ promise.then((v) => { console.log(v); });
 promise.then((v) => console.log(v));
 ```
 
-**Wrap callbacks in arrows** — don't pass function references directly:
+<b>Wrap callbacks in arrows</b> — don't pass function references directly:
 ```ts
 // ✓
 ['1', '2'].map((n) => parseInt(n, 10));
@@ -124,42 +125,42 @@ promise.then((v) => console.log(v));
 ['1', '2'].map(parseInt); // [1, NaN]
 ```
 
-**Default params:** Simple values only. No side effects, no shared mutable state.
+<b>Default params:</b> Simple values only. No side effects, no shared mutable state.
 
-**No `this` in functions** unless arrow function in method, or explicit `this` param.
+<b>No `this` in functions</b> unless arrow function in method, or explicit `this` param.
 
 ## Classes
 
-**Parameter properties:**
+<b>Parameter properties:</b>
 ```ts
 class Foo {
   constructor(private readonly bar: Bar) {}
 }
 ```
 
-**Field initializers** at declaration. Initialize optional fields to `undefined` explicitly.
+<b>Field initializers</b> at declaration. Initialize optional fields to `undefined` explicitly.
 
-**Blank line** between constructor and methods, between methods.
+<b>Blank line</b> between constructor and methods, between methods.
 
-**No semicolons** after method declarations.
+<b>No semicolons</b> after method declarations.
 
-**Visibility:** Omit `public` (default). Use `private`/`protected`. Never `#private` fields.
+<b>Visibility:</b> Omit `public` (default). Use `private`/`protected`. Never `#private` fields.
 
-**No static `this`.** Reference class name directly.
+<b>No static `this`.</b> Reference class name directly.
 
-**Getters:** Must be pure. No pass-through accessors without logic.
+<b>Getters:</b> Must be pure. No pass-through accessors without logic.
 
-**No unnecessary constructors.**
+<b>No unnecessary constructors.</b>
 
-**`obj['prop']` prohibited** to bypass visibility.
+<b>`obj['prop']` prohibited</b> to bypass visibility.
 
 ## Control Flow
 
-**Braces required.** Exception: single-line `if (x) doThing();`
+<b>Braces required.</b> Exception: single-line `if (x) doThing();`
 
-**`===`/`!==` only.** Exception: `== null` for null+undefined check.
+<b>`===`/`!==` only.</b> Exception: `== null` for null+undefined check.
 
-**Iteration:**
+<b>Iteration:</b>
 ```ts
 // Arrays: for...of
 for (const x of arr) {}
@@ -168,35 +169,35 @@ for (const [k, v] of Object.entries(obj)) {}
 // Never for...in on arrays
 ```
 
-**Switch:** `default` case required (last). No fall-through from non-empty cases.
+<b>Switch:</b> `default` case required (last). No fall-through from non-empty cases.
 
-**Assignment in conditions:** Avoid. If needed, double-paren: `while ((x = next())) {}`
+<b>Assignment in conditions:</b> Avoid. If needed, double-paren: `while ((x = next())) {}`
 
-**Try blocks:** Keep focused. Move non-throwing code outside.
+<b>Try blocks:</b> Keep focused. Move non-throwing code outside.
 
-**Empty catch:** Must have explanatory comment.
+<b>Empty catch:</b> Must have explanatory comment.
 
 ## Type Assertions
 
-**Avoid. Prefer runtime checks:**
+<b>Avoid. Prefer runtime checks:</b>
 ```ts
 if (x instanceof Foo) { x.method(); }
 ```
 
-**`as` syntax**, not angle brackets. Comment required explaining safety.
+<b>`as` syntax</b>, not angle brackets. Comment required explaining safety.
 
-**Double assertion** through `unknown` when needed:
+<b>Double assertion</b> through `unknown` when needed:
 ```ts
 (x as unknown as TargetType)
 ```
 
-**Non-null `!` assertions:** Avoid. Comment required if used.
+<b>Non-null `!` assertions:</b> Avoid. Comment required if used.
 
 ## Type Coercion
 
-**Allowed:** `String()`, `Boolean()`, `Number()`, template literals, `!!`
+<b>Allowed:</b> `String()`, `Boolean()`, `Number()`, template literals, `!!`
 
-**Enums to boolean prohibited:**
+<b>Enums to boolean prohibited:</b>
 ```ts
 // ✗
 if (status) {}
@@ -205,7 +206,7 @@ if (Boolean(status)) {}
 if (status !== Status.NONE) {}
 ```
 
-**`Number()` for parsing.** Check `isFinite()`. No unary `+`, no `parseInt` (except non-base-10 with validation).
+<b>`Number()` for parsing.</b> Check `isFinite()`. No unary `+`, no `parseInt` (except non-base-10 with validation).
 
 ## Error Handling
 

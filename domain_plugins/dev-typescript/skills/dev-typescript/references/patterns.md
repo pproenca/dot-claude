@@ -27,7 +27,7 @@ function bad({num}: Options = {num: 42}) {}
 
 ## Spread Syntax
 
-**Type matching required:**
+<b>Type matching required:</b>
 ```ts
 // Arrays: spread only iterables
 const arr = [...foo, ...bar];
@@ -38,7 +38,7 @@ const obj = {...defaults, ...overrides};
 const obj = {...(condition ? extra : {})}; // conditional
 ```
 
-**Prohibited patterns:**
+<b>Prohibited patterns:</b>
 ```ts
 // ✗ Falsy spread
 const bad = [...(shouldUse && items)]; // might be false
@@ -51,7 +51,7 @@ const bad = [...{a: 1}];     // object into array
 
 ## Getters & Setters
 
-**Must have logic.** No pass-through accessors:
+<b>Must have logic.</b> No pass-through accessors:
 ```ts
 // ✗ Pointless - just make bar public
 get bar() { return this._bar; }
@@ -62,19 +62,19 @@ get bar() { return this._bar ?? 'default'; }
 set bar(v) { this._bar = v.trim(); }
 ```
 
-**Backing field naming:** Prefix with `internal` or `wrapped`:
+<b>Backing field naming:</b> Prefix with `internal` or `wrapped`:
 ```ts
 private wrappedValue = '';
 get value() { return this.wrappedValue || 'default'; }
 ```
 
-**Getters must be pure.** No side effects, no state changes.
+<b>Getters must be pure.</b> No side effects, no state changes.
 
-**No `Object.defineProperty`** for accessors.
+<b>No `Object.defineProperty`</b> for accessors.
 
 ## Event Handlers
 
-**Arrow properties allowed** when handler needs uninstall:
+<b>Arrow properties allowed</b> when handler needs uninstall:
 ```ts
 class Component {
   // ✓ Arrow property - stable reference for removeEventListener
@@ -89,16 +89,16 @@ class Component {
 }
 ```
 
-**Inline arrows** for non-removable handlers:
+<b>Inline arrows</b> for non-removable handlers:
 ```ts
 element.addEventListener('click', () => { this.onClick(); });
 ```
 
-**Never `.bind()` in addEventListener** — creates new reference each call.
+<b>Never `.bind()` in addEventListener</b> — creates new reference each call.
 
 ## Callbacks
 
-**Always wrap in arrow:**
+<b>Always wrap in arrow:</b>
 ```ts
 // ✓
 items.map((x) => transform(x));
@@ -109,7 +109,7 @@ items.map(transform);
 items.filter(isValid);
 ```
 
-**Why:** Higher-order functions pass multiple arguments. Direct references receive all of them:
+<b>Why:</b> Higher-order functions pass multiple arguments. Direct references receive all of them:
 ```ts
 ['1', '2', '3'].map(parseInt);
 // parseInt receives (value, index, array)
@@ -120,7 +120,7 @@ items.filter(isValid);
 
 ## `this` Binding
 
-**Arrow functions in methods** access outer `this`:
+<b>Arrow functions in methods</b> access outer `this`:
 ```ts
 class Foo {
   items: string[] = [];
@@ -134,7 +134,7 @@ class Foo {
 }
 ```
 
-**Explicit params** over rebinding:
+<b>Explicit params</b> over rebinding:
 ```ts
 // ✓
 const setText = (el: HTMLElement) => { el.textContent = 'hi'; };
@@ -147,20 +147,20 @@ document.body.onclick = setText; // this binding unclear
 
 ## Iteration
 
-**Arrays:** `for...of` or `.forEach()`:
+<b>Arrays:</b> `for...of` or `.forEach()`:
 ```ts
 for (const item of items) {}
 for (const [i, item] of items.entries()) {} // with index
 ```
 
-**Objects:** `Object.keys/values/entries`:
+<b>Objects:</b> `Object.keys/values/entries`:
 ```ts
 for (const key of Object.keys(obj)) {}
 for (const value of Object.values(obj)) {}
 for (const [key, value] of Object.entries(obj)) {}
 ```
 
-**`for...in` only for dict-style objects**, with `hasOwnProperty`:
+<b>`for...in` only for dict-style objects</b>, with `hasOwnProperty`:
 ```ts
 for (const key in dict) {
   if (!dict.hasOwnProperty(key)) continue;
@@ -170,7 +170,7 @@ for (const key in dict) {
 
 ## Computed Properties
 
-**Symbol keys only** in classes:
+<b>Symbol keys only</b> in classes:
 ```ts
 class Iter {
   *[Symbol.iterator]() { yield* this.items; }
