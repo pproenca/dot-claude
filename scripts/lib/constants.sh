@@ -12,26 +12,23 @@
 
 # Built-in Claude Code tools
 VALID_BUILTIN_TOOLS=(
-  "Read"
-  "Write"
-  "Edit"
+  "AskUserQuestion"
   "Bash"
+  "BashOutput"
+  "Edit"
+  "ExitPlanMode"
   "Glob"
   "Grep"
+  "KillShell"
+  "NotebookEdit"
+  "Read"
+  "Skill"
+  "SlashCommand"
   "Task"
   "TodoWrite"
-  "AskUserQuestion"
-  "Skill"
   "WebFetch"
   "WebSearch"
-  "NotebookRead"
-  "NotebookEdit"
-  "LS"
-  "EnterPlanMode"
-  "ExitPlanMode"
-  "KillShell"
-  "SlashCommand"
-  "TaskOutput"
+  "Write"
 )
 
 # Valid model values for agents
