@@ -1,6 +1,7 @@
 ---
 name: orchestration-workflow
 description: This skill activates when handling complex multi-step tasks, coordinating multiple agents, planning large implementations, or when phrases like "orchestrate", "complex task", "multi-step", "coordinate work", or "plan and implement" are used. Provides the Explore-Plan-Delegate framework for IC7-level orchestration.
+allowed-tools: Read, Write, Task, TodoWrite
 ---
 
 # Multi-Agent Orchestration Workflow

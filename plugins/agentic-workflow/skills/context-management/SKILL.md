@@ -1,6 +1,7 @@
 ---
 name: context-management
 description: This skill activates when managing context across long tasks, handling compaction, preserving critical information, or when phrases like "context", "preserve", "compaction", "JIT loading", "external state", "todo.md", "progress.txt" are used. Provides strategies for maintaining coherence across context windows.
+allowed-tools: Read, Write, Edit, TodoWrite
 ---
 
 # Context Management for Long-Running Tasks

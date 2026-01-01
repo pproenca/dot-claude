@@ -1,4 +1,5 @@
 ---
+name: integration-tester
 description: |
   Verification agent that runs full test suite, type checking, and linting.
   Reports any failures for remediation by the orchestrator.

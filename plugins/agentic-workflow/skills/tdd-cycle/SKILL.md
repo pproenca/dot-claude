@@ -1,6 +1,7 @@
 ---
 name: tdd-cycle
 description: This skill activates when writing tests, implementing features with testing, or when phrases like "TDD", "test-driven", "test first", "red green blue", "write tests before code" are used. Provides the Red-Green-Blue cycle for quality implementations.
+allowed-tools: Read, Edit, Write, Bash
 ---
 
 # Test-Driven Development Cycle

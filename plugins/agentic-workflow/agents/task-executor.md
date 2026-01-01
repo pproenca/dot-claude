@@ -1,4 +1,5 @@
 ---
+name: task-executor
 description: |
   Implementation subagent (IC6) that executes a single task packet.
   Follows TDD cycle: RED (write failing test) → GREEN (implement) → BLUE (refactor).

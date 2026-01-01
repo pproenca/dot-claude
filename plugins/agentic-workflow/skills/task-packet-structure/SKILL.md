@@ -1,6 +1,7 @@
 ---
 name: task-packet-structure
 description: This skill activates when creating tasks for subagents, delegating work, structuring handoffs, or when phrases like "task packet", "delegate task", "subagent handoff", "create task", "spawn agent" are used. Provides the standard task packet format for subagent delegation.
+allowed-tools: Read, Write, Task
 ---
 
 # Task Packet Structure

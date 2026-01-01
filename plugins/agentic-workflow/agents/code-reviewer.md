@@ -1,4 +1,5 @@
 ---
+name: code-reviewer
 description: |
   Verification agent with fresh context for comprehensive code review.
   Reviews security, performance, patterns, and test coverage.

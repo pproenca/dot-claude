@@ -1,4 +1,5 @@
 ---
+name: synthesizer
 description: |
   Collects artifacts from all subagents, reviews verification results,
   creates remediation tasks if issues found, and synthesizes final implementation status.

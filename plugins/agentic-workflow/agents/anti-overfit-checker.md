@@ -1,4 +1,5 @@
 ---
+name: anti-overfit-checker
 description: |
   Verification agent that detects overfitting to test cases.
   Receives implementation code and requirements but NOT test files.

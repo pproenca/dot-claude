@@ -44,7 +44,7 @@ description: |
   </commentary>
   assistant: "I'll use the code-explorer agent to survey the project structure and conventions."
   </example>
-tools: Glob, Grep, LS, Read, LSP
+tools: Glob, Grep, LS, Read
 model: opus
 color: blue
 ---

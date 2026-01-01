@@ -1,4 +1,5 @@
 ---
+name: task-packet-writer
 description: |
   Subagent that converts a plan.md into individual task packet files.
   Extracts tasks from plan, creates well-structured packet files in .claude/task-packets/.

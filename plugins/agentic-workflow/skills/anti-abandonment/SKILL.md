@@ -1,6 +1,7 @@
 ---
 name: anti-abandonment
 description: This skill activates when there's risk of incomplete work, premature task completion, context drift, or when phrases like "don't abandon", "complete the task", "finish fully", "premature stop", "all items done" are used. Provides patterns to prevent task abandonment and ensure full completion.
+allowed-tools: Read, TodoWrite
 ---
 
 # Anti-Abandonment Patterns
