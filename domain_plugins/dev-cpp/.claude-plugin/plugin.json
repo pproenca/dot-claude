@@ -1,0 +1,8 @@
+{
+  "name": "dev-cpp",
+  "description": "Production-grade C++ engineering patterns from Google C++ Style Guide (100M+ LOC scale)",
+  "author": {
+    "name": "Pedro Proenca",
+    "email": "pedro@10xengs.com"
+  }
+}
