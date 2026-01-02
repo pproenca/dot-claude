@@ -1,7 +1,7 @@
 ---
 name: dev-cpp
 description: "Production-grade C++ engineering patterns from Google C++ Style Guide (100M+ LOC scale). Provides strict naming conventions, ownership semantics with smart pointers, defensive coding patterns, and scale-aware API design. Use when: (1) Writing new C++ code that must be maintainable, (2) Reviewing C++ for style compliance, (3) Designing C++ APIs or libraries, (4) Building Node.js native addons with N-API/V8, (5) Optimizing C++ hot paths for performance, (6) Questions about Google C++ style or modern C++ best practices."
-allowed-tools: Read, Edit, Bash, Glob, Grep
+allowed-tools: Read, Edit, Bash, Glob, Grep, LSP
 ---
 
 # C++ Engineering Excellence

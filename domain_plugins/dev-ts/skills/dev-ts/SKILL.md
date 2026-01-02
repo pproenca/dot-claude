@@ -1,7 +1,7 @@
 ---
 name: dev-ts
 description: Write TypeScript following Google's TypeScript Style Guide. Use when creating, editing, or reviewing TypeScript code. Enforces Google's conventions for imports, exports, naming, types, classes, functions, control flow, and error handling. Read references/patterns.md for destructuring, spread, iteration, type coercion, callbacks, and accessor patterns.
-allowed-tools: Read, Edit, Bash, Glob, Grep
+allowed-tools: Read, Edit, Bash, Glob, Grep, LSP
 ---
 
 # Google TypeScript Style
