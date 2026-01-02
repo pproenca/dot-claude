@@ -4,6 +4,37 @@
     "name": "Pedro Proenca",
     "email": "pedro@10xengs.com"
   },
+  "lspServers": {
+    "clangd": {
+      "command": "clangd",
+      "args": ["--background-index"],
+      "extensionToLanguage": {
+        ".c": "c",
+        ".h": "c",
+        ".cpp": "cpp",
+        ".cc": "cpp",
+        ".cxx": "cpp",
+        ".hpp": "cpp",
+        ".hxx": "cpp",
+        ".C": "cpp",
+        ".H": "cpp"
+      }
+    },
+    "typescript-language-server": {
+      "command": "typescript-language-server",
+      "args": ["--stdio"],
+      "extensionToLanguage": {
+        ".ts": "typescript",
+        ".tsx": "typescriptreact",
+        ".js": "javascript",
+        ".jsx": "javascriptreact",
+        ".mts": "typescript",
+        ".cts": "typescript",
+        ".mjs": "javascript",
+        ".cjs": "javascript"
+      }
+    }
+  },
   "metadata": {
     "description": "Claude Code plugins for productivity workflows - skills, agents, commands, and hooks",
     "version": "1.0.0"
@@ -28,8 +59,12 @@
       "source": "./domain_plugins/dev-python"
     },
     {
-      "name": "dev-typescript",
-      "source": "./domain_plugins/dev-typescript"
+      "name": "dev-ts",
+      "source": "./domain_plugins/dev-ts"
+    },
+    {
+      "name": "dev-cpp",
+      "source": "./domain_plugins/dev-cpp"
     }
   ]
 }
