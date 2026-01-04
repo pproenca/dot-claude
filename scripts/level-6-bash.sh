@@ -155,9 +155,9 @@ for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plug
     while IFS= read -r cmd; do
       [[ -z "$cmd" ]] && continue
 
-      # Look for bash script invocations
+      # Look for bash script invocations (including subdirectories like hooks/scripts/)
       if [[ "$cmd" =~ hooks/.*\.sh ]]; then
-        script_name=$(echo "$cmd" | grep -oE 'hooks/[a-zA-Z0-9_-]+\.sh' | head -1)
+        script_name=$(echo "$cmd" | grep -oE 'hooks/[a-zA-Z0-9_/-]+\.sh' | head -1)
         if [[ -n "$script_name" ]]; then
           resolved="$plugin_dir$script_name"
           if [[ -f "$resolved" ]]; then

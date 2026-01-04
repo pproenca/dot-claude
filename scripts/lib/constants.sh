@@ -20,6 +20,7 @@ VALID_BUILTIN_TOOLS=(
   "Glob"
   "Grep"
   "KillShell"
+  "LSP"
   "NotebookEdit"
   "Read"
   "Skill"

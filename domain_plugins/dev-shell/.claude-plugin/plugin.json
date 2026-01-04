@@ -1,5 +1,5 @@
 {
-  "name": "shell",
+  "name": "dev-shell",
   "description": "Shell scripting toolkit with Google Style Guide expertise and refactoring capabilities",
   "author": {
     "name": "Pedro Proenca",

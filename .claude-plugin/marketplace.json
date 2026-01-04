@@ -65,6 +65,14 @@
     {
       "name": "dev-cpp",
       "source": "./domain_plugins/dev-cpp"
+    },
+    {
+      "name": "dev-debug-cpp",
+      "source": "./domain_plugins/dev-debug-cpp"
+    },
+    {
+      "name": "dev-shell",
+      "source": "./domain_plugins/dev-shell"
     }
   ]
 }
