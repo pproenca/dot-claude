@@ -113,15 +113,18 @@ git clone https://github.com/pproenca/dev-workflow ~/.claude/plugins/dev-workflo
 **Required:** `git`
 **Optional:** `jq`, `bats-core`, `shellcheck`, `pre-commit`
 
-### Worktree Setup (Optional)
+### Worktree Workflows
 
-To use git worktree workflows (parallel development branches), enable worktree navigation:
+The plugin supports git worktree workflows using a sibling directory pattern:
 
 ```
-/add-dir ~/.dot-claude-worktrees
+my-repo/          # Main repository
+my-repo--feature/ # Worktree for 'feature' branch
 ```
 
-This allows Claude to `cd` into worktrees created by the plugin. Run once per machine.
+No configuration needed. Worktrees are created alongside your main repository.
+
+See the `simple-git-worktrees` skill for details.
 
 ## Usage
 

@@ -1,25 +1,32 @@
 #!/usr/bin/env bash
 # worktree-manager.sh - Simple git worktree management
-# Worktrees stored in ~/.dot-claude-worktrees/<repo>/<branch>
+# Worktrees stored as sibling directories: ../repo--branch
 
 set -euo pipefail
 
-# Worktree base directory
-WORKTREE_BASE="${HOME}/.dot-claude-worktrees"
-
 # Create a new worktree with a branch
 # Usage: create_worktree <branch-name>
-# Creates worktree at ~/.dot-claude-worktrees/<repo>/<branch>
+# Creates worktree at ../repo--branch
 create_worktree() {
   local branch="${1:?Branch name required}"
   local repo_name
   repo_name="$(basename "$(git rev-parse --show-toplevel)")"
-  local worktree_dir="${WORKTREE_BASE}/${repo_name}"
-  mkdir -p "$worktree_dir"
-  local worktree_path="${worktree_dir}/${branch}"
 
-  # Create worktree with new branch
-  git worktree add -b "$branch" "$worktree_path"
+  # Calculate sibling path
+  local main_dir
+  main_dir="$(git rev-parse --show-toplevel)"
+  local parent_dir
+  parent_dir="$(dirname "$main_dir")"
+  local worktree_path="${parent_dir}/${repo_name}--${branch}"
+
+  # Safety: Check if exists
+  if [[ -e "$worktree_path" ]]; then
+    echo "ERROR: Path exists: $worktree_path" >&2
+    return 1
+  fi
+
+  # Create worktree with new branch (suppress git output)
+  git worktree add -b "$branch" "$worktree_path" >&2
 
   echo "$worktree_path"
 }
@@ -52,13 +59,22 @@ check_unpushed_commits() {
   return 0
 }
 
-# Get worktree path for a branch
-# Usage: get_worktree_path <branch>
-get_worktree_path() {
-  local branch="${1:?Branch name required}"
-  local repo_name
-  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
-  echo "${WORKTREE_BASE}/${repo_name}/${branch}"
+# Validate worktree directory naming pattern
+# Usage: validate_worktree_pattern <dirname>
+# Returns 0 if valid (repo--branch), 1 if invalid
+validate_worktree_pattern() {
+  local dirname="${1:?Directory name required}"
+
+  # Must contain '--'
+  if [[ "$dirname" != *--* ]]; then
+    return 1
+  fi
+
+  local repo="${dirname%%--*}"
+  local branch="${dirname#*--}"
+
+  # Both parts non-empty
+  [[ -n "$repo" ]] && [[ -n "$branch" ]]
 }
 
 # Remove current worktree and its branch
@@ -71,13 +87,18 @@ remove_worktree() {
     return 1
   fi
 
-  # Get branch name from current branch
-  local branch
-  branch="$(git branch --show-current)"
+  # Parse repo--branch pattern
+  local worktree_dir
+  worktree_dir="$(basename "$PWD")"
 
-  # Get paths before we leave
-  local worktree_path
-  worktree_path="$(pwd)"
+  if ! validate_worktree_pattern "$worktree_dir"; then
+    echo "ERROR: Invalid worktree pattern: $worktree_dir" >&2
+    echo "Expected pattern: repo--branch" >&2
+    return 1
+  fi
+
+  local branch="${worktree_dir#*--}"
+  local worktree_path="$PWD"
   local main_repo
   main_repo="$(get_main_worktree)"
 
@@ -145,11 +166,16 @@ if [[ "${BASH_SOURCE[0]:-}" == "${0}" ]]; then
     check-unpushed)
       check_unpushed_commits "${2:-.}"
       ;;
-    get-path)
-      get_worktree_path "${2:?Branch name required}"
+    validate)
+      if validate_worktree_pattern "${2:?Directory name required}"; then
+        echo "Valid worktree pattern: $2"
+      else
+        echo "Invalid worktree pattern: $2"
+        exit 1
+      fi
       ;;
     *)
-      echo "Usage: $0 {create <branch>|remove|list|is-main|check-unpushed [path]|get-path <branch>}"
+      echo "Usage: $0 {create <branch>|remove|list|is-main|check-unpushed [path]|validate <dirname>}"
       exit 1
       ;;
   esac

@@ -156,10 +156,11 @@ If tests pass and was in worktree:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
-# Clean up worktree if we were in one (remove_worktree has safety checks)
-if [[ -n "${WORKTREE_PATH:-}" ]]; then
-  # Use remove_worktree which checks for unpushed commits
-  cd "$WORKTREE_PATH" && remove_worktree
+
+# Clean up worktree if we were in one (not main repo)
+if ! is_main_repo; then
+  # remove_worktree has safety checks for unpushed commits
+  remove_worktree
 fi
 ```
 
@@ -219,12 +220,13 @@ AskUserQuestion:
 source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
 
 FEATURE="$(git branch --show-current)"
-MAIN_REPO="$(get_main_worktree)"
 
-# If in worktree, go to main repo and remove worktree
+# If in worktree, go to main repo first
 if ! is_main_repo; then
   WORKTREE_PATH="$(pwd)"
+  MAIN_REPO="$(get_main_worktree)"
   cd "$MAIN_REPO"
+  # Force remove worktree (user explicitly confirmed discard)
   git worktree remove --force "$WORKTREE_PATH"
 fi
 

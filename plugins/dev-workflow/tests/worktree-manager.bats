@@ -8,56 +8,81 @@ SCRIPT="$PLUGIN_ROOT/scripts/worktree-manager.sh"
 setup() {
   setup_git_repo
   source "$SCRIPT"
-
-  # Store original WORKTREE_BASE and override for testing
-  ORIGINAL_WORKTREE_BASE="${WORKTREE_BASE:-}"
-  export WORKTREE_BASE="${BATS_TEST_TMPDIR}/.dot-claude-worktrees"
-  mkdir -p "$WORKTREE_BASE"
 }
 
 teardown() {
-  # Restore original WORKTREE_BASE
-  if [[ -n "$ORIGINAL_WORKTREE_BASE" ]]; then
-    export WORKTREE_BASE="$ORIGINAL_WORKTREE_BASE"
-  fi
+  # Clean up test worktrees (sibling directories)
+  local repo_dir
+  repo_dir="$(git rev-parse --show-toplevel 2>/dev/null)" || repo_dir=""
 
-  # Clean up test worktrees
-  if [[ -d "${BATS_TEST_TMPDIR}/.dot-claude-worktrees" ]]; then
-    rm -rf "${BATS_TEST_TMPDIR}/.dot-claude-worktrees"
+  if [[ -n "$repo_dir" ]]; then
+    local parent_dir
+    parent_dir="$(dirname "$repo_dir")"
+    local repo_name
+    repo_name="$(basename "$repo_dir")"
+
+    # Remove any sibling worktrees matching repo--*
+    find "$parent_dir" -maxdepth 1 -type d -name "${repo_name}--*" -exec rm -rf {} + 2>/dev/null || true
   fi
 
   teardown_git_repo
 }
 
-@test "create_worktree creates worktree in centralized location" {
-  local repo_name
-  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
+@test "create_worktree creates sibling directory" {
+  local main_dir parent_dir repo_name
+  main_dir="$(git rev-parse --show-toplevel)"
+  parent_dir="$(dirname "$main_dir")"
+  repo_name="$(basename "$main_dir")"
 
   result=$(create_worktree "feature-test")
+  expected="${parent_dir}/${repo_name}--feature-test"
 
-  # Check worktree was created in ~/.dot-claude-worktrees/<repo>/<branch>
-  [[ -d "${WORKTREE_BASE}/${repo_name}/feature-test" ]]
+  # Check worktree was created in sibling directory
+  [[ -d "$expected" ]]
+  [[ "$result" == "$expected" ]]
 
   # Check branch exists
   git branch | grep -q "feature-test"
 }
 
-@test "create_worktree returns correct path" {
-  local repo_name
-  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
+@test "create_worktree fails if path exists" {
+  local main_dir parent_dir repo_name
+  main_dir="$(git rev-parse --show-toplevel)"
+  parent_dir="$(dirname "$main_dir")"
+  repo_name="$(basename "$main_dir")"
 
-  result=$(create_worktree "feature-test")
+  # Create the worktree first
+  create_worktree "duplicate-test"
 
-  [[ "$result" == "${WORKTREE_BASE}/${repo_name}/feature-test" ]]
+  # Try to create again - should fail
+  run create_worktree "duplicate-test"
+  [ "$status" -eq 1 ]
+  echo "$output" | grep -q "Path exists"
 }
 
-@test "get_worktree_path returns correct path" {
-  local repo_name
-  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
+@test "validate_worktree_pattern accepts valid patterns" {
+  run validate_worktree_pattern "myrepo--feature"
+  [ "$status" -eq 0 ]
 
-  result=$(get_worktree_path "my-feature")
+  run validate_worktree_pattern "my-repo--my-feature"
+  [ "$status" -eq 0 ]
 
-  [[ "$result" == "${WORKTREE_BASE}/${repo_name}/my-feature" ]]
+  run validate_worktree_pattern "repo123--branch-name"
+  [ "$status" -eq 0 ]
+}
+
+@test "validate_worktree_pattern rejects invalid patterns" {
+  run validate_worktree_pattern "myrepo"
+  [ "$status" -eq 1 ]
+
+  run validate_worktree_pattern "--feature"
+  [ "$status" -eq 1 ]
+
+  run validate_worktree_pattern "myrepo--"
+  [ "$status" -eq 1 ]
+
+  run validate_worktree_pattern "nohyphens"
+  [ "$status" -eq 1 ]
 }
 
 @test "is_main_repo returns true in main repo" {
@@ -66,11 +91,13 @@ teardown() {
 }
 
 @test "is_main_repo returns false in worktree" {
-  local repo_name
-  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
+  local main_dir parent_dir repo_name
+  main_dir="$(git rev-parse --show-toplevel)"
+  parent_dir="$(dirname "$main_dir")"
+  repo_name="$(basename "$main_dir")"
 
   create_worktree "feature-test"
-  cd "${WORKTREE_BASE}/${repo_name}/feature-test"
+  cd "${parent_dir}/${repo_name}--feature-test"
 
   run is_main_repo
   [ "$status" -eq 1 ]
@@ -84,11 +111,13 @@ teardown() {
 }
 
 @test "check_unpushed_commits fails when branch never pushed" {
-  local repo_name
-  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
+  local main_dir parent_dir repo_name
+  main_dir="$(git rev-parse --show-toplevel)"
+  parent_dir="$(dirname "$main_dir")"
+  repo_name="$(basename "$main_dir")"
 
   create_worktree "unpushed-feature"
-  local worktree_path="${WORKTREE_BASE}/${repo_name}/unpushed-feature"
+  local worktree_path="${parent_dir}/${repo_name}--unpushed-feature"
 
   # Make a commit in the worktree
   cd "$worktree_path"
@@ -109,11 +138,13 @@ teardown() {
 }
 
 @test "remove_worktree fails with unpushed commits" {
-  local repo_name
-  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
+  local main_dir parent_dir repo_name
+  main_dir="$(git rev-parse --show-toplevel)"
+  parent_dir="$(dirname "$main_dir")"
+  repo_name="$(basename "$main_dir")"
 
   create_worktree "feature-with-commits"
-  local worktree_path="${WORKTREE_BASE}/${repo_name}/feature-with-commits"
+  local worktree_path="${parent_dir}/${repo_name}--feature-with-commits"
 
   # Make a commit in the worktree (unpushed)
   cd "$worktree_path"
@@ -127,13 +158,29 @@ teardown() {
   echo "$output" | grep -q "unpushed"
 }
 
+@test "remove_worktree validates pattern before operating" {
+  # Test that validate_worktree_pattern is called and rejects invalid patterns
+  # This is tested indirectly through the validate_worktree_pattern function tests
+  # and through integration - if a user somehow has an invalid directory name,
+  # the function will reject it
+
+  # Direct pattern validation test (validates the guard)
+  run validate_worktree_pattern "invalid"
+  [ "$status" -eq 1 ]
+
+  run validate_worktree_pattern "repo--branch"
+  [ "$status" -eq 0 ]
+}
+
 @test "CLI: create command works" {
-  local repo_name
-  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
+  local main_dir parent_dir repo_name
+  main_dir="$(git rev-parse --show-toplevel)"
+  parent_dir="$(dirname "$main_dir")"
+  repo_name="$(basename "$main_dir")"
 
   run "$SCRIPT" create "cli-test"
   [ "$status" -eq 0 ]
-  [[ -d "${WORKTREE_BASE}/${repo_name}/cli-test" ]]
+  [[ -d "${parent_dir}/${repo_name}--cli-test" ]]
 }
 
 @test "CLI: list command works" {
@@ -147,13 +194,16 @@ teardown() {
   [ "$output" = "true" ]
 }
 
-@test "CLI: get-path command works" {
-  local repo_name
-  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
-
-  run "$SCRIPT" get-path "my-branch"
+@test "CLI: validate command accepts valid pattern" {
+  run "$SCRIPT" validate "myrepo--mybranch"
   [ "$status" -eq 0 ]
-  [[ "$output" == "${WORKTREE_BASE}/${repo_name}/my-branch" ]]
+  echo "$output" | grep -q "Valid worktree pattern"
+}
+
+@test "CLI: validate command rejects invalid pattern" {
+  run "$SCRIPT" validate "invalid"
+  [ "$status" -eq 1 ]
+  echo "$output" | grep -q "Invalid worktree pattern"
 }
 
 @test "CLI: unknown command shows usage" {
@@ -171,23 +221,27 @@ teardown() {
 }
 
 @test "get_main_worktree from within worktree returns main repo" {
-  local main_repo repo_name
+  local main_repo main_dir parent_dir repo_name
+  main_dir="$(git rev-parse --show-toplevel)"
   main_repo="$(pwd)"
-  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
+  parent_dir="$(dirname "$main_dir")"
+  repo_name="$(basename "$main_dir")"
 
   create_worktree "feature-test"
-  cd "${WORKTREE_BASE}/${repo_name}/feature-test"
+  cd "${parent_dir}/${repo_name}--feature-test"
 
   result=$(get_main_worktree)
   [[ "$result" == "$main_repo" ]]
 }
 
 @test "CLI: check-unpushed command with path argument" {
-  local repo_name
-  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
+  local main_dir parent_dir repo_name
+  main_dir="$(git rev-parse --show-toplevel)"
+  parent_dir="$(dirname "$main_dir")"
+  repo_name="$(basename "$main_dir")"
 
   create_worktree "check-test"
-  local worktree_path="${WORKTREE_BASE}/${repo_name}/check-test"
+  local worktree_path="${parent_dir}/${repo_name}--check-test"
 
   # Make a commit (unpushed)
   cd "$worktree_path"

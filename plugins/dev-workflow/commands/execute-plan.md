@@ -47,15 +47,15 @@ AskUserQuestion:
   question: "Create isolated worktree session for this work?"
   multiSelect: false
   options:
-    - label: "Yes - spawn new session (Recommended)"
-      description: "Creates worktree, launches new Terminal, you continue there"
+    - label: "Yes - create worktree (Recommended)"
+      description: "Creates ../repo--branch, switches to it in current session"
     - label: "No - work in main repo"
       description: "Execute directly in main repo (not recommended)"
 ```
 
-**If user selects "Yes - spawn new session":**
+**If user selects "Yes - create worktree":**
 
-Create worktree and spawn new Claude session:
+Create worktree and switch to it in current session:
 
 ```bash
 source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
@@ -64,32 +64,28 @@ PLAN_FILE="$ARGUMENTS"
 # Extract feature name from plan filename (remove date prefix and extension)
 BRANCH_NAME=$(basename "$PLAN_FILE" .md | sed 's/^[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}-//')
 
-# Create worktree (will be in ~/.dot-claude-worktrees/<repo>/<branch>)
+# Create sibling worktree
 WORKTREE_PATH=$(create_worktree "$BRANCH_NAME")
-echo "WORKTREE_PATH=$WORKTREE_PATH"
-echo "BRANCH=$BRANCH_NAME"
+echo "Created worktree: $WORKTREE_PATH"
+echo "Branch: $BRANCH_NAME"
 
-# Copy plan file to worktree so it's accessible there
-cp "$PLAN_FILE" "$WORKTREE_PATH/"
-
-# Launch new Terminal session in worktree with initial prompt
-PLAN_BASENAME=$(basename "$PLAN_FILE")
-"${CLAUDE_PLUGIN_ROOT}/scripts/open-terminal.sh" "$WORKTREE_PATH" "Run /dev-workflow:execute-plan $PLAN_BASENAME"
+# Change to worktree (plan file accessible via shared .git)
+cd "$WORKTREE_PATH"
+echo "Working directory: $(pwd)"
 ```
 
-**After spawning new session, STOP and report:**
+**Report and CONTINUE to Step 1b:**
 
 ```text
-New session spawned in worktree.
+Worktree created and activated.
 
 Location: $WORKTREE_PATH
 Branch: $BRANCH_NAME
 
-Continue in the new Terminal window.
-This session is done - the new session will orchestrate the plan.
+Proceeding with plan execution in current session...
 ```
 
-**STOP EXECUTION HERE.** Do not continue to Step 2. The new session handles orchestration.
+**CONTINUE to Step 1b.** The current session continues as orchestrator.
 
 **If user selects "No - work in main repo":**
 
