@@ -9,14 +9,12 @@ set -euo pipefail
 # Creates worktree at ../repo--branch
 create_worktree() {
   local branch="${1:?Branch name required}"
-  local repo_name
-  repo_name="$(basename "$(git rev-parse --show-toplevel)")"
 
   # Calculate sibling path
   local main_dir
   main_dir="$(git rev-parse --show-toplevel)"
-  local parent_dir
-  parent_dir="$(dirname "$main_dir")"
+  local repo_name="${main_dir##*/}"
+  local parent_dir="${main_dir%/*}"
   local worktree_path="${parent_dir}/${repo_name}--${branch}"
 
   # Safety: Check if exists

@@ -30,7 +30,8 @@ if is_main_repo; then
   echo "IN_MAIN_REPO=true"
 else
   echo "IN_MAIN_REPO=false"
-  echo "Already in worktree: $(basename "$(pwd)")"
+  CURRENT_DIR="$(pwd)"
+  echo "Already in worktree: ${CURRENT_DIR##*/}"
 fi
 ```
 
@@ -61,17 +62,20 @@ Create worktree and switch to it in current session:
 source "${CLAUDE_PLUGIN_ROOT}/scripts/worktree-manager.sh"
 PLAN_FILE="$ARGUMENTS"
 
-# Extract feature name from plan filename (remove date prefix and extension)
-BRANCH_NAME=$(basename "$PLAN_FILE" .md | sed 's/^[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}-//')
+# Extract filename from path (avoid nested command substitutions)
+PLAN_BASENAME="${PLAN_FILE##*/}"
+PLAN_BASENAME="${PLAN_BASENAME%.md}"
+
+# Remove date prefix using sed
+BRANCH_NAME="$(echo "$PLAN_BASENAME" | sed 's/^[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}-//')"
 
 # Create sibling worktree
-WORKTREE_PATH=$(create_worktree "$BRANCH_NAME")
+WORKTREE_PATH="$(create_worktree "$BRANCH_NAME")"
 echo "Created worktree: $WORKTREE_PATH"
 echo "Branch: $BRANCH_NAME"
 
 # Change to worktree (plan file accessible via shared .git)
-cd "$WORKTREE_PATH"
-echo "Working directory: $(pwd)"
+cd "$WORKTREE_PATH" && pwd
 ```
 
 **Report and CONTINUE to Step 1b:**
