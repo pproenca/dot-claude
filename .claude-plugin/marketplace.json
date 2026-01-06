@@ -39,7 +39,7 @@
     "description": "Claude Code plugins for productivity workflows - skills, agents, commands, and hooks",
     "version": "1.0.0"
   },
-  "repository": "https://github.com/pedroproenca/dot-claude",
+  "repository": "https://github.com/pproenca/dot-claude",
   "plugins": [
     {
       "name": "dev-workflow",
@@ -65,10 +65,6 @@
     {
       "name": "dev-cpp",
       "source": "./domain_plugins/dev-cpp"
-    },
-    {
-      "name": "dev-debug-cpp",
-      "source": "./domain_plugins/dev-debug-cpp"
     },
     {
       "name": "dev-shell",
