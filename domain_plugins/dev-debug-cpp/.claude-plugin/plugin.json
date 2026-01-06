@@ -1,0 +1,8 @@
+{
+  "name": "dev-debug-cpp",
+  "description": "C++ debugging for segfaults, memory corruption, threading issues, and linker/ABI problems",
+  "author": {
+    "name": "Pedro Proenca",
+    "email": "pedro@10xengs.com"
+  }
+}
