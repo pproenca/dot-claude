@@ -1,5 +1,5 @@
 ---
-description: Create a new best-practices skill for a programming language or framework
+description: Create a best-practices skill for any language
 argument-hint: <language> [--output-dir <path>]
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep, AskUserQuestion, Task, TodoWrite, WebSearch, WebFetch
 ---
@@ -20,9 +20,21 @@ This command orchestrates the creation of a complete skill containing:
 
 ### Phase 1: Gather Requirements
 
+**1.0 Parse Arguments**
+
+Parse command arguments from `$ARGUMENTS`:
+- First argument (`$1`): Language/framework name (e.g., "cpp", "typescript", "python")
+- `--output-dir <path>`: Optional output directory override
+
+Example invocations:
+- `/skills-template:create-skill typescript` → language=typescript
+- `/skills-template:create-skill cpp --output-dir ./my-skills` → language=cpp, output=./my-skills
+
+If `$ARGUMENTS` contains a language, use it directly. Otherwise, proceed to ask.
+
 **1.1 Identify Target Language**
 
-If no language specified, ask the user:
+If no language specified in `$ARGUMENTS`, ask the user:
 
 ```
 AskUserQuestion:

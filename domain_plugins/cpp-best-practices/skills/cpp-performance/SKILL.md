@@ -1,6 +1,7 @@
 ---
 name: cpp-best-practices
 description: C++ performance optimization guidelines from modern C++ standards (C++17/20/23). This skill should be used when writing, reviewing, or refactoring C++ code to ensure optimal performance patterns. Triggers on tasks involving memory management, concurrency, compile-time optimization, cache efficiency, or performance improvements.
+allowed-tools: [Read, Edit, Bash, Glob, Grep, WebSearch, WebFetch, LSP]
 ---
 
 # C++ Best Practices

@@ -1,5 +1,5 @@
 ---
-description: Execute implementation plan with progress tracking and post-completion actions
+description: Execute implementation plan with progress tracking
 argument-hint: [plan-file]
 allowed-tools: Read, Write, Bash, TodoWrite, Task, Skill, AskUserQuestion, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
 ---
