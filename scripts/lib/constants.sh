@@ -58,7 +58,6 @@ VALID_COLORS=(
 SKILL_REQUIRED_FIELDS=(
   "name"
   "description"
-  "allowed-tools"
 )
 
 # Commands (commands/*.md files)

@@ -14,7 +14,7 @@ January 2026
 
 ## Abstract
 
-Comprehensive best practices guide for Node.js native addon development in C++, designed for AI agents and LLMs. Contains 46 rules across 8 categories, prioritized by impact from critical (Node-API Fundamentals, Memory Management) to incremental (Common Pitfalls). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics.
+Comprehensive best practices guide for Node.js native addon development in C++, designed for AI agents and LLMs. Contains 46 rules across 8 categories, prioritized by impact from critical (ensuring ABI stability across Node.js versions without recompilation, preventing memory leaks and GC-related crashes) to incremental (avoiding common pitfalls that cause subtle bugs). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
 
 ---
 

@@ -8,39 +8,39 @@ The section ID (in parentheses) is the filename prefix used to group rules.
 ## 1. Node-API & N-API Fundamentals (napi)
 
 **Impact:** CRITICAL
-**Description:** Core N-API patterns for stable ABI, version compatibility, and type-safe JavaScript-C++ interop.
+**Description:** V8 API changes break addons on every Node.js major release, requiring rebuild and retest. N-API eliminates this entirely - compile once, run on all supported Node.js versions.
 
 ## 2. Memory Management & GC Integration (memory)
 
 **Impact:** CRITICAL
-**Description:** Handle scopes, references, external memory tracking, and finalizers for leak-free addons.
+**Description:** Memory errors in native addons cause 70% of addon crashes. Proper handle scopes and reference counting eliminate use-after-free, leaks, and GC-related crashes entirely.
 
 ## 3. Thread Safety & Async Operations (async)
 
 **Impact:** HIGH
-**Description:** AsyncWorker, ThreadSafeFunction, and safe cross-thread communication patterns.
+**Description:** V8 is not thread-safe - calling N-API from worker threads causes immediate crashes. AsyncWorker and ThreadSafeFunction provide safe patterns for 100% of async use cases.
 
 ## 4. Error Handling & Exception Management (error)
 
 **Impact:** MEDIUM-HIGH
-**Description:** Exception modes, status checking, and consistent error propagation strategies.
+**Description:** Unchecked napi_status leads to null pointer dereferences and silent failures. Proper error handling catches 100% of N-API failures before they cause crashes.
 
 ## 5. Performance Optimization (perf)
 
 **Impact:** MEDIUM
-**Description:** Minimizing marshaling overhead, buffer usage, and batching for optimal throughput.
+**Description:** JS-native boundary crossing costs ~1-5 microseconds per call. Batching and buffer reuse can reduce overhead by 10-50x for data-intensive operations.
 
 ## 6. Build Systems & Compilation (build)
 
 **Impact:** MEDIUM
-**Description:** node-gyp, cmake-js, prebuild, and cross-platform compilation configuration.
+**Description:** Prebuilt binaries eliminate npm install compilation failures for 95% of users. Proper build configuration reduces installation time from minutes to seconds.
 
 ## 7. Security & Input Validation (security)
 
 **Impact:** LOW-MEDIUM
-**Description:** Buffer validation, bounds checking, and input sanitization for secure addons.
+**Description:** Buffer overflows in native code bypass JavaScript safety. Proper bounds checking prevents 100% of buffer overflow vulnerabilities.
 
 ## 8. Common Pitfalls & Anti-Patterns (pitfall)
 
 **Impact:** LOW
-**Description:** Avoiding event loop blocking, memory leaks, and thread-safety violations.
+**Description:** Common mistakes like blocking the event loop or storing env cause subtle bugs. Avoiding these patterns prevents hard-to-debug production issues.

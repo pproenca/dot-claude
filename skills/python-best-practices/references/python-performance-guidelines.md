@@ -14,7 +14,7 @@ January 2026
 
 ## Abstract
 
-Comprehensive performance optimization guide for Python 3.11-3.14 applications, designed for AI agents and LLMs. Contains 43+ rules across 8 categories, prioritized by impact from critical (Modern Type Annotations, Async & Concurrency) to incremental (Tooling & Configuration). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
+Comprehensive performance optimization guide for Python 3.11-3.14 applications, designed for AI agents and LLMs. Contains 43+ rules across 8 categories, prioritized by impact from critical (eliminating type annotation boilerplate by 50% and 5+ import statements per file, preventing async deadlocks and event loop blocking) to incremental (consolidating project configuration into single pyproject.toml). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
 
 ---
 

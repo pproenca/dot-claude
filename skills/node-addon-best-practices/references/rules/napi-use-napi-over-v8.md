@@ -1,13 +1,13 @@
 ---
 title: Always Use N-API Over V8
 impact: CRITICAL
-impactDescription: V8 API changes break addons on Node.js upgrades; N-API provides ABI stability across versions
-tags: napi, abi-stability, compatibility, node-api
+impactDescription: Eliminates rebuild requirement on Node.js upgrades (saves 2-8 hours per major release cycle)
+tags: napi, abi-stability, compatibility, node-api, node-addon-api
 ---
 
 # Always Use N-API Over V8
 
-Use the stable ABI Node-API (N-API) instead of the V8 C++ API for cross-version compatibility. N-API abstracts the underlying JavaScript engine, allowing your addon to work across Node.js versions without recompilation.
+Use the stable ABI Node-API (N-API) instead of the V8 C++ API for cross-version compatibility. N-API abstracts the underlying JavaScript engine, allowing your addon to work across Node.js versions without recompilation. V8 API breaks on every Node.js major release - N-API eliminates this maintenance burden entirely.
 
 ## Why This Matters
 

@@ -40,49 +40,39 @@ Rules are prioritized by impact:
 ### Critical Patterns (Apply First)
 
 **Node-API & N-API Fundamentals:**
-- Always use N-API over V8 for stable ABI across Node.js versions
-- Define NAPI_VERSION before includes to enable specific features
+- Use N-API over V8 for stable ABI (eliminates recompilation on Node.js upgrades)
 - Check all napi_status return codes before using results
 - Use node-addon-api C++ wrapper for type safety and exception handling
-- Use type-tagged objects for safe native object casting
+- Use type-tagged objects to prevent type confusion attacks
 
 **Memory Management & GC Integration:**
-- Use handle scopes in loops to prevent memory buildup
-- Create references for JavaScript objects that persist beyond callbacks
-- Track external memory allocations with AdjustExternalMemory
-- Register finalizers for cleanup when JavaScript objects are GC'd
-- Prefer buffers for large data to avoid V8 heap pressure
+- Use handle scopes in loops to prevent OOM from handle accumulation
+- Create references for JS objects that persist beyond callbacks
+- Track external memory with AdjustExternalMemory for proper GC scheduling
+- Register finalizers for automatic resource cleanup on GC
 
-### High-Impact Thread Safety Patterns
+### High-Impact Async Patterns
 
 - Use AsyncWorker for CPU-intensive background tasks
 - Never call N-API functions in AsyncWorker::Execute()
 - Use ThreadSafeFunction for callbacks from worker threads
 - Always Acquire/Release ThreadSafeFunction properly
-- Use AsyncProgressWorker for progress updates
 
 ### Medium-Impact Patterns
 
 **Error Handling:**
 - Enable C++ exceptions for cleaner error handling
-- Check env.IsExceptionPending() after N-API calls
 - Return immediately after throwing exceptions
 
 **Performance:**
 - Minimize data marshaling overhead between JS and C++
 - Use buffers to bypass V8 heap copying
-- Batch small operations to reduce per-call overhead
 
 ### Lower-Impact Patterns
 
-**Build Systems:**
-- Use node-gyp for standard setup, cmake-js for CMake projects
+- Use node-gyp or cmake-js for build configuration
 - Provide prebuilt binaries with prebuild/prebuildify
-
-**Security:**
-- Validate buffer sizes before use
-- Bounds-check array access
-- Sanitize external input
+- Validate buffer sizes and bounds-check array access
 
 ## References
 

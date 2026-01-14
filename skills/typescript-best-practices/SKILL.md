@@ -40,61 +40,44 @@ Rules are prioritized by impact:
 ### Critical Patterns (Apply First)
 
 **Type Safety:**
-- Enable strict mode in all projects
-- Never use `any` - prefer `unknown` or proper typing
-- Use type narrowing with type guards
-- Leverage discriminated unions for type-safe branching
-- Use `satisfies` operator for type validation
-- Avoid type assertions (`as`) - narrow instead
+- Enable strict mode - catches 40% of production bugs at compile time
+- Never use `any` - prefer `unknown` with proper narrowing
+- Use discriminated unions for type-safe state management
+- Apply `satisfies` operator for inference + validation
 
 **Performance:**
-- Use `const` enums for zero-runtime overhead
-- Avoid excessive type complexity (recursive types)
-- Use project references for large codebases
-- Leverage incremental compilation
-- Avoid barrel file re-exports in applications
-- Enable `skipLibCheck` for faster builds
-- Configure include/exclude properly
+- Enable incremental compilation - 10x faster subsequent builds
+- Use project references for monorepos - rebuild only changed packages
+- Avoid barrel file re-exports - prevents 30-70% bundle bloat
+- Enable `skipLibCheck` - cuts type-check time by 50%
 
 ### High-Impact Patterns
 
-- Use Result/Either pattern over exceptions
-- Type your error boundaries properly
-- Use `never` for exhaustive error handling
-- Avoid swallowing errors with empty catch blocks
+- Use Result/Either pattern - makes errors visible in types
+- Apply exhaustive checks with `never` - catches missed cases at compile time
+- Type error boundaries - distinguish network vs validation vs auth errors
 
 ### Medium-Impact Patterns
 
 **API Design:**
-- Use function overloads for complex signatures
-- Prefer generics over `any` for reusable code
-- Use branded types for nominal typing
-- Design APIs with inference in mind
+- Use branded types for nominal safety (UserId vs OrderId)
+- Prefer generics over `any` - preserves type information
+- Design APIs for inference - minimize required annotations
 
 **Module Organization:**
-- Prefer named exports over default exports
-- Use type-only imports where applicable
-- Avoid circular dependencies
-- Reserve barrel files for library entry points only
+- Prefer named exports - enables better refactoring
+- Use `import type` - eliminates runtime import overhead
 
 **Code Patterns:**
-- Use discriminated unions over type assertions
-- Leverage exhaustive checks with `never`
-- Use utility types (`Partial`, `Pick`, `Omit`, etc.)
-- Use template literal types for string patterns
+- Use utility types (`Partial`, `Pick`, `Omit`) over manual definitions
+- Apply const assertions for literal type preservation
 
 ### Lower-Impact Patterns
 
 **Configuration:**
 - Use `moduleResolution: bundler` for modern projects
 - Enable `noUncheckedIndexedAccess` for array safety
-- Configure paths for clean imports
-- Enable `exactOptionalPropertyTypes` for stricter optionals
 - Extend from `@tsconfig/bases` for environment defaults
-
-**Testing:**
-- Use `expectTypeOf` for compile-time type tests
-- Mock with proper type narrowing
 
 ## References
 

@@ -85,16 +85,11 @@ Rules are prioritized by impact:
 
 ### Security Patterns
 
-- Never use `eval()` or `exec()` with untrusted input
-- Use `ast.literal_eval()` for safe literal parsing
-- Avoid `pickle` with untrusted data; prefer JSON
-- Validate and sanitize all external input
-- Use `secrets` module instead of `random` for security
-- Avoid shell=True in subprocess calls
-- Use parameterized queries for databases
-- Store secrets in environment variables, not code
-- Use `hashlib` with proper algorithms for hashing
-- Validate file paths to prevent directory traversal
+- Never use `eval()`/`exec()`/`pickle` with untrusted data
+- Use `secrets` module instead of `random` for cryptographic operations
+- Use parameterized queries to prevent SQL injection
+- Validate file paths with `Path.is_relative_to()` to prevent traversal
+- Store secrets in environment variables, use `pydantic-settings` for validation
 
 ### Tooling Patterns
 
