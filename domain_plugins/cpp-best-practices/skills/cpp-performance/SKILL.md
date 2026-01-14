@@ -8,7 +8,7 @@ allowed-tools: [Read, Edit, Bash, Glob, Grep, WebSearch, WebFetch, LSP]
 
 ## Overview
 
-Comprehensive performance optimization guide for modern C++ applications, containing 40+ rules across 8 categories. Rules are prioritized by impact to guide automated refactoring and code generation. Focuses on C++17/20/23 best practices.
+Comprehensive performance optimization guide for modern C++ applications, containing 47 rules across 8 categories. Rules are prioritized by impact to guide automated refactoring and code generation. Focuses on C++17/20/23 best practices.
 
 ## When to Apply
 

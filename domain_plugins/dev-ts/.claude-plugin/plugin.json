@@ -1,6 +1,6 @@
 {
   "name": "dev-ts",
-  "description": "Google TypeScript Style Guide for writing TypeScript following Google's conventions",
+  "description": "TypeScript best practices with 49 rules covering type safety, compilation performance, error handling, API design, module organization, code patterns, configuration, and testing",
   "author": {
     "name": "Pedro Proenca",
     "email": "pedro@10xengs.com"
