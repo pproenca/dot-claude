@@ -35,16 +35,19 @@ Rules are prioritized by impact:
 
 ## Quick Reference
 
+<!-- IMPORTANT: Each section below must have ≤5 bullets. Total: 20-25 bullets. -->
+<!-- Pick the TOP patterns from each category - the rest go in references/ -->
+
 ### Critical Patterns (Apply First)
 
-**{CATEGORY_1_NAME}:**
+**{CATEGORY_1_NAME}:** <!-- MAX 5 bullets -->
 - {RULE_1_1_SUMMARY}
 - {RULE_1_2_SUMMARY}
 - {RULE_1_3_SUMMARY}
 - {RULE_1_4_SUMMARY}
 - {RULE_1_5_SUMMARY}
 
-**{CATEGORY_2_NAME}:**
+**{CATEGORY_2_NAME}:** <!-- MAX 5 bullets -->
 - {RULE_2_1_SUMMARY}
 - {RULE_2_2_SUMMARY}
 - {RULE_2_3_SUMMARY}
@@ -53,6 +56,7 @@ Rules are prioritized by impact:
 
 ### High-Impact Patterns
 
+<!-- MAX 4 bullets -->
 - {RULE_3_1_SUMMARY}
 - {RULE_3_2_SUMMARY}
 - {RULE_3_3_SUMMARY}
@@ -60,17 +64,19 @@ Rules are prioritized by impact:
 
 ### Medium-Impact Patterns
 
+<!-- MAX 5 bullets - pick best from categories 4, 5, 6 -->
 - {RULE_4_1_SUMMARY}
 - {RULE_4_2_SUMMARY}
 - {RULE_5_1_SUMMARY}
 - {RULE_5_2_SUMMARY}
-- {RULE_5_3_SUMMARY}
+- {RULE_6_1_SUMMARY}
 
 ### Lower-Impact Patterns
 
-- {RULE_6_1_SUMMARY}
+<!-- MAX 3 bullets - pick best from categories 7, 8 -->
 - {RULE_7_1_SUMMARY}
 - {RULE_7_2_SUMMARY}
+- {RULE_8_1_SUMMARY}
 
 ## References
 
@@ -81,7 +87,9 @@ Full documentation with code examples is available in:
 
 To look up a specific pattern, grep the rules directory:
 ```
-grep -l "{KEYWORD}" references/rules/
+grep -l "{KEYWORD_1}" references/rules/
+grep -l "{KEYWORD_2}" references/rules/
+grep -l "{KEYWORD_3}" references/rules/
 ```
 
 ## Rule Categories in `references/rules/`

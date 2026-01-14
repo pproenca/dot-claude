@@ -48,7 +48,8 @@ Each category (1-8) has these placeholders:
 |-------------|-------------|
 | `{CATEGORY_N_NAME}` | Full category name (e.g., "Eliminating Waterfalls") |
 | `{CATEGORY_N_ANCHOR}` | URL anchor (kebab-case, e.g., "eliminating-waterfalls") |
-| `{CATEGORY_N_DESCRIPTION}` | 2-3 sentence explanation for guidelines.md |
+| `{CATEGORY_N_PROBLEM_DOMAIN}` | Problem domain for abstract (e.g., "eliminating render waterfalls", "reducing bundle size by 40-70%") |
+| `{CATEGORY_N_DESCRIPTION}` | 2-3 sentence explanation for guidelines.md, starting with IMPACT |
 | `{CATEGORY_N_DESCRIPTION_SHORT}` | 1 sentence for _sections.md |
 | `{PREFIX_N}` | Filename prefix (3-8 chars, e.g., "async", "bundle") |
 
@@ -61,6 +62,14 @@ Each category (1-8) has these placeholders:
 - Category 6: MEDIUM
 - Category 7: LOW-MEDIUM
 - Category 8: LOW
+
+**IMPORTANT: Abstract Problem Domain Examples:**
+| ❌ Category Name Only | ✅ Problem Domain Description |
+|----------------------|-------------------------------|
+| "Type Safety" | "eliminating runtime type errors" |
+| "Performance" | "reducing bundle size by 40-70%" |
+| "Memory Management" | "preventing 70% of security vulnerabilities" |
+| "Testing" | "catching type regressions at compile time" |
 
 ---
 
@@ -87,14 +96,18 @@ Each rule has these placeholders (replace N with category, M with rule number):
 |-------------|-------------|
 | `{RULE_TITLE}` | Title matching the H2 heading |
 | `{IMPACT_LEVEL}` | One of: CRITICAL, HIGH, MEDIUM-HIGH, MEDIUM, LOW-MEDIUM, LOW |
-| `{IMPACT_METRIC}` | Short metric (e.g., "O(n) to O(1)", "50% faster") |
+| `{QUANTIFIED_METRIC}` | Specific metric (e.g., "50% memory reduction", "O(n) → O(1)", "15-70% faster builds") |
 | `{PREFIX}` | Category prefix (first tag) |
 | `{TAG_1}`, `{TAG_2}`, `{TAG_3}` | Additional searchable tags |
-| `{RULE_EXPLANATION}` | 1-3 sentence explanation |
+| `{RULE_EXPLANATION}` | 1-3 sentence explanation starting with IMPACT |
 | `{INCORRECT_DESCRIPTION}` | Parenthetical problem description |
-| `{INCORRECT_CODE}` | Anti-pattern code |
+| `{INCORRECT_CODE}` | Anti-pattern code with PROBLEM: comment |
 | `{CORRECT_DESCRIPTION}` | Parenthetical solution description |
-| `{CORRECT_CODE}` | Correct implementation |
+| `{CORRECT_CODE}` | Correct implementation with SOLUTION: comment |
+| `{ALTERNATIVE_APPROACH_NAME}` | Name of alternative approach (e.g., "union of literal types") |
+| `{ALTERNATIVE_CODE}` | Alternative implementation code |
+| `{WHEN_TO_USE}` | 1 sentence describing ideal scenario |
+| `{WHEN_NOT_TO_USE}` | 1 sentence describing contraindications |
 | `{REFERENCE_TEXT}` | Link text for external reference |
 | `{REFERENCE_URL}` | URL for external reference |
 

@@ -444,40 +444,55 @@ Reference: [Link to documentation or resource](https://example.com)
 - Code examples are self-contained and runnable
 - Incorrect/Correct examples should be parallel in structure
 
-**Rule File Template:**
+**Rule File Template (60-100 lines):**
 
 ```markdown
 ---
 title: {Descriptive Rule Title - Title Case}
 impact: {CRITICAL|HIGH|MEDIUM-HIGH|MEDIUM|LOW-MEDIUM|LOW}
-impactDescription: {short metric phrase}
+impactDescription: {QUANTIFIED metric, e.g., "50% memory reduction", "O(n) → O(1)"}
 tags: {prefix}, {technology1}, {technology2}, {pattern-type}
 ---
 
 ## {Descriptive Rule Title - matches frontmatter exactly}
 
-{1-3 sentences explaining what this rule addresses, why it matters, and the performance implication.}
+{1-3 sentences explaining what this rule addresses. START WITH IMPACT, not definition. Example: "This pattern reduces memory by 50% for classes with 1000+ instances." NOT "Memory management is important."}
 
 **Incorrect ({parenthetical description of the problem}):**
 
 ```{language}
-{5-20 lines of realistic code showing the anti-pattern}
-{Include comments explaining what's happening}
-{Use realistic names and patterns}
+// PROBLEM: {Explain the specific cost with numbers, e.g., "Creates 1,583 module imports, ~2.8s overhead"}
+{10-20 lines of realistic code showing the anti-pattern}
+{Use REAL library names like lucide-react, pydantic, abseil - NOT generic utils/}
+// {Inline comment explaining why this line is problematic}
 ```
 
 **Correct ({parenthetical description of the solution}):**
 
 ```{language}
-{5-20 lines of realistic code showing the fix}
+// SOLUTION: {Explain the improvement with metrics}
+{10-20 lines of realistic code showing the fix}
 {Mirror structure of incorrect example}
-{Include comments explaining the improvement}
+// {Inline comment explaining the improvement}
 ```
 
-{Optional: Additional examples, edge cases, or explanatory text}
+**Alternative ({name of alternative approach}):**
+
+```{language}
+// {When to prefer this alternative over the primary solution}
+{5-10 lines showing alternative approach}
+```
+
+**When to use:** {1 sentence describing ideal scenario for this pattern}
+
+**When NOT to use:** {1 sentence describing contraindications, e.g., "For collections under 100 items where overhead exceeds benefit"}
 
 Reference: [{Descriptive link text}]({URL})
 ```
+
+**Note:** Not every rule needs Alternative and "When NOT to use" sections, but aim for:
+- At least 30% of rules have Alternative sections
+- At least 20% of rules have "When NOT to use" sections
 
 ---
 
@@ -571,21 +586,55 @@ Aim for this approximate distribution across categories:
 4. **Inline comments** - Explain what's happening and why it matters
 5. **Type annotations** - Include types in typed languages
 6. **Error handling** - Show realistic error handling where relevant
+7. **Real library names** - Use actual packages (e.g., `lucide-react`, `pydantic`, `abseil`), not generic `utils/`
 
 ### Length Guidelines
 
-- Simple rules: 5-10 lines per example
-- Complex rules: 10-25 lines per example
+- Simple rules: 10-15 lines per example
+- Complex rules: 15-25 lines per example
 - Multi-example rules: 2-3 complete examples
+- **Total rule file: 60-100 lines** (not 30-50)
 
 ### Comment Style
 
 ```{language}
-// Incorrect: {what's wrong}
-{code line}  // {why this is problematic}
+// PROBLEM: {quantified cost, e.g., "200ms import overhead", "O(n²) complexity"}
+{code line}  // {why this is problematic with specific impact}
 
-// Correct: {what's right}
-{code line}  // {why this is better}
+// SOLUTION: {quantified improvement}
+{code line}  // {why this is better with metrics}
+```
+
+### Quantified Impact Examples
+
+Use specific metrics in comments and impactDescription:
+
+| ❌ Vague | ✅ Quantified |
+|----------|---------------|
+| "improves performance" | "reduces load time by 40-60%" |
+| "enables tree-shaking" | "15-70% faster dev boot, 28% faster builds" |
+| "more efficient" | "O(n) → O(1) lookup, 50x faster for 1000+ items" |
+| "reduces memory" | "~150 bytes → ~40 bytes per instance (73% reduction)" |
+
+### Alternative Approaches (Required for 30% of rules)
+
+After the Correct example, include an alternative when applicable:
+
+```markdown
+**Alternative (union of literal types):**
+
+```typescript
+// Prefer this when the enum is used for type discrimination only
+type Direction = 'up' | 'down' | 'left' | 'right';
+`` `
+```
+
+### When NOT to Use (Required for 20% of rules)
+
+Include contraindications for non-obvious patterns:
+
+```markdown
+**When NOT to use:** For collections under 100 items where the O(1) lookup overhead exceeds the O(n) scan benefit.
 ```
 
 ---
@@ -619,16 +668,21 @@ Before finalizing a skill, verify:
 - [ ] Priority table has exactly 8 categories
 - [ ] Impact levels match _sections.md
 - [ ] Quick Reference covers all categories
+- [ ] **Quick Reference has ≤5 bullets per section (total 20-25 bullets)**
 - [ ] Rule Categories documents all 8 prefixes
 - [ ] Total line count < 150
 
 ### {language}-performance-guidelines.md
 - [ ] Header has version, source, date
 - [ ] Note mentions AI/LLM optimization
+- [ ] **Abstract mentions PROBLEM DOMAINS, not just category names**
 - [ ] Abstract includes rule count and category count
 - [ ] Table of Contents lists all rules
 - [ ] Each category has Impact label
+- [ ] **Category descriptions START with impact, not definition**
 - [ ] Each rule has Incorrect/Correct examples
+- [ ] **At least 30% of rules have Alternative sections**
+- [ ] **At least 20% of rules have "When NOT to use" sections**
 - [ ] References section has 5+ external links
 - [ ] Total line count: 1500-2500
 
@@ -640,18 +694,29 @@ Before finalizing a skill, verify:
 
 ### _template.md
 - [ ] YAML frontmatter shows all fields
-- [ ] Placeholder text explains each field
+- [ ] **impactDescription placeholder shows quantified metric example**
+- [ ] **Alternative and "When NOT to use" sections included**
 - [ ] Code fence uses `{language}` placeholder
 
 ### Individual Rules
 - [ ] 40-50 rule files total
+- [ ] **Rule file length: 60-100 lines (not 30-50)**
 - [ ] Filenames match `{prefix}-{name}.md` pattern
 - [ ] YAML frontmatter is complete
+- [ ] **impactDescription has quantified metric (not vague description)**
 - [ ] Title matches H2 heading
 - [ ] Impact matches category level
 - [ ] Tags include category prefix first
 - [ ] Incorrect/Correct examples present
+- [ ] **Code comments explain PROBLEM with specific costs**
+- [ ] **CRITICAL rules use real library names (not generic utils/)**
 - [ ] Code is realistic and complete
+
+### Category Balance
+- [ ] No category has >12 rules
+- [ ] No category has <2 rules
+- [ ] CRITICAL categories have 5-7 rules each
+- [ ] LOW-MEDIUM category has 8-12 rules
 
 ---
 

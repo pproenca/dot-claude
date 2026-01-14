@@ -14,7 +14,7 @@
 
 ## Abstract
 
-Comprehensive performance optimization guide for {LANGUAGE_DISPLAY} applications, designed for AI agents and LLMs. Contains {RULE_COUNT}+ rules across 8 categories, prioritized by impact from critical ({CATEGORY_1_NAME}, {CATEGORY_2_NAME}) to incremental ({CATEGORY_8_NAME}). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
+Comprehensive performance optimization guide for {LANGUAGE_DISPLAY} applications, designed for AI agents and LLMs. Contains {RULE_COUNT}+ rules across 8 categories, prioritized by impact from critical ({CATEGORY_1_PROBLEM_DOMAIN}, {CATEGORY_2_PROBLEM_DOMAIN}) to incremental ({CATEGORY_8_PROBLEM_DOMAIN}). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, quantified impact metrics (e.g., "50% memory reduction", "O(n) → O(1)"), and alternative approaches to guide automated refactoring and code generation.
 
 ---
 
@@ -80,21 +80,35 @@ Comprehensive performance optimization guide for {LANGUAGE_DISPLAY} applications
 
 {CATEGORY_1_DESCRIPTION}
 
+<!-- NOTE: Category descriptions should START with impact, not definition. Example:
+     ❌ "Memory management is fundamental to C++ programming."
+     ✅ "Memory errors cause 70% of security vulnerabilities. Proper RAII eliminates entire bug classes." -->
+
 ### 1.1 {RULE_1_1_TITLE}
 
 {RULE_1_1_EXPLANATION}
 
-**Incorrect: {RULE_1_1_INCORRECT_DESC}**
+**Incorrect ({RULE_1_1_INCORRECT_DESC}):**
 
 ```{LANGUAGE}
+// PROBLEM: {Explain the specific cost, e.g., "200ms import overhead on cold start"}
 {RULE_1_1_INCORRECT_CODE}
 ```
 
-**Correct: {RULE_1_1_CORRECT_DESC}**
+**Correct ({RULE_1_1_CORRECT_DESC}):**
 
 ```{LANGUAGE}
+// SOLUTION: {Explain the improvement with metrics}
 {RULE_1_1_CORRECT_CODE}
 ```
+
+**Alternative ({RULE_1_1_ALTERNATIVE_NAME}):**
+
+```{LANGUAGE}
+{RULE_1_1_ALTERNATIVE_CODE}
+```
+
+**When NOT to use:** {RULE_1_1_CONTRAINDICATION}
 
 {RULE_1_1_ADDITIONAL_NOTES}
 

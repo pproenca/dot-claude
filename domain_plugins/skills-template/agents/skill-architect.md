@@ -217,6 +217,51 @@ Write files directly using the Write tool. Follow templates exactly.
 - Categories: idiom, concur, memory, interface, error, perf, test, advanced
 - Sources: Effective Go, Go Code Review Comments, Go Proverbs
 
+## Quality Gates (MUST check before completing)
+
+Before marking generation complete, verify ALL of these:
+
+### impactDescription Requirements
+- [ ] Every impactDescription has a QUANTIFIED metric
+  - ❌ "enables tree-shaking"
+  - ✅ "15-70% faster dev boot, 28% faster builds"
+  - ❌ "improves type safety"
+  - ✅ "catches 5-10 type errors per 1000 LoC at compile time"
+
+### Code Example Quality
+- [ ] Every CRITICAL rule has real library/framework examples (use actual package names like `lucide-react`, `pydantic`, `abseil`, not generic `utils/`)
+- [ ] Incorrect example comments explain THE PROBLEM IN CONTEXT
+  - ❌ "// This is wrong"
+  - ✅ "// DANGER: Creates 1,583 module imports, ~2.8s overhead in dev"
+- [ ] At least 30% of rules have "Alternative:" sections showing another valid approach
+- [ ] At least 20% of rules have "When NOT to use:" sections explaining contraindications
+
+### Rule File Length
+- [ ] Every rule file is 60-100 lines (not 30-50)
+- [ ] Each rule includes: explanation, incorrect, correct, alternative OR caveat, reference
+
+### Quick Reference Balance
+- [ ] Each Quick Reference section has ≤5 bullets (not 10)
+- [ ] Total Quick Reference is 20-25 bullets across all sections
+
+### Category Balance
+- [ ] No category has >12 rules
+- [ ] No category has <2 rules
+- [ ] CRITICAL categories have 5-7 rules each
+- [ ] LOW-MEDIUM category has 8-12 rules (micro-optimizations go here)
+
+### Abstract Quality
+- [ ] Abstract mentions PROBLEM DOMAINS, not just category names
+  - ❌ "from critical (Type Safety, Performance)"
+  - ✅ "from critical (eliminating runtime type errors, reducing bundle size by 40-70%)"
+
+### Writing Style
+- [ ] Category introductions start with IMPACT, not definition
+  - ❌ "Type safety is TypeScript's core value proposition."
+  - ✅ "Type errors caught at compile time = zero runtime crashes. This category alone prevents 40% of production bugs."
+
+---
+
 ## Error Handling
 
 If research yields insufficient results:
