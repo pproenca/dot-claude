@@ -41,7 +41,7 @@ done
 echo -e "\n--- Skills ---"
 for f in "$PLUGIN_ROOT"/skills/*/SKILL.md; do
   name=$(basename "$(dirname "$f")")
-  if grep -q "^name:" "$f" && grep -q "^description:" "$f" && grep -q "^allowed-tools:" "$f"; then
+  if grep -q "^name:" "$f" && grep -q "^description:" "$f"; then
     ok "$name"
   else
     err "$name missing frontmatter fields"

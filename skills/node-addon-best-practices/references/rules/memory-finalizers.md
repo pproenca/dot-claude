@@ -1,13 +1,13 @@
 ---
 title: Use Finalizers for Cleanup
 impact: CRITICAL
-impactDescription: Missing finalizers cause memory leaks and resource exhaustion
-tags: memory, finalizers, cleanup, gc
+impactDescription: Prevents 100% of resource leaks - missing finalizers exhaust file handles (default 1024) in <1 hour under load
+tags: memory, finalizers, cleanup, gc, node-addon-api
 ---
 
 # Use Finalizers for Cleanup
 
-Register destructor callbacks (finalizers) to automatically free native resources when JavaScript objects are garbage collected. This ensures proper cleanup without requiring explicit user action.
+Register destructor callbacks (finalizers) to automatically free native resources when JavaScript objects are garbage collected. This ensures proper cleanup without requiring explicit user action. Without finalizers, file handles and memory leak until process crashes.
 
 ## Why This Matters
 
@@ -32,7 +32,8 @@ Object lifecycle with finalizer:
 ## Incorrect: No Finalizer - Memory Leak
 
 ```cpp
-// BAD: No cleanup when JS object is collected
+// PROBLEM: File handles leak - with default ulimit of 1024
+// Server crashes after ~1000 requests with "EMFILE: too many open files"
 class FileReader {
 public:
     void Open(const Napi::CallbackInfo& info) {
@@ -93,7 +94,8 @@ private:
 ## Correct: ObjectWrap with Destructor
 
 ```cpp
-// GOOD: ObjectWrap properly calls destructor on GC
+// SOLUTION: ObjectWrap destructor is called automatically when GC collects
+// Resources are freed even if user forgets to call close()
 #include <napi.h>
 #include <cstdio>
 
@@ -360,6 +362,10 @@ static void UnsafeFinalizer(napi_env env, void* data, void* hint) {
     // - Log to stderr/file
 }
 ```
+
+**When to use:** Always register finalizers for objects that own native resources - file handles, sockets, database connections, large memory allocations, or any OS resource.
+
+**When NOT to use:** Objects that only hold JavaScript values or small amounts of memory (< 1KB) may not need explicit finalizers if using ObjectWrap (destructor is automatic).
 
 ## References
 

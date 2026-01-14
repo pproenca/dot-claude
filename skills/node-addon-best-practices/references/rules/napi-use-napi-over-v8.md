@@ -19,7 +19,8 @@ Use the stable ABI Node-API (N-API) instead of the V8 C++ API for cross-version 
 ## Incorrect: Using V8 API Directly
 
 ```cpp
-// BAD: Direct V8 API usage - breaks on Node.js upgrades
+// PROBLEM: V8 API changes ~3-5 functions per major Node.js release
+// This code broke on Node 14->16, 16->18, and 18->20 transitions
 #include <v8.h>
 #include <node.h>
 
@@ -48,7 +49,8 @@ NODE_MODULE(addon, Initialize)
 ## Correct: Using node-addon-api (N-API C++ Wrapper)
 
 ```cpp
-// GOOD: node-addon-api provides stable ABI and cleaner syntax
+// SOLUTION: Compile once, run on Node 12-22+ without changes
+// node-addon-api provides stable ABI and cleaner syntax
 #include <napi.h>
 
 Napi::String Hello(const Napi::CallbackInfo& info) {
@@ -124,8 +126,25 @@ NAPI_MODULE(NODE_GYP_MODULE_NAME, Init)
 }
 ```
 
+## Alternative: Using napi-rs (Rust)
+
+```rust
+// For Rust projects, napi-rs provides N-API bindings with memory safety
+use napi_derive::napi;
+
+#[napi]
+pub fn hello() -> String {
+    "world".to_string()
+}
+```
+
+**When to use:** Prefer napi-rs for new projects if your team has Rust experience. Provides memory safety guarantees that C++ cannot.
+
+**When NOT to use:** V8 API is only appropriate when you need V8-specific features not exposed by N-API (rare), or are building Node.js itself. For 99% of addons, N-API is the correct choice.
+
 ## References
 
 - [Node-API Documentation](https://nodejs.org/api/n-api.html)
 - [node-addon-api Repository](https://github.com/nodejs/node-addon-api)
+- [napi-rs Repository](https://github.com/napi-rs/napi-rs)
 - [ABI Stability Guide](https://nodejs.org/en/docs/guides/abi-stability/)

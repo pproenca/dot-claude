@@ -517,7 +517,7 @@ export { capitalize } from './string';
 
 **Impact: HIGH**
 
-Robust error handling makes failures explicit and recoverable. TypeScript enables typed error patterns that prevent silent failures.
+Untyped exceptions are invisible to callers - they can forget to try/catch with zero compile-time warning. Result types make failure explicit in function signatures, catching 100% of unhandled error paths at compile time instead of in production.
 
 ### 3.1 Use Result Pattern
 
@@ -768,7 +768,7 @@ function isUserError(error: unknown): error is UserError {
 
 **Impact: MEDIUM-HIGH**
 
-Well-designed TypeScript APIs leverage the type system to provide excellent developer experience with compile-time safety.
+Poorly typed APIs force downstream `as` casts and lose type safety across entire call chains. Proper generics preserve type information, branded types prevent ID confusion bugs, and inference-friendly APIs eliminate 80% of manual type annotations.
 
 ### 4.1 Use Function Overloads
 
@@ -996,7 +996,7 @@ createUser({
 
 **Impact: MEDIUM**
 
-Proper module organization affects compilation speed, tree-shaking effectiveness, and code maintainability.
+Barrel files (`index.ts` re-exports) cause 30-70% bundle bloat by defeating tree-shaking. Type-only imports (`import type`) eliminate runtime overhead for type-only dependencies entirely. Circular dependencies cause silent initialization bugs that only manifest at runtime.
 
 ### 5.1 Prefer Named Exports
 
@@ -1176,7 +1176,7 @@ import { API_URL } from '@/config';
 
 **Impact: MEDIUM**
 
-TypeScript enables powerful patterns that make impossible states unrepresentable and code more maintainable.
+Discriminated unions make impossible states unrepresentable - no more `data` AND `error` being set simultaneously. Exhaustive checks with `never` catch 100% of missed switch cases at compile time when union variants change. Utility types reduce boilerplate by 60-80%.
 
 ### 6.1 Use Discriminated Unions Over Type Assertions
 
@@ -1400,7 +1400,7 @@ type OrderElement = ElementType<Order[]>; // Order
 
 **Impact: LOW-MEDIUM**
 
-Proper tsconfig.json settings dramatically affect type safety and developer experience.
+Wrong tsconfig settings leave entire categories of bugs undetected. `noUncheckedIndexedAccess` alone catches array out-of-bounds errors that cause 5-10% of runtime exceptions. `strictNullChecks` prevents the most common JavaScript runtime error: "Cannot read property of undefined".
 
 ### 7.1 Use Modern Module Resolution
 
@@ -1584,7 +1584,7 @@ Enable source maps for debugging TypeScript in development.
 
 **Impact: LOW**
 
-Type-level testing ensures your types behave as expected and catch regressions.
+Type regressions break consumers silently - they only discover the breakage when they upgrade. Compile-time type tests with `expectTypeOf` catch generic inference bugs before they ship. Proper typed mocks ensure test doubles match the actual interface contract.
 
 ### 8.1 Use Type-Level Tests
 

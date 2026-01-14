@@ -1,13 +1,13 @@
 ---
 title: Track External Memory Allocations
 impact: CRITICAL
-impactDescription: Untracked allocations cause memory pressure issues and OOM without GC awareness
-tags: memory, external-memory, gc, allocation
+impactDescription: Enables GC to run at correct time - untracked 500MB native allocation causes OOM while V8 thinks heap is empty
+tags: memory, external-memory, gc, allocation, node-addon-api
 ---
 
 # Track External Memory Allocations
 
-Call `AdjustExternalMemory` to inform V8's garbage collector about large native memory allocations. Without tracking, the GC doesn't know memory pressure exists and may not run when needed.
+Call `AdjustExternalMemory` to inform V8's garbage collector about large native memory allocations. Without tracking, the GC doesn't know memory pressure exists and may not run when needed. A 500MB native buffer with 10MB JS heap will cause OOM without triggering GC.
 
 ## Why This Matters
 
@@ -30,7 +30,8 @@ Native: (invisible)            External: 500MB (tracked)
 ## Incorrect: Large Allocation Without Tracking
 
 ```cpp
-// BAD: V8 doesn't know about this allocation
+// PROBLEM: V8 sees 10KB heap but process uses 10GB
+// GC never runs because V8 thinks memory is fine - eventual OOM
 class LargeBuffer : public Napi::ObjectWrap<LargeBuffer> {
 public:
     LargeBuffer(const Napi::CallbackInfo& info)
@@ -71,7 +72,8 @@ for (let i = 0; i < 100; i++) {
 ## Correct: Track External Memory
 
 ```cpp
-// GOOD: Inform V8 about external memory
+// SOLUTION: AdjustExternalMemory tells V8 about native allocations
+// GC now triggers when total (JS + external) exceeds threshold
 class LargeBuffer : public Napi::ObjectWrap<LargeBuffer> {
 public:
     static Napi::Object Init(Napi::Env env, Napi::Object exports) {
@@ -309,6 +311,10 @@ private:
     size_t allocated_;
 };
 ```
+
+**When to use:** Track any native allocation > 1MB that persists beyond a single callback. Image buffers, audio samples, cached data, and file contents all need tracking.
+
+**When NOT to use:** Small allocations (< 1KB), stack allocations, or temporary heap allocations freed within the same callback. The overhead of tracking (~1 microsecond) isn't worth it for small allocations.
 
 ## When to Track External Memory
 

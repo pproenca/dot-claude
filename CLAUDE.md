@@ -70,7 +70,7 @@ All components use YAML frontmatter:
 ---
 name: skill-name
 description: Trigger phrases for skill discovery
-allowed-tools: [Read, Edit, Bash]
+allowed-tools: [Read, Edit, Bash]  # optional
 ---
 ```
 

@@ -45,7 +45,7 @@ for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plug
       fi
     done
 
-    # Validate allowed-tools
+    # Validate allowed-tools if present (optional for skills)
     tools_str=$(get_tools_list "$skill_file")
     if [[ -n "$tools_str" ]]; then
       invalid=$(validate_tools_list "$tools_str")
@@ -54,6 +54,8 @@ for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plug
       else
         ok "$plugin_name/skills/$skill_name: valid frontmatter"
       fi
+    else
+      ok "$plugin_name/skills/$skill_name: valid frontmatter"
     fi
   done
 done

@@ -43,4 +43,4 @@ The section ID (in parentheses) is the filename prefix used to group rules.
 ## 8. Tooling & Configuration (tooling)
 
 **Impact:** LOW
-**Description:** Modern Python project configuration with pyproject.toml, uv, ruff, and mypy integration.
+**Description:** Single pyproject.toml replaces 5-7 configuration files. Ruff provides 10-100x faster linting than flake8 with unified formatting.

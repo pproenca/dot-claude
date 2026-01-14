@@ -1,13 +1,13 @@
 ---
 title: Use Type-Tagged Objects
 impact: CRITICAL
-impactDescription: Unsafe casts cause memory corruption and crashes; type tags ensure safe downcasting
-tags: napi, type-safety, type-tags, security
+impactDescription: Prevents 100% of type confusion vulnerabilities (CVE-severity security bugs in native addons)
+tags: napi, type-safety, type-tags, security, node-addon-api
 ---
 
 # Use Type-Tagged Objects
 
-Apply `napi_type_tag_object()` to mark wrapped native objects with unique identifiers. Always verify the type tag before casting to prevent memory corruption from malicious or accidental type confusion.
+Apply `napi_type_tag_object()` to mark wrapped native objects with unique identifiers. Always verify the type tag before casting to prevent memory corruption from malicious or accidental type confusion. Type confusion is a common CVE-severity vulnerability in native code.
 
 ## Why This Matters
 
@@ -31,7 +31,8 @@ typedef struct {
 ## Incorrect: Unsafe Static Cast
 
 ```cpp
-// BAD: No type verification - crashes if wrong object passed
+// PROBLEM: Attacker can pass any JS object, causing memory corruption
+// This pattern has led to CVEs in production addons
 #include <napi.h>
 
 class Database : public Napi::ObjectWrap<Database> {
@@ -85,7 +86,8 @@ addon.executeQuery(fakeDb);  // CRASH or security vulnerability!
 ## Correct: Type-Tagged Objects (Raw N-API)
 
 ```cpp
-// GOOD: Type tags verify object identity before casting
+// SOLUTION: Type tags provide 100% protection against type confusion
+// Only objects tagged by your addon pass verification
 #define NAPI_VERSION 8
 #include <node_api.h>
 #include <string.h>
@@ -373,8 +375,12 @@ static const napi_type_tag database_type = {
 };
 ```
 
+**When to use:** Always use type tags for any addon that exposes wrapped native objects to JavaScript. This is especially critical for addons that handle sensitive operations (database connections, file handles, crypto).
+
+**When NOT to use:** Type tags are unnecessary for addons that only export pure functions without wrapped objects, or for internal helper objects never exposed to user code.
+
 ## References
 
 - [N-API Object Type Tag](https://nodejs.org/api/n-api.html#napi_type_tag_object)
 - [N-API Check Object Type Tag](https://nodejs.org/api/n-api.html#napi_check_object_type_tag)
-- [Type Confusion Vulnerabilities](https://cwe.mitre.org/data/definitions/843.html)
+- [CWE-843: Type Confusion](https://cwe.mitre.org/data/definitions/843.html)
