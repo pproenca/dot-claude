@@ -53,10 +53,9 @@ Rules are prioritized by impact:
 
 ### High-Impact Performance Patterns
 
-- Use `__slots__` for memory-efficient classes with many instances
-- Use generators for large datasets instead of list comprehensions
-- Cache expensive computations with `functools.cache`
-- Use local variable caching in performance-critical loops
+- Use `__slots__` for 73% memory reduction on classes with many instances
+- Use generators for large datasets (constant memory vs full list)
+- Cache expensive computations with `functools.cache` or `lru_cache`
 
 ### Medium-Impact Modern Idioms
 
@@ -66,21 +65,17 @@ Rules are prioritized by impact:
 
 ### Error Handling Patterns
 
-- Use `ExceptionGroup` and `except*` for multiple exceptions
-- Always chain exceptions with `raise ... from`
-- Use context managers for resource cleanup
-- Create custom exceptions inheriting from appropriate base
-- Use `Self` type for fluent interface methods
-- Leverage improved error messages in 3.11+
+- Use `ExceptionGroup` and `except*` for concurrent error handling
+- Always chain exceptions with `raise ... from` for full tracebacks
+- Use context managers for automatic resource cleanup
+- Use `Self` type for fluent interface methods (3.11+)
 
 ### Data Structure Patterns
 
 - Use `@dataclass(slots=True)` for memory-efficient dataclasses
+- Use `@dataclass(frozen=True)` for immutable, hashable data
 - Use `TypedDict` for typed dictionary schemas
 - Use `NamedTuple` over plain tuples for clarity
-- Prefer `Enum` with `auto()` for enumerated constants
-- Use `@dataclass(frozen=True)` for immutable data
-- Use `copy.replace()` for dataclass updates (3.13+)
 - Use `field(default_factory=...)` for mutable defaults
 
 ### Security Patterns

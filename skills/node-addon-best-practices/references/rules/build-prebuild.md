@@ -1,13 +1,13 @@
 ---
 title: Provide Prebuilt Binaries
 impact: MEDIUM
-impactDescription: Eliminates build failures for 95%+ of users without build tools
-tags: build, prebuild, distribution, binary, npm-install
+impactDescription: Eliminates npm install failures for 95% of users - reduces install time from 2-5 minutes to 2-5 seconds
+tags: build, prebuild, prebuildify, distribution, binary, npm-install
 ---
 
 # Provide Prebuilt Binaries
 
-Use prebuild or prebuildify to distribute precompiled binaries. Most users don't have C++ build tools installed; prebuilt binaries enable seamless `npm install`.
+Use prebuild or prebuildify to distribute precompiled binaries. Most users don't have C++ build tools installed; prebuilt binaries enable seamless `npm install`. Installation time drops from 2-5 minutes (compilation) to 2-5 seconds (download).
 
 ## Why This Matters
 
@@ -17,12 +17,11 @@ Use prebuild or prebuildify to distribute precompiled binaries. Most users don't
 - CI/CD pipelines run without build toolchains
 - Better user experience for non-C++ developers
 
-## Incorrect
-
-Requiring users to compile from source:
+## Incorrect: Requiring Compilation
 
 ```json
-// package.json - Forces compilation on every install
+// PROBLEM: 95% of developers don't have C++ toolchain installed
+// npm install fails with cryptic "gyp ERR!" messages
 {
     "name": "my-addon",
     "scripts": {
@@ -39,9 +38,12 @@ npm ERR! gyp ERR! build error
 npm ERR! node-gyp failed
 ```
 
-## Correct
+## Correct: Using prebuildify
 
-Use prebuildify for prebuilt binaries:
+```
+// SOLUTION: prebuildify embeds binaries in npm package
+// node-gyp-build automatically loads correct binary for platform
+```
 
 ```json
 // package.json
@@ -249,3 +251,7 @@ module.exports = binding;
 | win32 | x64 | 18, 20, 22 |
 
 N-API versioning means one binary works across Node.js versions with the same N-API version.
+
+**When to use:** Always provide prebuilt binaries for any addon published to npm. The CI/CD setup cost is one-time; the benefit to users is permanent.
+
+**When NOT to use:** Private addons used only within your team where everyone has build tools installed, or during active development before publishing.
