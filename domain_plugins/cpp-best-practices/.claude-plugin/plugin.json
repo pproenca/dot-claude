@@ -1,0 +1,8 @@
+{
+  "name": "cpp-best-practices",
+  "description": "C++ performance optimization guidelines with 40+ rules covering memory management, compile-time optimization, concurrency, cache efficiency, algorithms, I/O, code generation, and template metaprogramming",
+  "author": {
+    "name": "Pedro Proenca",
+    "email": "pedro@10xengs.com"
+  }
+}
