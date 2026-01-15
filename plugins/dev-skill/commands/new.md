@@ -17,12 +17,28 @@ You will receive:
 2. **Organization Name**: The organization authoring this skill
 3. **Authoritative Sources**: Documentation, repos, and benchmarks to reference
 
+## Step 0: Ask Where to Write the Skill
+
+**Before starting research**, ask the user where to write the skill using `AskUserQuestion`:
+
+```
+Question: "Where should I create this skill?"
+Header: "Location"
+Options:
+- "~/.claude/skills/ (Global)" - Available across all projects, personal customizations
+- ".claude/skills/ (Project)" - Specific to this project, shared with team via git
+```
+
+Store the chosen path as `{output-base}` and use it for all file generation.
+
+---
+
 ## Output Structure
 
 Generate a complete skill with the following files:
 
 ```
-skills/{technology-slug}/
+{output-base}/{technology-slug}/
 ├── SKILL.md              # Entry point with quick reference
 ├── AGENTS.md             # Compiled comprehensive guide
 ├── metadata.json         # Version, org, references
@@ -32,6 +48,8 @@ skills/{technology-slug}/
     ├── _template.md      # Rule template
     └── {prefix}-{slug}.md # Individual rules (40+ total)
 ```
+
+Where `{output-base}` is either `~/.claude/skills` (global) or `.claude/skills` (project) based on user choice.
 
 ---
 
