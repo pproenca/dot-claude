@@ -17,8 +17,9 @@ You will receive a skill directory path to review (e.g., `./skills/python-best-p
 
 ### Step 1: Load Context
 
-1. Read `${CLAUDE_PLUGIN_ROOT}/references/QUALITY_CHECKLIST.md` for the full quality checklist
-2. Read the skill's core files:
+1. First, locate the dev-skill plugin directory by searching for `plugins/dev-skill/references/QUALITY_CHECKLIST.md` in the workspace
+2. Read the `QUALITY_CHECKLIST.md` file from the plugin's `references/` directory for the full quality checklist
+3. Read the skill's core files:
    - `SKILL.md` - Entry point and quick reference
    - `AGENTS.md` - Compiled comprehensive guide
    - `metadata.json` - Version and references
