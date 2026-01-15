@@ -1,6 +1,7 @@
 ---
-name: skill-creator
-description: This skill should be used when the user asks to "create a best practices skill", "generate a performance skill", "build optimization guidelines", "create rules for a technology", "make a skill like react-best-practices", or needs guidance on skill structure, rule templates, category organization, or generating performance optimization documentation for any technology (React, Go, Python, databases, mobile, etc.).
+description: Create a best practices skill for any technology (40+ rules, validated)
+argument-hint: <technology> [organization]
+allowed-tools: Read, Write, Bash, Glob, Grep, Task, AskUserQuestion, WebFetch, WebSearch, TodoWrite
 ---
 
 # Performance Best Practices Skill Creator
