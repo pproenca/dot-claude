@@ -1,7 +1,7 @@
 ---
 name: preflight-validator
 description: Use this agent to validate skill planning before generating rules. Checks category derivation, lifecycle analysis, source authority, and rule distribution. Run after planning checkpoint approval.
-model: haiku
+model: opus
 tools: ["Read", "Glob", "WebFetch", "WebSearch"]
 ---
 
