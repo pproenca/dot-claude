@@ -1,8 +1,0 @@
-{
-  "name": "dev-ts",
-  "description": "TypeScript best practices with 49 rules covering type safety, compilation performance, error handling, API design, module organization, code patterns, configuration, and testing",
-  "author": {
-    "name": "Pedro Proenca",
-    "email": "pedro@10xengs.com"
-  }
-}

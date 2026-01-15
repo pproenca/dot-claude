@@ -1,0 +1,53 @@
+---
+name: {{ORGANIZATION_SLUG}}-{{TECHNOLOGY_SLUG}}-best-practices
+description: {{TECHNOLOGY_NAME}} performance optimization guidelines from {{ORGANIZATION_NAME}}. This skill should be used when writing, reviewing, or refactoring {{TECHNOLOGY_NAME}} code to ensure optimal performance patterns. Triggers on tasks involving {{TRIGGER_KEYWORDS}}.
+---
+
+# {{ORGANIZATION_NAME}} {{TECHNOLOGY_NAME}} Best Practices
+
+Comprehensive performance optimization guide for {{TECHNOLOGY_NAME}} applications, maintained by {{ORGANIZATION_NAME}}. Contains {{RULE_COUNT}} rules across {{CATEGORY_COUNT}} categories, prioritized by impact to guide automated refactoring and code generation.
+
+## When to Apply
+
+Reference these guidelines when:
+{{FOR_EACH USE_CASE in WHEN_TO_APPLY}}
+- {{USE_CASE}}
+{{END_FOR_EACH}}
+
+## Rule Categories by Priority
+
+| Priority | Category | Impact | Prefix |
+|----------|----------|--------|--------|
+{{FOR_EACH CATEGORY in PERFORMANCE_CATEGORIES}}
+| {{INDEX}} | {{CATEGORY.name}} | {{CATEGORY.impact}} | `{{CATEGORY.prefix}}-` |
+{{END_FOR_EACH}}
+
+## Quick Reference
+
+{{FOR_EACH CATEGORY in PERFORMANCE_CATEGORIES}}
+### {{INDEX}}. {{CATEGORY.name}} ({{CATEGORY.impact}})
+
+{{FOR_EACH RULE in CATEGORY.rules}}
+- `{{CATEGORY.prefix}}-{{RULE.slug}}` - {{RULE.one_line}}
+{{END_FOR_EACH}}
+
+{{END_FOR_EACH}}
+
+## How to Use
+
+Read individual rule files for detailed explanations and code examples:
+
+```
+rules/{{EXAMPLE_PREFIX}}-{{EXAMPLE_SLUG}}.md
+rules/_sections.md
+```
+
+Each rule file contains:
+- Brief explanation of why it matters
+- Incorrect code example with explanation
+- Correct code example with explanation
+- Additional context and references
+
+## Full Compiled Document
+
+For the complete guide with all rules expanded: `AGENTS.md`

@@ -1,0 +1,101 @@
+# ============================================================
+# SKILL GENERATION INPUT CONFIGURATION
+# ============================================================
+# Fill in these variables to generate a new skill.
+# Reference: output/skill-reverse-engineer-output.md
+
+# =============================================================================
+# TECHNOLOGY DEFINITION
+# =============================================================================
+
+TECHNOLOGY_NAME: ""           # e.g., "React and Next.js", "Go", "Rust"
+TECHNOLOGY_SLUG: ""           # e.g., "react", "go", "rust" (lowercase, no spaces)
+TECHNOLOGY_STACK: ""          # Related technologies/ecosystem
+ORGANIZATION_NAME: ""         # e.g., "Vercel Engineering", "Google"
+ORGANIZATION_SLUG: ""         # e.g., "vercel", "google" (lowercase)
+PRIMARY_LANGUAGE: ""          # Code language for examples (e.g., "typescript", "go", "rust")
+
+# =============================================================================
+# EXECUTION LIFECYCLE
+# CRITICAL: This determines category ordering
+# List stages from input to output, noting where performance problems occur
+# =============================================================================
+
+EXECUTION_LIFECYCLE:
+  - stage: "request"
+    description: "Initial request/invocation"
+    typical_problems: ["sequential I/O", "unnecessary requests"]
+    cascade_effect: "ALL downstream stages"
+  - stage: "parse"
+    description: "Parsing and initial processing"
+    typical_problems: ["large payloads", "slow parsing"]
+    cascade_effect: "Affects all subsequent processing"
+  - stage: "process"
+    description: "Main processing/computation"
+    typical_problems: ["algorithm inefficiency", "blocking operations"]
+    cascade_effect: "Affects output generation"
+  - stage: "output"
+    description: "Output generation/rendering"
+    typical_problems: ["excessive rendering", "large responses"]
+    cascade_effect: "Affects client/consumer"
+  - stage: "runtime"
+    description: "Ongoing runtime operations"
+    typical_problems: ["memory leaks", "hot path inefficiency"]
+    cascade_effect: "Affects sustained performance"
+
+# =============================================================================
+# PERFORMANCE CATEGORIES
+# Derived from lifecycle analysis, ordered by cascade effect (CRITICAL → LOW)
+# Order by: lifecycle position × impact radius × frequency
+# =============================================================================
+
+PERFORMANCE_CATEGORIES:
+  - name: "Category Name"
+    prefix: "cat"                    # 3-8 char prefix for filenames
+    impact: "CRITICAL"               # CRITICAL|HIGH|MEDIUM-HIGH|MEDIUM|LOW-MEDIUM|LOW
+    description: "One sentence describing what this category covers"
+    lifecycle_stage: "request"       # Which lifecycle stage this affects
+    cascade_effect: "How it affects downstream operations"
+    rule_count_target: 5             # Target 3-7 rules per major category
+
+# =============================================================================
+# WHEN TO APPLY
+# 5 scenarios that trigger this skill
+# =============================================================================
+
+WHEN_TO_APPLY:
+  - "Writing new {{TECHNOLOGY_NAME}} code"
+  - "{{Category 1 specific activity}}"
+  - "{{Category 2 specific activity}}"
+  - "Reviewing code for performance issues"
+  - "Refactoring existing {{TECHNOLOGY_NAME}} code"
+
+# =============================================================================
+# TRIGGER KEYWORDS
+# For skill description frontmatter
+# =============================================================================
+
+TRIGGER_KEYWORDS: "keyword1, keyword2, keyword3, performance improvements"
+
+# =============================================================================
+# AUTHORITATIVE SOURCES
+# For metadata.json and rule references
+# =============================================================================
+
+AUTHORITATIVE_DOCUMENTATION:
+  - url: "https://..."
+    purpose: "Official language/framework documentation"
+  - url: "https://..."
+    purpose: "API reference"
+
+TOOL_REPOSITORIES:
+  - url: "https://github.com/..."
+    purpose: "Recommended tool for X"
+
+BENCHMARK_DATA_SOURCES:
+  - url: "https://..."
+    purpose: "Performance data supporting impact claims"
+
+CODE_REPOSITORIES:
+  - url: "https://github.com/..."
+    purpose: "Reference implementation of best practices"

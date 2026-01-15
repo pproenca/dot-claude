@@ -1,0 +1,15 @@
+{
+  "version": "0.1.0",
+  "organization": "Node.js Community",
+  "technology": "Node.js Native Addons (C++)",
+  "date": "January 2026",
+  "abstract": "Comprehensive performance optimization guide for Node.js native addons written in C++, designed for AI agents and LLMs. Contains 38 rules across 8 categories, prioritized by impact from critical (JS/C++ boundary optimization, memory management, async threading) to medium (N-API patterns, build configuration). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.",
+  "references": [
+    "https://nodejs.org/api/n-api.html",
+    "https://github.com/nodejs/node-addon-api",
+    "https://v8.dev/docs/embed",
+    "https://nodejs.org/api/addons.html",
+    "https://docs.libuv.org/en/v1.x/threadpool.html",
+    "https://v8.dev/blog/pointer-compression"
+  ]
+}

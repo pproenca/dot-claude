@@ -88,6 +88,10 @@
         "best-practices",
         "code-generation"
       ]
+    },
+    {
+      "name": "dev-skill",
+      "source": "./plugins/dev-skill"
     }
   ]
 }

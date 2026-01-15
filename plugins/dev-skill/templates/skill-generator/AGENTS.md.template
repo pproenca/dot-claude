@@ -1,0 +1,56 @@
+# {{TECHNOLOGY_NAME}} Best Practices
+
+**Version {{VERSION}}**
+{{ORGANIZATION_NAME}}
+{{DATE}}
+
+> **Note:**
+> This document is mainly for agents and LLMs to follow when maintaining,
+> generating, or refactoring {{TECHNOLOGY_NAME}} codebases at {{ORGANIZATION_NAME}}. Humans
+> may also find it useful, but guidance here is optimized for automation
+> and consistency by AI-assisted workflows.
+
+---
+
+## Abstract
+
+{{ABSTRACT}}
+
+---
+
+## Table of Contents
+
+{{FOR_EACH CATEGORY in PERFORMANCE_CATEGORIES}}
+{{INDEX}}. [{{CATEGORY.name}}](#{{INDEX}}-{{CATEGORY.name_slug}}) — **{{CATEGORY.impact}}**
+{{FOR_EACH RULE in CATEGORY.rules}}
+   - {{CATEGORY.INDEX}}.{{RULE.INDEX}} [{{RULE.title}}](#{{CATEGORY.INDEX}}{{RULE.INDEX}}-{{RULE.title_slug}})
+{{END_FOR_EACH}}
+{{END_FOR_EACH}}
+
+---
+
+{{FOR_EACH CATEGORY in PERFORMANCE_CATEGORIES}}
+## {{INDEX}}. {{CATEGORY.name}}
+
+**Impact: {{CATEGORY.impact}}**
+
+{{CATEGORY.description}}
+
+{{FOR_EACH RULE in CATEGORY.rules}}
+### {{CATEGORY.INDEX}}.{{RULE.INDEX}} {{RULE.title}}
+
+**Impact: {{RULE.impact}} ({{RULE.impactDescription}})**
+
+{{RULE.content}}
+
+{{END_FOR_EACH}}
+
+---
+
+{{END_FOR_EACH}}
+
+## References
+
+{{FOR_EACH REF in REFERENCES}}
+{{INDEX}}. [{{REF.url}}]({{REF.url}})
+{{END_FOR_EACH}}
