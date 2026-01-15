@@ -2,38 +2,7 @@
   "name": "dot-claude",
   "owner": {
     "name": "Pedro Proenca",
-    "email": "pedro@10xengs.com"
-  },
-  "lspServers": {
-    "clangd": {
-      "command": "clangd",
-      "args": ["--background-index"],
-      "extensionToLanguage": {
-        ".c": "c",
-        ".h": "c",
-        ".cpp": "cpp",
-        ".cc": "cpp",
-        ".cxx": "cpp",
-        ".hpp": "cpp",
-        ".hxx": "cpp",
-        ".C": "cpp",
-        ".H": "cpp"
-      }
-    },
-    "typescript-language-server": {
-      "command": "typescript-language-server",
-      "args": ["--stdio"],
-      "extensionToLanguage": {
-        ".ts": "typescript",
-        ".tsx": "typescriptreact",
-        ".js": "javascript",
-        ".jsx": "javascriptreact",
-        ".mts": "typescript",
-        ".cts": "typescript",
-        ".mjs": "javascript",
-        ".cjs": "javascript"
-      }
-    }
+    "email": "pedro@pproenca.dev"
   },
   "metadata": {
     "description": "Claude Code plugins for productivity workflows - skills, agents, commands, and hooks",
@@ -42,56 +11,29 @@
   "repository": "https://github.com/pproenca/dot-claude",
   "plugins": [
     {
+      "name": "dev-skill",
+      "source": "./plugins/dev-skill",
+      "description": "Validation and generation tools for best practices skills"
+    },
+    {
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
-      "description": "TDD enforcement, systematic debugging, and code review with planning methodology loaded at session start",
-      "keywords": [
-        "tdd",
-        "debugging",
-        "code-review",
-        "planning",
-        "methodology",
-        "verification"
-      ]
-    },
-    {
-      "name": "dev-python",
-      "source": "./domain_plugins/dev-python"
-    },
-    {
-      "name": "dev-ts",
-      "source": "./domain_plugins/dev-ts"
-    },
-    {
-      "name": "dev-shell",
-      "source": "./domain_plugins/dev-shell"
-    },
-    {
-      "name": "cpp-best-practices",
-      "source": "./domain_plugins/cpp-best-practices",
-      "description": "C++ performance optimization with 40+ rules for memory, concurrency, and cache efficiency",
-      "keywords": ["cpp", "performance", "memory", "concurrency"]
+      "description": "Development workflow with TDD, debugging, and collaboration skills"
     },
     {
       "name": "dev-debug-cpp",
       "source": "./domain_plugins/dev-debug-cpp",
-      "description": "C++ debugging assistance with GDB, LLDB, and sanitizer guidance",
-      "keywords": ["cpp", "debugging", "gdb", "lldb"]
+      "description": "C++ debugging for segfaults, memory corruption, threading issues, and linker/ABI problems"
     },
     {
-      "name": "skills-template",
-      "source": "./domain_plugins/skills-template",
-      "description": "Create best-practices skills for any programming language with guided orchestration and validation",
-      "keywords": [
-        "skills",
-        "templates",
-        "best-practices",
-        "code-generation"
-      ]
+      "name": "dev-python",
+      "source": "./domain_plugins/dev-python",
+      "description": "Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django and production-ready practices"
     },
     {
-      "name": "dev-skill",
-      "source": "./plugins/dev-skill"
+      "name": "dev-shell",
+      "source": "./domain_plugins/dev-shell",
+      "description": "Shell scripting toolkit with Google Style Guide expertise and refactoring capabilities"
     }
   ]
 }
