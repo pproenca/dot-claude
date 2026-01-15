@@ -35,7 +35,7 @@ Rules are prioritized by impact:
 
 ## Quick Reference
 
-<!-- IMPORTANT: Each section below must have ≤5 bullets. Total: 20-25 bullets. -->
+<!-- IMPORTANT: Each section below must have <=5 bullets. Total: 20-25 bullets. -->
 <!-- Pick the TOP patterns from each category - the rest go in references/ -->
 
 ### Critical Patterns (Apply First)

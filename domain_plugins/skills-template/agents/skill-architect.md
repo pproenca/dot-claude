@@ -186,7 +186,7 @@ Write files directly using the Write tool. Follow templates exactly.
 ### Rule Descriptions Must:
 - Start with imperative verb or clear statement
 - Explain the "why" not just the "what"
-- Include quantified impact where possible (e.g., "O(n) → O(1)")
+- Include quantified impact where possible (e.g., "O(n) -> O(1)")
 - Be concise (1-3 sentences)
 
 ### Tags Must Include:
@@ -219,30 +219,42 @@ Write files directly using the Write tool. Follow templates exactly.
 
 ## Quality Gates (MUST check before completing)
 
-Before marking generation complete, verify ALL of these:
+Before marking generation complete, verify ALL of these. **Read SKILL-TEMPLATE.md section "ADVANCED QUALITY PATTERNS" for detailed examples.**
 
 ### impactDescription Requirements
-- [ ] Every impactDescription has a QUANTIFIED metric
-  - ❌ "enables tree-shaking"
-  - ✅ "15-70% faster dev boot, 28% faster builds"
-  - ❌ "improves type safety"
-  - ✅ "catches 5-10 type errors per 1000 LoC at compile time"
+- [ ] Every impactDescription is <=8 words with a QUANTIFIED metric
+  - [BAD] "enables tree-shaking" (vague)
+  - [GOOD] "15-70% smaller bundles" (quantified, short)
+  - [BAD] "eliminates memory leaks and dangling pointers" (too verbose)
+  - [GOOD] "prevents 70% of memory bugs" (quantified, short)
 
 ### Code Example Quality
 - [ ] Every CRITICAL rule has real library/framework examples (use actual package names like `lucide-react`, `pydantic`, `abseil`, not generic `utils/`)
-- [ ] Incorrect example comments explain THE PROBLEM IN CONTEXT
-  - ❌ "// This is wrong"
-  - ✅ "// DANGER: Creates 1,583 module imports, ~2.8s overhead in dev"
+- [ ] Incorrect example comments include QUANTIFIED costs
+  - [BAD] "// This is wrong"
+  - [GOOD] "// PROBLEM: Creates 1,583 module imports, ~2.8s overhead in dev"
 - [ ] At least 30% of rules have "Alternative:" sections showing another valid approach
 - [ ] At least 20% of rules have "When NOT to use:" sections explaining contraindications
 
+### Closing Context Sentences
+- [ ] At least 50% of rules end with 1-2 sentences of contextual wisdom
+  - [BAD] Rule ends abruptly after code example
+  - [GOOD] "This optimization is especially valuable when the skipped branch is frequently taken, or when the deferred operation is expensive."
+- [ ] Closing sentences explain WHEN to apply, not just WHAT to do
+
+### Trade-off Documentation
+- [ ] At least 20% of rules document trade-offs explicitly
+  - [GOOD] "**Trade-off:** Faster initial paint vs potential layout shift. Choose based on your UX priorities."
+  - [GOOD] "**Trade-off:** Lower memory usage vs increased code complexity. Use for collections >10K items."
+
 ### Rule File Length
-- [ ] Every rule file is 60-100 lines (not 30-50)
-- [ ] Each rule includes: explanation, incorrect, correct, alternative OR caveat, reference
+- [ ] Rule file length: 30-120 lines (quality over quantity)
+- [ ] Each rule includes: explanation, incorrect, correct, and AT LEAST ONE of: alternative, trade-off, closing context, reference
 
 ### Quick Reference Balance
-- [ ] Each Quick Reference section has ≤5 bullets (not 10)
+- [ ] Each Quick Reference section has <=5 bullets
 - [ ] Total Quick Reference is 20-25 bullets across all sections
+- [ ] Every bullet starts with imperative verb ("Defer", "Use", "Avoid", "Prefer")
 
 ### Category Balance
 - [ ] No category has >12 rules
@@ -252,13 +264,16 @@ Before marking generation complete, verify ALL of these:
 
 ### Abstract Quality
 - [ ] Abstract mentions PROBLEM DOMAINS, not just category names
-  - ❌ "from critical (Type Safety, Performance)"
-  - ✅ "from critical (eliminating runtime type errors, reducing bundle size by 40-70%)"
+  - [BAD] "from critical (Type Safety, Performance)"
+  - [GOOD] "from critical (eliminating runtime type errors, reducing bundle size by 40-70%)"
 
 ### Writing Style
+- [ ] Rule explanations start with IMPACT, not definition
+  - [BAD] "Barrel files re-export modules from a directory."
+  - [GOOD] "Barrel files force bundlers to load every module in the directory--even for a single import."
 - [ ] Category introductions start with IMPACT, not definition
-  - ❌ "Type safety is TypeScript's core value proposition."
-  - ✅ "Type errors caught at compile time = zero runtime crashes. This category alone prevents 40% of production bugs."
+  - [BAD] "Type safety is TypeScript's core value proposition."
+  - [GOOD] "Type errors caught at compile time = zero runtime crashes. This category alone prevents 40% of production bugs."
 
 ---
 

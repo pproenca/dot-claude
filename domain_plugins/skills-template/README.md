@@ -31,20 +31,20 @@ Using SKILL-TEMPLATE.md, create a typescript-best-practices skill focused on:
 
 ```
 skills-template/
-├── README.md                 # This file
-├── SKILL-TEMPLATE.md         # Complete specification
-└── starter/                  # Minimal starter files
-    ├── SKILL.md              # Entry point template
-    └── references/
-        ├── guidelines.md     # Main documentation template
-        └── rules/
-            ├── _sections.md  # Category definitions
-            └── _template.md  # Rule file template
++-- README.md                 # This file
++-- SKILL-TEMPLATE.md         # Complete specification
+`-- starter/                  # Minimal starter files
+    +-- SKILL.md              # Entry point template
+    `-- references/
+        +-- guidelines.md     # Main documentation template
+        `-- rules/
+            +-- _sections.md  # Category definitions
+            `-- _template.md  # Rule file template
 ```
 
 ## Template Highlights
 
-- **8 Priority Categories**: CRITICAL → LOW impact levels
+- **8 Priority Categories**: CRITICAL -> LOW impact levels
 - **40-50 Rules**: Distributed across categories
 - **Incorrect/Correct Pattern**: Every rule shows anti-pattern and fix
 - **Progressive Disclosure**: SKILL.md is concise; details load on-demand

@@ -64,7 +64,7 @@ Each category (1-8) has these placeholders:
 - Category 8: LOW
 
 **IMPORTANT: Abstract Problem Domain Examples:**
-| ❌ Category Name Only | ✅ Problem Domain Description |
+| [BAD] Category Name Only | [GOOD] Problem Domain Description |
 |----------------------|-------------------------------|
 | "Type Safety" | "eliminating runtime type errors" |
 | "Performance" | "reducing bundle size by 40-70%" |
@@ -96,7 +96,7 @@ Each rule has these placeholders (replace N with category, M with rule number):
 |-------------|-------------|
 | `{RULE_TITLE}` | Title matching the H2 heading |
 | `{IMPACT_LEVEL}` | One of: CRITICAL, HIGH, MEDIUM-HIGH, MEDIUM, LOW-MEDIUM, LOW |
-| `{QUANTIFIED_METRIC}` | Specific metric (e.g., "50% memory reduction", "O(n) → O(1)", "15-70% faster builds") |
+| `{QUANTIFIED_METRIC}` | Specific metric (e.g., "50% memory reduction", "O(n) -> O(1)", "15-70% faster builds") |
 | `{PREFIX}` | Category prefix (first tag) |
 | `{TAG_1}`, `{TAG_2}`, `{TAG_3}` | Additional searchable tags |
 | `{RULE_EXPLANATION}` | 1-3 sentence explanation starting with IMPACT |

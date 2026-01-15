@@ -195,34 +195,34 @@ Comprehensive performance optimization guide for {Language/Framework} applicatio
 
 ## Table of Contents
 
-1. [{Category 1 Full Name}](#{anchor}) — **CRITICAL**
+1. [{Category 1 Full Name}](#{anchor}) -- **CRITICAL**
    - 1.1 [{Rule 1.1 Title}](#{anchor})
    - 1.2 [{Rule 1.2 Title}](#{anchor})
    - 1.3 [{Rule 1.3 Title}](#{anchor})
    - 1.4 [{Rule 1.4 Title}](#{anchor})
    - 1.5 [{Rule 1.5 Title}](#{anchor})
-2. [{Category 2 Full Name}](#{anchor}) — **CRITICAL**
+2. [{Category 2 Full Name}](#{anchor}) -- **CRITICAL**
    - 2.1 [{Rule 2.1 Title}](#{anchor})
    - 2.2 [{Rule 2.2 Title}](#{anchor})
    - 2.3 [{Rule 2.3 Title}](#{anchor})
    - 2.4 [{Rule 2.4 Title}](#{anchor})
    - 2.5 [{Rule 2.5 Title}](#{anchor})
-3. [{Category 3 Full Name}](#{anchor}) — **HIGH**
+3. [{Category 3 Full Name}](#{anchor}) -- **HIGH**
    - 3.1 [{Rule 3.1 Title}](#{anchor})
    - 3.2 [{Rule 3.2 Title}](#{anchor})
    - 3.3 [{Rule 3.3 Title}](#{anchor})
    - 3.4 [{Rule 3.4 Title}](#{anchor})
-4. [{Category 4 Full Name}](#{anchor}) — **MEDIUM-HIGH**
+4. [{Category 4 Full Name}](#{anchor}) -- **MEDIUM-HIGH**
    - 4.1 [{Rule 4.1 Title}](#{anchor})
    - 4.2 [{Rule 4.2 Title}](#{anchor})
-5. [{Category 5 Full Name}](#{anchor}) — **MEDIUM**
+5. [{Category 5 Full Name}](#{anchor}) -- **MEDIUM**
    - 5.1 [{Rule 5.1 Title}](#{anchor})
    - 5.2 [{Rule 5.2 Title}](#{anchor})
    - 5.3 [{Rule 5.3 Title}](#{anchor})
    - 5.4 [{Rule 5.4 Title}](#{anchor})
    - 5.5 [{Rule 5.5 Title}](#{anchor})
    - 5.6 [{Rule 5.6 Title}](#{anchor})
-6. [{Category 6 Full Name}](#{anchor}) — **MEDIUM**
+6. [{Category 6 Full Name}](#{anchor}) -- **MEDIUM**
    - 6.1 [{Rule 6.1 Title}](#{anchor})
    - 6.2 [{Rule 6.2 Title}](#{anchor})
    - 6.3 [{Rule 6.3 Title}](#{anchor})
@@ -230,7 +230,7 @@ Comprehensive performance optimization guide for {Language/Framework} applicatio
    - 6.5 [{Rule 6.5 Title}](#{anchor})
    - 6.6 [{Rule 6.6 Title}](#{anchor})
    - 6.7 [{Rule 6.7 Title}](#{anchor})
-7. [{Category 7 Full Name}](#{anchor}) — **LOW-MEDIUM**
+7. [{Category 7 Full Name}](#{anchor}) -- **LOW-MEDIUM**
    - 7.1 [{Rule 7.1 Title}](#{anchor})
    - 7.2 [{Rule 7.2 Title}](#{anchor})
    - 7.3 [{Rule 7.3 Title}](#{anchor})
@@ -243,7 +243,7 @@ Comprehensive performance optimization guide for {Language/Framework} applicatio
    - 7.10 [{Rule 7.10 Title}](#{anchor})
    - 7.11 [{Rule 7.11 Title}](#{anchor})
    - 7.12 [{Rule 7.12 Title}](#{anchor})
-8. [{Category 8 Full Name}](#{anchor}) — **LOW**
+8. [{Category 8 Full Name}](#{anchor}) -- **LOW**
    - 8.1 [{Rule 8.1 Title}](#{anchor})
    - 8.2 [{Rule 8.2 Title}](#{anchor})
 
@@ -450,7 +450,7 @@ Reference: [Link to documentation or resource](https://example.com)
 ---
 title: {Descriptive Rule Title - Title Case}
 impact: {CRITICAL|HIGH|MEDIUM-HIGH|MEDIUM|LOW-MEDIUM|LOW}
-impactDescription: {QUANTIFIED metric, e.g., "50% memory reduction", "O(n) → O(1)"}
+impactDescription: {QUANTIFIED metric, e.g., "50% memory reduction", "O(n) -> O(1)"}
 tags: {prefix}, {technology1}, {technology2}, {pattern-type}
 ---
 
@@ -586,7 +586,35 @@ Aim for this approximate distribution across categories:
 4. **Inline comments** - Explain what's happening and why it matters
 5. **Type annotations** - Include types in typed languages
 6. **Error handling** - Show realistic error handling where relevant
-7. **Real library names** - Use actual packages (e.g., `lucide-react`, `pydantic`, `abseil`), not generic `utils/`
+7. **Real library names** - Use actual packages, not generic `utils/` or `helpers/`
+
+### Real Library Examples (REQUIRED for CRITICAL rules)
+
+CRITICAL rules must reference production libraries to feel grounded in real-world usage. Generic `utils/` or `helpers/` imports signal academic examples rather than battle-tested patterns.
+
+**Language-specific library examples:**
+
+| Language | Production Libraries (USE) | Generic Patterns (AVOID) |
+|----------|---------------------------|--------------------------|
+| **React/TS** | lucide-react, @mui/material, swr, react-query, zustand, zod | utils/, helpers/, components/shared/ |
+| **Python** | pydantic, httpx, sqlalchemy, pytest, FastAPI, typer | utils.py, helpers.py, common.py |
+| **C++** | absl::, folly::, Boost, fmt::, spdlog::, nlohmann::json | utils.h, helpers.hpp, common/ |
+| **Go** | uber-go/zap, gorilla/mux, stretchr/testify, spf13/cobra | utils/, helpers/, common/ |
+| **Rust** | serde, tokio, anyhow, thiserror, clap, tracing | utils.rs, helpers.rs |
+
+**Example transformation:**
+
+```markdown
+<!-- [BAD] GENERIC (feels academic) -->
+import { formatDate } from '../utils/helpers';
+import { Button } from '../components/shared';
+
+<!-- [GOOD] PRODUCTION (feels real) -->
+import { format } from 'date-fns';
+import { Button } from '@radix-ui/react-button';
+```
+
+**Validation:** Grep your CRITICAL rule files for `utils/`, `helpers/`, `common/`. Replace with real library imports.
 
 ### Length Guidelines
 
@@ -598,23 +626,39 @@ Aim for this approximate distribution across categories:
 ### Comment Style
 
 ```{language}
-// PROBLEM: {quantified cost, e.g., "200ms import overhead", "O(n²) complexity"}
+// PROBLEM: {quantified cost, e.g., "200ms import overhead", "O(n^2) complexity"}
 {code line}  // {why this is problematic with specific impact}
 
 // SOLUTION: {quantified improvement}
 {code line}  // {why this is better with metrics}
 ```
 
-### Quantified Impact Examples
+### impactDescription Requirements
 
-Use specific metrics in comments and impactDescription:
+The `impactDescription` field in YAML frontmatter must be **short, punchy, and quantified**. AI agents use this to quickly compare rule impacts.
 
-| ❌ Vague | ✅ Quantified |
-|----------|---------------|
+**Constraint:** <=8 words, with a measurable metric.
+
+| [BAD] Too Verbose / Vague | [GOOD] Short and Quantified |
+|------------------------|-------------------------|
+| "eliminates memory leaks and dangling pointers" | "prevents 70% of memory bugs" |
+| "improves performance significantly" | "40-60% faster load time" |
+| "enables tree-shaking for smaller bundles" | "15-70% smaller bundles" |
+| "makes the code more efficient" | "O(n) -> O(1) lookup" |
+| "reduces memory usage considerably" | "73% memory reduction" |
+| "avoids blocking unused code paths" | "avoids blocking unused paths" |
+| "improves type safety at compile time" | "catches 5-10 errors per 1000 LoC" |
+
+### Quantified Code Comment Examples
+
+Use specific metrics in code comments (PROBLEM/SOLUTION lines):
+
+| [BAD] Vague Comment | [GOOD] Quantified Comment |
+|-----------------|----------------------|
 | "improves performance" | "reduces load time by 40-60%" |
 | "enables tree-shaking" | "15-70% faster dev boot, 28% faster builds" |
-| "more efficient" | "O(n) → O(1) lookup, 50x faster for 1000+ items" |
-| "reduces memory" | "~150 bytes → ~40 bytes per instance (73% reduction)" |
+| "more efficient" | "O(n) -> O(1) lookup, 50x faster for 1000+ items" |
+| "reduces memory" | "~150 bytes -> ~40 bytes per instance (73% reduction)" |
 
 ### Alternative Approaches (Required for 30% of rules)
 
@@ -658,6 +702,190 @@ Tags serve as searchable metadata. Include:
 
 ---
 
+## ADVANCED QUALITY PATTERNS
+
+These patterns differentiate expert-level skills from structurally complete but shallow ones. Study the examples carefully.
+
+### Closing Context Sentences
+
+Every rule should end with a contextual wisdom sentence that helps AI agents understand **when** and **why** to apply the pattern. This is the "so what?" that connects the technical pattern to real-world decision-making.
+
+**Pattern:** Add 1-2 sentences after the code examples explaining when the optimization is most valuable, edge cases, or trade-offs.
+
+**Examples:**
+
+```markdown
+<!-- [GOOD] Ends with contextual wisdom -->
+This optimization is especially valuable when the skipped branch is frequently taken,
+or when the deferred operation is expensive.
+
+<!-- [GOOD] Explains trade-off -->
+Trade-off: Faster initial paint vs potential layout shift. Choose based on your UX priorities.
+
+<!-- [GOOD] Provides frequency guidance -->
+Apply this pattern when you have 3+ sequential awaits. For 2 awaits with dependencies,
+the overhead of Promise.all() may not justify the complexity.
+
+<!-- [BAD] Ends abruptly after code example -->
+[Code example ends, no closing context]
+```
+
+**Target:** At least 50% of rules should have closing context sentences.
+
+---
+
+### Trade-off Documentation
+
+Many optimization choices involve trade-offs. Document these explicitly to help AI agents make informed decisions rather than blindly applying patterns.
+
+**Pattern:** Add a "Trade-off:" statement when the optimization sacrifices one quality for another.
+
+**Examples:**
+
+```markdown
+<!-- [GOOD] Explicit trade-off -->
+**Trade-off:** Faster initial paint vs potential layout shift. Choose based on your UX priorities.
+
+**Trade-off:** Lower memory usage vs increased code complexity. Use for collections >10K items.
+
+**Trade-off:** Compile-time checking vs runtime flexibility. Prefer compile-time unless dynamic dispatch is required.
+```
+
+**Target:** At least 20% of rules should document trade-offs.
+
+---
+
+### "Another Example" vs "Alternative"
+
+These serve different purposes:
+
+| Pattern | When to Use | Example |
+|---------|-------------|---------|
+| **Another example** | Showing a *variation* of the same pattern in a different context | "Another example (with error handling):" |
+| **Alternative** | Showing a *different approach* that solves the same problem | "Alternative (compile-time approach):" |
+
+**Examples:**
+
+```markdown
+<!-- "Another example" - Same pattern, different context -->
+**Another example (with network requests):**
+```typescript
+// Same defer-await pattern, but with fetch instead of file I/O
+```
+
+<!-- "Alternative" - Different approach entirely -->
+**Alternative (compile-time const):**
+```typescript
+// Completely different solution using constexpr instead of runtime cache
+```
+```
+
+---
+
+### Quantified Code Comments
+
+Comments in code examples should include specific, memorable metrics rather than vague descriptions. This makes examples more compelling and helps AI agents understand magnitude.
+
+**Pattern:** Include specific numbers in PROBLEM and SOLUTION comments.
+
+**Examples:**
+
+| [BAD] Generic Comment | [GOOD] Quantified Comment |
+|-------------------|----------------------|
+| `// This is slow` | `// Runtime cost: 200-800ms on every cold start` |
+| `// Lots of imports` | `// Loads 1,583 modules, takes ~2.8s extra in dev` |
+| `// Memory overhead` | `// Each instance: ~150 bytes; with slots: ~40 bytes (73% reduction)` |
+| `// Easy to forget` | `// Causes memory leak: 8MB/hour under typical load` |
+
+---
+
+### Problem-First Writing Style
+
+Rule explanations should start with the **impact** of the problem, not a definition or description. This creates urgency and helps AI agents prioritize.
+
+**Examples:**
+
+```markdown
+<!-- [BAD] DEFINITION-FIRST (weak) -->
+Raw pointers require manual memory management and can lead to issues.
+
+<!-- [GOOD] PROBLEM-FIRST (strong) -->
+Raw pointers cause 70% of security vulnerabilities in C++ codebases. Every manual
+delete is a potential double-free, and every forgotten delete is a memory leak.
+
+<!-- [BAD] DEFINITION-FIRST (weak) -->
+Barrel files re-export modules from a directory.
+
+<!-- [GOOD] PROBLEM-FIRST (strong) -->
+Barrel files force bundlers to load every module in the directory--even for a
+single import. One `import { Button }` can trigger 1,583 module loads.
+```
+
+---
+
+### Inline References
+
+References can appear in two places:
+1. **End-of-rule reference:** Standard `Reference: [text](url)` at the rule end
+2. **Inline reference:** Embedded within explanations for immediate context
+
+**Pattern:** Use inline references when citing specific documentation within the explanation.
+
+**Example:**
+
+```markdown
+The [React docs on useMemo](https://react.dev/reference/react/useMemo) recommend
+memoizing expensive calculations, but note that the overhead of memoization itself
+can exceed the savings for simple computations.
+
+Reference: [React Performance Optimization](https://react.dev/learn/render-and-commit)
+```
+
+---
+
+### Rule File Length Flexibility
+
+**Quality over quantity.** The original guidance of "60-100 lines" is a target, not a requirement.
+
+- **Simple rules:** 30-50 lines if the concept is straightforward
+- **Complex rules:** 60-100 lines if alternatives, trade-offs, and edge cases are needed
+- **Very complex rules:** Up to 120 lines for multi-faceted patterns
+
+**Key principle:** Every line should add value. Padding rules to meet line counts degrades quality.
+
+---
+
+### Quick Reference Constraints
+
+The Quick Reference section in SKILL.md must remain scannable--it's a summary, not a comprehensive list.
+
+**Hard limits:**
+- **Per section:** <=5 bullets maximum
+- **Total:** 20-25 bullets across all sections
+- **Format:** Every bullet starts with an imperative verb ("Defer", "Use", "Avoid", "Prefer")
+
+**Why this matters:** When Quick Reference exceeds ~25 bullets, it loses its "quick" nature and becomes redundant with the full guidelines. AI agents should be able to scan it in seconds.
+
+**Collapsing guidance:** If a category has 7 rules but only 5 Quick Reference slots, prioritize:
+1. CRITICAL/HIGH impact rules first
+2. Most frequently applicable patterns
+3. Patterns that prevent common mistakes
+
+**Example of collapsing:**
+
+```markdown
+<!-- Category has 7 rules, but Quick Reference shows 4: -->
+**Memory Management:**
+- Prefer unique_ptr for single ownership (covers rules 1.1, 1.2)
+- Use RAII for resource management (covers rules 1.3, 1.4, 1.5)
+- Avoid raw new/delete in application code (covers rule 1.6)
+- Profile before optimizing allocations (rule 1.7)
+```
+
+**Validation:** Count your bullets. If any section exceeds 5 or total exceeds 25, collapse patterns.
+
+---
+
 ## VALIDATION CHECKLIST
 
 Before finalizing a skill, verify:
@@ -668,7 +896,7 @@ Before finalizing a skill, verify:
 - [ ] Priority table has exactly 8 categories
 - [ ] Impact levels match _sections.md
 - [ ] Quick Reference covers all categories
-- [ ] **Quick Reference has ≤5 bullets per section (total 20-25 bullets)**
+- [ ] **Quick Reference has <=5 bullets per section (total 20-25 bullets)**
 - [ ] Rule Categories documents all 8 prefixes
 - [ ] Total line count < 150
 
@@ -683,6 +911,8 @@ Before finalizing a skill, verify:
 - [ ] Each rule has Incorrect/Correct examples
 - [ ] **At least 30% of rules have Alternative sections**
 - [ ] **At least 20% of rules have "When NOT to use" sections**
+- [ ] **At least 50% of rules have closing context sentences**
+- [ ] **At least 20% of rules document trade-offs**
 - [ ] References section has 5+ external links
 - [ ] Total line count: 1500-2500
 
@@ -694,23 +924,26 @@ Before finalizing a skill, verify:
 
 ### _template.md
 - [ ] YAML frontmatter shows all fields
-- [ ] **impactDescription placeholder shows quantified metric example**
+- [ ] **impactDescription placeholder shows quantified metric example (<=8 words)**
 - [ ] **Alternative and "When NOT to use" sections included**
+- [ ] **Trade-off placeholder included**
+- [ ] **Closing context placeholder included**
 - [ ] Code fence uses `{language}` placeholder
 
 ### Individual Rules
 - [ ] 40-50 rule files total
-- [ ] **Rule file length: 60-100 lines (not 30-50)**
+- [ ] **Rule file length: 30-120 lines (quality over quantity)**
 - [ ] Filenames match `{prefix}-{name}.md` pattern
 - [ ] YAML frontmatter is complete
-- [ ] **impactDescription has quantified metric (not vague description)**
+- [ ] **impactDescription <=8 words, quantified (e.g., "50% memory reduction", "O(n) -> O(1)")**
 - [ ] Title matches H2 heading
 - [ ] Impact matches category level
-- [ ] Tags include category prefix first
+- [ ] Tags include category prefix first (4-5 tags total)
 - [ ] Incorrect/Correct examples present
-- [ ] **Code comments explain PROBLEM with specific costs**
+- [ ] **Code comments include quantified metrics (not vague descriptions)**
 - [ ] **CRITICAL rules use real library names (not generic utils/)**
 - [ ] Code is realistic and complete
+- [ ] **Rule explanations start with problem impact, not definitions**
 
 ### Category Balance
 - [ ] No category has >12 rules
@@ -744,55 +977,55 @@ Use this as the gold standard for any new skill:
 
 ```
 skills/react-best-practices/
-├── SKILL.md (107 lines)
-└── references/
-    ├── react-performance-guidelines.md (1947 lines)
-    └── rules/
-        ├── _sections.md (47 lines)
-        ├── _template.md (29 lines)
-        ├── async-api-routes.md
-        ├── async-defer-await.md
-        ├── async-dependencies.md
-        ├── async-parallel.md
-        ├── async-suspense-boundaries.md
-        ├── bundle-barrel-imports.md
-        ├── bundle-conditional.md
-        ├── bundle-defer-third-party.md
-        ├── bundle-dynamic-imports.md
-        ├── bundle-preload.md
-        ├── server-cache-lru.md
-        ├── server-cache-react.md
-        ├── server-parallel-fetching.md
-        ├── server-serialization.md
-        ├── client-event-listeners.md
-        ├── client-swr-dedup.md
-        ├── rerender-defer-reads.md
-        ├── rerender-dependencies.md
-        ├── rerender-derived-state.md
-        ├── rerender-lazy-state-init.md
-        ├── rerender-memo.md
-        ├── rerender-transitions.md
-        ├── rendering-activity.md
-        ├── rendering-animate-svg-wrapper.md
-        ├── rendering-conditional-render.md
-        ├── rendering-content-visibility.md
-        ├── rendering-hoist-jsx.md
-        ├── rendering-hydration-no-flicker.md
-        ├── rendering-svg-precision.md
-        ├── js-batch-dom-css.md
-        ├── js-cache-function-results.md
-        ├── js-cache-property-access.md
-        ├── js-cache-storage.md
-        ├── js-combine-iterations.md
-        ├── js-early-exit.md
-        ├── js-hoist-regexp.md
-        ├── js-index-maps.md
-        ├── js-length-check-first.md
-        ├── js-min-max-loop.md
-        ├── js-set-map-lookups.md
-        ├── js-tosorted-immutable.md
-        ├── advanced-event-handler-refs.md
-        └── advanced-use-latest.md
++-- SKILL.md (107 lines)
+`-- references/
+    +-- react-performance-guidelines.md (1947 lines)
+    `-- rules/
+        +-- _sections.md (47 lines)
+        +-- _template.md (29 lines)
+        +-- async-api-routes.md
+        +-- async-defer-await.md
+        +-- async-dependencies.md
+        +-- async-parallel.md
+        +-- async-suspense-boundaries.md
+        +-- bundle-barrel-imports.md
+        +-- bundle-conditional.md
+        +-- bundle-defer-third-party.md
+        +-- bundle-dynamic-imports.md
+        +-- bundle-preload.md
+        +-- server-cache-lru.md
+        +-- server-cache-react.md
+        +-- server-parallel-fetching.md
+        +-- server-serialization.md
+        +-- client-event-listeners.md
+        +-- client-swr-dedup.md
+        +-- rerender-defer-reads.md
+        +-- rerender-dependencies.md
+        +-- rerender-derived-state.md
+        +-- rerender-lazy-state-init.md
+        +-- rerender-memo.md
+        +-- rerender-transitions.md
+        +-- rendering-activity.md
+        +-- rendering-animate-svg-wrapper.md
+        +-- rendering-conditional-render.md
+        +-- rendering-content-visibility.md
+        +-- rendering-hoist-jsx.md
+        +-- rendering-hydration-no-flicker.md
+        +-- rendering-svg-precision.md
+        +-- js-batch-dom-css.md
+        +-- js-cache-function-results.md
+        +-- js-cache-property-access.md
+        +-- js-cache-storage.md
+        +-- js-combine-iterations.md
+        +-- js-early-exit.md
+        +-- js-hoist-regexp.md
+        +-- js-index-maps.md
+        +-- js-length-check-first.md
+        +-- js-min-max-loop.md
+        +-- js-set-map-lookups.md
+        +-- js-tosorted-immutable.md
+        +-- advanced-event-handler-refs.md
+        `-- advanced-use-latest.md
 ```
 
 **Category Distribution:**
@@ -806,3 +1039,74 @@ skills/react-best-practices/
 - advanced: 2 rules (LOW)
 
 **Total: 43 rules**
+
+---
+
+## GOLDEN STANDARD COMPARISON
+
+This section shows side-by-side comparisons between expert-level (golden standard) patterns and structurally complete but shallow implementations. Study these to internalize the quality difference.
+
+### Example 1: Rule Explanation Quality
+
+| Aspect | [BAD] Shallow | [GOOD] Golden Standard |
+|--------|------------|-------------------|
+| **Opening sentence** | "Barrel files re-export modules from a directory." | "Barrel files force bundlers to load every module in the directory--even for a single import. One `import { Button }` can trigger 1,583 module loads." |
+| **Why it's better** | Defines the term but doesn't explain impact | Immediately shows the problem with quantified impact |
+
+### Example 2: impactDescription Quality
+
+| Aspect | [BAD] Shallow | [GOOD] Golden Standard |
+|--------|------------|-------------------|
+| **impactDescription** | "eliminates memory leaks and dangling pointers throughout the codebase" | "prevents 70% of memory bugs" |
+| **Word count** | 9 words | 5 words |
+| **Quantification** | None (vague "eliminates") | Yes ("70%") |
+
+### Example 3: Code Comment Quality
+
+| Aspect | [BAD] Shallow | [GOOD] Golden Standard |
+|--------|------------|-------------------|
+| **PROBLEM comment** | `// This approach is slow and inefficient` | `// PROBLEM: Loads 1,583 modules, takes ~2.8s extra in dev` |
+| **SOLUTION comment** | `// This is better` | `// SOLUTION: Direct import loads 3 modules, saves 2.7s` |
+
+### Example 4: Closing Context Quality
+
+| Aspect | [BAD] Shallow | [GOOD] Golden Standard |
+|--------|------------|-------------------|
+| **Rule ending** | [Ends after code example] | "This optimization is especially valuable when the skipped branch is frequently taken, or when the deferred operation is expensive." |
+| **Value added** | None | Helps AI agents understand WHEN to apply |
+
+### Example 5: Category Description Quality
+
+| Aspect | [BAD] Shallow | [GOOD] Golden Standard |
+|--------|------------|-------------------|
+| **Description** | "Memory management is fundamental to C++ programming. Proper patterns ensure stability." | "Memory errors cause 70% of security vulnerabilities. Proper RAII eliminates entire bug classes--no manual cleanup, no leaks, no double-frees." |
+| **Why it's better** | Definition-first, vague | Impact-first, quantified, specific benefits |
+
+### Example 6: Quick Reference Bullet Quality
+
+| Aspect | [BAD] Shallow | [GOOD] Golden Standard |
+|--------|------------|-------------------|
+| **Bullet format** | "Memory Management - use smart pointers" | "Prefer unique_ptr for single ownership" |
+| **Why it's better** | Noun-first, generic | Imperative verb, actionable |
+
+### Self-Assessment Checklist
+
+Before finalizing, compare each rule against these golden standard characteristics:
+
+1. **Does my explanation start with impact?**
+   - Can a reader understand why they should care in the first sentence?
+
+2. **Is my impactDescription punchy and quantified?**
+   - Can it be compared at a glance with other rules?
+
+3. **Do my code comments have specific metrics?**
+   - Would a reader remember the numbers?
+
+4. **Does my rule end with contextual wisdom?**
+   - Would an AI agent know when/why to apply this pattern?
+
+5. **Do my Quick Reference bullets start with verbs?**
+   - Can they be scanned as a todo list?
+
+6. **Do my CRITICAL rules use real libraries?**
+   - Would a production developer recognize these imports?

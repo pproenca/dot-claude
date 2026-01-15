@@ -27,8 +27,8 @@ Parse command arguments from `$ARGUMENTS`:
 - `--output-dir <path>`: Optional output directory override
 
 Example invocations:
-- `/skills-template:create-skill typescript` → language=typescript
-- `/skills-template:create-skill cpp --output-dir ./my-skills` → language=cpp, output=./my-skills
+- `/skills-template:create-skill typescript` -> language=typescript
+- `/skills-template:create-skill cpp --output-dir ./my-skills` -> language=cpp, output=./my-skills
 
 If `$ARGUMENTS` contains a language, use it directly. Otherwise, proceed to ask.
 
@@ -90,7 +90,7 @@ Task(
     Output: {output_dir}
 
     Perform comprehensive research on {language} performance best practices.
-    Identify 8 categories ordered by impact (CRITICAL → LOW).
+    Identify 8 categories ordered by impact (CRITICAL -> LOW).
     Plan 40-50 specific rules with example patterns.
 
     Return a structured plan with:
@@ -291,13 +291,13 @@ Present completion summary:
 
 ```
 {language}-best-practices/
-├── SKILL.md (XXX lines)
-└── references/
-    ├── {language}-performance-guidelines.md (XXXX lines)
-    └── rules/
-        ├── _sections.md
-        ├── _template.md
-        └── {rule_count} rule files
++-- SKILL.md (XXX lines)
+`-- references/
+    +-- {language}-performance-guidelines.md (XXXX lines)
+    `-- rules/
+        +-- _sections.md
+        +-- _template.md
+        `-- {rule_count} rule files
 ```
 
 ### Installation
