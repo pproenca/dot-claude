@@ -1,0 +1,8 @@
+{
+  "name": "dev-skill",
+  "description": "Validation and generation tools for best practices skills",
+  "author": {
+    "name": "Pedro Proenca",
+    "email": "pedro@10xengs.com"
+  }
+}
