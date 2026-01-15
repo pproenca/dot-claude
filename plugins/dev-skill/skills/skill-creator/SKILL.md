@@ -1,6 +1,5 @@
 ---
 name: skill-creator
-model: claude-opus-4-5
 description: This skill should be used when the user asks to "create a best practices skill", "generate a performance skill", "build optimization guidelines", "create rules for a technology", "make a skill like react-best-practices", or needs guidance on skill structure, rule templates, category organization, or generating performance optimization documentation for any technology (React, Go, Python, databases, mobile, etc.).
 ---
 
