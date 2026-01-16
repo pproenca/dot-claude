@@ -205,20 +205,27 @@ function buildAgentsMD(skillDir) {
   return { output: output.join('\n'), totalRules, sectionCount: sections.length };
 }
 
-const skillDir = process.argv[2];
-if (!skillDir) {
-  console.log('Usage: node build-agents-md.js <skill-directory>');
-  process.exit(1);
+// Export for use as a module
+export { buildAgentsMD };
+
+// CLI entry point - only runs when executed directly
+const isMainModule = import.meta.url === `file://${process.argv[1]}`;
+if (isMainModule) {
+  const skillDir = process.argv[2];
+  if (!skillDir) {
+    console.log('Usage: node build-agents-md.js <skill-directory>');
+    process.exit(1);
+  }
+
+  if (!fs.existsSync(skillDir)) {
+    console.error(`Error: Directory not found: ${skillDir}`);
+    process.exit(1);
+  }
+
+  const { output, totalRules, sectionCount } = buildAgentsMD(skillDir);
+  const outputPath = path.join(skillDir, 'AGENTS.md');
+  fs.writeFileSync(outputPath, output);
+
+  console.log(`Generated: ${outputPath}`);
+  console.log(`Sections: ${sectionCount}, Rules: ${totalRules}, Lines: ${output.split('\n').length}`);
 }
-
-if (!fs.existsSync(skillDir)) {
-  console.error(`Error: Directory not found: ${skillDir}`);
-  process.exit(1);
-}
-
-const { output, totalRules, sectionCount } = buildAgentsMD(skillDir);
-const outputPath = path.join(skillDir, 'AGENTS.md');
-fs.writeFileSync(outputPath, output);
-
-console.log(`Generated: ${outputPath}`);
-console.log(`Sections: ${sectionCount}, Rules: ${totalRules}, Lines: ${output.split('\n').length}`);

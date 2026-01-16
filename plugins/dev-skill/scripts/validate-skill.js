@@ -13,6 +13,7 @@
 import fs from 'fs';
 import path from 'path';
 import { SkillValidator } from './validation/validator.js';
+import { buildAgentsMD } from './build-agents-md.js';
 
 /**
  * Parse command line arguments
@@ -25,6 +26,7 @@ function parseArgs(args) {
     json: false,
     all: false,
     sectionsOnly: false,
+    verifyGenerated: false,
     concurrency: parseInt(process.env.SKILL_VALIDATOR_CONCURRENCY || '6', 10),
   };
 
@@ -36,6 +38,7 @@ function parseArgs(args) {
     else if (arg === '--json') options.json = true;
     else if (arg === '--all') options.all = true;
     else if (arg === '--sections-only') options.sectionsOnly = true;
+    else if (arg === '--verify-generated') options.verifyGenerated = true;
     else if (arg === '--concurrency' && args[i + 1]) {
       const n = parseInt(args[++i], 10);
       if (n > 0) options.concurrency = n;
@@ -221,6 +224,60 @@ async function runBulkValidation(skillsDir, options) {
 }
 
 /**
+ * Verify AGENTS.md matches script-generated output
+ * @param {string} skillDir
+ * @returns {{valid: boolean, issues: Array}}
+ */
+function verifyAgentsMd(skillDir) {
+  const agentsPath = path.join(skillDir, 'AGENTS.md');
+  const issues = [];
+
+  if (!fs.existsSync(agentsPath)) {
+    issues.push({
+      level: 'ERROR',
+      path: 'AGENTS.md',
+      message: 'AGENTS.md not found. Run: node scripts/build-agents-md.js <skill-directory>'
+    });
+    return { valid: false, issues };
+  }
+
+  try {
+    const { output: generated } = buildAgentsMD(skillDir);
+    const existing = fs.readFileSync(agentsPath, 'utf-8');
+
+    if (generated !== existing) {
+      // Find first differing line for helpful feedback
+      const genLines = generated.split('\n');
+      const existLines = existing.split('\n');
+      let diffLine = 1;
+      for (let i = 0; i < Math.max(genLines.length, existLines.length); i++) {
+        if (genLines[i] !== existLines[i]) {
+          diffLine = i + 1;
+          break;
+        }
+      }
+
+      issues.push({
+        level: 'ERROR',
+        path: 'AGENTS.md',
+        line: diffLine,
+        message: 'AGENTS.md differs from script output. Regenerate with: node scripts/build-agents-md.js <skill-directory>'
+      });
+      return { valid: false, issues };
+    }
+
+    return { valid: true, issues: [] };
+  } catch (error) {
+    issues.push({
+      level: 'ERROR',
+      path: 'AGENTS.md',
+      message: `Failed to generate AGENTS.md for comparison: ${error.message}`
+    });
+    return { valid: false, issues };
+  }
+}
+
+/**
  * Validate a single skill
  * @param {string} skillDir
  * @param {Object} options
@@ -230,9 +287,25 @@ async function validateSingleSkill(skillDir, options) {
   const skillId = path.basename(skillDir);
   const start = Date.now();
 
-  const report = options.sectionsOnly
+  let report = options.sectionsOnly
     ? await validator.validateSectionsOnly(skillDir)
     : await validator.validateSkill(skillDir);
+
+  // Verify AGENTS.md if requested
+  if (options.verifyGenerated && !options.sectionsOnly) {
+    const agentsResult = verifyAgentsMd(skillDir);
+    if (!agentsResult.valid) {
+      report = {
+        ...report,
+        valid: false,
+        issues: [...report.issues, ...agentsResult.issues],
+        summary: {
+          ...report.summary,
+          errors: report.summary.errors + agentsResult.issues.filter(i => i.level === 'ERROR').length
+        }
+      };
+    }
+  }
 
   const durationMs = Date.now() - start;
 
@@ -241,6 +314,9 @@ async function validateSingleSkill(skillDir, options) {
   } else {
     if (options.sectionsOnly) {
       console.log(`\nValidating sections only: ${skillId}\n`);
+    }
+    if (options.verifyGenerated) {
+      console.log(`(with AGENTS.md verification)`);
     }
     printHumanReport(skillId, report, durationMs);
   }
@@ -257,11 +333,12 @@ Usage:
   node validate-skill.js --all <skills-directory> [options]
 
 Options:
-  --strict        Treat warnings as errors (fail if any warnings)
-  --json          Output JSON report format
-  --all           Validate all skills in the given directory
-  --concurrency N Number of parallel validations (default: 6)
-  --sections-only Validate only _sections.md (for incremental generation)
+  --strict           Treat warnings as errors (fail if any warnings)
+  --json             Output JSON report format
+  --all              Validate all skills in the given directory
+  --concurrency N    Number of parallel validations (default: 6)
+  --sections-only    Validate only _sections.md (for incremental generation)
+  --verify-generated Verify AGENTS.md matches script-generated output
 
 Examples:
   node validate-skill.js ./skills/react-best-practices
@@ -270,10 +347,15 @@ Examples:
   node validate-skill.js --all ./skills
   node validate-skill.js --all ./skills --json --concurrency 4
   node validate-skill.js ./skills/react-best-practices --sections-only
+  node validate-skill.js ./skills/react-best-practices --verify-generated
 
 Incremental Validation:
   Use --sections-only during skill generation to validate categories early.
   This enables fail-fast behavior before generating individual rules.
+
+AGENTS.md Verification:
+  Use --verify-generated to ensure AGENTS.md was generated by the script
+  and not manually edited. This detects stale or manually modified files.
 
 Exit codes:
   0 - All validations passed

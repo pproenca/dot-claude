@@ -159,8 +159,10 @@ Generate files in dependency order with validation at each step:
 │ 3. Generate SKILL.md, metadata.json             │
 │    (Uses rules count and categories)            │
 ├─────────────────────────────────────────────────┤
-│ 4. Build AGENTS.md                              │
-│    node scripts/build-agents-md.js              │
+│ 4. Build AGENTS.md (MUST use script)            │
+│    node scripts/build-agents-md.js <skill-dir>  │
+│    ⚠️  NEVER write AGENTS.md manually           │
+│    Required: metadata.json, rules/_sections.md  │
 ├─────────────────────────────────────────────────┤
 │ 5. Final validation                             │
 │    node scripts/validate-skill.js               │
@@ -175,10 +177,16 @@ Run both validation phases:
 1. **Automated validation**: `node scripts/validate-skill.js ./skills/{tech-slug}`
    - Fix ALL errors before proceeding
    - Address warnings where feasible
+   - Use `--verify-generated` flag to ensure AGENTS.md matches script output
 
 2. **Agent quality review**: Launch `skill-reviewer` agent
    - Reviews teaching effectiveness, code realism, impact accuracy
    - Fix ALL issues identified before release
+
+**If build-agents-md.js fails:**
+- `Error: metadata.json not found` → Ensure metadata.json exists in skill root with required fields
+- `Error: rules/_sections.md not found` → Create _sections.md under rules/ directory following the template
+- Malformed output → Check rule files have valid YAML frontmatter (title, impact, impactDescription, tags)
 
 ---
 
