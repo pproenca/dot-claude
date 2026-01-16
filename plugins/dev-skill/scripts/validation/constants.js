@@ -292,7 +292,7 @@ const VALIDATION_MESSAGES = {
   GUIDE_IMPACT_LEVELS: `Valid impact levels: ${IMPACT_LEVELS.join(', ')}`,
   GUIDE_IMPACT_ORDERING: 'Categories should be ordered by impact: CRITICAL first, then HIGH, MEDIUM-HIGH, MEDIUM, LOW-MEDIUM, LOW',
   GUIDE_REQUIRED_FILES: 'A complete skill requires: SKILL.md, metadata.json, rules/_sections.md, rules/_template.md',
-  GUIDE_SKILL_STRUCTURE: 'See references/QUALITY_CHECKLIST.md for complete skill structure requirements',
+  GUIDE_SKILL_STRUCTURE: 'See QUALITY_CHECKLIST.md in the dev-skill plugin references/ directory for complete skill structure requirements',
 };
 
 // Required files and sections for a complete skill

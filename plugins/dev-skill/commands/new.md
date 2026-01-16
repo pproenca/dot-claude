@@ -159,14 +159,14 @@ Generate files in dependency order with validation at each step:
 │ 3. Generate SKILL.md, metadata.json             │
 │    (Uses rules count and categories)            │
 ├─────────────────────────────────────────────────┤
-│ 4. Build AGENTS.md (MUST use script)            │
-│    node scripts/build-agents-md.js <skill-dir>  │
-│    ⚠️  NEVER write AGENTS.md manually           │
-│    Required: metadata.json, rules/_sections.md  │
-├─────────────────────────────────────────────────┤
-│ 5. Final validation                             │
-│    node scripts/validate-skill.js               │
-│    skill-reviewer agent                         │
+│ 4. Build AGENTS.md (MUST use script)                            │
+│    node ${CLAUDE_PLUGIN_ROOT}/scripts/build-agents-md.js <dir>  │
+│    ⚠️  NEVER write AGENTS.md manually                           │
+│    Required: metadata.json, rules/_sections.md                  │
+├─────────────────────────────────────────────────────────────────┤
+│ 5. Final validation                                             │
+│    node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-skill.js         │
+│    skill-reviewer agent                                         │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -174,7 +174,7 @@ Generate files in dependency order with validation at each step:
 
 Run both validation phases:
 
-1. **Automated validation**: `node scripts/validate-skill.js ./skills/{tech-slug}`
+1. **Automated validation**: `node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-skill.js ./skills/{tech-slug}`
    - Fix ALL errors before proceeding
    - Address warnings where feasible
    - Use `--verify-generated` flag to ensure AGENTS.md matches script output
@@ -570,7 +570,7 @@ Before finalizing, verify:
 
 ### Automation Scripts
 ```
-scripts/
+${CLAUDE_PLUGIN_ROOT}/scripts/
 ├── validate-skill.js   # Validates generated skill against guidelines
 ├── build-agents-md.js  # Compiles rules into AGENTS.md
 └── README.md           # Script documentation
@@ -578,14 +578,14 @@ scripts/
 
 ### Validation Agents
 ```
-agents/
+${CLAUDE_PLUGIN_ROOT}/agents/
 ├── preflight-validator.md  # Validates planning before generation (run early)
 └── skill-reviewer.md       # Reviews subjective quality criteria (run after generation)
 ```
 
 ### Reference Examples
 ```
-references/
+${CLAUDE_PLUGIN_ROOT}/references/
 ├── QUALITY_CHECKLIST.md # Authoritative validation checklist
 ├── COMPLETE_EXAMPLE.md  # Full React example with all rule samples
 ├── README.md            # Documentation for reference files
@@ -603,9 +603,9 @@ templates/skill-generator/
 ```
 
 **IMPORTANT**:
-1. Always read `references/COMPLETE_EXAMPLE.md` before generating a new skill
-2. Run `scripts/validate-skill.js` after generation to ensure compliance
-3. Check against `references/QUALITY_CHECKLIST.md` before release
+1. Always read `${CLAUDE_PLUGIN_ROOT}/references/COMPLETE_EXAMPLE.md` before generating a new skill
+2. Run `node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-skill.js` after generation to ensure compliance
+3. Check against `${CLAUDE_PLUGIN_ROOT}/references/QUALITY_CHECKLIST.md` before release
 
 ---
 

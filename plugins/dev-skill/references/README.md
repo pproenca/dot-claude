@@ -114,7 +114,7 @@ When creating new rules:
 Use the build script to compile rules into a single document:
 
 ```bash
-node output/build-agents-md.js ./skills/your-skill-name
+node scripts/build-agents-md.js ./skills/your-skill-name
 ```
 
 This generates `AGENTS.md` from `metadata.json`, `_sections.md`, and all rule files.
