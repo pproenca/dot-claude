@@ -5,6 +5,54 @@ Modeled after [OpenSpec](https://github.com/Fission-AI/OpenSpec)'s validation ar
 
 ## Scripts
 
+### clone-repos.sh
+
+Clone Git repositories or link local directories for codebase analysis. Used by the `/dev-skill:from-codebase` command.
+
+```bash
+bash clone-repos.sh <output-dir> <source1> [source2] ...
+```
+
+#### Sources
+
+Supports multiple input formats:
+- **Git URL**: `https://github.com/user/repo` or `git@github.com:user/repo`
+- **GitHub shorthand**: `user/repo` (converted to `https://github.com/user/repo`)
+- **Local path**: `/path/to/project` or `./relative/path` (creates symlink)
+
+#### Examples
+
+```bash
+# Clone single GitHub repo using shorthand
+bash clone-repos.sh /tmp/analysis radix-ui/primitives
+
+# Clone multiple repos
+bash clone-repos.sh /tmp/analysis shadcn-ui/ui radix-ui/themes
+
+# Mix of Git URLs and local paths
+bash clone-repos.sh /tmp/analysis https://github.com/shadcn-ui/ui ./local-project
+```
+
+#### Output
+
+Prints JSON array with status of each cloned/linked repo:
+
+```json
+[
+  {"name": "ui", "source": "shadcn-ui/ui", "type": "git", "path": "/tmp/xxx/ui", "files": 245, "language": "typescript", "status": "success"},
+  {"name": "local-project", "source": "./local-project", "type": "local", "path": "/tmp/xxx/local-project", "files": 89, "language": "typescript", "status": "success"}
+]
+```
+
+#### Features
+
+- **Shallow clones**: Uses `git clone --depth 1` for fast cloning
+- **Language detection**: Detects primary language (TypeScript, JavaScript, Python, Go, Rust, C++, Java)
+- **File counting**: Counts source files for analysis scope estimation
+- **Idempotent**: Removes existing directories before cloning
+
+---
+
 ### validate-skill.js
 
 Comprehensive skill validator with OpenSpec-level scrutiny.
