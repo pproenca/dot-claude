@@ -1,6 +1,25 @@
 ---
 name: migration-judge
-description: Use this agent to validate a skill migration from old rules/ structure to new references/ structure. Should be invoked after the migrate command completes file moves and link updates.
+description: |
+  Use this agent to validate a skill migration from old rules/ structure to new references/ structure. Should be invoked after the migrate command completes file moves and link updates.
+
+  <example>
+  Context: The migrate command has finished moving files for a Python skill.
+  user: "Migration complete. Did it work correctly?"
+  assistant: "Let me use the migration-judge agent to validate the migration was successful and all content was preserved."
+  <commentary>
+  After the migrate command completes file moves, invoke migration-judge to verify directory structure and content preservation.
+  </commentary>
+  </example>
+
+  <example>
+  Context: A TypeScript skill has been migrated from rules/ to references/ structure.
+  user: "The files are moved. Can you verify nothing broke?"
+  assistant: "I'll run the migration-judge agent to check directory structure, link updates, and ensure no content was lost."
+  <commentary>
+  Use migration-judge after migrate command to catch any breaking changes before considering migration complete.
+  </commentary>
+  </example>
 model: sonnet
 color: yellow
 tools: ["Read", "Bash", "Glob", "Grep"]

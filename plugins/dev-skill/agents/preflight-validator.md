@@ -1,7 +1,27 @@
 ---
 name: preflight-validator
-description: Use this agent to validate skill planning before generating rules. Checks category derivation, lifecycle analysis, source authority, and rule distribution. Run after planning checkpoint approval.
+description: |
+  Use this agent to validate skill planning before generating rules. Checks category derivation, lifecycle analysis, source authority, and rule distribution. Run after planning checkpoint approval.
+
+  <example>
+  Context: User has approved the planning checkpoint for a new React skill.
+  user: "The categories and sources look good, let's proceed."
+  assistant: "Let me use the preflight-validator agent to validate the planning before we generate rules."
+  <commentary>
+  The planning checkpoint was approved, so invoke the preflight-validator to catch issues before expensive rule generation.
+  </commentary>
+  </example>
+
+  <example>
+  Context: A TypeScript skill plan has been created with 8 categories and 50 rules.
+  user: "I've outlined the skill structure, ready to move forward."
+  assistant: "I'll run the preflight-validator agent to verify the category ordering, source authority, and rule distribution before generation."
+  <commentary>
+  Use preflight-validator after planning is complete to validate lifecycle ordering and source quality.
+  </commentary>
+  </example>
 model: opus
+color: yellow
 tools: ["Read", "Glob", "WebFetch", "WebSearch"]
 ---
 

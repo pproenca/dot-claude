@@ -1,7 +1,27 @@
 ---
 name: skill-reviewer
-description: Use this agent to validate a generated skill against QUALITY_CHECKLIST.md for subjective quality criteria that cannot be automated. Should be invoked after validate-skill.js passes with 0 errors.
+description: |
+  Use this agent to validate a generated skill against QUALITY_CHECKLIST.md for subjective quality criteria that cannot be automated. Should be invoked after validate-skill.js passes with 0 errors.
+
+  <example>
+  Context: The validate-skill.js script passed with 0 errors for a Python skill.
+  user: "Validation passed! Is the skill ready to ship?"
+  assistant: "Let me use the skill-reviewer agent to check subjective quality criteria like teaching effectiveness and code example realism."
+  <commentary>
+  After automated validation passes, invoke skill-reviewer for manual quality checks that scripts cannot perform.
+  </commentary>
+  </example>
+
+  <example>
+  Context: A React skill has been generated and structural validation completed.
+  user: "The skill files are all in place. Can you review the quality?"
+  assistant: "I'll run the skill-reviewer agent to evaluate teaching effectiveness, minimal diff philosophy, and impact claim accuracy."
+  <commentary>
+  Use skill-reviewer after validate-skill.js passes to catch subjective quality issues before release.
+  </commentary>
+  </example>
 model: opus
+color: yellow
 tools: ["Read", "Glob", "Grep", "WebSearch"]
 ---
 
@@ -22,7 +42,7 @@ You will receive a skill directory path to review (e.g., `./skills/python-best-p
    - `SKILL.md` - Entry point and quick reference
    - `AGENTS.md` - Compiled comprehensive guide
    - `metadata.json` - Version and references
-   - `rules/_sections.md` - Category definitions
+   - `references/_sections.md` - Category definitions
 3. Sample 5-10 rule files from `rules/` across different categories
 
 ### Step 2: Validate Manual-Only Criteria
