@@ -27,7 +27,7 @@ Target: <5% structural deviation from guidelines.
 - [ ] ✅ AUTO: Individual rule files have full detail
 - [ ] ✅ AUTO: AGENTS.md compiles everything correctly
 - [ ] ✅ AUTO: metadata.json has version, org, date, abstract, references
-- [ ] ✅ AUTO: rules/_sections.md defines all categories with prefixes
+- [ ] ✅ AUTO: references/_sections.md defines all categories with prefixes
 
 ### SKILL.md Requirements
 - [ ] ✅ AUTO: Frontmatter has: name (kebab-case), description
@@ -317,7 +317,7 @@ node scripts/validate-skill.js ./skills/your-skill-name
 ```
 
 The script checks:
-- Required files exist (SKILL.md, AGENTS.md, README.md, metadata.json, rules/_sections.md)
+- Required files exist (SKILL.md, AGENTS.md, README.md, metadata.json, references/_sections.md)
 - YAML frontmatter is valid
 - All rules have incorrect/correct examples
 - **MUST:** All annotations have descriptive parenthetical text

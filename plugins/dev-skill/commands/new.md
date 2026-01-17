@@ -43,10 +43,12 @@ Generate a complete skill with the following files:
 ├── AGENTS.md             # Compiled comprehensive guide
 ├── metadata.json         # Version, org, references
 ├── README.md             # Human-readable overview
-└── rules/
-    ├── _sections.md      # Category definitions
-    ├── _template.md      # Rule template
-    └── {prefix}-{slug}.md # Individual rules (40+ total)
+├── references/
+│   ├── _sections.md      # Category definitions
+│   └── {prefix}-{slug}.md # Individual rules (40+ total)
+└── assets/
+    └── templates/
+        └── _template.md  # Rule template for extensions
 ```
 
 Where `{output-base}` is either `~/.claude/skills` (global) or `.claude/skills` (project) based on user choice.
@@ -144,7 +146,7 @@ Generate files in dependency order with validation at each step:
 
 ```
 ┌─────────────────────────────────────────────────┐
-│ 1. Generate rules/_sections.md                  │
+│ 1. Generate references/_sections.md             │
 │    ↓                                            │
 │    Validate: impact ordering, prefix format     │
 │    (Fail fast if categories are wrong)          │
@@ -157,12 +159,13 @@ Generate files in dependency order with validation at each step:
 │    Validate each batch before next              │
 ├─────────────────────────────────────────────────┤
 │ 3. Generate SKILL.md, metadata.json             │
+│    Generate assets/templates/_template.md       │
 │    (Uses rules count and categories)            │
 ├─────────────────────────────────────────────────┤
 │ 4. Build AGENTS.md (MUST use script)                            │
 │    node ${CLAUDE_PLUGIN_ROOT}/scripts/build-agents-md.js <dir>  │
 │    ⚠️  NEVER write AGENTS.md manually                           │
-│    Required: metadata.json, rules/_sections.md                  │
+│    Required: metadata.json, references/_sections.md             │
 ├─────────────────────────────────────────────────────────────────┤
 │ 5. Final validation                                             │
 │    node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-skill.js         │
@@ -185,7 +188,7 @@ Run both validation phases:
 
 **If build-agents-md.js fails:**
 - `Error: metadata.json not found` → Ensure metadata.json exists in skill root with required fields
-- `Error: rules/_sections.md not found` → Create _sections.md under rules/ directory following the template
+- `Error: _sections.md not found` → Create _sections.md under references/ directory following the template
 - Malformed output → Check rule files have valid YAML frontmatter (title, impact, impactDescription, tags)
 
 ---
@@ -220,13 +223,14 @@ User: "Create a Go best practices skill using standard categories"
 │    Skip research, use: mem-, cache-, algo-,     │
 │    ds-, io-, conc-, opt-, micro-                │
 ├─────────────────────────────────────────────────┤
-│ 2. Generate _sections.md immediately            │
+│ 2. Generate references/_sections.md immediately │
 │    Validate: node validate-skill.js --sections  │
 ├─────────────────────────────────────────────────┤
-│ 3. Generate all rules in parallel               │
+│ 3. Generate all rules in parallel in references/│
 │    (No batching by impact level needed)         │
 ├─────────────────────────────────────────────────┤
 │ 4. Generate SKILL.md, metadata.json, AGENTS.md  │
+│    Generate assets/templates/_template.md       │
 ├─────────────────────────────────────────────────┤
 │ 5. Full validation + skill-reviewer             │
 └─────────────────────────────────────────────────┘
@@ -349,25 +353,28 @@ Reference these guidelines when:
 
 ### 1. {Category Name} (CRITICAL)
 
-- `{prefix}-{slug}` - {One-line description}
-- `{prefix}-{slug}` - {One-line description}
+- [`{prefix}-{slug}`](references/{prefix}-{slug}.md) - {One-line description}
+- [`{prefix}-{slug}`](references/{prefix}-{slug}.md) - {One-line description}
 ...
 
 ## How to Use
 
-Read individual rule files for detailed explanations and code examples:
+Read individual reference files for detailed explanations and code examples:
 
+- [Section definitions](references/_sections.md) - Category structure and impact levels
+- [Rule template](assets/templates/_template.md) - Template for adding new rules
+
+## Reference Files
+
+| File | Description |
+|------|-------------|
+| [AGENTS.md](AGENTS.md) | Complete compiled guide with all rules |
+| [references/_sections.md](references/_sections.md) | Category definitions and ordering |
+| [assets/templates/_template.md](assets/templates/_template.md) | Template for new rules |
+| [metadata.json](metadata.json) | Version and reference information |
 ```
-rules/{prefix}-{slug}.md
-rules/_sections.md
-```
 
-## Full Compiled Document
-
-For the complete guide with all rules expanded: `AGENTS.md`
-```
-
-### rules/_sections.md Structure
+### references/_sections.md Structure
 
 ```markdown
 # Sections
@@ -572,7 +579,7 @@ Before finalizing, verify:
 ```
 ${CLAUDE_PLUGIN_ROOT}/scripts/
 ├── validate-skill.js   # Validates generated skill against guidelines
-├── build-agents-md.js  # Compiles rules into AGENTS.md
+├── build-agents-md.js  # Compiles references into AGENTS.md
 └── README.md           # Script documentation
 ```
 
@@ -589,10 +596,11 @@ ${CLAUDE_PLUGIN_ROOT}/references/
 ├── QUALITY_CHECKLIST.md # Authoritative validation checklist
 ├── COMPLETE_EXAMPLE.md  # Full React example with all rule samples
 ├── README.md            # Documentation for reference files
-├── _sections.md         # Complete sections template (8 categories)
-├── _template.md         # Rule template with frontmatter
 ├── metadata.json        # Full metadata example
-└── rules/               # 12 sample rules across all categories
+└── examples/            # 12 sample rules across all categories
+    ├── _sections.md     # Complete sections template (8 categories)
+    ├── _template.md     # Rule template with frontmatter
+    └── {prefix}-*.md    # Sample rule files
 ```
 
 ### Templates and Mental Model

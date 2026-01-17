@@ -204,8 +204,8 @@ const VALIDATION_MESSAGES = {
   // File Structure
   MISSING_FILE: (file) => `Missing required file: ${file}`,
   INVALID_JSON: (file, error) => `${file}: Invalid JSON - ${error}`,
-  NO_RULES_FOUND: 'No rule files found in rules/ directory',
-  NO_SECTIONS_DEFINED: 'No sections defined in rules/_sections.md',
+  NO_RULES_FOUND: 'No rule files found in references/ (or rules/) directory',
+  NO_SECTIONS_DEFINED: 'No sections defined in _sections.md',
 
   // SKILL.md
   SKILL_MISSING_NAME: 'SKILL.md: Missing required frontmatter field: name',
@@ -226,11 +226,11 @@ const VALIDATION_MESSAGES = {
   METADATA_EMPTY_REFERENCES: 'metadata.json: references array is empty',
 
   // _sections.md
-  SECTION_NUMBERING_GAP: (name, expected, actual) => `rules/_sections.md: Section "${name}" has index ${actual}, expected ${expected}`,
-  SECTION_INVALID_IMPACT: (name, impact) => `rules/_sections.md: Section "${name}" has invalid impact level: ${impact}`,
-  SECTION_IMPACT_ORDER: (name, prevName) => `rules/_sections.md: Section "${name}" has higher impact than previous section "${prevName}"`,
-  SECTION_PREFIX_TOO_SHORT: (name, prefix) => `rules/_sections.md: Section "${name}" prefix "${prefix}" is too short (min ${MIN_PREFIX_LENGTH} chars)`,
-  SECTION_PREFIX_TOO_LONG: (name, prefix) => `rules/_sections.md: Section "${name}" prefix "${prefix}" is too long (max ${MAX_PREFIX_LENGTH} chars)`,
+  SECTION_NUMBERING_GAP: (name, expected, actual) => `_sections.md: Section "${name}" has index ${actual}, expected ${expected}`,
+  SECTION_INVALID_IMPACT: (name, impact) => `_sections.md: Section "${name}" has invalid impact level: ${impact}`,
+  SECTION_IMPACT_ORDER: (name, prevName) => `_sections.md: Section "${name}" has higher impact than previous section "${prevName}"`,
+  SECTION_PREFIX_TOO_SHORT: (name, prefix) => `_sections.md: Section "${name}" prefix "${prefix}" is too short (min ${MIN_PREFIX_LENGTH} chars)`,
+  SECTION_PREFIX_TOO_LONG: (name, prefix) => `_sections.md: Section "${name}" prefix "${prefix}" is too long (max ${MAX_PREFIX_LENGTH} chars)`,
   SECTION_NO_RULES: (name, prefix) => `Section "${name}" (prefix: ${prefix}) has no rule files`,
 
   // Rule Files
@@ -291,12 +291,13 @@ const VALIDATION_MESSAGES = {
   GUIDE_KEBAB_CASE: 'Use lowercase letters and hyphens only (e.g., "react-best-practices")',
   GUIDE_IMPACT_LEVELS: `Valid impact levels: ${IMPACT_LEVELS.join(', ')}`,
   GUIDE_IMPACT_ORDERING: 'Categories should be ordered by impact: CRITICAL first, then HIGH, MEDIUM-HIGH, MEDIUM, LOW-MEDIUM, LOW',
-  GUIDE_REQUIRED_FILES: 'A complete skill requires: SKILL.md, metadata.json, rules/_sections.md, rules/_template.md',
+  GUIDE_REQUIRED_FILES: 'A complete skill requires: SKILL.md, metadata.json, references/_sections.md (or rules/_sections.md)',
   GUIDE_SKILL_STRUCTURE: 'See QUALITY_CHECKLIST.md in the dev-skill plugin references/ directory for complete skill structure requirements',
 };
 
 // Required files and sections for a complete skill
-const REQUIRED_FILES = ['SKILL.md', 'metadata.json', 'rules/_sections.md', 'rules/_template.md'];
+// Note: _sections.md location is validated dynamically (references/ or rules/)
+const REQUIRED_FILES = ['SKILL.md', 'metadata.json'];
 const REQUIRED_SKILL_SECTIONS = ['When to Apply', 'Rule Categories', 'Quick Reference'];
 const REQUIRED_METADATA_FIELDS = ['version', 'organization', 'date', 'abstract', 'references'];
 

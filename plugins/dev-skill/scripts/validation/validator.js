@@ -162,17 +162,21 @@ class SkillValidator {
   async validateSectionsOnly(skillDir) {
     const issues = [];
 
-    // Check if rules directory exists
+    // Check if references/ or rules/ directory exists (references/ preferred)
+    const referencesDir = path.join(skillDir, 'references');
     const rulesDir = path.join(skillDir, 'rules');
-    if (!fs.existsSync(rulesDir)) {
-      issues.push(createError('structure', 'rules/ directory not found'));
+    const refDir = fs.existsSync(referencesDir) ? referencesDir : rulesDir;
+    const refDirName = fs.existsSync(referencesDir) ? 'references' : 'rules';
+
+    if (!fs.existsSync(refDir)) {
+      issues.push(createError('structure', 'references/ or rules/ directory not found'));
       return createReport(issues, this.strictMode);
     }
 
     // Check if _sections.md exists
-    const sectionsPath = path.join(rulesDir, '_sections.md');
+    const sectionsPath = path.join(refDir, '_sections.md');
     if (!fs.existsSync(sectionsPath)) {
-      issues.push(createError('rules/_sections.md', 'File not found'));
+      issues.push(createError(`${refDirName}/_sections.md`, 'File not found'));
       return createReport(issues, this.strictMode);
     }
 
@@ -208,6 +212,7 @@ class SkillValidator {
   validateRequiredFiles(skillDir) {
     const issues = [];
 
+    // Check base required files
     for (const file of REQUIRED_FILES) {
       const filepath = path.join(skillDir, file);
       if (!fs.existsSync(filepath)) {
@@ -215,6 +220,15 @@ class SkillValidator {
           `${VALIDATION_MESSAGES.MISSING_FILE(file)}. ${VALIDATION_MESSAGES.GUIDE_REQUIRED_FILES}`
         ));
       }
+    }
+
+    // Check for _sections.md in references/ or rules/
+    const { dir: refDir, name: refDirName } = this.getReferencesDir(skillDir);
+    const sectionsPath = path.join(refDir, '_sections.md');
+    if (!fs.existsSync(sectionsPath)) {
+      issues.push(createError('structure',
+        `${VALIDATION_MESSAGES.MISSING_FILE(`${refDirName}/_sections.md`)}. ${VALIDATION_MESSAGES.GUIDE_REQUIRED_FILES}`
+      ));
     }
 
     return issues;
@@ -294,12 +308,27 @@ class SkillValidator {
   }
 
   /**
+   * Get the references directory (references/ or legacy rules/)
+   * @param {string} skillDir
+   * @returns {{dir: string, name: string}}
+   */
+  getReferencesDir(skillDir) {
+    const referencesDir = path.join(skillDir, 'references');
+    const rulesDir = path.join(skillDir, 'rules');
+    if (fs.existsSync(referencesDir)) {
+      return { dir: referencesDir, name: 'references' };
+    }
+    return { dir: rulesDir, name: 'rules' };
+  }
+
+  /**
    * Parse _sections.md file
    * @param {string} skillDir
    * @returns {import('./types.js').Section[]}
    */
   parseSectionsFile(skillDir) {
-    const filepath = path.join(skillDir, 'rules', '_sections.md');
+    const { dir } = this.getReferencesDir(skillDir);
+    const filepath = path.join(dir, '_sections.md');
     if (!fs.existsSync(filepath)) return [];
 
     const content = fs.readFileSync(filepath, 'utf-8');
@@ -313,7 +342,8 @@ class SkillValidator {
    * @returns {import('./types.js').ValidationIssue[]}
    */
   validateSectionsFile(skillDir, sections) {
-    const filepath = 'rules/_sections.md';
+    const { name: refDirName } = this.getReferencesDir(skillDir);
+    const filepath = `${refDirName}/_sections.md`;
     const issues = [];
 
     if (sections.length === 0) {
@@ -342,14 +372,14 @@ class SkillValidator {
    * @returns {{totalRules: number, quantifiedRules: number, rulesByPrefix: Object}}
    */
   validateRulesDir(skillDir, sections, issues) {
-    const rulesDir = path.join(skillDir, 'rules');
+    const { dir: refDir, name: refDirName } = this.getReferencesDir(skillDir);
     const stats = {
       totalRules: 0,
       quantifiedRules: 0,
       rulesByPrefix: {}
     };
 
-    if (!fs.existsSync(rulesDir)) return stats;
+    if (!fs.existsSync(refDir)) return stats;
 
     const prefixMap = new Map();
     for (const section of sections) {
@@ -357,18 +387,18 @@ class SkillValidator {
       stats.rulesByPrefix[section.prefix] = 0;
     }
 
-    const ruleFiles = getFiles(rulesDir, RULE_FILE_REGEX)
+    const ruleFiles = getFiles(refDir, RULE_FILE_REGEX)
       .filter(f => !f.startsWith('_'));
 
     if (ruleFiles.length === 0) {
-      issues.push(createError('rules/', VALIDATION_MESSAGES.NO_RULES_FOUND));
+      issues.push(createError(`${refDirName}/`, VALIDATION_MESSAGES.NO_RULES_FOUND));
       return stats;
     }
 
     for (const file of ruleFiles) {
-      const filepath = path.join(rulesDir, file);
+      const filepath = path.join(refDir, file);
       const prefix = file.split('-')[0];
-      const displayPath = `rules/${file}`;
+      const displayPath = `${refDirName}/${file}`;
 
       if (sections.length > 0 && !prefixMap.has(prefix)) {
         issues.push(createWarning(displayPath,

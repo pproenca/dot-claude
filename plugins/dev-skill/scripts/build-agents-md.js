@@ -3,7 +3,7 @@
 /**
  * AGENTS.md Build Script
  *
- * Compiles individual rule files into a single comprehensive AGENTS.md document.
+ * Compiles individual reference files into a single comprehensive AGENTS.md document.
  *
  * Usage: node build-agents-md.js <skill-directory>
  */
@@ -81,16 +81,16 @@ function parseSections(content) {
   return sections;
 }
 
-function getRulesForSection(rulesDir, prefix, files) {
-  const rules = [];
+function getReferencesForSection(referencesDir, prefix, files) {
+  const references = [];
 
   for (const file of files) {
     if (file.startsWith(prefix + '-') && file.endsWith('.md')) {
-      const filepath = path.join(rulesDir, file);
+      const filepath = path.join(referencesDir, file);
       const content = fs.readFileSync(filepath, 'utf-8');
       const { frontmatter, body } = parseFrontmatter(content);
 
-      rules.push({
+      references.push({
         filename: file,
         title: frontmatter.title || file,
         impact: frontmatter.impact || 'MEDIUM',
@@ -101,9 +101,9 @@ function getRulesForSection(rulesDir, prefix, files) {
     }
   }
 
-  rules.sort((a, b) => a.title.localeCompare(b.title));
+  references.sort((a, b) => a.title.localeCompare(b.title));
 
-  return rules;
+  return references;
 }
 
 function buildAgentsMD(skillDir) {
@@ -114,13 +114,21 @@ function buildAgentsMD(skillDir) {
   }
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf-8'));
 
-  const sectionsPath = path.join(skillDir, 'rules', '_sections.md');
+  // Try references/ first, fall back to rules/ for backwards compatibility
+  let referencesDir = path.join(skillDir, 'references');
+  let sectionsPath = path.join(referencesDir, '_sections.md');
+
   if (!fs.existsSync(sectionsPath)) {
-    console.error('Error: rules/_sections.md not found');
-    process.exit(1);
+    // Fall back to legacy rules/ directory
+    referencesDir = path.join(skillDir, 'rules');
+    sectionsPath = path.join(referencesDir, '_sections.md');
+    if (!fs.existsSync(sectionsPath)) {
+      console.error('Error: _sections.md not found in references/ or rules/');
+      process.exit(1);
+    }
   }
+
   const sections = parseSections(fs.readFileSync(sectionsPath, 'utf-8'));
-  const rulesDir = path.join(skillDir, 'rules');
   const techName = metadata.technology || 'Best Practices';
 
   const output = [
@@ -147,10 +155,10 @@ function buildAgentsMD(skillDir) {
     ''
   ];
 
-  const rulesCache = new Map();
-  const ruleFiles = fs.readdirSync(rulesDir);
+  const referencesCache = new Map();
+  const referenceFiles = fs.readdirSync(referencesDir);
   for (const section of sections) {
-    rulesCache.set(section.prefix, getRulesForSection(rulesDir, section.prefix, ruleFiles));
+    referencesCache.set(section.prefix, getReferencesForSection(referencesDir, section.prefix, referenceFiles));
   }
 
   let totalRules = 0;
@@ -158,12 +166,12 @@ function buildAgentsMD(skillDir) {
     const sectionSlug = slugify(`${section.index} ${section.name}`);
     output.push(`${section.index}. [${section.name}](#${sectionSlug}) — **${section.impact}**`);
 
-    const rules = rulesCache.get(section.prefix);
-    totalRules += rules.length;
-    for (let i = 0; i < rules.length; i++) {
+    const references = referencesCache.get(section.prefix);
+    totalRules += references.length;
+    for (let i = 0; i < references.length; i++) {
       const ruleNum = `${section.index}.${i + 1}`;
-      const ruleSlug = slugify(`${ruleNum} ${rules[i].title}`);
-      output.push(`   - ${ruleNum} [${rules[i].title}](#${ruleSlug})`);
+      const ruleSlug = slugify(`${ruleNum} ${references[i].title}`);
+      output.push(`   - ${ruleNum} [${references[i].title}](#${ruleSlug})`);
     }
   }
 
@@ -179,17 +187,17 @@ function buildAgentsMD(skillDir) {
       ''
     );
 
-    const rules = rulesCache.get(section.prefix);
-    for (let i = 0; i < rules.length; i++) {
-      const rule = rules[i];
+    const references = referencesCache.get(section.prefix);
+    for (let i = 0; i < references.length; i++) {
+      const ref = references[i];
       const ruleNum = `${section.index}.${i + 1}`;
-      const impact = rule.impactDescription
-        ? `**Impact: ${rule.impact} (${rule.impactDescription})**`
-        : `**Impact: ${rule.impact}**`;
-      // Remove leading H2 title from rule body (already in subsection header)
-      const body = rule.body.replace(/^## .+\n+/, '');
+      const impact = ref.impactDescription
+        ? `**Impact: ${ref.impact} (${ref.impactDescription})**`
+        : `**Impact: ${ref.impact}**`;
+      // Remove leading H2 title from body (already in subsection header)
+      const body = ref.body.replace(/^## .+\n+/, '');
 
-      output.push(`### ${ruleNum} ${rule.title}`, '', impact, '', body, '');
+      output.push(`### ${ruleNum} ${ref.title}`, '', impact, '', body, '');
     }
 
     output.push('---', '');
@@ -201,6 +209,26 @@ function buildAgentsMD(skillDir) {
       output.push(`${index + 1}. [${ref}](${ref})`);
     });
   }
+
+  // Add Source Files footer section with markdown links
+  const isNewStructure = fs.existsSync(path.join(skillDir, 'references'));
+  const refDirName = isNewStructure ? 'references' : 'rules';
+
+  output.push('', '---', '');
+  output.push('## Source Files', '');
+  output.push('This document was compiled from individual reference files. For detailed editing or extension:', '');
+  output.push('| File | Description |');
+  output.push('|------|-------------|');
+  output.push(`| [${refDirName}/_sections.md](${refDirName}/_sections.md) | Category definitions and impact ordering |`);
+
+  // Check for assets/templates directory
+  const templatesDir = path.join(skillDir, 'assets', 'templates');
+  if (fs.existsSync(templatesDir)) {
+    output.push('| [assets/templates/_template.md](assets/templates/_template.md) | Template for creating new rules |');
+  }
+
+  output.push('| [SKILL.md](SKILL.md) | Quick reference entry point |');
+  output.push('| [metadata.json](metadata.json) | Version and reference URLs |');
 
   return { output: output.join('\n'), totalRules, sectionCount: sections.length };
 }

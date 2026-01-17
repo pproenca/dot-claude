@@ -7,27 +7,19 @@ This directory contains reference files from the `react-best-practices` skill th
 ```
 references/
 ├── README.md           # This file
-├── _sections.md        # Section definitions template
-├── _template.md        # Rule template with frontmatter
+├── AGENTS.md           # Compiled example guide
+├── QUALITY_CHECKLIST.md # Authoritative validation checklist
+├── COMPLETE_EXAMPLE.md # Full React example with all rule samples
 ├── metadata.json       # Skill metadata example
-└── rules/              # Sample rules by category
-    ├── async-parallel.md           # CRITICAL - Basic Promise.all pattern
-    ├── async-dependencies.md       # CRITICAL - Dependency-based parallelization
-    ├── bundle-barrel-imports.md    # CRITICAL - Barrel file avoidance
-    ├── bundle-dynamic-imports.md   # CRITICAL - Dynamic imports
-    ├── server-parallel-fetching.md # HIGH - RSC parallel fetching
-    ├── server-cache-react.md       # MEDIUM - React.cache() usage
-    ├── client-swr-dedup.md         # MEDIUM-HIGH - SWR deduplication
-    ├── rerender-memo.md            # MEDIUM - Memoization patterns
-    ├── rendering-content-visibility.md # MEDIUM - CSS content-visibility
-    ├── js-tosorted-immutable.md    # MEDIUM-HIGH - Immutable array methods
-    ├── js-set-map-lookups.md       # LOW-MEDIUM - Data structure optimization
-    └── advanced-use-latest.md      # LOW - useLatest pattern
+└── examples/           # Sample rules and templates
+    ├── _sections.md    # Section definitions template
+    ├── _template.md    # Rule template with frontmatter
+    └── {prefix}-*.md   # Sample rules by category
 ```
 
 ## How to Use These References
 
-### 1. Section Definitions (`_sections.md`)
+### 1. Section Definitions ([examples/_sections.md](examples/_sections.md))
 
 Use this as a template for organizing your skill into categories. Key elements:
 
@@ -35,7 +27,7 @@ Use this as a template for organizing your skill into categories. Key elements:
 - **Impact levels**: CRITICAL → HIGH → MEDIUM → LOW
 - **Prefix**: Used for rule file naming (`prefix-slug.md`)
 
-### 2. Rule Template (`_template.md`)
+### 2. Rule Template ([examples/_template.md](examples/_template.md))
 
 Every rule file must follow this structure:
 
@@ -64,7 +56,7 @@ Explanation of the rule.
 \`\`\`
 ```
 
-### 3. Metadata (`metadata.json`)
+### 3. Metadata ([metadata.json](metadata.json))
 
 Required fields:
 - `version`: Semantic version (e.g., "0.1.0")
@@ -76,16 +68,16 @@ Required fields:
 
 ### 4. Sample Rules
 
-The rules directory contains 12 examples covering all impact levels:
+The [examples/](examples/) directory contains 12 sample rules covering all impact levels:
 
 | Impact | Rules |
 |--------|-------|
-| CRITICAL | async-parallel, async-dependencies, bundle-barrel-imports, bundle-dynamic-imports |
-| HIGH | server-parallel-fetching |
-| MEDIUM-HIGH | client-swr-dedup, js-tosorted-immutable |
-| MEDIUM | server-cache-react, rerender-memo, rendering-content-visibility |
-| LOW-MEDIUM | js-set-map-lookups |
-| LOW | advanced-use-latest |
+| CRITICAL | [async-parallel](examples/async-parallel.md), [async-dependencies](examples/async-dependencies.md), [bundle-barrel-imports](examples/bundle-barrel-imports.md), [bundle-dynamic-imports](examples/bundle-dynamic-imports.md) |
+| HIGH | [server-parallel-fetching](examples/server-parallel-fetching.md) |
+| MEDIUM-HIGH | [client-swr-dedup](examples/client-swr-dedup.md), [js-tosorted-immutable](examples/js-tosorted-immutable.md) |
+| MEDIUM | [server-cache-react](examples/server-cache-react.md), [rerender-memo](examples/rerender-memo.md), [rendering-content-visibility](examples/rendering-content-visibility.md) |
+| LOW-MEDIUM | [js-set-map-lookups](examples/js-set-map-lookups.md) |
+| LOW | [advanced-use-latest](examples/advanced-use-latest.md) |
 
 ## Rule Naming Convention
 
@@ -111,10 +103,12 @@ When creating new rules:
 
 ## Building AGENTS.md
 
-Use the build script to compile rules into a single document:
+Use the build script to compile references into a single document:
 
 ```bash
 node scripts/build-agents-md.js ./skills/your-skill-name
 ```
 
-This generates `AGENTS.md` from `metadata.json`, `_sections.md`, and all rule files.
+This generates `AGENTS.md` from `metadata.json`, `references/_sections.md`, and all rule files in `references/`.
+
+**Note**: The build script supports both the new `references/` structure and legacy `rules/` directories for backwards compatibility.
