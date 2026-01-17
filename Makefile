@@ -17,6 +17,7 @@ PRE_COMMIT ?= uv run pre-commit
 PLUGIN_DIR := plugins
 DOMAIN_PLUGIN_DIR := domain_plugins
 DEV_WORKFLOW := $(PLUGIN_DIR)/dev-workflow
+DEV_SKILL := $(PLUGIN_DIR)/dev-skill
 DEV_PYTHON := $(DOMAIN_PLUGIN_DIR)/dev-python
 
 # ============================================================================
@@ -27,6 +28,8 @@ DEV_PYTHON := $(DOMAIN_PLUGIN_DIR)/dev-python
 BASH_SCRIPTS := $(wildcard $(DEV_WORKFLOW)/scripts/*.sh) \
                 $(wildcard $(DEV_WORKFLOW)/hooks/*.sh) \
                 $(wildcard $(DEV_WORKFLOW)/skills/*/find-polluter.sh) \
+                $(wildcard $(DEV_SKILL)/scripts/*.sh) \
+                $(wildcard $(DEV_SKILL)/hooks/*.sh) \
                 $(wildcard $(DEV_PYTHON)/hooks/*.sh)
 
 # All test files
@@ -73,8 +76,22 @@ install:  ## Install all dependencies (bats, shellcheck, pre-commit via uv)
 	@echo "✓ Setup complete"
 
 .PHONY: deps
-deps:  ## Check dependencies status
-	@$(DEV_WORKFLOW)/scripts/check-dependencies.sh
+deps:  ## Check dependencies status for all plugins
+	@echo "=== dev-workflow ==="
+	@$(DEV_WORKFLOW)/scripts/check-dependencies.sh || true
+	@echo ""
+	@echo "=== dev-skill ==="
+	@$(DEV_SKILL)/scripts/check-dependencies.sh
+
+.PHONY: dev-skill-deps
+dev-skill-deps:  ## Install dev-skill npm dependencies
+	@echo "Installing dev-skill dependencies..."
+	@cd $(DEV_SKILL) && npm install
+	@echo "✓ dev-skill dependencies installed"
+
+.PHONY: dev-skill-check
+dev-skill-check:  ## Check dev-skill dependencies status
+	@$(DEV_SKILL)/scripts/check-dependencies.sh
 
 ##@ Testing
 

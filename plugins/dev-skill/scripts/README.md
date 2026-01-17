@@ -3,7 +3,66 @@
 Automation tools for generating and validating performance best practices skills.
 Modeled after [OpenSpec](https://github.com/Fission-AI/OpenSpec)'s validation architecture.
 
+## Dependencies
+
+| Dependency | Required | Purpose |
+|------------|----------|---------|
+| Node.js 18+ | Yes | Run validation and build scripts |
+| npm | Yes | Install npm packages |
+| git | Yes | Clone repositories for analysis |
+| rg (ripgrep) | No | Faster searches (optional) |
+| fd (fd-find) | No | Faster file finding (optional) |
+
+## Quick Start
+
+```bash
+# One-click setup
+bash scripts/setup.sh
+
+# Or manually
+npm install
+```
+
 ## Scripts
+
+### check-dependencies.sh
+
+Validates that all required tools and npm packages are installed.
+
+```bash
+bash scripts/check-dependencies.sh
+```
+
+#### Output
+
+Reports status with indicators:
+- `✓` - dependency present
+- `✗` - dependency missing (required)
+- `-` - dependency missing (optional)
+
+#### Exit Codes
+
+- `0` - All required dependencies present
+- `1` - Missing required dependencies
+
+---
+
+### setup.sh
+
+One-click contributor setup. Verifies Node.js 18+, npm, and installs dependencies.
+
+```bash
+bash scripts/setup.sh
+```
+
+#### Features
+
+- Checks Node.js version (requires 18+)
+- Verifies npm availability
+- Runs `npm install` in plugin directory
+- Validates installation via check-dependencies.sh
+
+---
 
 ### clone-repos.sh
 
