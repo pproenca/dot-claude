@@ -112,3 +112,51 @@ node scripts/build-agents-md.js ./skills/your-skill-name
 This generates `AGENTS.md` from `metadata.json`, `references/_sections.md`, and all rule files in `references/`.
 
 **Note**: The build script supports both the new `references/` structure and legacy `rules/` directories for backwards compatibility.
+
+## Migrating Legacy Skills
+
+Skills generated before the structure refactor use `rules/` instead of `references/`. Use the migrate command to update them:
+
+```
+/dev-skill:migrate <skill-path>
+```
+
+**What it does:**
+- Moves `rules/*.md` → `references/`
+- Moves `rules/_template.md` → `assets/templates/`
+- Updates SKILL.md links to use markdown format
+- Regenerates AGENTS.md with Source Files footer
+- Validates migration with 100% checks
+
+**Old structure:**
+```
+skill/
+├── SKILL.md
+├── AGENTS.md
+├── metadata.json
+├── README.md
+└── rules/
+    ├── _sections.md
+    ├── _template.md
+    └── {prefix}-{slug}.md
+```
+
+**New structure:**
+```
+skill/
+├── SKILL.md
+├── AGENTS.md
+├── metadata.json
+├── README.md
+├── references/
+│   ├── _sections.md
+│   └── {prefix}-{slug}.md
+└── assets/
+    └── templates/
+        └── _template.md
+```
+
+**Requirements:**
+- Skill must be in a git repo with committed changes
+- Migration preserves all content (move, not rewrite)
+- Includes migration-judge validation for 100% accuracy

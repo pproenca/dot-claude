@@ -101,11 +101,11 @@ Perform all analysis work upfront:
 
 ### Step 2: Single Planning Checkpoint
 
-**CRITICAL**: Present ALL analysis results in ONE `AskUserQuestion` call using `multiSelect: false`:
+**CRITICAL**: First output the planning summary as regular text so the user can review it, THEN ask for approval.
 
-```
-Present a comprehensive planning summary:
+**Step 2a - Display the plan** (output as regular markdown text, NOT inside AskUserQuestion):
 
+```markdown
 ## Skill Planning Review
 
 ### Execution Lifecycle
@@ -126,15 +126,21 @@ Present a comprehensive planning summary:
 - Category 1: ~X rules
 - Category 2: ~Y rules
 - Total: ~40-50 rules
-
-Does this plan look correct? Select an option or provide feedback.
 ```
 
+**Step 2b - Ask for approval** (use `AskUserQuestion` with `multiSelect: false`):
+
+```
+Question: "Does this skill plan look correct? Review the categories, sources, and rule distribution above."
+Header: "Plan Review"
 Options:
 - "Approve and proceed" - Start generation
 - "Adjust categories" - User provides specific changes
 - "Change sources" - User provides different sources
 - "Major revisions needed" - User describes changes
+```
+
+**IMPORTANT**: The plan content MUST be displayed as regular output text BEFORE calling AskUserQuestion. Do NOT embed the plan inside the question—users cannot see question content until after they respond.
 
 **Only proceed after user approval.**
 

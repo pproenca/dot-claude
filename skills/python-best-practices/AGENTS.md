@@ -4,9 +4,9 @@
 Python Community  
 January 2026
 
-> **Note:**
-> This document is mainly for agents and LLMs to follow when maintaining,
-> generating, or refactoring Python >=3.11 codebases. Humans may also find it useful,
+> **Note:**  
+> This document is mainly for agents and LLMs to follow when maintaining,  
+> generating, or refactoring codebases. Humans may also find it useful,  
 > but guidance here is optimized for automation and consistency by AI-assisted workflows.
 
 ---
@@ -2195,3 +2195,16 @@ Reference: [What's New in Python 3.11](https://docs.python.org/3/whatsnew/3.11.h
 11. [https://peps.python.org/pep-0008/](https://peps.python.org/pep-0008/)
 12. [https://docs.pydantic.dev/](https://docs.pydantic.dev/)
 13. [https://github.com/ijl/orjson](https://github.com/ijl/orjson)
+
+---
+
+## Source Files
+
+This document was compiled from individual reference files. For detailed editing or extension:
+
+| File | Description |
+|------|-------------|
+| [references/_sections.md](references/_sections.md) | Category definitions and impact ordering |
+| [assets/templates/_template.md](assets/templates/_template.md) | Template for creating new rules |
+| [SKILL.md](SKILL.md) | Quick reference entry point |
+| [metadata.json](metadata.json) | Version and reference URLs |

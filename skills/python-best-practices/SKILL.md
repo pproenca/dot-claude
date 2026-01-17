@@ -106,14 +106,22 @@ Reference these guidelines when:
 
 ## How to Use
 
-Read individual rule files for detailed explanations and code examples:
+Read individual reference files for detailed explanations and code examples:
 
-```
-rules/io-connection-pooling.md
-rules/async-gather-independent-operations.md
-rules/_sections.md
-```
+- [Section definitions](references/_sections.md) - Category structure and impact levels
+- [Rule template](assets/templates/_template.md) - Template for adding new rules
 
-## Full Compiled Document
+Each rule file contains:
+- Brief explanation of why it matters
+- Incorrect code example with explanation
+- Correct code example with explanation
+- Additional context and references
 
-For the complete guide with all rules expanded: `AGENTS.md`
+## Reference Files
+
+| File | Description |
+|------|-------------|
+| [AGENTS.md](AGENTS.md) | Complete compiled guide with all rules |
+| [references/_sections.md](references/_sections.md) | Category definitions and ordering |
+| [assets/templates/_template.md](assets/templates/_template.md) | Template for new rules |
+| [metadata.json](metadata.json) | Version and reference information |
