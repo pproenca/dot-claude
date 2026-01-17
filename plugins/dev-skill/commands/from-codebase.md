@@ -25,7 +25,14 @@ You will receive one or more sources (Git URLs, GitHub shorthand, or local paths
 │    ↓                                                         │
 │ 2. Clone/link repos to tempdir                              │
 │    ↓                                                         │
-│ 3. Launch codebase-analyzer agent for deep analysis         │
+│ 3. Launch codebase-analyzer orchestrator                    │
+│    │                                                         │
+│    ├──► organization-analyzer  ─┐                           │
+│    ├──► component-analyzer     ─┼──► Run in PARALLEL        │
+│    ├──► naming-analyzer        ─┤                           │
+│    └──► error-handling-analyzer┘                            │
+│    │                                                         │
+│    └──► Merge results                                       │
 │    ↓                                                         │
 │ 4. Review analysis with user (planning checkpoint)          │
 │    ↓                                                         │
@@ -36,6 +43,19 @@ You will receive one or more sources (Git URLs, GitHub shorthand, or local paths
 │ 7. Cleanup tempdir                                          │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+### Parallel Analysis Architecture
+
+For large codebases, analysis is split across 4 specialized agents:
+
+| Agent | Focus | Model |
+|-------|-------|-------|
+| `organization-analyzer` | File/folder structure, test placement | Sonnet |
+| `component-analyzer` | Component patterns, imports, exports | Opus |
+| `naming-analyzer` | Variable, function, type, file naming | Sonnet |
+| `error-handling-analyzer` | Error patterns, validation, edge cases | Opus |
+
+The `codebase-analyzer` (Opus) orchestrates these agents in parallel, then merges results.
 
 ---
 
@@ -109,22 +129,40 @@ Store the paths for the analyzer.
 
 ---
 
-## Step 3: Launch Codebase Analyzer Agent
+## Step 3: Launch Parallel Analysis
 
-Use the Task tool to launch the `codebase-analyzer` agent with `model: opus`:
+Use the Task tool to launch the `codebase-analyzer` orchestrator agent:
 
-**Provide to the agent:**
+**Provide to the orchestrator:**
 1. List of cloned repository paths
-2. Primary language detected
-3. Analysis focus areas: organization, components, naming, error handling
+2. Repository metadata JSON (from clone-repos.sh)
+3. Analysis scope: full codebase scan
+
+**What happens:**
+The orchestrator will:
+1. Parse repo metadata (language, framework, file counts)
+2. Launch 4 specialized analyzers **in parallel**:
+   - `organization-analyzer` → file/folder patterns
+   - `component-analyzer` → component structure patterns
+   - `naming-analyzer` → naming conventions
+   - `error-handling-analyzer` → error handling patterns
+3. Wait for all analyzers to complete
+4. Merge and synthesize results
+5. Return unified analysis JSON
+
+**Performance benefit:**
+- Sequential analysis: ~20 min for large repos
+- Parallel analysis: ~5 min (4x speedup)
 
 **Expected output:**
-The agent will return a comprehensive JSON analysis covering:
-- Directory and file organization patterns
-- Component/module structure patterns
-- Naming conventions (variables, functions, types, files)
-- Error handling approaches
-- A list of preliminary rules extracted
+The orchestrator returns merged JSON with:
+- Overview (repos, language, framework, confidence)
+- Organization patterns and rules
+- Component patterns and rules
+- Naming patterns and rules
+- Error handling patterns and rules
+- Cross-repo synthesis (if multiple repos)
+- Combined rule list (40+ rules)
 
 ---
 
