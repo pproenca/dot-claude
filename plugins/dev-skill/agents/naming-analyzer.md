@@ -1,15 +1,15 @@
 ---
 name: naming-analyzer
-description: Specialized agent for analyzing naming conventions in a codebase. Part of the parallel codebase analysis pipeline for /dev-skill:from-codebase.
+description: |
+  Specialized agent for analyzing naming conventions in a codebase. Part of the parallel codebase analysis pipeline for /dev-skill:from-codebase.
 
-<example>
-Context: The codebase-analyzer orchestrator is running parallel analysis.
-assistant: "Launching naming-analyzer to extract naming conventions..."
-<commentary>
-This agent focuses on variable, function, type, and file naming patterns.
-</commentary>
-</example>
-
+  <example>
+  Context: The codebase-analyzer orchestrator is running parallel analysis.
+  assistant: "Launching naming-analyzer to extract naming conventions..."
+  <commentary>
+  This agent focuses on variable, function, type, and file naming patterns.
+  </commentary>
+  </example>
 model: sonnet
 color: yellow
 tools: ["Read", "Glob", "Grep"]

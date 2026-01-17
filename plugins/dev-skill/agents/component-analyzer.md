@@ -1,15 +1,15 @@
 ---
 name: component-analyzer
-description: Specialized agent for analyzing component and module structure patterns in a codebase. Part of the parallel codebase analysis pipeline for /dev-skill:from-codebase.
+description: |
+  Specialized agent for analyzing component and module structure patterns in a codebase. Part of the parallel codebase analysis pipeline for /dev-skill:from-codebase.
 
-<example>
-Context: The codebase-analyzer orchestrator is running parallel analysis.
-assistant: "Launching component-analyzer to extract component structure patterns..."
-<commentary>
-This agent focuses on how individual components/modules are structured internally.
-</commentary>
-</example>
-
+  <example>
+  Context: The codebase-analyzer orchestrator is running parallel analysis.
+  assistant: "Launching component-analyzer to extract component structure patterns..."
+  <commentary>
+  This agent focuses on how individual components/modules are structured internally.
+  </commentary>
+  </example>
 model: opus
 color: green
 tools: ["Read", "Glob", "Grep"]

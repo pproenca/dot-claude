@@ -1,15 +1,15 @@
 ---
 name: organization-analyzer
-description: Specialized agent for analyzing file and folder organization patterns in a codebase. Part of the parallel codebase analysis pipeline for /dev-skill:from-codebase.
+description: |
+  Specialized agent for analyzing file and folder organization patterns in a codebase. Part of the parallel codebase analysis pipeline for /dev-skill:from-codebase.
 
-<example>
-Context: The codebase-analyzer orchestrator is running parallel analysis.
-assistant: "Launching organization-analyzer to extract file/folder patterns..."
-<commentary>
-This agent focuses only on directory structure, file naming, and code organization patterns.
-</commentary>
-</example>
-
+  <example>
+  Context: The codebase-analyzer orchestrator is running parallel analysis.
+  assistant: "Launching organization-analyzer to extract file/folder patterns..."
+  <commentary>
+  This agent focuses only on directory structure, file naming, and code organization patterns.
+  </commentary>
+  </example>
 model: sonnet
 color: cyan
 tools: ["Read", "Glob", "Grep", "Bash"]

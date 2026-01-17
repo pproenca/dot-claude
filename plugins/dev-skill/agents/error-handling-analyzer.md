@@ -1,15 +1,15 @@
 ---
 name: error-handling-analyzer
-description: Specialized agent for analyzing error handling and edge case patterns in a codebase. Part of the parallel codebase analysis pipeline for /dev-skill:from-codebase.
+description: |
+  Specialized agent for analyzing error handling and edge case patterns in a codebase. Part of the parallel codebase analysis pipeline for /dev-skill:from-codebase.
 
-<example>
-Context: The codebase-analyzer orchestrator is running parallel analysis.
-assistant: "Launching error-handling-analyzer to extract error handling patterns..."
-<commentary>
-This agent focuses on error handling, validation, and edge case handling patterns.
-</commentary>
-</example>
-
+  <example>
+  Context: The codebase-analyzer orchestrator is running parallel analysis.
+  assistant: "Launching error-handling-analyzer to extract error handling patterns..."
+  <commentary>
+  This agent focuses on error handling, validation, and edge case handling patterns.
+  </commentary>
+  </example>
 model: opus
 color: red
 tools: ["Read", "Glob", "Grep"]

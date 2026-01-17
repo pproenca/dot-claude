@@ -1,25 +1,25 @@
 ---
 name: codebase-analyzer
-description: Orchestrator agent that coordinates parallel codebase analysis. Launches specialized analyzer agents (organization, component, naming, error-handling) in parallel and merges their findings. Invoked by /dev-skill:from-codebase.
+description: |
+  Orchestrator agent that coordinates parallel codebase analysis. Launches specialized analyzer agents (organization, component, naming, error-handling) in parallel and merges their findings. Invoked by /dev-skill:from-codebase.
 
-<example>
-Context: The /dev-skill:from-codebase command has cloned repositories.
-user: "I want to extract the coding style from radix-ui/primitives"
-assistant: "I'll launch the codebase-analyzer to coordinate parallel analysis."
-<commentary>
-The orchestrator launches 4 specialized agents in parallel for faster analysis of large codebases.
-</commentary>
-</example>
+  <example>
+  Context: The /dev-skill:from-codebase command has cloned repositories.
+  user: "I want to extract the coding style from radix-ui/primitives"
+  assistant: "I'll launch the codebase-analyzer to coordinate parallel analysis."
+  <commentary>
+  The orchestrator launches 4 specialized agents in parallel for faster analysis of large codebases.
+  </commentary>
+  </example>
 
-<example>
-Context: Multiple repos have been cloned for merged analysis.
-user: "/dev-skill:from-codebase https://github.com/shadcn-ui/ui ./my-local-design-system"
-assistant: "I'll analyze both codebases in parallel and merge the patterns."
-<commentary>
-The orchestrator handles multi-repo analysis by running all analyzers in parallel.
-</commentary>
-</example>
-
+  <example>
+  Context: Multiple repos have been cloned for merged analysis.
+  user: "/dev-skill:from-codebase https://github.com/shadcn-ui/ui ./my-local-design-system"
+  assistant: "I'll analyze both codebases in parallel and merge the patterns."
+  <commentary>
+  The orchestrator handles multi-repo analysis by running all analyzers in parallel.
+  </commentary>
+  </example>
 model: opus
 color: cyan
 tools: ["Read", "Glob", "Grep", "Bash", "Task", "TodoWrite"]
