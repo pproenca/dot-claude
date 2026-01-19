@@ -16,15 +16,6 @@ const SECTION_HEADER_REGEX = /^## (\d+)\. (.+) \(([a-z]+)\)/;
 const IMPACT_REGEX = /^\*\*Impact:\*\* (.+)/;
 const DESCRIPTION_REGEX = /^\*\*Description:\*\* (.+)/;
 
-function slugify(text) {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .trim();
-}
-
 function parseFrontmatter(content) {
   const match = content.match(FRONTMATTER_REGEX);
   if (!match) return { frontmatter: {}, body: content };
@@ -114,16 +105,25 @@ function buildAgentsMD(skillDir) {
   }
   const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf-8'));
 
-  // Try references/ first, fall back to rules/ for backwards compatibility
+  // Try references/, examples/, then rules/ for backwards compatibility
   let referencesDir = path.join(skillDir, 'references');
   let sectionsPath = path.join(referencesDir, '_sections.md');
+  let refDirName = 'references';
+
+  if (!fs.existsSync(sectionsPath)) {
+    // Try examples/ directory
+    referencesDir = path.join(skillDir, 'examples');
+    sectionsPath = path.join(referencesDir, '_sections.md');
+    refDirName = 'examples';
+  }
 
   if (!fs.existsSync(sectionsPath)) {
     // Fall back to legacy rules/ directory
     referencesDir = path.join(skillDir, 'rules');
     sectionsPath = path.join(referencesDir, '_sections.md');
+    refDirName = 'rules';
     if (!fs.existsSync(sectionsPath)) {
-      console.error('Error: _sections.md not found in references/ or rules/');
+      console.error('Error: _sections.md not found in references/, examples/, or rules/');
       process.exit(1);
     }
   }
@@ -163,45 +163,21 @@ function buildAgentsMD(skillDir) {
 
   let totalRules = 0;
   for (const section of sections) {
-    const sectionSlug = slugify(`${section.index} ${section.name}`);
-    output.push(`${section.index}. [${section.name}](#${sectionSlug}) — **${section.impact}**`);
+    output.push(`${section.index}. [${section.name}](${refDirName}/_sections.md#${section.index}-${section.name.toLowerCase().replace(/\s+/g, '-')}) — **${section.impact}**`);
 
     const references = referencesCache.get(section.prefix);
     totalRules += references.length;
     for (let i = 0; i < references.length; i++) {
+      const ref = references[i];
       const ruleNum = `${section.index}.${i + 1}`;
-      const ruleSlug = slugify(`${ruleNum} ${references[i].title}`);
-      output.push(`   - ${ruleNum} [${references[i].title}](#${ruleSlug})`);
+      const impactInfo = ref.impactDescription
+        ? `— ${ref.impact} (${ref.impactDescription})`
+        : `— ${ref.impact}`;
+      output.push(`   - ${ruleNum} [${ref.title}](${refDirName}/${ref.filename}) ${impactInfo}`);
     }
   }
 
   output.push('', '---', '');
-
-  for (const section of sections) {
-    output.push(
-      `## ${section.index}. ${section.name}`,
-      '',
-      `**Impact: ${section.impact}**`,
-      '',
-      section.description,
-      ''
-    );
-
-    const references = referencesCache.get(section.prefix);
-    for (let i = 0; i < references.length; i++) {
-      const ref = references[i];
-      const ruleNum = `${section.index}.${i + 1}`;
-      const impact = ref.impactDescription
-        ? `**Impact: ${ref.impact} (${ref.impactDescription})**`
-        : `**Impact: ${ref.impact}**`;
-      // Remove leading H2 title from body (already in subsection header)
-      const body = ref.body.replace(/^## .+\n+/, '');
-
-      output.push(`### ${ruleNum} ${ref.title}`, '', impact, '', body, '');
-    }
-
-    output.push('---', '');
-  }
 
   output.push('## References', '');
   if (metadata.references?.length > 0) {
@@ -211,9 +187,6 @@ function buildAgentsMD(skillDir) {
   }
 
   // Add Source Files footer section with markdown links
-  const isNewStructure = fs.existsSync(path.join(skillDir, 'references'));
-  const refDirName = isNewStructure ? 'references' : 'rules';
-
   output.push('', '---', '');
   output.push('## Source Files', '');
   output.push('This document was compiled from individual reference files. For detailed editing or extension:', '');

@@ -21,33 +21,13 @@
 ## Table of Contents
 
 {{FOR_EACH CATEGORY in PERFORMANCE_CATEGORIES}}
-{{INDEX}}. [{{CATEGORY.name}}](#{{INDEX}}-{{CATEGORY.name_slug}}) — **{{CATEGORY.impact}}**
+{{INDEX}}. [{{CATEGORY.name}}]({{REF_DIR_NAME}}/_sections.md#{{INDEX}}-{{CATEGORY.name_slug}}) — **{{CATEGORY.impact}}**
 {{FOR_EACH RULE in CATEGORY.rules}}
-   - {{CATEGORY.INDEX}}.{{RULE.INDEX}} [{{RULE.title}}](#{{CATEGORY.INDEX}}{{RULE.INDEX}}-{{RULE.title_slug}})
+   - {{CATEGORY.INDEX}}.{{RULE.INDEX}} [{{RULE.title}}]({{REF_DIR_NAME}}/{{RULE.filename}}) — {{RULE.impact}} ({{RULE.impactDescription}})
 {{END_FOR_EACH}}
 {{END_FOR_EACH}}
 
 ---
-
-{{FOR_EACH CATEGORY in PERFORMANCE_CATEGORIES}}
-## {{INDEX}}. {{CATEGORY.name}}
-
-**Impact: {{CATEGORY.impact}}**
-
-{{CATEGORY.description}}
-
-{{FOR_EACH RULE in CATEGORY.rules}}
-### {{CATEGORY.INDEX}}.{{RULE.INDEX}} {{RULE.title}}
-
-**Impact: {{RULE.impact}} ({{RULE.impactDescription}})**
-
-{{RULE.content}}
-
-{{END_FOR_EACH}}
-
----
-
-{{END_FOR_EACH}}
 
 ## References
 
@@ -63,7 +43,7 @@ This document was compiled from individual reference files. For detailed editing
 
 | File | Description |
 |------|-------------|
-| [references/_sections.md](references/_sections.md) | Category definitions and impact ordering |
+| [{{REF_DIR_NAME}}/_sections.md]({{REF_DIR_NAME}}/_sections.md) | Category definitions and impact ordering |
 | [assets/templates/_template.md](assets/templates/_template.md) | Template for creating new rules |
 | [SKILL.md](SKILL.md) | Quick reference entry point |
 | [metadata.json](metadata.json) | Version and reference URLs |
