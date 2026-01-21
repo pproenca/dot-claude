@@ -20,9 +20,9 @@ A single skill directory path, e.g.:
 ```
 skill/
 ├── SKILL.md
-├── AGENTS.md
+├── AGENTS.md             # Will be deleted
 ├── metadata.json
-├── README.md
+├── README.md             # Will be deleted
 └── rules/
     ├── _sections.md
     ├── _template.md
@@ -33,9 +33,7 @@ skill/
 ```
 skill/
 ├── SKILL.md              # Updated with markdown links
-├── AGENTS.md             # Regenerated with Source Files footer
 ├── metadata.json
-├── README.md
 ├── references/
 │   ├── _sections.md
 │   └── {prefix}-{slug}.md
@@ -88,9 +86,6 @@ ls -1 "<skill-path>/rules/"*.md | grep -v '/_' > /tmp/rules_before.txt
 # Count rules
 RULE_COUNT_BEFORE=$(ls -1 "<skill-path>/rules/"*.md 2>/dev/null | grep -v '/_' | wc -l | tr -d ' ')
 
-# Capture AGENTS.md line count
-AGENTS_LINES_BEFORE=$(wc -l < "<skill-path>/AGENTS.md" | tr -d ' ')
-
 # Capture checksums for content verification
 find "<skill-path>/rules" -name "*.md" -type f -exec md5 {} \; > /tmp/checksums_before.txt
 ```
@@ -121,9 +116,12 @@ mv rules/_template.md assets/templates/_template.md
 
 # 5. Remove empty rules/ directory
 rmdir rules
+
+# 6. Delete obsolete files (no longer part of skill structure)
+rm -f AGENTS.md README.md
 ```
 
-**Content preservation**: Files are moved (mv), not copied or rewritten. Only metadata (path) changes.
+**Content preservation**: Rule files are moved (mv), not copied or rewritten. Only metadata (path) changes. AGENTS.md and README.md are deleted as they are no longer part of the curated skill structure.
 
 ### Step 4: Update SKILL.md Links
 
@@ -153,24 +151,11 @@ Read individual reference files:
 
 Use Read tool to get SKILL.md content, apply transformations, then Write tool to save.
 
-### Step 5: Regenerate AGENTS.md
-
-Use the build script which already supports the new structure:
-
-```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/build-agents-md.js" "<skill-path>"
-```
-
-The script will:
-- Read from `references/` directory
-- Generate "Source Files" footer with navigation links
-- Maintain all rule content
-
-### Step 6: Validation Pipeline
+### Step 5: Validation Pipeline
 
 Run all validation checks. ALL must pass.
 
-#### 6.1 Structural Validation
+#### 5.1 Structural Validation
 
 ```bash
 cd "<skill-path>"
@@ -189,7 +174,7 @@ test -f assets/templates/_template.md || echo "FAIL: _template.md not found"
 test ! -d rules || echo "FAIL: rules/ directory still exists"
 ```
 
-#### 6.2 Content Validation
+#### 5.2 Content Validation
 
 ```bash
 # No rules/ references remain in SKILL.md
@@ -199,26 +184,27 @@ grep -q "rules/" SKILL.md && echo "FAIL: SKILL.md still contains rules/ referenc
 grep -q "references/" SKILL.md || echo "FAIL: SKILL.md missing references/ links"
 ```
 
-#### 6.3 Build Validation
+#### 5.3 Build Validation
 
 ```bash
 # validate-skill.js passes
 node "${CLAUDE_PLUGIN_ROOT}/scripts/validate-skill.js" "<skill-path>"
 # Must exit with 0 errors
 
-# AGENTS.md was regenerated successfully (exists and has content)
-test -s AGENTS.md || echo "FAIL: AGENTS.md empty or missing"
+# Obsolete files were deleted
+test ! -f AGENTS.md || echo "FAIL: AGENTS.md still exists"
+test ! -f README.md || echo "FAIL: README.md still exists"
 ```
 
-#### 6.4 Content Preservation Check
+#### 5.4 Content Preservation Check
 
 ```bash
 # Compare file checksums (content should be identical for moved files)
-# Note: AGENTS.md will differ (regenerated), SKILL.md will differ (links updated)
+# Note: SKILL.md will differ (links updated)
 # Rule files in references/ should have same content as rules/ did
 ```
 
-### Step 7: Migration Judge Review
+### Step 6: Migration Judge Review
 
 Invoke the `migration-judge` agent to review the migration:
 
@@ -229,7 +215,7 @@ Prompt: Review the migration of skill at "<skill-path>".
 Verify:
 1. All rule files were moved correctly (content preserved)
 2. SKILL.md links updated appropriately
-3. AGENTS.md regenerated with all rules
+3. AGENTS.md and README.md were deleted
 4. No breaking changes introduced
 
 Provide PASS/FAIL verdict with reasoning.
@@ -279,7 +265,7 @@ On successful migration, report:
 - Moved `_sections.md` to `references/`
 - Moved `_template.md` to `assets/templates/`
 - Updated SKILL.md with markdown links
-- Regenerated AGENTS.md with Source Files footer
+- Deleted obsolete `AGENTS.md` and `README.md`
 - Removed empty `rules/` directory
 
 ### Validation Results
@@ -287,7 +273,7 @@ On successful migration, report:
 - [x] Structure validation: PASS
 - [x] Content validation: PASS
 - [x] validate-skill.js: 0 errors
-- [x] AGENTS.md build: SUCCESS
+- [x] Obsolete files deleted: PASS
 - [x] Migration judge: PASS
 
 ### Git Status
@@ -309,6 +295,6 @@ Commit with: `git commit -am "refactor({skill-name}): migrate to references/ str
 |------|--------|
 | Rule files | Move (content preserved) |
 | SKILL.md | Update links |
-| AGENTS.md | Regenerate |
 | metadata.json | No change |
-| README.md | No change |
+| AGENTS.md | Delete |
+| README.md | Delete |
