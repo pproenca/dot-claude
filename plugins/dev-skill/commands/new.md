@@ -40,9 +40,7 @@ Generate a complete skill with the following files:
 ```
 {output-base}/{technology-slug}/
 ├── SKILL.md              # Entry point with quick reference
-├── AGENTS.md             # Compiled comprehensive guide
 ├── metadata.json         # Version, org, references
-├── README.md             # Human-readable overview
 ├── references/
 │   ├── _sections.md      # Category definitions
 │   └── {prefix}-{slug}.md # Individual rules (40+ total)
@@ -168,14 +166,9 @@ Generate files in dependency order with validation at each step:
 │    Generate assets/templates/_template.md       │
 │    (Uses rules count and categories)            │
 ├─────────────────────────────────────────────────┤
-│ 4. Build AGENTS.md (MUST use script)                            │
-│    node ${CLAUDE_PLUGIN_ROOT}/scripts/build-agents-md.js <dir>  │
-│    ⚠️  NEVER write AGENTS.md manually                           │
-│    Required: metadata.json, references/_sections.md             │
-├─────────────────────────────────────────────────────────────────┤
-│ 5. Final validation                                             │
+│ 4. Final validation                             │
 │    node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-skill.js         │
-│    skill-reviewer agent                                         │
+│    skill-reviewer agent                         │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -186,16 +179,10 @@ Run both validation phases:
 1. **Automated validation**: `node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-skill.js ./skills/{tech-slug}`
    - Fix ALL errors before proceeding
    - Address warnings where feasible
-   - Use `--verify-generated` flag to ensure AGENTS.md matches script output
 
 2. **Agent quality review**: Launch `skill-reviewer` agent
    - Reviews teaching effectiveness, code realism, impact accuracy
    - Fix ALL issues identified before release
-
-**If build-agents-md.js fails:**
-- `Error: metadata.json not found` → Ensure metadata.json exists in skill root with required fields
-- `Error: _sections.md not found` → Create _sections.md under references/ directory following the template
-- Malformed output → Check rule files have valid YAML frontmatter (title, impact, impactDescription, tags)
 
 ---
 
@@ -235,7 +222,7 @@ User: "Create a Go best practices skill using standard categories"
 │ 3. Generate all rules in parallel in references/│
 │    (No batching by impact level needed)         │
 ├─────────────────────────────────────────────────┤
-│ 4. Generate SKILL.md, metadata.json, AGENTS.md  │
+│ 4. Generate SKILL.md, metadata.json             │
 │    Generate assets/templates/_template.md       │
 ├─────────────────────────────────────────────────┤
 │ 5. Full validation + skill-reviewer             │
@@ -374,7 +361,6 @@ Read individual reference files for detailed explanations and code examples:
 
 | File | Description |
 |------|-------------|
-| [AGENTS.md](AGENTS.md) | Complete compiled guide with all rules |
 | [references/_sections.md](references/_sections.md) | Category definitions and ordering |
 | [assets/templates/_template.md](assets/templates/_template.md) | Template for new rules |
 | [metadata.json](metadata.json) | Version and reference information |
@@ -555,7 +541,6 @@ Before finalizing, verify:
 - [ ] File prefixes are consistent (3-8 chars)
 - [ ] SKILL.md provides quick reference navigation
 - [ ] Individual rules have full detail
-- [ ] AGENTS.md compiles everything correctly
 
 ### Content
 - [ ] Each rule has incorrect AND correct examples
@@ -585,7 +570,6 @@ Before finalizing, verify:
 ```
 ${CLAUDE_PLUGIN_ROOT}/scripts/
 ├── validate-skill.js   # Validates generated skill against guidelines
-├── build-agents-md.js  # Compiles references into AGENTS.md
 └── README.md           # Script documentation
 ```
 
