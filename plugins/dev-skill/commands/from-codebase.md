@@ -43,10 +43,10 @@ Analysis is split across 2 specialized Opus agents, dispatched directly from thi
 
 | Agent | Focus | Model |
 |-------|-------|-------|
-| `structure-analyzer` | Directory layout, file naming, import ordering, variable/function/type naming conventions | Opus |
-| `code-patterns-analyzer` | Component anatomy, module patterns, error handling, validation, async patterns | Opus |
+| `structure-analyzer` | Directory layout, file naming, import ordering, variable/function/type naming conventions | Sonnet |
+| `code-patterns-analyzer` | Component anatomy, module patterns, error handling, validation, async patterns | Sonnet |
 
-Both agents use Glob/Grep/Read tools (no shell commands). You dispatch them directly via Task and merge their results.
+Both agents use Glob/Grep/Read tools (no shell commands). They use Sonnet for fast codebase exploration. You dispatch them directly via Task and merge their results.
 
 ---
 

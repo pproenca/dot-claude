@@ -40,6 +40,7 @@ Generate a complete skill with the following files:
 ```
 {output-base}/{technology-slug}/
 ├── SKILL.md              # Entry point with quick reference
+├── AGENTS.md             # Compiled TOC navigation doc (built by script)
 ├── metadata.json         # Version, org, references
 ├── references/
 │   ├── _sections.md      # Category definitions
@@ -166,13 +167,27 @@ Generate files in dependency order with validation at each step:
 │    Generate assets/templates/_template.md       │
 │    (Uses rules count and categories)            │
 ├─────────────────────────────────────────────────┤
-│ 4. Final validation                             │
+│ 4. Build AGENTS.md                              │
+│    node ${CLAUDE_PLUGIN_ROOT}/scripts/build-agents-md.js        │
+│    (NEVER write AGENTS.md manually)             │
+├─────────────────────────────────────────────────┤
+│ 5. Final validation                             │
 │    node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-skill.js         │
 │    skill-reviewer agent                         │
 └─────────────────────────────────────────────────┘
 ```
 
-### Step 4: Automated Quality Assurance
+### Step 4: Build AGENTS.md
+
+After all rules are generated, build the AGENTS.md navigation document:
+
+```bash
+node ${CLAUDE_PLUGIN_ROOT}/scripts/build-agents-md.js ./{output-base}/{technology-slug}
+```
+
+**NEVER write AGENTS.md manually** — always use the build script.
+
+### Step 5: Automated Quality Assurance
 
 Run both validation phases:
 
@@ -225,7 +240,9 @@ User: "Create a Go best practices skill using standard categories"
 │ 4. Generate SKILL.md, metadata.json             │
 │    Generate assets/templates/_template.md       │
 ├─────────────────────────────────────────────────┤
-│ 5. Full validation + skill-reviewer             │
+│ 5. Build AGENTS.md via build-agents-md.js       │
+├─────────────────────────────────────────────────┤
+│ 6. Full validation + skill-reviewer             │
 └─────────────────────────────────────────────────┘
 ```
 

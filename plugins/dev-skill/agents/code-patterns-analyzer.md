@@ -10,7 +10,7 @@ description: |
   This agent covers component anatomy, module structure, error handling, validation, state management, and all code-level implementation patterns.
   </commentary>
   </example>
-model: opus
+model: sonnet
 color: green
 tools: ["Read", "Glob", "Grep"]
 ---

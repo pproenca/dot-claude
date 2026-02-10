@@ -76,22 +76,24 @@ skills/{skill-name}/
 │   ├── Categories table  # Priority, Impact, Prefix
 │   ├── Quick Reference   # 1-line per rule by category
 │   └── How to Use        # Navigation instructions
-├── AGENTS.md             # Compiled (~2000+ lines)
+├── AGENTS.md             # TOC-only navigation doc (~65 lines, built by script)
 │   ├── Version block     # Version, org, date
 │   ├── Note block        # "For agents and LLMs"
 │   ├── Abstract          # Summary paragraph
-│   ├── TOC               # Linked categories and rules
-│   └── Full rules        # All content with sequential IDs
+│   ├── TOC               # Linked categories and rules with impact levels
+│   └── Source Files      # Links to reference files
 ├── metadata.json         # Build metadata
 │   ├── version           # Semantic version
 │   ├── organization      # Authoring org
 │   ├── date              # Last update
 │   ├── abstract          # Summary for compilation
 │   └── references        # URL list
-└── rules/
-    ├── _sections.md      # Category definitions
-    ├── _template.md      # Rule authoring guide
-    └── {prefix}-{slug}.md # Individual rules
+├── references/
+│   ├── _sections.md      # Category definitions
+│   └── {prefix}-{slug}.md # Individual rules
+└── assets/
+    └── templates/
+        └── _template.md  # Rule authoring guide
 ```
 
 ### Naming Conventions
@@ -309,26 +311,26 @@ Derive 5 scenarios following this pattern:
 
 ### B.1 AGENTS.md Generation Algorithm
 
-AGENTS.md is **COMPILED** from rules/*.md, not manually written.
+AGENTS.md is **BUILT** from references/*.md by `build-agents-md.js`, not manually written.
 
 **Build algorithm:**
 
 ```
 1. Read metadata.json for version, org, date, abstract, references
 
-2. Read rules/_sections.md for category definitions
+2. Read references/_sections.md for category definitions
 
 3. For each category (in order defined in _sections.md):
-   a. Find all rules/{prefix}-*.md files matching this category
+   a. Find all references/{prefix}-*.md files matching this category
    b. Sort rules alphabetically by title from frontmatter
    c. Assign sequential IDs (1.1, 1.2, ... for category 1)
 
-4. Generate document:
+4. Generate TOC-only document:
    - Title, version block, note block
    - Abstract from metadata.json
-   - TOC with auto-generated anchors
-   - Each category section with all its rules
+   - TOC with file links and impact levels
    - References section from metadata.json
+   - Source Files footer with links to reference files
 ```
 
 ### B.2 Anchor Generation
@@ -342,9 +344,9 @@ AGENTS.md is **COMPILED** from rules/*.md, not manually written.
 ```markdown
 ## Table of Contents
 
-1. [{Category Name}](#{n}-{slug}) — **{IMPACT}**
-   - {n}.1 [{Rule Title}](#{n1}-{rule-slug})
-   - {n}.2 [{Rule Title}](#{n2}-{rule-slug})
+1. [{Category Name}](references/_sections.md#{n}-{slug}) — **{IMPACT}**
+   - {n}.1 [{Rule Title}](references/{prefix}-{slug}.md) — {IMPACT} ({impactDescription})
+   - {n}.2 [{Rule Title}](references/{prefix}-{slug}.md) — {IMPACT} ({impactDescription})
 ```
 
 ### B.4 Abstract Template

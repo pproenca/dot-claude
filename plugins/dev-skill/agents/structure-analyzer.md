@@ -10,7 +10,7 @@ description: |
   This agent covers directory layout, file naming, test placement, import organization, and all naming conventions (variables, functions, types, constants).
   </commentary>
   </example>
-model: opus
+model: sonnet
 color: cyan
 tools: ["Read", "Glob", "Grep"]
 ---
