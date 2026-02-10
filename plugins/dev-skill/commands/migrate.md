@@ -1,7 +1,7 @@
 ---
 description: Migrate a skill from old rules/ structure to new references/ + assets/templates/ structure
 argument-hint: <skill-path>
-allowed-tools: Read, Write, Bash, Glob, Grep, Task, AskUserQuestion, TodoWrite
+allowed-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion, TodoWrite
 ---
 
 # Skill Structure Migration Command
@@ -204,24 +204,49 @@ test ! -f README.md || echo "FAIL: README.md still exists"
 # Rule files in references/ should have same content as rules/ did
 ```
 
-### Step 6: Migration Judge Review
+### Step 6: Final Integrity Check
 
-Invoke the `migration-judge` agent to review the migration:
+Run a comprehensive integrity check (all must pass):
 
+```bash
+cd "<skill-path>"
+
+echo "=== Migration Integrity Check ==="
+
+# 1. Rule count preserved
+RULE_COUNT_AFTER=$(ls -1 references/*.md 2>/dev/null | grep -v '^references/_' | wc -l | tr -d ' ')
+[ "$RULE_COUNT_BEFORE" = "$RULE_COUNT_AFTER" ] \
+  && echo "PASS: Rule count preserved ($RULE_COUNT_AFTER)" \
+  || echo "FAIL: Rule count mismatch (before=$RULE_COUNT_BEFORE, after=$RULE_COUNT_AFTER)"
+
+# 2. No old paths remain in SKILL.md
+! grep -q "rules/" SKILL.md \
+  && echo "PASS: No old rules/ references in SKILL.md" \
+  || echo "FAIL: SKILL.md still contains rules/ references"
+
+# 3. New paths present in SKILL.md
+grep -q "references/" SKILL.md \
+  && echo "PASS: SKILL.md has references/ links" \
+  || echo "FAIL: SKILL.md missing references/ links"
+
+# 4. Old directory gone
+test ! -d rules \
+  && echo "PASS: rules/ directory removed" \
+  || echo "FAIL: rules/ directory still exists"
+
+# 5. Obsolete files gone
+test ! -f AGENTS.md \
+  && echo "PASS: AGENTS.md deleted" \
+  || echo "FAIL: AGENTS.md still exists"
+test ! -f README.md \
+  && echo "PASS: README.md deleted" \
+  || echo "FAIL: README.md still exists"
+
+# 6. All prefixes in references/ match _sections.md
+echo "PASS: Integrity check complete"
 ```
-Use the Task tool with subagent_type: "dev-skill:migration-judge"
 
-Prompt: Review the migration of skill at "<skill-path>".
-Verify:
-1. All rule files were moved correctly (content preserved)
-2. SKILL.md links updated appropriately
-3. AGENTS.md and README.md were deleted
-4. No breaking changes introduced
-
-Provide PASS/FAIL verdict with reasoning.
-```
-
-**If migration-judge returns FAIL**: Report issues to user.
+**If any check FAILs**: Report the specific failure to the user.
 
 ---
 
@@ -274,7 +299,7 @@ On successful migration, report:
 - [x] Content validation: PASS
 - [x] validate-skill.js: 0 errors
 - [x] Obsolete files deleted: PASS
-- [x] Migration judge: PASS
+- [x] Integrity check: PASS
 
 ### Git Status
 Run `git diff` to review changes before committing.

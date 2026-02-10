@@ -8,8 +8,6 @@ allowed-tools: Read, Write, Bash, Glob, Grep, Task, AskUserQuestion, TodoWrite
 
 You are an expert at extracting coding patterns, architecture, and style conventions from reference codebases and turning them into comprehensive skill files that teach AI agents to write code in that style.
 
-**IMPORTANT**: This workflow requires the Opus model for high-quality analysis and rule generation. Always use `model: opus` when invoking the codebase-analyzer agent.
-
 ## Input Required
 
 You will receive one or more sources (Git URLs, GitHub shorthand, or local paths):
@@ -25,16 +23,11 @@ You will receive one or more sources (Git URLs, GitHub shorthand, or local paths
 │    ↓                                                         │
 │ 2. Clone/link repos to tempdir                              │
 │    ↓                                                         │
-│ 3. Launch codebase-analyzer orchestrator                    │
-│    │                                                         │
-│    ├──► organization-analyzer  ─┐                           │
-│    ├──► component-analyzer     ─┼──► Run in PARALLEL        │
-│    ├──► naming-analyzer        ─┤                           │
-│    └──► error-handling-analyzer┘                            │
-│    │                                                         │
-│    └──► Merge results                                       │
+│ 3. Launch 2 analyzer agents in PARALLEL                     │
+│    ├──► structure-analyzer   (org + naming)                  │
+│    └──► code-patterns-analyzer (components + error handling) │
 │    ↓                                                         │
-│ 4. Review analysis with user (planning checkpoint)          │
+│ 4. Merge results + review with user (planning checkpoint)   │
 │    ↓                                                         │
 │ 5. Generate skill using /dev-skill:new patterns             │
 │    ↓                                                         │
@@ -46,16 +39,14 @@ You will receive one or more sources (Git URLs, GitHub shorthand, or local paths
 
 ### Parallel Analysis Architecture
 
-For large codebases, analysis is split across 4 specialized agents:
+Analysis is split across 2 specialized Opus agents, dispatched directly from this command:
 
 | Agent | Focus | Model |
 |-------|-------|-------|
-| `organization-analyzer` | File/folder structure, test placement | Sonnet |
-| `component-analyzer` | Component patterns, imports, exports | Opus |
-| `naming-analyzer` | Variable, function, type, file naming | Sonnet |
-| `error-handling-analyzer` | Error patterns, validation, edge cases | Opus |
+| `structure-analyzer` | Directory layout, file naming, import ordering, variable/function/type naming conventions | Opus |
+| `code-patterns-analyzer` | Component anatomy, module patterns, error handling, validation, async patterns | Opus |
 
-The `codebase-analyzer` (Opus) orchestrates these agents in parallel, then merges results.
+Both agents use Glob/Grep/Read tools (no shell commands). You dispatch them directly via Task and merge their results.
 
 ---
 
@@ -125,50 +116,65 @@ Example output:
 ]
 ```
 
-Store the paths for the analyzer.
+Store the paths and metadata for the analyzers.
 
 ---
 
 ## Step 3: Launch Parallel Analysis
 
-Use the Task tool to launch the `codebase-analyzer` orchestrator agent:
+**CRITICAL**: Launch BOTH agents in a SINGLE message with two Task tool calls so they run in parallel.
 
-**Provide to the orchestrator:**
-1. List of cloned repository paths
-2. Repository metadata JSON (from clone-repos.sh)
-3. Analysis scope: full codebase scan
+Use the Task tool to dispatch both agents directly:
 
-**What happens:**
-The orchestrator will:
-1. Parse repo metadata (language, framework, file counts)
-2. Launch 4 specialized analyzers **in parallel**:
-   - `organization-analyzer` → file/folder patterns
-   - `component-analyzer` → component structure patterns
-   - `naming-analyzer` → naming conventions
-   - `error-handling-analyzer` → error handling patterns
-3. Wait for all analyzers to complete
-4. Merge and synthesize results
-5. Return unified analysis JSON
+### Agent 1: structure-analyzer
 
-**Performance benefit:**
-- Sequential analysis: ~20 min for large repos
-- Parallel analysis: ~5 min (4x speedup)
+```
+subagent_type: "dev-skill:structure-analyzer"
 
-**Expected output:**
-The orchestrator returns merged JSON with:
-- Overview (repos, language, framework, confidence)
-- Organization patterns and rules
-- Component patterns and rules
-- Naming patterns and rules
-- Error handling patterns and rules
-- Cross-repo synthesis (if multiple repos)
-- Combined rule list (40+ rules)
+Prompt: Analyze the organization and naming conventions in these repositories:
+- Paths: {list of repo paths}
+- Language: {detected language from clone metadata}
+- Framework: {detected framework}
+
+Focus on: directory layout, file naming, test placement, import ordering,
+variable/function/type/constant naming conventions, export patterns, co-location patterns.
+
+Sample 15-30 files across different parts of the codebase.
+Report patterns with 75%+ consistency and provide real code examples.
+```
+
+### Agent 2: code-patterns-analyzer
+
+```
+subagent_type: "dev-skill:code-patterns-analyzer"
+
+Prompt: Analyze the implementation patterns in these repositories:
+- Paths: {list of repo paths}
+- Language: {detected language from clone metadata}
+- Framework: {detected framework}
+
+Focus on: component/module anatomy, props patterns, hooks/composables,
+error handling, validation, null handling, async patterns, state management.
+
+Read 15-25 complete files to understand context.
+Report patterns with 75%+ consistency and provide real code examples.
+```
+
+### Merging Results
+
+After both agents complete, merge their findings:
+
+1. **Aggregate patterns** by category — structure-analyzer provides organization + naming patterns, code-patterns-analyzer provides implementation + error handling patterns
+2. **Cross-validate** — check for consistency (e.g., if structure-analyzer reports kebab-case files but code-patterns-analyzer found PascalCase component files, note the distinction)
+3. **Deduplicate** — merge overlapping observations
+4. **Rank by impact** — CRITICAL: foundational patterns (structure, component anatomy), HIGH: consistency patterns (naming, imports), MEDIUM: style preferences, LOW: minor conventions
+5. **Multi-repo synthesis** (if multiple repos) — identify patterns common to ALL repos (highest weight) vs repo-specific patterns
 
 ---
 
 ## Step 4: Planning Checkpoint
 
-Present the analysis results to the user for review:
+Present the merged analysis to the user for review:
 
 ```markdown
 ## Codebase Analysis Summary
@@ -181,20 +187,13 @@ Present the analysis results to the user for review:
 
 ### Key Patterns Found
 
-**Organization:**
+**Organization & Naming:**
 - [Pattern 1]
 - [Pattern 2]
 
-**Naming Conventions:**
-- [Convention 1]
-- [Convention 2]
-
-**Component Structure:**
+**Implementation Patterns:**
 - [Pattern 1]
 - [Pattern 2]
-
-**Error Handling:**
-- [Pattern 1]
 
 ### Proposed Rule Categories
 | # | Category | Prefix | Rules | Impact |
@@ -366,4 +365,4 @@ If validate-skill.js fails:
 - The hybrid approach means performance patterns found in the codebase ARE included
 - Minimum 40 rules to be comprehensive
 - Always cleanup tempdir, even on failure
-- Use Opus model for analysis (critical for quality)
+- Both analyzer agents run on Opus for high-quality pattern extraction

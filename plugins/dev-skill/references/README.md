@@ -159,4 +159,4 @@ skill/
 **Requirements:**
 - Skill must be in a git repo with committed changes
 - Migration preserves all content (move, not rewrite)
-- Includes migration-judge validation for 100% accuracy
+- Includes inline integrity checks for 100% accuracy
