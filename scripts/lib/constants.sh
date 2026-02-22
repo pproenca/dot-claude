@@ -14,19 +14,21 @@
 VALID_BUILTIN_TOOLS=(
   "AskUserQuestion"
   "Bash"
-  "BashOutput"
   "Edit"
+  "EnterPlanMode"
   "ExitPlanMode"
   "Glob"
   "Grep"
-  "KillShell"
-  "LSP"
   "NotebookEdit"
   "Read"
   "Skill"
-  "SlashCommand"
   "Task"
-  "TodoWrite"
+  "TaskCreate"
+  "TaskGet"
+  "TaskList"
+  "TaskOutput"
+  "TaskStop"
+  "TaskUpdate"
   "WebFetch"
   "WebSearch"
   "Write"
@@ -34,6 +36,7 @@ VALID_BUILTIN_TOOLS=(
 
 # Valid model values for agents
 VALID_MODELS=(
+  "haiku"
   "sonnet"
   "opus"
 )

@@ -1,6 +1,6 @@
 ---
 description: Abandon active workflow and clear TodoWrite
-allowed-tools: Bash, TodoWrite, AskUserQuestion, mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
+allowed-tools: Bash, TaskList, TaskUpdate, AskUserQuestion
 ---
 
 # Abandon Workflow

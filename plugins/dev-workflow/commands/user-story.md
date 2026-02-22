@@ -1,7 +1,7 @@
 ---
 description: Create user story maps via Jeff Patton methodology
 argument-hint: [feature name] or --resume [session-name] or --list
-allowed-tools: Read, Write, Bash, Grep, Glob, AskUserQuestion, TodoWrite, Task
+allowed-tools: Read, Write, Bash, Grep, Glob, AskUserQuestion, TaskCreate, TaskUpdate, TaskList, Task
 ---
 
 # User Story Mapping Interview

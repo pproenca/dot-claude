@@ -75,7 +75,7 @@ Your job is to analyze and report, not to implement.
 
 ### Phase 1: Directory Survey
 
-Use the LS and Glob tools to understand project layout:
+Use Glob and Bash (ls) to understand project layout:
 
 - Map the project structure (src/, lib/, tests/, etc.)
 - Identify key configuration files (package.json, tsconfig.json, Cargo.toml)
