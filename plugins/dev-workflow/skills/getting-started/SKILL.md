@@ -1,6 +1,6 @@
 ---
 name: getting-started
-description: This skill is loaded automatically at session start via SessionStart hook. Establishes protocols for finding and using skills, checking skills before tasks, brainstorming before coding, and creating TodoWrite for checklists.
+description: This skill is loaded automatically at session start via SessionStart hook. Establishes protocols for finding and using skills, checking skills before tasks, brainstorming before coding, and creating tasks for checklists.
 allowed-tools: Read, Skill, TaskCreate, TaskUpdate, TaskList
 ---
 
@@ -71,9 +71,9 @@ When multiple skills could apply, use this order:
 
 ## Skills with Checklists
 
-If a skill contains a checklist, create TodoWrite items for each step.
+If a skill contains a checklist, create tasks using TaskCreate for each step.
 
-Mental tracking of checklists leads to skipped steps. TodoWrite makes progress visible.
+Mental tracking of checklists leads to skipped steps. TaskCreate/TaskUpdate makes progress visible.
 
 ## Announcing Skill Usage
 
@@ -106,7 +106,7 @@ User instructions describe WHAT to do, not HOW.
 
 1. Scan for relevant skills before starting any task
 2. If skill exists: load it, announce it, follow it
-3. Checklists require TodoWrite tracking
+3. Checklists require TaskCreate/TaskUpdate tracking
 4. Rigid skills: follow exactly. Flexible skills: adapt principles.
 
 ## Reference
@@ -127,28 +127,29 @@ See `references/skill-integration.md` for decision tree and skill chains.
 |---------|---------|
 | Plans persist to `docs/plans/` | Version controlled, reviewable |
 | Parallel via `Task(run_in_background)` + `TaskOutput` | Respects task dependencies |
-| Task grouping by file overlap | Determines which tasks can run parallel |
+| Native dependency tracking via `addBlockedBy` | Determines which tasks can run parallel |
 | Automatic post-completion | Code review + finish branch enforced |
-| Resume capability | Orchestrator tracks progress per group |
+| Resume capability | TaskList tracks progress with real-time state |
 
 ### How Parallel Execution Works
 
 The `/dev-workflow:execute-plan` command uses background agents for parallelism:
 
 ```
-1. Analyze task groups by file dependencies
-2. FOR each group (groups execute serially):
-   a. Launch tasks in group with Task(run_in_background: true)
+1. Create tasks with TaskCreate, expressing dependencies via addBlockedBy
+2. FOR each round of unblocked tasks:
+   a. Launch tasks with Task(run_in_background: true)
    b. Wait for all with TaskOutput(block: true)
-   c. Update state: current_task = last task in group
+   c. Mark completed with TaskUpdate
+   d. Check TaskList for newly unblocked tasks
 3. Proceed to post-completion actions
 ```
 
 This approach:
 - Preserves plan in `docs/plans/` for version control
-- Respects task dependencies (groups are serial, tasks within group are parallel)
+- Respects task dependencies (blockedBy ensures correct ordering)
 - No context leak (task content passed to agents only)
-- Accurate progress tracking (state updated after confirmed completion)
+- Accurate progress tracking (TaskList shows real-time state)
 
 ### When to Use Native `EnterPlanMode` Directly
 
@@ -293,37 +294,30 @@ Tasks with NO file overlap execute in parallel (3-5 per group):
 
 Always include "Code Review" as the final task.
 
-### Swarm Execution
+### Parallel Execution
 
-Use `ExitPlanMode(launchSwarm: true, teammateCount: N)` to spawn parallel teammates.
+Use `ExitPlanMode` to finish planning. For parallel execution, use the plugin commands flow:
 
-**Calculate teammateCount:**
-| Independent Groups | teammateCount |
-|--------------------|---------------|
-| 1-2 groups | 2 |
-| 3-4 groups | 3-4 |
-| 5+ groups | 5 (max) |
+```
+/dev-workflow:write-plan → /dev-workflow:execute-plan
+```
 
-**Execution behavior:**
-- Each teammate executes one task following embedded TDD instructions
-- Each task = one commit
-- Teammates work in parallel where tasks have no file overlap
-- Tasks in same group with file overlap run sequentially
+The execute-plan command handles parallelism via Task agents with `run_in_background: true`. Dependencies expressed via `addBlockedBy` ensure correct ordering.
 
 ### State Persistence (Resume Capability)
 
-**State is managed by TodoWrite.** Tasks are tracked as pending/in_progress/completed in the todo list.
+**State is managed by TaskCreate/TaskUpdate.** Tasks are tracked as pending/in_progress/completed with dependency tracking via blockedBy.
 
 The plan file in `docs/plans/` is the source of truth for task definitions.
 
 **If session ends unexpectedly:**
 1. Re-run `/dev-workflow:execute-plan [plan-file]`
-2. TodoWrite shows which tasks are complete
-3. Skip completed tasks, continue from first pending
+2. TaskList shows which tasks are complete
+3. Skip completed tasks, continue from first unblocked pending
 
 Commands:
-- /dev-workflow:resume - Continue execution from TodoWrite state
-- /dev-workflow:abandon - Clear TodoWrite and stop
+- /dev-workflow:resume - Continue execution from task state
+- /dev-workflow:abandon - Mark tasks deleted and stop
 
 ### Post-Execution Actions
 
@@ -350,7 +344,7 @@ After all tasks complete, the orchestrator must:
 
 3. **Finish Branch** - Use `Skill("dev-workflow:finishing-a-development-branch")`
 
-These steps are MANDATORY after swarm execution.
+These steps are MANDATORY after plan execution.
 
 ---
 
@@ -378,8 +372,8 @@ AskUserQuestion:
   options:
     - label: "Sequential (Recommended)"
       description: "Execute tasks one by one with full TDD cycle"
-    - label: "Parallel via swarm"
-      description: "Enter plan mode, adapt plan, launch swarm"
+    - label: "Parallel via execute-plan"
+      description: "Run execute-plan command for parallel task execution"
     - label: "Review first"
       description: "Let me review and suggest improvements"
 ```
@@ -387,24 +381,23 @@ AskUserQuestion:
 ### Step 3a: Sequential Execution
 
 For each task in order:
-1. Create TodoWrite with all tasks
-2. Mark current task `in_progress`
+1. Create tasks with TaskCreate
+2. Mark current task `in_progress` via TaskUpdate
 3. Follow TDD instructions embedded in task
 4. Commit after task passes
-5. Mark task `completed`, move to next
+5. Mark task `completed` via TaskUpdate, move to next
 
 After all tasks:
 - Dispatch code-reviewer
 - Use receiving-code-review skill
 - Use finishing-a-development-branch skill
 
-### Step 3b: Parallel via Swarm
+### Step 3b: Parallel via execute-plan
 
-1. Use `EnterPlanMode`
-2. Adapt existing plan to native format if needed
-3. Write to plan file
-4. `ExitPlanMode(launchSwarm: true)`
-5. Follow Post-Swarm Actions
+1. Run `/dev-workflow:execute-plan [plan-file]`
+2. Command creates tasks with dependencies via addBlockedBy
+3. Launches unblocked tasks in parallel via Task agents
+4. Follows post-completion actions automatically
 
 ### Step 3c: Review First
 

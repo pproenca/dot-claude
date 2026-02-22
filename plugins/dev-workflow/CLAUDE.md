@@ -21,13 +21,13 @@ Tests run on commit via pre-commit hook.
 
 **Plugin flow (native tools):**
 ```text
-/dev-workflow:brainstorm (optional) → EnterPlanMode → ExitPlanMode(launchSwarm: true)
-                                           ↓
-                              SessionStart injects methodology:
-                              - TDD task structure
-                              - Pragmatic architecture
-                              - Parallel grouping
-                              - Post-swarm actions (code review, finish branch)
+/dev-workflow:brainstorm (optional) → /dev-workflow:write-plan → /dev-workflow:execute-plan
+                                                                          ↓
+                                                             SessionStart injects methodology:
+                                                             - TDD task structure
+                                                             - Pragmatic architecture
+                                                             - Dependency-based parallelism
+                                                             - Post-completion actions (code review, finish branch)
 ```
 
 **Hooks** (`hooks/hooks.json`):
@@ -39,7 +39,7 @@ Tests run on commit via pre-commit hook.
 
 All components require YAML frontmatter.
 
-**Valid tools:** `Read`, `Write`, `Edit`, `Bash`, `Glob`, `Grep`, `Task`, `TodoWrite`, `AskUserQuestion`, `Skill`, `WebFetch`, `WebSearch`, `NotebookEdit`
+**Valid tools:** `Read`, `Write`, `Edit`, `Bash`, `Glob`, `Grep`, `Task`, `TaskCreate`, `TaskUpdate`, `TaskList`, `TaskGet`, `TaskStop`, `TaskOutput`, `AskUserQuestion`, `Skill`, `WebFetch`, `WebSearch`, `NotebookEdit`
 
 **Skills** (`skills/<name>/SKILL.md`):
 ```yaml
@@ -54,7 +54,7 @@ allowed-tools: [Read, Edit, Bash]  # optional
 ```yaml
 ---
 description: What the command does
-allowed-tools: [Read, Task, TodoWrite]
+allowed-tools: [Read, Task, TaskCreate, TaskUpdate]
 ---
 ```
 
@@ -75,7 +75,7 @@ tools: [Glob, Grep, Read]
 | Rigid | TDD, systematic-debugging, verification-before-completion | Follow exactly |
 | Flexible | brainstorm, architecture | Adapt to context |
 
-Skills with checklists require TodoWrite tracking.
+Skills with checklists require TaskCreate/TaskUpdate tracking.
 
 ## Directory Structure
 

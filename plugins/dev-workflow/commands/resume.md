@@ -9,12 +9,10 @@ Resume execution of an interrupted plan from where it left off.
 
 ## Step 1: Check Current State
 
-Check TodoWrite for current progress:
+Check task state for current progress:
 
 ```claude
-# Check TodoWrite state - the existing todo list shows current progress
-# Pending tasks are those not yet completed
-# Count completed vs total to show progress
+TaskList  # Shows all tasks with status, blockedBy, and ownership
 ```
 
 Check git log for recent work:
@@ -34,7 +32,7 @@ AskUserQuestion:
   multiSelect: false
   options:
     - label: "Continue"
-      description: "Resume execution from first pending task"
+      description: "Resume execution from first unblocked pending task"
     - label: "Review first"
       description: "Show completed work before continuing"
 ```
@@ -44,9 +42,9 @@ AskUserQuestion:
 **If Continue:**
 
 1. Read the original plan file
-2. Check TodoWrite for pending tasks
+2. Check TaskList for pending unblocked tasks
 3. Continue with `/dev-workflow:execute-plan [plan-file]`
-4. The command will detect completed tasks in TodoWrite and skip them
+4. The command will detect completed tasks via TaskList and skip them
 
 **If Review first:**
 
