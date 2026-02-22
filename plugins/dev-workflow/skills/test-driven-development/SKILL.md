@@ -8,6 +8,8 @@ allowed-tools: Read, Edit, Bash
 
 Write the test first. Watch it fail. Write minimal code to pass.
 
+If you wrote implementation code before the test, discard it and start fresh from the test.
+
 ## The Cycle: Red → Green → Refactor
 
 ### RED — Write Failing Test

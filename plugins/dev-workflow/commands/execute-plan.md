@@ -57,6 +57,8 @@ WORKTREE_PATH="$(create_worktree "$BRANCH_NAME")"
 cd "$WORKTREE_PATH" && pwd
 ```
 
+**Role: Orchestrator.** You coordinate task execution via Task agents, collect results, and run reviews. You do not implement tasks directly. If you find yourself writing implementation code, stop — dispatch a Task agent instead.
+
 ## Step 2: Read Plan and Create Tasks
 
 ```bash
