@@ -26,7 +26,7 @@ teardown() {
 
   [ "$status" -eq 0 ]
   echo "$output" | grep -q "Getting Started"
-  echo "$output" | grep -q "Skill Check Protocol"
+  echo "$output" | grep -q "Skill Discovery"
   # Note: JSON validation may fail on BSD sed systems (macOS) due to sed incompatibility
   # The hook uses GNU sed syntax which doesn't work on macOS
 }

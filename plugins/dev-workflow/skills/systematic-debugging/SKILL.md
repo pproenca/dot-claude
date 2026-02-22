@@ -6,179 +6,72 @@ allowed-tools: Read, Bash, Grep, Skill
 
 # Systematic Debugging
 
-**Announce at start:** "I'm using the systematic-debugging skill to investigate this issue."
-
-Random fixes waste time and create new bugs. Quick patches mask underlying issues.
-
-**Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.
-
-**Violating the letter of this process is violating the spirit of debugging.**
-
-## The Iron Law
-
-```text
-NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
-```
-
-If you haven't completed Phase 1, you cannot propose fixes.
+Find root cause before attempting fixes. Symptom fixes mask underlying issues.
 
 ## The Four Phases
 
 ### Phase 1: Root Cause Investigation
 
-**BEFORE attempting ANY fix:**
+Before attempting any fix:
 
-1. **Read error messages carefully** - They often contain the solution
-2. **Reproduce consistently** - If not reproducible, gather more data
-3. **Check recent changes** - Git diff, new dependencies, config changes
-4. **Trace data flow** - Where does bad value originate?
+1. **Read error messages carefully** — they often contain the solution. Read stack traces completely; note line numbers, file paths, error codes.
+2. **Reproduce consistently** — exact steps, every time. If not reproducible, gather more data.
+3. **Check recent changes** — git diff, new dependencies, config changes, environmental differences.
+4. **Trace data flow** — where does the bad value originate? For deep call stack errors, use the **root-cause-tracing** skill.
 
-For deep call stack errors, use **root-cause-tracing** skill.
-
-For multi-component systems, add diagnostic instrumentation at each boundary before proposing fixes.
+For multi-component systems, add diagnostic logging at each component boundary before proposing fixes. Log what enters and exits each component.
 
 ### Phase 2: Pattern Analysis
 
-1. **Find working examples** - Similar working code in same codebase
-2. **Compare against references** - Read reference implementation completely
-3. **Identify differences** - List every difference, however small
-4. **Understand dependencies** - What settings, config, environment?
+1. **Find working examples** — similar working code in the same codebase.
+2. **Compare against references** — read reference implementations completely, not skimmed.
+3. **Identify differences** — list every difference, however small.
+4. **Understand dependencies** — settings, config, environment assumptions.
 
 ### Phase 3: Hypothesis and Testing
 
-1. **Form single hypothesis** - "I think X is the root cause because Y"
-2. **Test minimally** - Smallest possible change, one variable at a time
-3. **Verify before continuing** - Didn't work? Form NEW hypothesis
+1. **Form single hypothesis** — "I think X is the root cause because Y."
+2. **Test minimally** — smallest possible change, one variable at a time.
+3. **Verify** — didn't work? Form new hypothesis. Don't stack fixes.
 
 ### Phase 4: Implementation
 
-**Fix the root cause, not the symptom:**
+1. **Create failing test** — simplest reproduction. Use the **test-driven-development** skill.
+2. **Implement single fix** — address the root cause. One change at a time. No "while I'm here" improvements.
+3. **Verify fix** — test passes, no other tests broken, issue resolved.
+4. **If fix doesn't work** — return to Phase 1 with new information. If 3+ fixes have failed, see below.
 
-1. **Create failing test case**
-   - Simplest possible reproduction
-   - Use **dev-workflow:test-driven-development** skill
-   - MUST have before fixing
+## When 3+ Fixes Fail: Question Architecture
 
-2. **Implement single fix**
-   - Address the root cause identified
-   - ONE change at a time
-   - No "while I'm here" improvements
-   - No bundled refactoring
+If each fix reveals a new problem in a different place, this is not a failed hypothesis — it's a wrong architecture.
 
-3. **Verify fix**
-   - Test passes now?
-   - No other tests broken?
-   - Issue actually resolved?
+Stop and question fundamentals:
+- Is this pattern fundamentally sound?
+- Are we sticking with it through inertia?
+- Should we refactor architecture vs. continue fixing symptoms?
 
-4. **If fix doesn't work**
-   - STOP
-   - Count: How many fixes have you tried?
-   - If < 3: Return to Phase 1, re-analyze with new information
-   - **If ≥ 3: STOP and question the architecture (see below)**
-   - DON'T attempt Fix #4 without architectural discussion
-
-## Red Flags - STOP
-
-When catching these thoughts:
-
-- "Quick fix for now, investigate later"
-- "Just try changing X and see"
-- "It's probably X, let me fix that"
-- "I don't fully understand but this might work"
-- Proposing solutions before tracing data flow
-- "Here are the main problems: [lists fixes without investigation]"
-- **"One more fix attempt" (when already tried 2+)**
-- **Each fix reveals new problem in different place**
-
-**All mean: STOP. Return to Phase 1.**
-
-**If 3+ fixes failed:** Question the architecture (see below).
+Discuss with the user before attempting more fixes. Present findings: "3 fix attempts, each revealed new problem."
 
 ## Quick Reference
 
-| Phase             | Key Activities                 | Success Criteria            |
-| ----------------- | ------------------------------ | --------------------------- |
-| 1. Root Cause     | Read errors, reproduce, trace  | Understand WHAT and WHY     |
-| 2. Pattern        | Find working examples, compare | Identify differences        |
-| 3. Hypothesis     | Form theory, test minimally    | Confirmed or new hypothesis |
-| 4. Implementation | Create test, fix, verify       | Bug resolved, tests pass    |
+| Phase | Key Activities | Success Criteria |
+|-------|---------------|-----------------|
+| 1. Root Cause | Read errors, reproduce, trace | Understand WHAT and WHY |
+| 2. Pattern | Find working examples, compare | Identify differences |
+| 3. Hypothesis | Form theory, test minimally | Confirmed or new hypothesis |
+| 4. Implementation | Create test, fix, verify | Bug resolved, tests pass |
 
-## When 3+ Fixes Failed: Question Architecture
+## Red Flags — Stop and Return to Phase 1
 
-**Pattern indicating architectural problem:**
-
-- Each fix reveals new shared state/coupling/problem in different place
-- Fixes require "massive refactoring" to implement
-- Each fix creates new symptoms elsewhere
-
-**This is NOT a failed hypothesis - this is a wrong architecture.**
-
-**STOP and question fundamentals:**
-
-```text
-BEFORE attempting Fix #4:
-
-1. Have I tried 3+ fixes for this issue?
-   If YES → STOP
-
-2. Does each fix reveal a new problem?
-   If YES → Architecture problem, not bug
-
-3. Questions to ask:
-   - Is this pattern fundamentally sound?
-   - Are we "sticking with it through sheer inertia"?
-   - Should we refactor architecture vs. continue fixing symptoms?
-
-4. Discuss with human partner before attempting more fixes
-```
-
-**Do NOT:**
-- "One more fix might work"
-- Keep adding patches
-- Assume the architecture is correct
-
-**DO:**
-- Present findings: "3 fix attempts, each revealed new problem"
-- Propose architectural discussion
-- Wait for guidance before proceeding
-
-## Additional Resources
-
-### Reference Files
-
-For detailed guidance:
-
-- **`references/phase-details.md`** - Expanded phase procedures
-- **`references/rationalizations.md`** - Common excuses and rebuttals
-
-## Common Rationalizations
-
-| Excuse | Reality |
-|--------|---------|
-| "Issue is simple, don't need process" | Simple issues have root causes too. Process is fast for simple bugs. |
-| "Emergency, no time for process" | Systematic debugging is FASTER than guess-and-check thrashing. |
-| "Just try this first, then investigate" | First fix sets the pattern. Do it right from the start. |
-| "I'll write test after confirming fix works" | Untested fixes don't stick. Test first proves it. |
-| "Multiple fixes at once saves time" | Can't isolate what worked. Causes new bugs. |
-| "I see the problem, let me fix it" | Seeing symptoms ≠ understanding root cause. |
-| "One more fix attempt" (after 2+ failures) | 3+ failures = architectural problem. Question pattern, don't fix again. |
-
-## Real-World Impact
-
-| Approach | Outcome |
-|----------|---------|
-| Systematic debugging | 15-30 minutes to fix |
-| Random fixes approach | 2-3 hours of thrashing |
-| First-time fix rate (systematic) | 95% |
-| First-time fix rate (random) | 40% |
-| New bugs introduced (systematic) | Near zero |
-| New bugs introduced (random) | Common |
-
-**The math is clear:** Systematic beats random every time.
+- Proposing fixes before tracing data flow
+- "Quick fix for now, investigate later"
+- "I don't fully understand but this might work"
+- Each fix reveals a new problem in a different place
+- 3+ failed fix attempts without questioning architecture
 
 ## Integration
 
-- **dev-workflow:root-cause-tracing** - REQUIRED for deep call stack errors (Phase 1)
-- **dev-workflow:test-driven-development** - REQUIRED for failing test case (Phase 4)
-- **dev-workflow:defense-in-depth** - Add validation layers after fix
-- **dev-workflow:verification-before-completion** - Verify fix before claiming success
+- **root-cause-tracing** — for deep call stack errors (Phase 1)
+- **test-driven-development** — for failing test case (Phase 4)
+- **defense-in-depth** — add validation layers after fix
+- **verification-before-completion** — verify fix before claiming success

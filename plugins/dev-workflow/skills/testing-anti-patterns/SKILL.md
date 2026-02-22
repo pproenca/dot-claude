@@ -6,21 +6,9 @@ allowed-tools: Read, Grep, Glob
 
 # Testing Anti-Patterns
 
-**Announce at start:** "I'm using the testing-anti-patterns skill to review this test code."
-
 Tests must verify real behavior, not mock behavior. Mocks are tools to isolate, not things to test.
 
-**Core principle:** Test what the code does, not what the mocks do.
-
-**Following strict TDD prevents these anti-patterns.**
-
-## The Iron Laws
-
-```text
-1. NEVER test mock behavior
-2. NEVER add test-only methods to production classes
-3. NEVER mock without understanding dependencies
-```
+Following strict TDD prevents these anti-patterns.
 
 ## Anti-Pattern 1: Testing Mock Behavior
 
@@ -196,7 +184,7 @@ const mockResponse = {
 - **Tests pass but integration fails** - Mock incomplete, real API complete
 - **False confidence** - Test proves nothing about real behavior
 
-**The Iron Rule:** Mock the COMPLETE data structure as it exists in reality.
+Mock the COMPLETE data structure as it exists in reality.
 
 **The fix:**
 ```typescript
@@ -289,15 +277,6 @@ TDD cycle:
 | Incomplete mocks | Mirror real API completely |
 | Tests as afterthought | TDD - tests first |
 | Over-complex mocks | Consider integration tests |
-
-## Real-World Impact
-
-| Pattern | Effect |
-|---------|--------|
-| Testing mocks | Tests green, production broken |
-| Test-only methods | Accidental production calls, confused lifecycle |
-| Blind mocking | Mysterious test failures, false confidence |
-| Incomplete mocks | Integration failures despite tests passing |
 
 ## Integration
 
