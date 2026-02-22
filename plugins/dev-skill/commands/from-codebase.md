@@ -1,7 +1,7 @@
 ---
 description: Extract coding patterns from reference codebases and generate a style skill (40+ rules)
 argument-hint: <repo-or-path> [repo-or-path2] ...
-allowed-tools: Read, Write, Bash, Glob, Grep, Task, AskUserQuestion, TodoWrite
+allowed-tools: Read, Write, Bash, Glob, Grep, Task, AskUserQuestion, TaskCreate, TaskUpdate, TaskList
 ---
 
 # Codebase Style Extraction and Skill Generation

@@ -1,7 +1,7 @@
 ---
 description: Migrate a skill from old rules/ structure to new references/ + assets/templates/ structure
 argument-hint: <skill-path>
-allowed-tools: Read, Write, Bash, Glob, Grep, Task, AskUserQuestion, TodoWrite
+allowed-tools: Read, Write, Bash, Glob, Grep, Task, AskUserQuestion, TaskCreate, TaskUpdate, TaskList
 ---
 
 # Skill Structure Migration Command

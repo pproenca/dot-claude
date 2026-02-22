@@ -1,7 +1,7 @@
 ---
 description: Create a best practices skill for any technology (40+ rules, validated)
 argument-hint: <technology> [organization]
-allowed-tools: Read, Write, Bash, Glob, Grep, Task, AskUserQuestion, WebFetch, WebSearch, TodoWrite
+allowed-tools: Read, Write, Bash, Glob, Grep, Task, AskUserQuestion, WebFetch, WebSearch, TaskCreate, TaskUpdate, TaskList
 ---
 
 # Performance Best Practices Skill Creator

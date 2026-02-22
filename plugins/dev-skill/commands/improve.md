@@ -1,7 +1,7 @@
 ---
 description: Investigate and fix issues in an existing best practices skill based on user claims
 argument-hint: <skill-path>
-allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task, AskUserQuestion, TodoWrite, WebFetch, WebSearch
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task, AskUserQuestion, TaskCreate, TaskUpdate, TaskList, WebFetch, WebSearch
 ---
 
 # Skill Improvement Investigator
