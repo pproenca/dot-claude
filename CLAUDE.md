@@ -97,7 +97,7 @@ allowed-tools: [Read, Edit, Bash]  # optional
 ```yaml
 ---
 description: What the command does
-allowed-tools: [Read, Task, TodoWrite]
+allowed-tools: [Read, Task, TaskCreate, TaskUpdate]
 ---
 ```
 
@@ -113,7 +113,7 @@ tools: [Glob, Grep, Read]
 
 ### Valid Tools for Frontmatter
 
-`Read`, `Write`, `Edit`, `Bash`, `Glob`, `Grep`, `Task`, `TodoWrite`, `AskUserQuestion`, `Skill`, `WebFetch`, `WebSearch`, `NotebookRead`, `NotebookEdit`, `LS`, plus `mcp__*` for MCP tools.
+`Read`, `Write`, `Edit`, `Bash`, `Glob`, `Grep`, `Task`, `TaskCreate`, `TaskUpdate`, `TaskList`, `TaskGet`, `TaskStop`, `TaskOutput`, `AskUserQuestion`, `Skill`, `WebFetch`, `WebSearch`, `NotebookEdit`, plus `mcp__*` for MCP tools.
 
 ### Skill Categories
 
@@ -122,7 +122,7 @@ tools: [Glob, Grep, Read]
 | Rigid | TDD, systematic-debugging, verification-before-completion | Follow exactly |
 | Flexible | brainstorm, pragmatic-architecture | Adapt to context |
 
-Skills with checklists require TodoWrite tracking.
+Skills with checklists require TaskCreate/TaskUpdate tracking.
 
 ## Development Workflow
 
@@ -130,10 +130,10 @@ The `dev-workflow` plugin uses native Claude Code primitives:
 
 1. `SessionStart` hook loads `getting-started` skill with planning methodology
 2. `/dev-workflow:brainstorm` refines ideas via Socratic dialogue
-3. `EnterPlanMode` → `ExitPlanMode(launchSwarm: true)` for parallel execution
-4. Post-swarm: code review + finish branch
+3. `/dev-workflow:write-plan` → `/dev-workflow:execute-plan` for parallel execution
+4. Post-completion: code review + finish branch
 
-Alternative: `/dev-workflow:write-plan` → `/dev-workflow:execute-plan` for plan persistence.
+Alternative: `EnterPlanMode` → `ExitPlanMode` for quick 1-3 task features without plan persistence.
 
 ## Dependencies
 

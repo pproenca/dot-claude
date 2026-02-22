@@ -13,7 +13,7 @@ Guide completion of development work by presenting clear options.
 After code review passes, tests pass, work is ready to integrate.
 
 **Invoked by:**
-- Post-swarm actions (after ExitPlanMode completes)
+- Post-completion actions (after execute-plan completes)
 - Direct user request ("I'm done", "merge this", "create PR")
 
 ## Step 1: Verify Tests

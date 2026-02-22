@@ -27,7 +27,7 @@ description: |
 
   <example>
   Context: Workflow step dispatches review as quality gate
-  user: [Swarm execution completes all plan tasks]
+  user: [Plan execution completes all tasks]
   assistant: "All tasks complete. I need to run a final code review before finishing."
   <commentary>
   Workflow-triggered review. Dispatch code-reviewer as mandatory quality gate before declaring work complete.
