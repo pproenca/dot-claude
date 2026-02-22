@@ -1,7 +1,7 @@
 ---
 name: dev-debug-cpp
 description: C++ debugging for segfaults, memory corruption, threading issues, and linker/ABI problems. Use when encountering crashes (exit code 139/SIGSEGV), memory leaks, data races, undefined behavior, or when debugging native Node.js addons, FFmpeg integrations, or any C++ code that crashes mysteriously.
-allowed-tools: Read, Bash, Glob, Grep, LSP
+allowed-tools: Read, Bash, Glob, Grep
 ---
 
 # C++ Debugging Skill
