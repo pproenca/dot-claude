@@ -15,14 +15,14 @@ flowchart LR
     end
 
     subgraph execution["Execution"]
-        SWARM["Swarm execution"]
+        EXEC["Parallel task execution"]
     end
 
     B -->|"Socratic dialogue"| DD
     DD -->|"input"| P
     P -->|"explore + design"| PF
-    PF -->|"ExitPlanMode(launchSwarm)"| SWARM
-    SWARM --> DONE["Done"]
+    PF -->|"execute-plan"| EXEC
+    EXEC --> DONE["Done"]
 ```
 
 ## Why This Plugin
@@ -35,7 +35,7 @@ Most plugins add capabilities. This one changes how you work.
 
 | Problem | Solution |
 |---------|----------|
-| Context pollution | Native swarm execution |
+| Context pollution | Parallel task agents |
 | "Should work now" | Verification before any claim |
 | Symptom patching | Systematic debugging framework |
 | Skipped tests | TDD as methodology, not suggestion |
@@ -49,15 +49,15 @@ SessionStart hook
     └── Loads getting-started skill with planning methodology
 
 EnterPlanMode / ExitPlanMode
-    └── Native plan mode for design + swarm execution
+    └── Native plan mode for design
 
-PostPlanModeExit hook
-    └── Reminds of post-swarm actions (code review, finish branch)
+/dev-workflow:execute-plan
+    └── Parallel task agents with dependency tracking + post-completion actions
 ```
 
 **Token efficiency:**
 - Skills loaded on-demand via triggers
-- Native swarm handles parallel execution
+- Task agents handle parallel execution
 - Model selection per task complexity
 
 ## Features
@@ -85,8 +85,8 @@ PostPlanModeExit hook
 | `/dev-workflow:resume` | Resume interrupted plan execution |
 | `/dev-workflow:abandon` | Discard active workflow state |
 
-**Primary workflow:** Use native `EnterPlanMode` → `ExitPlanMode(launchSwarm: true)`.
-**Alternative workflow:** `/dev-workflow:write-plan` → `/dev-workflow:execute-plan` for more control and plan persistence.
+**Primary workflow:** `/dev-workflow:brainstorm` → `/dev-workflow:write-plan` → `/dev-workflow:execute-plan`
+**Quick workflow:** `EnterPlanMode` → `ExitPlanMode` for simple 1-3 task features without plan persistence.
 
 ### Agents
 
@@ -130,7 +130,7 @@ See the `simple-git-worktrees` skill for details.
 
 Skills load automatically at session start. The `getting-started` skill establishes the protocol: before any task, check if a skill applies.
 
-State is managed by TodoWrite. Sessions can resume via `/dev-workflow:resume`.
+State is managed by TaskCreate/TaskUpdate. Sessions can resume via `/dev-workflow:resume`.
 
 ## Development
 

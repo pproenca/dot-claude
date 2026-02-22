@@ -38,13 +38,13 @@ EnterPlanMode
     ├── Write plan with TDD tasks
     │
     ▼
-ExitPlanMode(launchSwarm: true, teammateCount: 3-5)
+/dev-workflow:execute-plan docs/plans/[plan].md
     │
-    ├── Teammates execute tasks in parallel
+    ├── Task agents execute in parallel (addBlockedBy for ordering)
     │   └── Each task: TDD cycle → commit
     │
     ▼
-Post-swarm actions (main session):
+Post-completion actions (orchestrator):
     ├── Task(dev-workflow:code-reviewer)
     ├── Skill("dev-workflow:receiving-code-review")
     └── Skill("dev-workflow:finishing-a-development-branch")
@@ -100,11 +100,11 @@ Skill("dev-workflow:receiving-code-review")
   - [Label] ([Description])
   - [Label] ([Description])
 
-### TodoWrite for progress
+### TaskCreate/TaskUpdate for progress
 
-- Create items at workflow start
-- Mark `in_progress` when starting
-- Mark `completed` when done
+- Create tasks at workflow start with TaskCreate
+- Mark `in_progress` when starting via TaskUpdate
+- Mark `completed` when done via TaskUpdate
 
 ## Trigger Decision Tree
 
@@ -239,9 +239,9 @@ EnterPlanMode
     │   └─ code-architect uses dev-workflow:pragmatic-architecture
     │
     ▼
-ExitPlanMode(launchSwarm: true)
+/dev-workflow:execute-plan
     │
-    ├─ TDD (each task via swarm teammates)
+    ├─ TDD (each task via Task agents)
     │
     ├─ Task tool (dev-workflow:code-reviewer)
     │   ├─ Uses: dev-workflow:testing-anti-patterns

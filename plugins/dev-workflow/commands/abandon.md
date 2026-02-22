@@ -1,5 +1,5 @@
 ---
-description: Abandon active workflow and clear TodoWrite
+description: Abandon active workflow and clear task state
 allowed-tools: Bash, TaskList, TaskUpdate, AskUserQuestion
 ---
 
