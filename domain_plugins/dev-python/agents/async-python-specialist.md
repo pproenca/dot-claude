@@ -24,7 +24,7 @@ description: |
   </example>
 color: cyan
 model: opus
-allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit, Bash(pytest:*), mcp__plugin_serena_serena, mcp__plugin_serena_serena_*
+allowed-tools: Bash(python:*), Bash(uv:*), Read, Edit, Bash(pytest:*)
 ---
 
 You are an async Python specialist focusing on concurrent I/O and asyncio patterns.
