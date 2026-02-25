@@ -1,0 +1,9 @@
+# Apple HIG - Foundations (selected for design workflow)
+https://developer.apple.com/design/human-interface-guidelines/branding
+https://developer.apple.com/design/human-interface-guidelines/color
+https://developer.apple.com/design/human-interface-guidelines/dark-mode
+https://developer.apple.com/design/human-interface-guidelines/layout
+https://developer.apple.com/design/human-interface-guidelines/materials
+https://developer.apple.com/design/human-interface-guidelines/motion
+https://developer.apple.com/design/human-interface-guidelines/typography
+https://developer.apple.com/design/human-interface-guidelines/writing

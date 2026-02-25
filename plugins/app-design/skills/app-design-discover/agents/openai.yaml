@@ -1,0 +1,4 @@
+interface:
+  display_name: "iOS Design Discovery"
+  short_description: "Define goals and MVP features for iOS apps"
+  default_prompt: "Use $ios-design-discover to define app goals and MVP features."

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Apple Engineering"
+  short_description: "iOS architecture, performance, and debugging workflows"
+  default_prompt: "Use $apple-engineering to run the right iOS engineering workflow and produce the required engineering artifacts."
+
+policy:
+  allow_implicit_invocation: true

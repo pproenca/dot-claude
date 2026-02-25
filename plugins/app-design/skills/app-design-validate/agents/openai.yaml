@@ -1,0 +1,4 @@
+interface:
+  display_name: "iOS Design Validate"
+  short_description: "Validate code against iOS design specs"
+  default_prompt: "Use $ios-design-validate to audit code against the design specifications and find gaps."

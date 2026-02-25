@@ -1,0 +1,16 @@
+# MetricKit
+https://developer.apple.com/documentation/metrickit
+https://developer.apple.com/documentation/metrickit/mxmetricmanager
+https://developer.apple.com/documentation/metrickit/mxmetricpayload
+https://developer.apple.com/documentation/metrickit/mxdiagnosticpayload
+https://developer.apple.com/documentation/metrickit/mxsignpostmetric
+
+# Xcode Performance
+https://developer.apple.com/documentation/xcode/analyzing-the-performance-of-your-shipping-app
+https://developer.apple.com/documentation/xcode/improving-app-responsiveness
+https://developer.apple.com/documentation/xcode/reducing-your-app-s-launch-time
+https://developer.apple.com/documentation/xcode/reducing-disk-writes
+https://developer.apple.com/documentation/xcode/gathering-information-about-memory-use
+https://developer.apple.com/documentation/xcode/diagnosing-memory-thread-and-crash-issues-early
+https://developer.apple.com/documentation/xcode/analyzing-responsiveness-issues-in-your-shipping-app
+https://developer.apple.com/documentation/xcode/monitoring-your-app-s-performance

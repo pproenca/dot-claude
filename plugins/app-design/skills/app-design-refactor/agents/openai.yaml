@@ -1,0 +1,4 @@
+interface:
+  display_name: "iOS Design Refactor"
+  short_description: "Refactor an existing iOS design spec"
+  default_prompt: "Use $ios-design-refactor to redesign an existing iOS design spec."

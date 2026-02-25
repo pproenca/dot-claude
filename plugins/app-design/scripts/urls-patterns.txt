@@ -1,0 +1,26 @@
+# Apple HIG - Patterns (25 pages)
+https://developer.apple.com/design/human-interface-guidelines/charting-data
+https://developer.apple.com/design/human-interface-guidelines/collaboration-and-sharing
+https://developer.apple.com/design/human-interface-guidelines/drag-and-drop
+https://developer.apple.com/design/human-interface-guidelines/entering-data
+https://developer.apple.com/design/human-interface-guidelines/feedback
+https://developer.apple.com/design/human-interface-guidelines/file-management
+https://developer.apple.com/design/human-interface-guidelines/going-full-screen
+https://developer.apple.com/design/human-interface-guidelines/launching
+https://developer.apple.com/design/human-interface-guidelines/live-viewing-apps
+https://developer.apple.com/design/human-interface-guidelines/loading
+https://developer.apple.com/design/human-interface-guidelines/managing-accounts
+https://developer.apple.com/design/human-interface-guidelines/managing-notifications
+https://developer.apple.com/design/human-interface-guidelines/modality
+https://developer.apple.com/design/human-interface-guidelines/multitasking
+https://developer.apple.com/design/human-interface-guidelines/offering-help
+https://developer.apple.com/design/human-interface-guidelines/onboarding
+https://developer.apple.com/design/human-interface-guidelines/playing-audio
+https://developer.apple.com/design/human-interface-guidelines/playing-haptics
+https://developer.apple.com/design/human-interface-guidelines/playing-video
+https://developer.apple.com/design/human-interface-guidelines/printing
+https://developer.apple.com/design/human-interface-guidelines/ratings-and-reviews
+https://developer.apple.com/design/human-interface-guidelines/searching
+https://developer.apple.com/design/human-interface-guidelines/settings
+https://developer.apple.com/design/human-interface-guidelines/undo-and-redo
+https://developer.apple.com/design/human-interface-guidelines/workouts

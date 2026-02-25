@@ -1,0 +1,30 @@
+# SwiftData
+https://developer.apple.com/documentation/swiftdata
+https://developer.apple.com/documentation/swiftdata/preserving-your-apps-model-data-across-launches
+https://developer.apple.com/documentation/swiftdata/adding-and-editing-persistent-data-in-your-app
+https://developer.apple.com/documentation/swiftdata/filtering-and-sorting-persistent-data
+https://developer.apple.com/documentation/swiftdata/maintaining-a-local-copy-of-server-data
+https://developer.apple.com/documentation/swiftdata/deleting-persistent-data-from-your-app
+https://developer.apple.com/documentation/swiftdata/syncing-model-data-across-a-persons-devices
+https://developer.apple.com/documentation/swiftdata/modelcontainer
+https://developer.apple.com/documentation/swiftdata/modelcontext
+https://developer.apple.com/documentation/swiftdata/schemamigrationplan
+https://developer.apple.com/documentation/swiftdata/migrationstage
+
+# CoreData
+https://developer.apple.com/documentation/coredata
+https://developer.apple.com/documentation/coredata/setting_up_a_core_data_stack
+https://developer.apple.com/documentation/coredata/creating_a_core_data_model
+https://developer.apple.com/documentation/coredata/linking_data_between_two_core_data_stores
+https://developer.apple.com/documentation/coredata/heavyweight_migration
+https://developer.apple.com/documentation/coredata/lightweight_migration
+https://developer.apple.com/documentation/coredata/mirroring_a_core_data_store_with_cloudkit
+https://developer.apple.com/documentation/coredata/nspersistentcontainer
+https://developer.apple.com/documentation/coredata/nsmanagedobject
+https://developer.apple.com/documentation/coredata/nsmanagedobjectcontext
+https://developer.apple.com/documentation/coredata/nsfetchrequest
+https://developer.apple.com/documentation/coredata/nspersistentcloudkitcontainer
+https://developer.apple.com/documentation/coredata/nsentitydescription
+https://developer.apple.com/documentation/coredata/nsrelationshipdescription
+https://developer.apple.com/documentation/coredata/nsmanagedobjectmodel
+https://developer.apple.com/documentation/coredata/nspersistentstorecoordinator

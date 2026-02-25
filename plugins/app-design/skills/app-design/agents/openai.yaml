@@ -1,0 +1,4 @@
+interface:
+  display_name: "iOS Design Workflow"
+  short_description: "Run full iOS app design workflow"
+  default_prompt: "Use $ios-design to run the full iOS design workflow."

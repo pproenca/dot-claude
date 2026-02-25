@@ -1,0 +1,90 @@
+# Analyzing responsiveness issues in your shipping app
+
+_Article_
+
+> Source: https://developer.apple.com/documentation/xcode/analyzing-responsiveness-issues-in-your-shipping-app
+
+Identify responsiveness issues your users encounter, and use the hang and hitch data in Xcode Organizer to determine which issues are most important to fix.
+
+### Overview
+
+Hitches and hangs are two types of responsiveness issues that negatively impact an app’s user experience. The system monitors for hangs and hitches for running apps, and periodically collects reports on the issues from a statistical sample. Xcode Organizer uses this data to display information about the hitch rate, the hang rate, and individual hang reports for your apps. All of this data is also available in [MetricKit](https://developer.apple.com/documentation/MetricKit), so you can gather and aggregate it in your own infrastructure. For more information about hangs and hitches, see [Understanding user interface responsiveness](https://developer.apple.com/documentation/xcode/understanding-user-interface-responsiveness).
+
+#### View your app’s hitch rate
+
+The Scrolling pane of the Xcode Organizer window displays information about the hitch rate of your app over time.
+
+[image: A screenshot of the Scrolling metric pane in the Xcode Organizer window. From left to right are the list of metrics and reports, the metric UI with a bar graph showing the scroll hitch rate for the past 12 app versions, the selected version, the comparison data for the selected and latest versions, and the goal keys.]
+
+Based on the scroll hitch rate for a version of your app, the bar appears in red, yellow, or green. Red bars indicate a poor scroll with a hitch rate of more than 10 milliseconds per second (ms/s), yellow bars indicate a fair scroll with a hitch rate of 5–10 ms/s, and green bars indicate a good scroll with a hitch rate of less than 5 ms/s. Aim for green bars to provide the best scroll experience for your users.
+
+Hitch-rate data is only available for iOS and iPadOS devices.
+
+#### View your app’s hang rate
+
+Xcode Organizer reports the hang rate as the number of seconds per hour that the app is unresponsive, while only counting periods of unresponsiveness of more than 250 ms. The Organizer window shows both the median hang rate of a typical user experience, and the extreme 90th percentile hang rate. [MetricKit](https://developer.apple.com/documentation/MetricKit) provides the same hang rate metric as a histogram.
+
+[image: A screenshot of the Hang Rate metric pane in the Xcode Organizer window. From left to right are the list of metrics and reports, the metric UI with a bar graph showing the hang rate for the past 12 app versions, the selected version, and the comparison data for the selected and latest versions.]
+
+Apple operating systems support a broad variety of devices with different hardware capabilities and performance characteristics. Code that performs flawlessly on one hardware model can hang on another. Use the device filter at the top of the Organizer window to filter the hang rate for specific device types and uncover hangs that only manifest in certain circumstances.
+
+Hang rate data is available for iOS and macOS devices.
+
+#### Analyze hang reports to determine a course of action
+
+The hang rate provides general information about how responsive a specific app version is on average, while hang reports highlight individual causes of hangs. When the main thread is unresponsive for 1 s or longer, the system also samples the app to capture a backtrace profile, highlighting where the app is spending its time during the hang. The system sends anonymous diagnostic reports with hang stack traces to Apple for users who consent to share data with app developers. Xcode Organizer aggregates these individual hang reports and groups them by similar backtraces to identify common causes of hangs. Alternatively, you can create your own reports from logs that [MetricKit](https://developer.apple.com/documentation/MetricKit) collects.
+
+[image: A screenshot of the Hang reports pane in the Xcode Organizer window. The report list is on the left, the stack trace is in the center, and the Inspector is on the right.]
+
+Each report in the Report List shows the function call that generates the hang, and the percentage of total hang time it accounts for in the release. The Report List sorts function calls in descending order of hang-time contribution to the app release. Clicking a report shows a sample main thread stack trace, as well as additional details in the Inspector, including:
+
+- iOS version
+
+- Device model
+
+- Number of logs received
+
+- 14-day reporting trend
+
+- Total hang time
+
+
+Details such as iOS version, device model, number of logs received, and 14-day reporting trend refer to the report, whereas details such as total hang time refer to the function calls.
+
+Identify the code that’s causing the hang by using the function calls for a specific report in the Report List and the corresponding stack trace.
+
+Hang reports are only available for iOS and iPadOS devices.
+
+#### Download full diagnostic logs
+
+Determining the cause of long app launch times, freezes, or disk writes may require more information than what Xcode Organizer displays. To inspect all signatures within the main thread or signatures of other threads, use the Full Logs section in the Inspector to download an archive of five full logs from affected users. After the download completes, Xcode saves the archive to your app’s Products folder. Open the logs in Console from Applications > Utilities in Finder.
+
+To capture a representative snapshot, the system samples threads over a period of time at high frequency. Each diagnostic log contains a list of active threads and the workloads they performed when the issue occurred. For each thread, the log provides the thread name, priority, and sample count. Each function name shows how many times the function was active during sampling. You can determine where your code spent the majority of the time by identifying which functions have sample counts closest to the thread sample total.
+
+```other
+  Thread 0x84a5b    DispatchQueue "com.apple.main-thread"(1)    103 samples (1-103)    priority 46-47 (base 46-47)
+103 start (in dyld) + 6040 (dyldMain.cpp:1450) [0x1c0725f08]
+  103 main (in MyApp) + 128 (main.m:31) [0x102422ffc]
+    103 UIApplicationMain (in UIKitCore) + 336 (UIApplication.m:5540) [0x19c680a28]
+      103 -[UIApplication _run] (in UIKitCore) + 816 (UIApplication.m:3845) [0x19c6b5274]
+        103 GSEventRunModal (in GraphicsServices) + 168 (GSEvent.c:2196) [0x1e6ab9454]
+          103 CFRunLoopRunSpecific (in CoreFoundation) + 572 (CFRunLoop.c:3434) [0x199c93adc]
+            99  __CFRunLoopRun (in CoreFoundation) + 840 (CFRunLoop.c:2969) [0x199c91f20]
+              99  __CFRunLoopDoSources0 (in CoreFoundation) + 232 (CFRunLoop.c:2051) [0x199c915a0]
+                99  __CFRunLoopDoSource0 (in CoreFoundation) + 172 (CFRunLoop.c:2014) [0x199c91744]
+                  99  __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE0_PERFORM_FUNCTION__ (in CoreFoundation) + 28 (CFRunLoop.c:1970) [0x199c9192c]
+                    99  runloopSourceCallback (in UIKitCore) + 92 (_UIUpdateScheduler.m:1341) [0x19c5841e4]
+                      99  schedulerStepScheduledMainSection (in UIKitCore) + 208 (_UIUpdateScheduler.m:1173) [0x19c588ab4]
+                        99  _UIUpdateSequenceRun (in UIKitCore) + 84 (_UIUpdateSequence.mm:136) [0x19c589404]
+```
+
+#### Reproduce problems to analyze and fix them
+
+The metrics in Xcode Organizer allow you to detect when your shipping app has a problem, such as the hitch rate increasing with the most recent release, but not necessarily what the cause of the problem is. To determine the source of the problem, consider the following steps:
+
+- Filter the relevant metric by various dimensions, such as device type or app version, to identify whether the issue occurs only on a specific combination of device and version of your app.
+
+- Identify the first app version that has the issue you’re looking for. Then use a version control system to identify the changes between app versions, and focus your testing on those areas.
+
+
+After you narrow down the areas of the app where the issue may be occurring, focus your testing on trying to reproduce the issue. You can use the on-device hang detection in iOS and iPadOS to receive notifications about a hang that occurs while you use the device. Or you can attach your device to Instruments and profile your app using the Time Profiler template to see any hangs in the trace while also recording additional data about what happens in your app during the hang. Then, follow the steps in [Improving app responsiveness](https://developer.apple.com/documentation/xcode/improving-app-responsiveness) to analyze and fix the issues.

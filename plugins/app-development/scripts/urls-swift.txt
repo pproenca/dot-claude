@@ -1,0 +1,19 @@
+# Swift Language
+https://developer.apple.com/documentation/swift
+https://developer.apple.com/documentation/swift/adoptingswift6
+https://developer.apple.com/documentation/swift/sendable
+https://developer.apple.com/documentation/swift/actor
+https://developer.apple.com/documentation/swift/globalactor
+https://developer.apple.com/documentation/swift/mainactor
+https://developer.apple.com/documentation/swift/taskgroup
+https://developer.apple.com/documentation/swift/asyncsequence
+https://developer.apple.com/documentation/swift/asyncstream
+https://developer.apple.com/documentation/swift/codable
+
+# Swift Packages
+https://developer.apple.com/documentation/xcode/swift-packages
+https://developer.apple.com/documentation/xcode/creating-a-standalone-swift-package-with-xcode
+https://developer.apple.com/documentation/xcode/bundling-resources-with-a-swift-package
+https://developer.apple.com/documentation/xcode/distributing-binary-frameworks-as-swift-packages
+https://developer.apple.com/documentation/xcode/organizing-your-code-with-local-packages
+https://developer.apple.com/documentation/xcode/identifying-binary-dependencies

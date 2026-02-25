@@ -1,0 +1,4 @@
+interface:
+  display_name: "Apple HIG Reference"
+  short_description: "Reference Apple HIG patterns and components"
+  default_prompt: "Use $apple-hig to validate a design against Apple HIG."

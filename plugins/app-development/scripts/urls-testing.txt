@@ -1,0 +1,14 @@
+# Swift Testing
+https://developer.apple.com/documentation/testing
+https://developer.apple.com/documentation/testing/definingtests
+https://developer.apple.com/documentation/testing/organizingtests
+https://developer.apple.com/documentation/testing/parameterizedtesting
+https://developer.apple.com/documentation/testing/migratingfromxctest
+https://developer.apple.com/documentation/testing/temporarilydisablingtests
+https://developer.apple.com/documentation/testing/addingtags
+https://developer.apple.com/documentation/testing/runningtestsinparallel
+
+# XCTest
+https://developer.apple.com/documentation/xctest
+https://developer.apple.com/documentation/xctest/performance_tests
+https://developer.apple.com/documentation/xctest/user_interface_tests

@@ -1,0 +1,12 @@
+{
+  "name": "app-development",
+  "version": "0.1.0",
+  "description": "Guided iOS/iPadOS data modeling, performance optimization, and debugging workflow using Apple documentation",
+  "author": {
+    "name": "Pedro Proença",
+    "email": "admin@therocketgrowth.com",
+    "url": "https://github.com/pproenca"
+  },
+  "license": "MIT",
+  "keywords": ["ios", "swiftdata", "coredata", "performance", "debugging", "testing", "swift"]
+}

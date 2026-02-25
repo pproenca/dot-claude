@@ -1,0 +1,4 @@
+interface:
+  display_name: "iOS Design Architect"
+  short_description: "Design screens, navigation, and foundations"
+  default_prompt: "Use $ios-design-architect to design screens and navigation with HIG."

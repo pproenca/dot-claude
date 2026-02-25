@@ -1,0 +1,12 @@
+{
+  "name": "app-design",
+  "version": "0.1.0",
+  "description": "Guided iOS/iPadOS/macOS screen design workflow using Apple Human Interface Guidelines",
+  "author": {
+    "name": "Pedro Proença",
+    "email": "admin@therocketgrowth.com",
+    "url": "https://github.com/pproenca"
+  },
+  "license": "MIT",
+  "keywords": ["ios", "design", "hig", "apple", "ui", "ux", "swiftui"]
+}
