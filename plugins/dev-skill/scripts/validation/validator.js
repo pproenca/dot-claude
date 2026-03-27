@@ -141,9 +141,9 @@ class SkillValidator {
     const discipline = this.detectDiscipline(skillDir, metadata);
 
     // Universal checks (all disciplines)
-    issues.push(...this.validateRequiredFiles(skillDir));
+    issues.push(...this.validateRequiredFiles(skillDir, discipline));
     issues.push(...this.validateMetadataFile(skillDir));
-    issues.push(...this.validateSkillMd(skillDir, metadata));
+    issues.push(...this.validateSkillMd(skillDir, metadata, discipline));
 
     // Discipline-specific checks
     if (discipline === 'distillation') {
@@ -386,10 +386,10 @@ class SkillValidator {
    * @param {string} skillDir
    * @returns {import('./types.js').ValidationIssue[]}
    */
-  validateRequiredFiles(skillDir) {
+  validateRequiredFiles(skillDir, discipline = 'distillation') {
     const issues = [];
 
-    // Check base required files
+    // Check base required files (universal)
     for (const file of REQUIRED_FILES) {
       const filepath = path.join(skillDir, file);
       if (!fs.existsSync(filepath)) {
@@ -399,13 +399,15 @@ class SkillValidator {
       }
     }
 
-    // Check for _sections.md in references/ or rules/
-    const { dir: refDir, name: refDirName } = this.getReferencesDir(skillDir);
-    const sectionsPath = path.join(refDir, '_sections.md');
-    if (!fs.existsSync(sectionsPath)) {
-      issues.push(createError('structure',
-        `${VALIDATION_MESSAGES.MISSING_FILE(`${refDirName}/_sections.md`)}. ${VALIDATION_MESSAGES.GUIDE_REQUIRED_FILES}`
-      ));
+    // _sections.md is only required for distillation (category-based skills)
+    if (discipline === 'distillation') {
+      const { dir: refDir, name: refDirName } = this.getReferencesDir(skillDir);
+      const sectionsPath = path.join(refDir, '_sections.md');
+      if (!fs.existsSync(sectionsPath)) {
+        issues.push(createError('structure',
+          `${VALIDATION_MESSAGES.MISSING_FILE(`${refDirName}/_sections.md`)}. ${VALIDATION_MESSAGES.GUIDE_REQUIRED_FILES}`
+        ));
+      }
     }
 
     return issues;
@@ -435,7 +437,7 @@ class SkillValidator {
    * @param {Object|null} metadata - Loaded metadata for cross-validation
    * @returns {import('./types.js').ValidationIssue[]}
    */
-  validateSkillMd(skillDir, metadata = null) {
+  validateSkillMd(skillDir, metadata = null, discipline = 'distillation') {
     const filepath = path.join(skillDir, 'SKILL.md');
     if (!fs.existsSync(filepath)) return [];
 
@@ -443,14 +445,16 @@ class SkillValidator {
     const content = fs.readFileSync(filepath, 'utf-8');
     const { frontmatter, body } = parseFrontmatter(content);
 
-    // Validate frontmatter
+    // Validate frontmatter (universal)
     issues.push(...validateSkillFrontmatter(frontmatter, 'SKILL.md'));
 
-    // Validate H1 format (must include org name and "Best Practices")
-    const organization = metadata?.organization || null;
-    issues.push(...validateSkillH1Format(content, organization, 'SKILL.md'));
+    // H1 "Best Practices" format check is distillation-only
+    if (discipline === 'distillation') {
+      const organization = metadata?.organization || null;
+      issues.push(...validateSkillH1Format(content, organization, 'SKILL.md'));
+    }
 
-    // Check line count
+    // Check line count (universal)
     const lineCount = content.split('\n').length;
     if (lineCount < MIN_SKILL_MD_LINES) {
       issues.push(createWarning('SKILL.md', VALIDATION_MESSAGES.SKILL_TOO_SHORT(lineCount)));
@@ -459,8 +463,9 @@ class SkillValidator {
       issues.push(createWarning('SKILL.md', VALIDATION_MESSAGES.SKILL_TOO_LONG(lineCount)));
     }
 
-    // Check required sections
-    for (const section of REQUIRED_SKILL_SECTIONS) {
+    // Check discipline-specific required sections
+    const requiredSections = REQUIRED_SKILL_SECTIONS_BY_DISCIPLINE[discipline] || REQUIRED_SKILL_SECTIONS;
+    for (const section of requiredSections) {
       if (!body.includes(section)) {
         issues.push(createWarning('SKILL.md', VALIDATION_MESSAGES.SKILL_MISSING_SECTION(section)));
       }
