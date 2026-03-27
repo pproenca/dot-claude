@@ -46,31 +46,52 @@ description: {trigger description — see "Description Field" below}
 
 ## The Description Field
 
-The description field is for the model, not for humans. When a session starts, the agent scans every available skill's description to decide relevance. Write it as a trigger description:
+The description is the primary triggering mechanism. Claude scans every skill's description to decide relevance — it competes with other skills for attention. Claude currently tends to **undertrigger** skills (not use them when they'd be useful), so descriptions should be slightly "pushy."
 
-**Good:** `Python performance optimization guidelines. This skill should be used when writing, reviewing, or refactoring Python code. Triggers on tasks involving async patterns, memory management, data structures, or import optimization.`
+**Good:** `Use this skill whenever writing, reviewing, or refactoring Python code for performance — covers async patterns, memory management, data structures, and import optimization. Trigger even if the user doesn't explicitly mention "performance" but is working on Python code that could benefit from optimization.`
 
 **Bad:** `A comprehensive guide to Python best practices.`
 
+**Also bad:** `Python performance optimization guidelines. This skill should be used when writing Python code.` *(too passive, not distinctive)*
+
 Rules:
-- Include specific trigger keywords the user might type
-- Use third-person format: "This skill should be used when..."
-- Name the technology and activity types explicitly
-- Keep under 200 characters for the first sentence (shown in skill listings)
+- Use imperative form: "Use this skill for/whenever..." not "This skill should be used when..."
+- Focus on user **intent** (what they're trying to achieve) not implementation details (how the skill works)
+- Be specific about trigger contexts — name technologies, activities, and edge cases
+- Make it distinctive — if two skills could match a query, the description should make clear why THIS one wins
+- Be slightly pushy: "even if the user doesn't explicitly ask for X" helps with undertriggering
+- Keep under 200 words — it's injected into every query and there may be many skills
+- Descriptions can be tested and optimized with `/dev-skill:eval`'s trigger optimization
 
 ## Progressive Disclosure
 
-Structure information in layers. The agent reads what it needs, when it needs it.
+Skills use a three-level loading system:
+
+1. **Metadata** (name + description) — Always in context. ~100-200 words.
+2. **SKILL.md body** — Loaded when the skill triggers. Keep under 500 lines; if approaching this limit, add hierarchy with clear pointers to references.
+3. **Bundled resources** — Loaded as needed. Unlimited size. Scripts can execute without being loaded into context.
 
 | Layer | What | Size |
 |-------|------|------|
-| SKILL.md | When to use, navigation, quick reference | ~100-150 lines |
+| SKILL.md | When to use, navigation, quick reference | <500 lines |
 | Top-level references | Category overviews, workflow steps, symptom catalogs | ~50-100 lines each |
 | Deep references | Individual rules, scripts, query patterns, templates | Unlimited |
 
-Point to deeper content from shallower layers:
+Point to deeper content from shallower layers with guidance on WHEN to read them:
 ```markdown
-See [detailed workflow](references/workflow.md) for step-by-step instructions.
+Read [detailed workflow](references/workflow.md) when executing the deployment — it has step-by-step instructions with rollback procedures.
+```
+
+For large reference files (>300 lines), include a table of contents at the top.
+
+**Domain organization**: When a skill supports multiple domains/frameworks, organize by variant so Claude reads only the relevant file:
+```
+cloud-deploy/
+├── SKILL.md (workflow + selection logic)
+└── references/
+    ├── aws.md
+    ├── gcp.md
+    └── azure.md
 ```
 
 ## Setup & Configuration
@@ -184,32 +205,61 @@ The `discipline` and `type` fields enable discipline-aware validation and evolut
 | File names | kebab-case | `verify-checkout.sh`, `symptom-timeout.md` |
 | Config keys | snake_case | `slack_channel`, `service_url` |
 
-## Language Patterns
+## Writing Principles
 
-Across all disciplines, skill content follows these patterns:
+### Explain the Why
+
+The most important writing principle for skills: **explain WHY, not just WHAT.** LLMs are smart — they generalize better from understood reasoning than from rigid rules. When you explain why a pattern matters, the model can apply the principle to novel situations. When you just dictate "ALWAYS do X," the model follows the rule mechanically and breaks on edge cases.
+
+| Effective | Ineffective |
+|-----------|-------------|
+| "Use server components for data fetching because client-side fetches create waterfalls — the browser must download JS, parse it, then fetch data sequentially" | "ALWAYS use server components for data fetching" |
+| "Run the deploy script instead of manual kubectl commands because the script includes the canary check and auto-rollback that manual deploys skip" | "NEVER deploy manually" |
+
+If you find yourself writing ALWAYS or NEVER in all caps, or building super-rigid structures, that's a signal to reframe. Explain the reasoning so the model understands the tradeoff.
+
+### Language Patterns
 
 | Do | Don't |
 |----|-------|
-| Direct imperatives: "Run", "Check", "Use" | Hedging: "Consider", "You might want to" |
+| Imperative form: "Run", "Check", "Use" | Hedging: "Consider", "You might want to" |
 | Specific: "2-10x improvement" | Vague: "significant improvement" |
 | Technical: precise terminology | Marketing: "blazing fast", "revolutionary" |
-| Neutral: state facts | Opinionated without evidence |
+| Reasoning: "because X causes Y" | Dictation without reasoning: "MUST do X" |
+
+### Bundle Scripts for Anything Deterministic
+
+Scripts execute without being loaded into context — they cost zero tokens until invoked. For anything deterministic or repetitive, write a script rather than explaining the steps in prose:
+
+- Validation checks → `scripts/validate.sh`
+- Data transformation → `scripts/transform.py`
+- Report generation → `scripts/generate-report.py`
+- Template rendering → `scripts/scaffold.sh`
+
+This applies to ALL disciplines, not just composition. A distillation skill might bundle a linter config. An investigation skill might bundle query scripts. An extraction skill's templates ARE the bundled scripts.
+
+## Safety — Principle of Lack of Surprise
+
+A skill's contents should not surprise the user in their intent if described. Skills must not contain exploit code, data exfiltration, or content that could compromise system security. Do not create skills designed to facilitate unauthorized access or misleading behavior.
 
 ## Quality Markers (Universal)
 
 Signs of a good skill regardless of discipline:
-- Description triggers correctly (agent finds it when relevant)
-- Progressive disclosure works (agent reads deeper content when needed)
+- Description triggers correctly (agent finds it when relevant, doesn't trigger when irrelevant)
+- Progressive disclosure works (agent reads deeper content when needed, not all at once)
+- Instructions explain the WHY — model can generalize to novel situations
 - Setup handles missing config gracefully
 - Gotchas are specific and actionable
 - Content is current (references are live, advice matches current versions)
+- Scripts handle anything deterministic (not explained in prose)
 
 Red flags:
-- SKILL.md over 300 lines (too much inline, needs progressive disclosure)
+- SKILL.md over 500 lines (too much inline, needs progressive disclosure)
 - No gotchas after extended use (gotchas always exist — they haven't been captured)
 - Generic advice that could apply to any technology
+- Lots of ALWAYS/NEVER/MUST without explaining why
 - Hardcoded secrets or paths
-- Description that's a summary, not a trigger description
+- Description that's a summary, not an intent-focused trigger description
 
 ## Composing Skills
 

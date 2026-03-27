@@ -88,7 +88,10 @@ tags: {prefix}, {technique1}, {technique2}
 
 ## {Title}
 
-{1-3 sentences explaining WHY this matters. Focus on performance implications.}
+{1-3 sentences explaining WHY this matters — what goes wrong without this pattern and what
+the cascade effect is. This is the highest-signal part of the rule. The model generalizes
+from understood reasoning, not from dictation. Don't just say "use X" — explain what
+happens when you don't, in concrete terms the model can internalize.}
 
 **Incorrect ({problem label}):**
 
