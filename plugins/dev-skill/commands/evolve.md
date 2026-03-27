@@ -630,6 +630,59 @@ If the skill's domain is too narrow or self-contained to benefit from complement
 
 ---
 
+## Blind Comparison (for significant changes)
+
+When the changes are substantial (multiple rules rewritten, workflow restructured, templates overhauled), offer a blind comparison between old and new versions. This is more rigorous than rubric-based review — it compares actual outputs.
+
+### When to offer
+- More than 5 rules changed (distillation)
+- Workflow steps added or reordered (composition)
+- Decision tree branches restructured (investigation)
+- Templates significantly changed (extraction)
+
+### How to run
+1. **Snapshot the old skill** before applying changes:
+   ```bash
+   cp -r {skill-path} {skill-path}-workspace/skill-snapshot/
+   ```
+2. **Apply changes** to the skill
+3. **Run 2-3 test prompts** against both versions (spawn subagents via Task tool):
+   - New version: run with the updated skill
+   - Old version: run with the snapshot
+4. **Launch blind comparator** — spawn a subagent that reads `${CLAUDE_PLUGIN_ROOT}/agents/comparator.md`:
+   ```
+   Compare these two outputs blindly:
+   - Output A: {workspace}/eval-{N}/version_a/outputs/
+   - Output B: {workspace}/eval-{N}/version_b/outputs/
+   - Eval prompt: {the test prompt}
+   - Expectations: {assertions if any}
+   Save results to: {workspace}/eval-{N}/comparison.json
+   ```
+   (Randomly assign old/new to A/B so the comparator can't infer which is which)
+5. **Launch analyzer** — spawn a subagent that reads `${CLAUDE_PLUGIN_ROOT}/agents/analyzer.md`:
+   ```
+   Analyze this comparison:
+   - Winner: {from comparison.json}
+   - Winner skill: {path to whichever version won}
+   - Winner transcript: {path}
+   - Loser skill: {path to whichever version lost}
+   - Loser transcript: {path}
+   - Comparison result: {workspace}/eval-{N}/comparison.json
+   Save analysis to: {workspace}/eval-{N}/analysis.json
+   ```
+6. **Report results** to the user with evidence from the analyzer
+
+If the new version loses the blind comparison, present the analysis and ask the user whether to keep the changes, revert, or try a different approach.
+
+### When NOT to use
+- Trivial fixes (typos, broken links, formatting)
+- The user explicitly says they don't want to run comparisons
+- No test prompts exist and the user doesn't want to create them
+
+For full functional eval with benchmarking and a human review viewer, suggest: **`/dev-skill:eval {skill-path}`**
+
+---
+
 ## Mandatory Requirements
 
 **NEVER:**

@@ -1289,4 +1289,21 @@ ${CLAUDE_PLUGIN_ROOT}/references/
 
 ---
 
+## After Generation: Suggest Eval
+
+After the skill passes structural validation and agent review, offer functional testing:
+
+Display as text, then ask via `AskUserQuestion`:
+
+```
+"The skill is structurally valid and passes quality review. Want to test it on real prompts before shipping? This runs the skill on realistic tasks, compares against a baseline, and lets you review actual outputs."
+Options:
+- "Yes, run evals" — Launch /dev-skill:eval
+- "No, ship as-is" — Done
+```
+
+If the user chooses evals, suggest: **`/dev-skill:eval {skill-path}`**
+
+---
+
 Now create the skill based on the user's selections, following the discipline-specific pipeline exactly.
