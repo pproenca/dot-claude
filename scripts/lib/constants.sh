@@ -127,5 +127,5 @@ SEMVER_PATTERN='^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$'
 # Maximum recommended description length for commands
 MAX_COMMAND_DESC_LENGTH=60
 
-# Maximum recommended skill description length (for discovery)
-MAX_SKILL_DESC_LENGTH=200
+# Maximum skill description length (Anthropic hard limit: 1024 chars)
+MAX_SKILL_DESC_LENGTH=1024

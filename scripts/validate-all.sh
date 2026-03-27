@@ -50,9 +50,10 @@ while [[ $# -gt 0 ]]; do
       echo "Validation Levels:"
       echo "  1: Syntax & Structure"
       echo "  2: Frontmatter Fields"
+      echo "  3: Discipline & Eval Consistency (dev-skill)"
       echo "  4: Arguments"
       echo "  5: File References"
-      echo "  6: Bash Syntax"
+      echo "  6: Bash & Python Syntax"
       echo "  7: Integration Tests (BATS)"
       exit 0
       ;;
@@ -74,6 +75,7 @@ run_level() {
   case "$level" in
     1) script="level-1-syntax.sh" ;;
     2) script="level-2-frontmatter.sh" ;;
+    3) script="level-3-disciplines.sh" ;;
     4) script="level-4-arguments.sh" ;;
     5) script="level-5-file-refs.sh" ;;
     6) script="level-6-bash.sh" ;;
@@ -125,7 +127,7 @@ elif [[ "$QUICK_MODE" == true ]]; then
   LEVELS=(1 2)
 else
   # Default: levels 1-6 (skip 7 which is slow BATS/integration)
-  LEVELS=(1 2 4 5 6)
+  LEVELS=(1 2 3 4 5 6)
 fi
 
 # Run each level

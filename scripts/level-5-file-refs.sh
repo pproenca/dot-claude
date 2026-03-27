@@ -40,13 +40,18 @@ for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plug
       # shellcheck disable=SC2001
       ref_path=$(echo "$ref_path" | sed 's/[)}\]>\\]$//')
 
-      # Resolve to actual path
-      resolved_path="$plugin_dir$ref_path"
-
-      if [[ -e "$resolved_path" ]]; then
+      # Skip paths with template variables like {discipline}, {name}, etc.
+      if echo "$ref_path" | grep -qE '\{[a-z_]+\}'; then
         refs_checked=$((refs_checked + 1))
       else
-        err "$plugin_name/$relative_file: \${CLAUDE_PLUGIN_ROOT}/$ref_path not found"
+        # Resolve to actual path
+        resolved_path="$plugin_dir$ref_path"
+
+        if [[ -e "$resolved_path" ]]; then
+          refs_checked=$((refs_checked + 1))
+        else
+          err "$plugin_name/$relative_file: \${CLAUDE_PLUGIN_ROOT}/$ref_path not found"
+        fi
       fi
     fi
   done < <(grep -rn '\${CLAUDE_PLUGIN_ROOT}' "$plugin_dir" --include="*.md" 2>/dev/null || true)
