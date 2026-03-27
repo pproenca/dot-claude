@@ -1,0 +1,254 @@
+{
+  "version": "1.0",
+  "description": "Golden set for regression testing the dev-skill plugin. One spec per skill type.",
+  "specs": [
+    {
+      "type": "library-reference",
+      "discipline": "distillation",
+      "spec": {
+        "technology": "Go",
+        "organization": "golden-test",
+        "min_rules": 5,
+        "categories": 2
+      },
+      "structural_checks": {
+        "required_files": ["SKILL.md", "metadata.json", "references/_sections.md"],
+        "required_dirs": ["references", "assets/templates"],
+        "metadata_fields": {"discipline": "distillation", "type": "library-reference"},
+        "min_rule_files": 5
+      },
+      "functional_eval": {
+        "prompt": "Write a Go HTTP handler that fetches data from two upstream services and returns a combined response with proper error handling",
+        "expectations": [
+          "Uses goroutines, errgroup, or channels for concurrent fetching",
+          "Handles errors from both upstream services without panicking",
+          "Propagates context for cancellation support",
+          "Uses buffered channels or other mechanism to prevent goroutine leaks"
+        ]
+      },
+      "trigger_evals": [
+        {"query": "I'm writing a Go service and want to make sure my goroutines aren't leaking when requests get cancelled", "should_trigger": true},
+        {"query": "help me set up a Python Flask app with SQLAlchemy models", "should_trigger": false}
+      ]
+    },
+    {
+      "type": "code-quality",
+      "discipline": "distillation",
+      "spec": {
+        "technology": "TypeScript",
+        "organization": "golden-test",
+        "min_rules": 5,
+        "categories": 2
+      },
+      "structural_checks": {
+        "required_files": ["SKILL.md", "metadata.json", "references/_sections.md"],
+        "required_dirs": ["references", "assets/templates"],
+        "metadata_fields": {"discipline": "distillation", "type": "code-quality"},
+        "min_rule_files": 5
+      },
+      "functional_eval": {
+        "prompt": "Review this TypeScript function for quality issues and suggest improvements: async function getData(ids: any[]) { let results = []; for (let id of ids) { let r = await fetch('/api/' + id); results.push(await r.json()); } return results; }",
+        "expectations": [
+          "Identifies the sequential await as a performance issue",
+          "Suggests Promise.all or similar parallel approach",
+          "Flags the use of 'any' type",
+          "Suggests proper error handling for fetch calls"
+        ]
+      },
+      "trigger_evals": [
+        {"query": "can you review my TypeScript code for any bad patterns or things I should fix", "should_trigger": true},
+        {"query": "write me a Rust web server from scratch using actix-web", "should_trigger": false}
+      ]
+    },
+    {
+      "type": "verification",
+      "discipline": "composition",
+      "spec": {
+        "technology": "E2E Testing",
+        "organization": "golden-test",
+        "workflow_steps": 3
+      },
+      "structural_checks": {
+        "required_files": ["SKILL.md", "metadata.json"],
+        "required_dirs": ["scripts"],
+        "metadata_fields": {"discipline": "composition", "type": "verification"},
+        "min_scripts": 1
+      },
+      "functional_eval": {
+        "prompt": "Run the signup verification flow to confirm a new user can register, receive a confirmation email, and log in",
+        "expectations": [
+          "Follows the skill's workflow steps in order",
+          "Uses the skill's verification script or assertions",
+          "Checks for successful state after each step, not just command exit codes"
+        ]
+      },
+      "trigger_evals": [
+        {"query": "I just deployed the new signup flow, can you verify it actually works end-to-end?", "should_trigger": true},
+        {"query": "write unit tests for the UserService class", "should_trigger": false}
+      ]
+    },
+    {
+      "type": "automation",
+      "discipline": "composition",
+      "spec": {
+        "technology": "Standup",
+        "organization": "golden-test",
+        "workflow_steps": 4
+      },
+      "structural_checks": {
+        "required_files": ["SKILL.md", "metadata.json"],
+        "required_dirs": ["scripts"],
+        "metadata_fields": {"discipline": "composition", "type": "automation"},
+        "min_scripts": 1
+      },
+      "functional_eval": {
+        "prompt": "Generate and post my daily standup summary",
+        "expectations": [
+          "Gathers git activity since last standup",
+          "Formats output following the skill's template",
+          "Includes both completed and in-progress work"
+        ]
+      },
+      "trigger_evals": [
+        {"query": "it's standup time, can you pull together what I worked on yesterday and what's on deck for today", "should_trigger": true},
+        {"query": "help me write a retrospective document for the last sprint", "should_trigger": false}
+      ]
+    },
+    {
+      "type": "cicd",
+      "discipline": "composition",
+      "spec": {
+        "technology": "Deployment",
+        "organization": "golden-test",
+        "workflow_steps": 5
+      },
+      "structural_checks": {
+        "required_files": ["SKILL.md", "metadata.json"],
+        "required_dirs": ["scripts"],
+        "metadata_fields": {"discipline": "composition", "type": "cicd"},
+        "min_scripts": 1
+      },
+      "functional_eval": {
+        "prompt": "Deploy the current branch to staging, run smoke tests, and report back",
+        "expectations": [
+          "Follows the deployment workflow steps",
+          "Runs verification after deploy",
+          "Reports deployment status with evidence"
+        ]
+      },
+      "trigger_evals": [
+        {"query": "ok this PR looks good, let's ship it to staging and make sure nothing's broken", "should_trigger": true},
+        {"query": "help me configure nginx as a reverse proxy", "should_trigger": false}
+      ]
+    },
+    {
+      "type": "infra-ops",
+      "discipline": "composition",
+      "spec": {
+        "technology": "Cleanup",
+        "organization": "golden-test",
+        "workflow_steps": 4
+      },
+      "structural_checks": {
+        "required_files": ["SKILL.md", "metadata.json"],
+        "required_dirs": ["scripts"],
+        "metadata_fields": {"discipline": "composition", "type": "infra-ops"},
+        "min_scripts": 1
+      },
+      "functional_eval": {
+        "prompt": "Find and clean up orphaned EBS volumes that aren't attached to any instance",
+        "expectations": [
+          "Scans for orphaned resources before any deletion",
+          "Requires confirmation before destructive operations",
+          "Supports dry-run mode"
+        ]
+      },
+      "trigger_evals": [
+        {"query": "our AWS bill spiked and I think there are a bunch of unattached volumes we're paying for, can you find and clean them up", "should_trigger": true},
+        {"query": "help me write a terraform module for an RDS instance", "should_trigger": false}
+      ]
+    },
+    {
+      "type": "scaffolding",
+      "discipline": "extraction",
+      "spec": {
+        "technology": "React",
+        "organization": "golden-test",
+        "template_types": 2
+      },
+      "structural_checks": {
+        "required_files": ["SKILL.md", "metadata.json"],
+        "required_dirs": ["assets/templates"],
+        "metadata_fields": {"discipline": "extraction", "type": "scaffolding"},
+        "min_templates": 1
+      },
+      "functional_eval": {
+        "prompt": "Create a new React component called UserProfile that displays a user's name, avatar, and bio",
+        "expectations": [
+          "Uses the skill's template for component generation",
+          "Follows the naming conventions from the skill",
+          "Includes a test file alongside the component"
+        ]
+      },
+      "trigger_evals": [
+        {"query": "I need to create a new component for the settings page, it should follow our team's patterns", "should_trigger": true},
+        {"query": "explain how React's useEffect cleanup function works", "should_trigger": false}
+      ]
+    },
+    {
+      "type": "runbook",
+      "discipline": "investigation",
+      "spec": {
+        "technology": "API Service",
+        "organization": "golden-test",
+        "symptom_count": 2
+      },
+      "structural_checks": {
+        "required_files": ["SKILL.md", "metadata.json"],
+        "required_dirs": ["references"],
+        "metadata_fields": {"discipline": "investigation", "type": "runbook"},
+        "has_symptom_files": true,
+        "has_tree_files": true
+      },
+      "functional_eval": {
+        "prompt": "The checkout API is returning 500 errors intermittently. About 10% of requests are failing. Investigate.",
+        "expectations": [
+          "Follows a structured investigation path, not ad-hoc guessing",
+          "Uses the skill's diagnostic queries or decision tree",
+          "Produces an investigation report with root cause and next steps"
+        ]
+      },
+      "trigger_evals": [
+        {"query": "we're seeing 500s on the checkout endpoint, it started about 30 minutes ago and it's getting worse", "should_trigger": true},
+        {"query": "write API documentation for the checkout endpoint using OpenAPI spec", "should_trigger": false}
+      ]
+    },
+    {
+      "type": "data-analysis",
+      "discipline": "investigation",
+      "spec": {
+        "technology": "Analytics",
+        "organization": "golden-test",
+        "query_count": 2
+      },
+      "structural_checks": {
+        "required_files": ["SKILL.md", "metadata.json"],
+        "required_dirs": ["references"],
+        "metadata_fields": {"discipline": "investigation", "type": "data-analysis"},
+        "has_query_files": true
+      },
+      "functional_eval": {
+        "prompt": "Why did our signup conversion drop 15% last week compared to the week before?",
+        "expectations": [
+          "Uses the skill's query patterns to pull relevant data",
+          "Compares the two time periods systematically",
+          "Produces a structured analysis, not just raw numbers"
+        ]
+      },
+      "trigger_evals": [
+        {"query": "our conversion rate tanked last Tuesday and nobody knows why, can you dig into the data?", "should_trigger": true},
+        {"query": "help me set up a new Grafana dashboard for monitoring CPU usage", "should_trigger": false}
+      ]
+    }
+  ]
+}

@@ -188,8 +188,8 @@ Execute this task:
 - Read the skill's SKILL.md and follow its guidance while completing the task.
 - Task: {eval prompt}
 - Input files: {eval input_files if any, or "none"}
-- Save ALL output files to: {workspace}/iteration-{N}/eval-{ID}-{name}/with_skill/outputs/
-- Save a transcript of your execution to: {workspace}/iteration-{N}/eval-{ID}-{name}/with_skill/transcript.md
+- Save ALL output files to: {workspace}/iteration-{N}/eval-{ID}-{name}/with_skill/run-1/outputs/
+- Save a transcript of your execution to: {workspace}/iteration-{N}/eval-{ID}-{name}/with_skill/run-1/transcript.md
 
 The transcript must include:
 1. What you understood the task to be
@@ -207,8 +207,8 @@ Outputs to save depend on the task. At minimum, save the primary deliverable fil
 Execute this task:
 - Task: {eval prompt}
 - Input files: {eval input_files if any, or "none"}
-- Save ALL output files to: {workspace}/iteration-{N}/eval-{ID}-{name}/without_skill/outputs/
-- Save a transcript of your execution to: {workspace}/iteration-{N}/eval-{ID}-{name}/without_skill/transcript.md
+- Save ALL output files to: {workspace}/iteration-{N}/eval-{ID}-{name}/without_skill/run-1/outputs/
+- Save a transcript of your execution to: {workspace}/iteration-{N}/eval-{ID}-{name}/without_skill/run-1/transcript.md
 
 The transcript must include:
 1. What you understood the task to be
@@ -247,7 +247,7 @@ When each subagent task completes, a task notification arrives with `total_token
 }
 ```
 
-Write to: `{workspace}/iteration-{N}/eval-{ID}-{name}/{config}/timing.json`
+Write to: `{workspace}/iteration-{N}/eval-{ID}-{name}/{config}/run-1/timing.json`
 
 This is the ONLY opportunity to capture timing data. It is not persisted elsewhere. If you miss the notification, the timing data is lost.
 
