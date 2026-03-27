@@ -1,0 +1,43 @@
+# Investigation Report: {Symptom}
+
+**Date:** {YYYY-MM-DD}
+**Investigator:** {agent or user}
+**Severity:** {P1/P2/P3}
+**Duration:** {time from detection to resolution}
+**Status:** {Resolved / Escalated / Monitoring}
+
+---
+
+## Summary
+
+{1-2 sentence finding — what happened and what was done about it.}
+
+## Timeline
+
+| Time | Event |
+|------|-------|
+| {HH:MM} | Symptom detected: {description} |
+| {HH:MM} | Checked: {what tool/query}, found: {finding} |
+| {HH:MM} | Root cause identified: {brief} |
+| {HH:MM} | Resolution applied: {what was done} |
+| {HH:MM} | Verified: {confirmation the fix worked} |
+
+## Root Cause
+
+{Detailed explanation of what went wrong and why.}
+
+## Resolution
+
+{What was done to fix it. Include exact commands or steps taken.}
+
+## Impact
+
+- **Duration:** {how long was the system affected}
+- **Users affected:** {scope — all users, specific cohort, internal only}
+- **Data impact:** {any data loss or corruption — usually "none"}
+
+## Action Items
+
+- [ ] {Preventive measure 1 — e.g., "Add alert for X threshold"}
+- [ ] {Preventive measure 2 — e.g., "Update runbook with this new failure mode"}
+- [ ] {Process improvement — e.g., "Add this scenario to the decision tree"}

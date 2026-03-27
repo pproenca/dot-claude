@@ -1,0 +1,13 @@
+{
+  "version": "0.1.0",
+  "organization": "{Organization Name}",
+  "technology": "{Technology or Domain}",
+  "discipline": "{distillation|composition|extraction|investigation}",
+  "type": "{library-reference|verification|automation|scaffolding|code-quality|cicd|runbook|data-analysis|infra-ops}",
+  "date": "{Month Year}",
+  "abstract": "{1-2 sentence summary of what this skill covers and its scope.}",
+  "references": [
+    "{url1}",
+    "{url2}"
+  ]
+}

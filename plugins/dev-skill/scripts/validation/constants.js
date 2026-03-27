@@ -5,6 +5,13 @@
  * Modeled after OpenSpec's validation/constants.ts
  */
 
+// Valid disciplines and types
+const VALID_DISCIPLINES = ['distillation', 'composition', 'extraction', 'investigation'];
+const VALID_TYPES = [
+  'library-reference', 'verification', 'automation', 'scaffolding',
+  'code-quality', 'cicd', 'runbook', 'data-analysis', 'infra-ops'
+];
+
 // Thresholds for content length validation
 const MIN_PURPOSE_LENGTH = 50;
 const MIN_RULE_EXPLANATION_LENGTH = 30;
@@ -298,7 +305,17 @@ const VALIDATION_MESSAGES = {
 // Required files and sections for a complete skill
 // Note: _sections.md location is validated dynamically (references/ or rules/)
 const REQUIRED_FILES = ['SKILL.md', 'metadata.json'];
-const REQUIRED_SKILL_SECTIONS = ['When to Apply', 'Rule Categories', 'Quick Reference'];
+
+// Discipline-specific required sections
+const REQUIRED_SKILL_SECTIONS_BY_DISCIPLINE = {
+  distillation: ['When to Apply', 'Rule Categories', 'Quick Reference'],
+  composition: ['When to Apply', 'Workflow Overview'],
+  investigation: ['When to Apply', 'Common Symptoms'],
+  extraction: ['When to Apply', 'Available Templates'],
+};
+// Default for backwards compatibility
+const REQUIRED_SKILL_SECTIONS = REQUIRED_SKILL_SECTIONS_BY_DISCIPLINE.distillation;
+
 const REQUIRED_METADATA_FIELDS = ['version', 'organization', 'date', 'abstract', 'references'];
 
 const REQUIRED_README_SECTIONS = [
@@ -321,6 +338,11 @@ const VAGUE_ANNOTATION_PATTERNS = [
 ];
 
 export {
+  // Disciplines
+  VALID_DISCIPLINES,
+  VALID_TYPES,
+  REQUIRED_SKILL_SECTIONS_BY_DISCIPLINE,
+
   // Thresholds
   MIN_PURPOSE_LENGTH,
   MIN_RULE_EXPLANATION_LENGTH,

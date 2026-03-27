@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# {step-name}.sh — {description}
+# Part of: {skill-name}
+
+set -euo pipefail
+
+# --- Configuration ---
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="${CLAUDE_PLUGIN_DATA:-$SCRIPT_DIR/..}/config.json"
+
+# --- Input validation ---
+if [[ $# -lt {min-args} ]]; then
+  echo "Usage: $0 {usage-pattern}" >&2
+  echo "" >&2
+  echo "  {argument descriptions}" >&2
+  exit 1
+fi
+
+# --- Read config ---
+if [[ -f "$CONFIG_FILE" ]]; then
+  # Parse config values (requires jq)
+  {CONFIG_VAR}=$(jq -r '.{field} // empty' "$CONFIG_FILE")
+  if [[ -z "${CONFIG_VAR}" ]]; then
+    echo "Error: '{field}' not configured in $CONFIG_FILE" >&2
+    echo "Run the skill setup first." >&2
+    exit 1
+  fi
+fi
+
+# --- Main logic ---
+echo "Running: {description}..."
+
+{step implementation}
+
+# --- Output ---
+echo "Completed: {description}"

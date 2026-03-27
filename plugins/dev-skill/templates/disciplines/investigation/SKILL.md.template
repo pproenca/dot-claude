@@ -1,0 +1,50 @@
+---
+name: {skill-name}
+description: {trigger-description}
+---
+
+# {Skill Title}
+
+{1-2 sentence overview. What domain/system does this investigate.}
+
+## When to Apply
+
+Use this skill when:
+- {Symptom 1 — most common trigger}
+- {Symptom 2}
+- {Question 1 — data analysis trigger}
+- {Alert/signal that starts an investigation}
+
+## Common Symptoms
+
+| Symptom | Usual Cause | Quick Check | Tree |
+|---------|-------------|-------------|------|
+| {symptom} | {common cause} | `{query/command}` | [{tree}](references/{symptom}-tree.md) |
+
+## Available Data Sources
+
+| Source | Access | Key Tables/Endpoints |
+|--------|--------|---------------------|
+| {source} | `{access pattern}` | {tables or endpoints} |
+
+## Setup
+
+On first run, configure:
+- `{field}`: {what to enter — e.g., "Grafana dashboard URL for the service"}
+
+## How to Use
+
+1. Identify the symptom in the table above
+2. Follow the linked decision tree
+3. Use queries in `references/queries/` at each decision point
+4. Produce a report using `assets/templates/report.md`
+
+See [symptom catalog](references/symptoms.md) for the full list.
+
+## Gotchas
+
+{Known diagnostic dead-ends or misleading signals.}
+
+## Related Skills
+
+{Complementary skills — e.g., the deployment skill this runbook diagnoses.}

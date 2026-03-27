@@ -36,7 +36,7 @@ cat << 'EOF'
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "<system-context>\ndev-skill plugin active. Commands available:\n- /dev-skill:new <technology> - Create best practices skill (40+ rules)\n- /dev-skill:from-codebase <repo> - Extract patterns from reference codebases\n- /dev-skill:migrate <path> - Migrate skill to new structure\n- /dev-skill:shrink <path> - Regenerate AGENTS.md as slim TOC-only doc\n</system-context>"
+    "additionalContext": "<system-context>\ndev-skill plugin active. Commands available:\n- /dev-skill:new <name> - Create a skill (9 types: API reference, verification, automation, scaffolding, quality, CI/CD, runbook, data analysis, infra ops)\n- /dev-skill:evolve <path> - Discipline-aware improvement of an existing skill\n- /dev-skill:validate <path> - Run structural + substance validation\n- /dev-skill:migrate <path> - Migrate skill to new structure\n- /dev-skill:shrink <path> - Regenerate AGENTS.md as slim TOC-only doc\n</system-context>"
   }
 }
 EOF

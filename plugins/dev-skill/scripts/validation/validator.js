@@ -10,6 +10,9 @@ import { extractFrontmatter, extractBody } from './markdown-parser.js';
 import {
   REQUIRED_FILES,
   REQUIRED_SKILL_SECTIONS,
+  REQUIRED_SKILL_SECTIONS_BY_DISCIPLINE,
+  VALID_DISCIPLINES,
+  VALID_TYPES,
   VALIDATION_MESSAGES,
   MIN_SKILL_MD_LINES,
   MAX_SKILL_MD_LINES,
@@ -135,22 +138,158 @@ class SkillValidator {
     const issues = [];
 
     const metadata = this.loadMetadata(skillDir);
+    const discipline = this.detectDiscipline(skillDir, metadata);
 
+    // Universal checks (all disciplines)
     issues.push(...this.validateRequiredFiles(skillDir));
     issues.push(...this.validateMetadataFile(skillDir));
     issues.push(...this.validateSkillMd(skillDir, metadata));
-    issues.push(...this.validateReadmeMd(skillDir));
 
-    const sections = this.parseSectionsFile(skillDir);
-    issues.push(...this.validateSectionsFile(skillDir, sections));
-    const ruleStats = this.validateRulesDir(skillDir, sections, issues);
-    issues.push(...this.validateAgentsMd(skillDir, sections, metadata));
+    // Discipline-specific checks
+    if (discipline === 'distillation') {
+      // Full distillation validation pipeline (existing behavior)
+      issues.push(...this.validateReadmeMd(skillDir));
 
-    issues.push(...this.validateCrossReferences(skillDir, sections, ruleStats));
+      const sections = this.parseSectionsFile(skillDir);
+      issues.push(...this.validateSectionsFile(skillDir, sections));
+      const ruleStats = this.validateRulesDir(skillDir, sections, issues);
+      issues.push(...this.validateAgentsMd(skillDir, sections, metadata));
 
-    issues.push(...this.validateStatistics(ruleStats));
+      issues.push(...this.validateCrossReferences(skillDir, sections, ruleStats));
+      issues.push(...this.validateStatistics(ruleStats));
+    } else if (discipline === 'composition') {
+      issues.push(...this.validateCompositionSkill(skillDir));
+    } else if (discipline === 'investigation') {
+      issues.push(...this.validateInvestigationSkill(skillDir));
+    } else if (discipline === 'extraction') {
+      issues.push(...this.validateExtractionSkill(skillDir));
+    }
 
     return createReport(issues, this.strictMode);
+  }
+
+  /**
+   * Validate composition skill structure
+   * @param {string} skillDir
+   * @returns {import('./types.js').ValidationIssue[]}
+   */
+  validateCompositionSkill(skillDir) {
+    const issues = [];
+    const scriptsDir = path.join(skillDir, 'scripts');
+
+    if (!fs.existsSync(scriptsDir)) {
+      issues.push(createError('structure', 'Composition skill missing scripts/ directory'));
+    } else {
+      const scripts = fs.readdirSync(scriptsDir).filter(f => f.endsWith('.sh'));
+      if (scripts.length === 0) {
+        issues.push(createWarning('scripts/', 'No shell scripts found in scripts/ directory'));
+      }
+      for (const script of scripts) {
+        const content = fs.readFileSync(path.join(scriptsDir, script), 'utf-8');
+        if (!content.includes('set -e')) {
+          issues.push(createWarning(`scripts/${script}`, 'Script missing strict mode (set -euo pipefail)'));
+        }
+        if (!content.startsWith('#!')) {
+          issues.push(createWarning(`scripts/${script}`, 'Script missing shebang line'));
+        }
+      }
+    }
+
+    // Check hooks if present
+    const hooksPath = path.join(skillDir, 'hooks', 'hooks.json');
+    if (fs.existsSync(hooksPath)) {
+      try {
+        const content = fs.readFileSync(hooksPath, 'utf-8');
+        JSON.parse(content);
+      } catch {
+        issues.push(createError('hooks/hooks.json', 'Invalid JSON in hooks file'));
+      }
+    }
+
+    // Check config.json if present
+    const configPath = path.join(skillDir, 'config.json');
+    if (fs.existsSync(configPath)) {
+      try {
+        const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+        if (!config._setup_instructions) {
+          issues.push(createWarning('config.json', 'Missing _setup_instructions field'));
+        }
+      } catch {
+        issues.push(createError('config.json', 'Invalid JSON in config file'));
+      }
+    }
+
+    return issues;
+  }
+
+  /**
+   * Validate investigation skill structure
+   * @param {string} skillDir
+   * @returns {import('./types.js').ValidationIssue[]}
+   */
+  validateInvestigationSkill(skillDir) {
+    const issues = [];
+    const refsDir = path.join(skillDir, 'references');
+
+    if (!fs.existsSync(refsDir)) {
+      issues.push(createError('structure', 'Investigation skill missing references/ directory'));
+      return issues;
+    }
+
+    // Check for symptom catalog
+    const symptomsPath = path.join(refsDir, 'symptoms.md');
+    if (!fs.existsSync(symptomsPath)) {
+      issues.push(createWarning('references/', 'Missing symptoms.md catalog'));
+    }
+
+    // Check for decision trees
+    const refFiles = fs.readdirSync(refsDir);
+    const treeFiles = refFiles.filter(f => f.endsWith('-tree.md'));
+    if (treeFiles.length === 0) {
+      issues.push(createWarning('references/', 'No decision tree files found (*-tree.md)'));
+    }
+
+    // Check for query patterns
+    const queriesDir = path.join(refsDir, 'queries');
+    if (!fs.existsSync(queriesDir)) {
+      issues.push(createWarning('references/', 'Missing queries/ directory'));
+    }
+
+    // Check report template
+    const reportPath = path.join(skillDir, 'assets', 'templates', 'report.md');
+    if (!fs.existsSync(reportPath)) {
+      issues.push(createWarning('assets/templates/', 'Missing report.md template'));
+    }
+
+    return issues;
+  }
+
+  /**
+   * Validate extraction skill structure
+   * @param {string} skillDir
+   * @returns {import('./types.js').ValidationIssue[]}
+   */
+  validateExtractionSkill(skillDir) {
+    const issues = [];
+    const templatesDir = path.join(skillDir, 'assets', 'templates');
+
+    if (!fs.existsSync(templatesDir)) {
+      issues.push(createError('structure', 'Extraction skill missing assets/templates/ directory'));
+      return issues;
+    }
+
+    const templateFiles = fs.readdirSync(templatesDir).filter(f => f.endsWith('.template'));
+    if (templateFiles.length === 0) {
+      issues.push(createWarning('assets/templates/', 'No .template files found'));
+    }
+
+    // Check for conventions doc
+    const conventionsPath = path.join(skillDir, 'references', 'conventions.md');
+    if (!fs.existsSync(conventionsPath)) {
+      issues.push(createWarning('references/', 'Missing conventions.md'));
+    }
+
+    return issues;
   }
 
   /**
@@ -202,6 +341,44 @@ class SkillValidator {
     } catch {
       return null;
     }
+  }
+
+  /**
+   * Detect discipline from metadata or directory structure.
+   * Defaults to 'distillation' for backwards compatibility.
+   * @param {string} skillDir
+   * @param {Object|null} metadata
+   * @returns {string}
+   */
+  detectDiscipline(skillDir, metadata) {
+    // Prefer explicit discipline from metadata
+    if (metadata?.discipline && VALID_DISCIPLINES.includes(metadata.discipline)) {
+      return metadata.discipline;
+    }
+
+    // Infer from directory structure
+    if (fs.existsSync(path.join(skillDir, 'scripts'))) {
+      return 'composition';
+    }
+
+    const refsDir = path.join(skillDir, 'references');
+    if (fs.existsSync(refsDir)) {
+      const refFiles = fs.readdirSync(refsDir);
+      if (refFiles.some(f => f.endsWith('-tree.md')) || fs.existsSync(path.join(refsDir, 'queries'))) {
+        return 'investigation';
+      }
+    }
+
+    const templatesDir = path.join(skillDir, 'assets', 'templates');
+    if (fs.existsSync(templatesDir)) {
+      const templateFiles = fs.readdirSync(templatesDir);
+      if (templateFiles.some(f => f.endsWith('.template'))) {
+        return 'extraction';
+      }
+    }
+
+    // Default: distillation (backwards compatible)
+    return 'distillation';
   }
 
   /**

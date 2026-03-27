@@ -1,0 +1,36 @@
+---
+name: {skill-name}
+description: {trigger-description}
+---
+
+# {Skill Title}
+
+{1-2 sentence overview of what this skill does and who maintains it.}
+
+## When to Apply
+
+Reference this skill when:
+- {Scenario 1 — most common trigger}
+- {Scenario 2}
+- {Scenario 3}
+- {Scenario 4 — least common but still relevant}
+
+{discipline-specific-sections}
+
+## Setup
+
+{If config.json exists, describe what needs to be configured on first run.}
+{If no setup needed, omit this section entirely.}
+
+## How to Use
+
+{Navigation instructions — what files to read, in what order, for what purpose.}
+
+## Gotchas
+
+{Common failure points, or pointer to gotchas.md for progressive disclosure.}
+{If none yet: "No known gotchas yet. Update this section as failure points are discovered."}
+
+## Related Skills
+
+{Optional: suggest complementary skills by name.}

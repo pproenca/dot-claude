@@ -1,6 +1,6 @@
 {
   "name": "dev-skill",
-  "description": "Validation and generation tools for best practices skills",
+  "description": "Create, evolve, and validate skills across 9 types — from API references to runbooks to CI/CD workflows",
   "author": {
     "name": "Pedro Proenca",
     "email": "pedro@10xengs.com"

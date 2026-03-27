@@ -1,0 +1,64 @@
+---
+name: {skill-name}
+description: {trigger-description}
+---
+
+# {Skill Title}
+
+{1-2 sentence overview. What does this workflow automate and why.}
+
+## When to Apply
+
+Use this skill when:
+- {Primary trigger scenario}
+- {Secondary trigger}
+- {Tertiary trigger}
+
+## Workflow Overview
+
+```
+{Step 1 name} → {Step 2 name} → ... → Verification
+     ↓ (on failure)
+  {Error handling}
+```
+
+| Step | Action | Tool | Risk |
+|------|--------|------|------|
+| 1 | {description} | {tool/script} | {read/write/destructive} |
+| 2 | {description} | {tool/script} | {read/write/destructive} |
+| ... | | | |
+
+## Requirements
+
+- {Tool/CLI 1} — {what it's used for}
+- {Tool/CLI 2} — {what it's used for}
+- {MCP server} — {what it's used for} (optional)
+
+## Setup
+
+{If config.json needed:}
+On first run, you'll be asked to configure:
+- `{field}`: {what to enter and where to find it}
+
+## Quick Reference
+
+| Script | Purpose |
+|--------|---------|
+| `scripts/{name}.sh` | {what it does} |
+| `scripts/verify.sh` | Assert workflow succeeded |
+
+## How to Use
+
+1. {How to trigger the workflow}
+2. {What to expect during execution}
+3. {How to verify results}
+
+See [detailed workflow](references/workflow.md) for step-by-step documentation.
+
+## Gotchas
+
+{Known failure points, or "No known gotchas yet."}
+
+## Related Skills
+
+{Complementary skills, if any.}

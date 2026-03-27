@@ -1,0 +1,50 @@
+# Decision Tree: {Symptom Name}
+
+**Severity:** {P1/P2/P3}
+**Usual causes:** {top 3, ordered by frequency}
+**Last updated:** {date}
+
+---
+
+## Entry Point
+
+**Check:** {First thing to check}
+**Tool:** `{query or command}`
+**Normal:** {what normal looks like — e.g., "latency < 100ms p99"}
+**Abnormal:** {what triggers the next branch}
+
+### If {condition A}:
+
+**Check:** {Next check}
+**Tool:** `{query or command}`
+
+#### If {sub-condition}:
+**Resolution:** {Concrete action to take}
+```bash
+{exact command or steps}
+```
+
+#### If {other sub-condition}:
+**Escalate:** {Who to contact and what to tell them}
+Include: {what information to gather before escalating}
+
+### If {condition B}:
+
+**Check:** {Alternative investigation path}
+**Tool:** `{query or command}`
+
+#### If {sub-condition}:
+**Resolution:** {Concrete action}
+
+#### If not:
+**Dismiss:** Not related to this symptom. {Why and what to check instead.}
+
+---
+
+## Post-Resolution
+
+After resolving, verify the fix:
+1. {Verification step 1}
+2. {Verification step 2}
+
+Update `gotchas.md` if this was a new failure mode.

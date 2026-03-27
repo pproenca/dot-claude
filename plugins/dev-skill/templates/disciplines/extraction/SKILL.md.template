@@ -1,0 +1,45 @@
+---
+name: {skill-name}
+description: {trigger-description}
+---
+
+# {Skill Title}
+
+{1-2 sentence overview. What does this scaffolding skill generate and for what framework.}
+
+## When to Apply
+
+Use this skill when:
+- Creating a new {component type 1}
+- Scaffolding a {component type 2}
+- Setting up a new {module/service/handler}
+- Need to follow {org/team} conventions for {framework}
+
+## Available Templates
+
+| Template | Produces | Parameters |
+|----------|----------|------------|
+| [{type}](assets/templates/{type}.template) | {files created} | `name`, `type` |
+
+## Setup
+
+{If config.json needed:}
+On first run, configure project-specific overrides:
+- `output_path`: {where to generate files}
+- `naming_convention`: {PascalCase, kebab-case, etc.}
+
+## How to Use
+
+1. Tell Claude what you want to create: "Create a new {component type} called {name}"
+2. Claude reads the appropriate template and generates the files
+3. Review the generated files and fill in the implementation
+
+See [conventions](references/conventions.md) for the standards these templates enforce.
+
+## Gotchas
+
+{Known edge cases with scaffolding.}
+
+## Related Skills
+
+{Complementary skills — e.g., the best-practices skill for the same framework.}

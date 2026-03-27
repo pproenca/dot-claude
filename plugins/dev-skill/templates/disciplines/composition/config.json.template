@@ -1,0 +1,8 @@
+{
+  "{field_1}": "",
+  "{field_2}": "",
+  "_setup_instructions": {
+    "{field_1}": "{Description of what to enter and where to find it}",
+    "{field_2}": "{Description of what to enter and where to find it}"
+  }
+}

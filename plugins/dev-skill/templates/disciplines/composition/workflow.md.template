@@ -1,0 +1,70 @@
+# {Skill Name} — Workflow Reference
+
+Detailed step-by-step documentation for the {skill-name} workflow.
+
+## Prerequisites
+
+- {Tool 1} installed and configured
+- {Tool 2} accessible
+- Config values set in `config.json`
+
+---
+
+## Step 1: {Step Name}
+
+**Action:** {What this step does}
+**Script:** `scripts/{step-name}.sh`
+**Input:** {What this step needs}
+**Output:** {What this step produces}
+
+```bash
+# Usage
+bash scripts/{step-name}.sh {args}
+
+# Expected output
+{expected output}
+```
+
+**On failure:**
+- {What the error looks like}
+- {What to do about it}
+- {How to retry}
+
+**Rollback:**
+{How to undo this step, or "N/A — read-only step"}
+
+---
+
+## Step 2: {Step Name}
+
+{Same structure as Step 1}
+
+---
+
+## Verification
+
+**Script:** `scripts/verify.sh`
+
+Asserts that the workflow completed successfully by checking:
+- {Assertion 1 — what state is checked}
+- {Assertion 2}
+- {Assertion 3}
+
+```bash
+bash scripts/verify.sh
+
+# Expected output
+Results: 3 passed, 0 failed
+```
+
+---
+
+## Troubleshooting
+
+### {Common Problem 1}
+**Symptom:** {What the user sees}
+**Cause:** {Why it happens}
+**Fix:** {Exact commands to resolve}
+
+### {Common Problem 2}
+{Same structure}
