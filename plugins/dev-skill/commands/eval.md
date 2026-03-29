@@ -166,11 +166,11 @@ Do not write assertions yet. Prompts and expected_output only. Assertions come i
 
 ---
 
-## Step 2: Spawn All Runs in the Same Turn
+## Step 2: Run Baselines First
 
-**CRITICAL**: Launch ALL with-skill AND without-skill (baseline) runs in a SINGLE message with multiple Task tool calls. This is non-negotiable — sequential spawning wastes time and introduces ordering bias.
+**The baseline-first principle:** Run baseline (without-skill) agents FIRST, read their outputs, THEN draft assertions targeting what the baseline missed. This eliminates non-discriminating assertions by construction — you can't write an assertion that tests something the baseline already does well, because you've already seen it succeed.
 
-For N evals, you will spawn 2N tasks in one turn.
+For iteration 2+, check if baselines can be reused from a previous iteration (see 2e below).
 
 ### Create iteration directory
 
@@ -178,7 +178,161 @@ For N evals, you will spawn 2N tasks in one turn.
 mkdir -p {workspace}/iteration-{N}
 ```
 
-### For each eval, spawn two tasks:
+### 2a: Spawn baseline runs ONLY
+
+Launch N baseline tasks in a SINGLE message (one per eval). Do NOT spawn with-skill runs yet.
+
+#### Baseline run (Task tool):
+
+```
+Execute this task:
+- Task: {eval prompt}
+- Input files: {eval input_files if any, or "none"}
+- Save ALL output files to: {workspace}/iteration-{N}/eval-{ID}-{name}/without_skill/run-1/outputs/
+- Save a transcript of your execution to: {workspace}/iteration-{N}/eval-{ID}-{name}/without_skill/run-1/transcript.md
+
+The transcript must include:
+1. What you understood the task to be
+2. Each major step you took and why
+3. What tools you used
+4. Any issues encountered and how you resolved them
+5. What you produced as output
+
+Do NOT read any skill files. Complete the task using only your default knowledge and the tools available to you.
+```
+
+### 2b: Write eval metadata
+
+For each eval, write `{workspace}/iteration-{N}/eval-{ID}-{name}/eval_metadata.json`:
+
+```json
+{
+  "id": "eval-1",
+  "name": "descriptive-name",
+  "prompt": "the full prompt text",
+  "expected_output": "description of what good looks like",
+  "assertions": [],
+  "configs": ["with_skill", "without_skill"]
+}
+```
+
+### 2c: Capture timing data
+
+When each baseline task completes, a task notification arrives with `total_tokens` and `duration_ms`. Capture these immediately and save to `timing.json` in the run directory:
+
+```json
+{
+  "total_tokens": 45230,
+  "duration_ms": 182500,
+  "duration_seconds": 182.5
+}
+```
+
+Write to: `{workspace}/iteration-{N}/eval-{ID}-{name}/without_skill/run-1/timing.json`
+
+This is the ONLY opportunity to capture timing data. It is not persisted elsewhere. If you miss the notification, the timing data is lost.
+
+### 2d: Wait for ALL baselines to complete
+
+Do not proceed until every baseline run has finished and produced both `transcript.md` and files in `outputs/`.
+
+### 2e: Baseline caching (iteration 2+)
+
+On iteration 2 and above, check if baselines can be reused from the previous iteration:
+
+1. Compare `{workspace}/evals/evals.json` against the previous iteration's version (checksum or diff the `prompt` fields)
+2. If prompts are UNCHANGED: copy the previous iteration's `without_skill/` directories into the current iteration. Skip baseline runs entirely.
+3. If prompts CHANGED: re-run baselines for the changed evals only.
+
+This cuts iteration 2+ cost in half — baseline outputs don't change unless the eval prompts change.
+
+---
+
+## Step 3: Draft Gap-Targeted Assertions, Then Run With-Skill
+
+### 3a: Read baseline outputs
+
+For each eval, read the baseline's transcript and output files. Understand what the baseline got RIGHT and what it got WRONG or MISSED.
+
+### 3b: Read discipline-specific assertion patterns
+
+Re-read the EVAL_GUIDE.md section on assertion patterns for the detected discipline.
+
+### 3c: Draft assertions targeting baseline gaps
+
+For each eval, identify 3-6 dimensions where the baseline output is weak, missing, or wrong. Draft assertions that test ONLY these gaps.
+
+The rule: **if the baseline already does X well, do NOT write an assertion for X.** Every assertion must target something the baseline missed — something the skill is expected to add.
+
+For each drafted assertion, note the baseline evidence:
+
+```markdown
+## Drafted Assertions (Gap-Targeted)
+
+### Eval 1: {name}
+
+**Baseline got right (NO assertions for these):**
+- Used environment variables for API key
+- Selected appropriate transport
+- Produced syntactically valid code
+
+**Baseline missed (assertions target these gaps):**
+1. {assertion} — Baseline output lacked this because: {evidence from baseline}
+2. {assertion} — Baseline output did X instead of Y: {evidence}
+3. {assertion} — Baseline didn't mention this at all: {evidence}
+```
+
+This makes the reasoning transparent: the user can see WHY each assertion exists and verify that the baseline evidence supports it.
+
+Assertions must still be:
+- **Objectively verifiable** — no subjective quality judgments
+- **Named descriptively** — names show up in the benchmark viewer
+
+Good assertion examples by discipline:
+
+**Distillation**: "Generated code uses Promise.all for independent fetches", "No nested await inside loop body"
+**Composition**: "Deploy script exited with code 0", "Rollback was triggered after health check failure"
+**Investigation**: "Root cause section identifies the memory leak", "Recommended fix references the specific config file"
+**Extraction**: "Generated component file follows PascalCase naming", "Template parameters were all substituted (no {placeholder} remains)"
+
+### 3d: Prefer scripted assertions
+
+For assertions that can be checked programmatically (file exists, string contains X, JSON has field Y, line count within range), write a check script rather than relying on the grader's reading comprehension. Scripts are faster, more reliable, and reusable across iterations.
+
+Save check scripts to `{workspace}/evals/checks/`:
+
+```bash
+#!/bin/bash
+# check_eval1_has_function.sh
+# Returns 0 (pass) or 1 (fail), prints evidence to stdout
+OUTPUT_DIR="$1"
+if grep -q "function processOrder" "$OUTPUT_DIR"/*.ts 2>/dev/null; then
+  echo "PASS: Found 'function processOrder' in output"
+  exit 0
+else
+  echo "FAIL: 'function processOrder' not found in any .ts file"
+  exit 1
+fi
+```
+
+### 3e: Update metadata with assertions
+
+1. Update each `eval_metadata.json` with the assertions array
+2. Update `{workspace}/evals/evals.json` with the assertions
+
+```json
+{
+  "assertions": [
+    "Recommends search+execute pattern for large API surface",
+    "Mentions CIMD as preferred over DCR for OAuth",
+    "Uses readOnlyHint annotation for read-only tools"
+  ]
+}
+```
+
+### 3f: Spawn with-skill runs
+
+Now launch N with-skill tasks in a SINGLE message (one per eval):
 
 #### With-skill run (Task tool):
 
@@ -201,147 +355,22 @@ The transcript must include:
 Outputs to save depend on the task. At minimum, save the primary deliverable files and a brief summary.
 ```
 
-#### Baseline run — same prompt, no skill (Task tool):
+Capture timing data for with-skill runs the same way as baselines (2c).
 
-```
-Execute this task:
-- Task: {eval prompt}
-- Input files: {eval input_files if any, or "none"}
-- Save ALL output files to: {workspace}/iteration-{N}/eval-{ID}-{name}/without_skill/run-1/outputs/
-- Save a transcript of your execution to: {workspace}/iteration-{N}/eval-{ID}-{name}/without_skill/run-1/transcript.md
-
-The transcript must include:
-1. What you understood the task to be
-2. Each major step you took and why
-3. What tools you used
-4. Any issues encountered and how you resolved them
-5. What you produced as output
-
-Do NOT read any skill files. Complete the task using only your default knowledge and the tools available to you.
-```
-
-### Write eval metadata
-
-For each eval, write `{workspace}/iteration-{N}/eval-{ID}-{name}/eval_metadata.json`:
-
-```json
-{
-  "id": "eval-1",
-  "name": "descriptive-name",
-  "prompt": "the full prompt text",
-  "expected_output": "description of what good looks like",
-  "assertions": [],
-  "configs": ["with_skill", "without_skill"]
-}
-```
-
-### Capture timing data
-
-When each subagent task completes, a task notification arrives with `total_tokens` and `duration_ms`. Capture these immediately and save to `timing.json` in the run directory:
-
-```json
-{
-  "total_tokens": 45230,
-  "duration_ms": 182500,
-  "duration_seconds": 182.5
-}
-```
-
-Write to: `{workspace}/iteration-{N}/eval-{ID}-{name}/{config}/run-1/timing.json`
-
-This is the ONLY opportunity to capture timing data. It is not persisted elsewhere. If you miss the notification, the timing data is lost.
-
----
-
-## Step 3: While Runs Are In Progress, Draft Assertions
-
-Do not wait for runs to complete. Use the time productively by drafting assertions.
-
-### 3a: Read discipline-specific assertion patterns
-
-Re-read the EVAL_GUIDE.md section on assertion patterns for the detected discipline.
-
-### 3b: Draft quantitative assertions
-
-For each eval, draft 3-6 assertions that are:
-
-- **Objectively verifiable** — no subjective quality judgments. "Output contains a function named X" not "Output is well-structured."
-- **Discriminating** — would fail for a bad output, not just trivially pass for anything. "JSON has field `total` with a numeric value" not "Output is not empty."
-- **Named descriptively** — these names show up in the benchmark viewer. Use names that tell the user what was tested at a glance.
-
-Good assertion examples by discipline:
-
-**Distillation**: "Generated code uses Promise.all for independent fetches", "No nested await inside loop body"
-**Composition**: "Deploy script exited with code 0", "Rollback was triggered after health check failure"
-**Investigation**: "Root cause section identifies the memory leak", "Recommended fix references the specific config file"
-**Extraction**: "Generated component file follows PascalCase naming", "Template parameters were all substituted (no {placeholder} remains)"
-
-### 3c: Prefer scripted assertions
-
-For assertions that can be checked programmatically (file exists, string contains X, JSON has field Y, line count within range), write a check script rather than relying on the grader's reading comprehension. Scripts are faster, more reliable, and reusable across iterations.
-
-Save check scripts to `{workspace}/evals/checks/`:
-
-```bash
-#!/bin/bash
-# check_eval1_has_function.sh
-# Returns 0 (pass) or 1 (fail), prints evidence to stdout
-OUTPUT_DIR="$1"
-if grep -q "function processOrder" "$OUTPUT_DIR"/*.ts 2>/dev/null; then
-  echo "PASS: Found 'function processOrder' in output"
-  exit 0
-else
-  echo "FAIL: 'function processOrder' not found in any .ts file"
-  exit 1
-fi
-```
-
-### 3d: Present assertions to the user
-
-Display as regular markdown:
-
-```markdown
-## Drafted Assertions
-
-### Eval 1: {name}
-1. {assertion text}
-2. {assertion text}
-3. {assertion text}
-
-### Eval 2: {name}
-1. {assertion text}
-2. {assertion text}
-3. {assertion text}
-```
-
-Then explain the reasoning: why these assertions are discriminating, what they would catch, and what they would miss.
-
-### 3e: Update metadata
-
-After presenting (no need to ask for approval — assertions can be refined after seeing results):
-
-1. Update each `eval_metadata.json` with the assertions array
-2. Update `{workspace}/evals/evals.json` with the assertions
-
-```json
-{
-  "assertions": [
-    "Generated code uses Promise.all for independent fetches",
-    "No nested await inside loop body",
-    "Output includes error handling for network failures"
-  ]
-}
+Wait for ALL with-skill runs to complete before proceeding to Step 4.
 ```
 
 ---
 
 ## Step 4: Grade, Aggregate, and Launch Viewer
 
-Wait for ALL subagent tasks from Step 2 to complete before proceeding. Verify that every run directory has both `transcript.md` and files in `outputs/`.
+Verify that every with-skill run directory has both `transcript.md` and files in `outputs/`.
 
-### 4a: Grade each run
+### 4a: Grade with-skill runs only
 
-For each eval and each config (with_skill, without_skill), spawn a grader subagent:
+Since assertions are gap-targeted (drafted from baseline gaps in Step 3), you only need to grade the with-skill runs. The baseline's behavior on each dimension was already observed when drafting assertions — re-grading it would be redundant.
+
+For each eval, spawn a grader subagent for the with-skill config:
 
 ```
 subagent_type: "dev-skill:grader"
@@ -349,9 +378,9 @@ subagent_type: "dev-skill:grader"
 Grade this eval run:
 
 - Expectations: {assertions list from eval_metadata.json}
-- Transcript: {workspace}/iteration-{N}/eval-{ID}-{name}/{config}/transcript.md
-- Outputs dir: {workspace}/iteration-{N}/eval-{ID}-{name}/{config}/outputs/
-- Save grading to: {workspace}/iteration-{N}/eval-{ID}-{name}/{config}/../grading_{config}.json
+- Transcript: {workspace}/iteration-{N}/eval-{ID}-{name}/with_skill/transcript.md
+- Outputs dir: {workspace}/iteration-{N}/eval-{ID}-{name}/with_skill/outputs/
+- Save grading to: {workspace}/iteration-{N}/eval-{ID}-{name}/grading_with_skill.json
 
 The skill's discipline is {discipline}. Adapt evidence gathering accordingly.
 
@@ -369,9 +398,23 @@ If scripted checks exist in `{workspace}/evals/checks/`, run them first and pass
 
 ```bash
 for script in {workspace}/evals/checks/check_eval{ID}_*.sh; do
-  bash "$script" "{workspace}/iteration-{N}/eval-{ID}-{name}/{config}/outputs/"
+  bash "$script" "{workspace}/iteration-{N}/eval-{ID}-{name}/with_skill/outputs/"
 done
 ```
+
+### 4a-note: Baseline grading file
+
+For the benchmark aggregator and viewer to work, create a `grading_without_skill.json` for each eval that marks all assertions as FAIL (since the assertions were specifically drafted to target baseline gaps):
+
+```json
+{
+  "expectations": [
+    { "text": "{assertion}", "passed": false, "evidence": "Baseline gap identified in Step 3: {evidence from baseline reading}" }
+  ]
+}
+```
+
+Use the baseline evidence notes from Step 3c to populate each entry. This preserves the with/without comparison in the viewer without running redundant graders.
 
 ### 4b: Aggregate into benchmark
 
@@ -391,7 +434,7 @@ Read `{workspace}/iteration-{N}/benchmark.json` and surface patterns that aggreg
 
 Patterns to surface:
 
-- **Non-discriminating assertions**: Assertions that always pass in BOTH with_skill and without_skill configs. These do not prove the skill adds value. Flag them for replacement.
+- **Non-discriminating assertions**: Assertions that pass in BOTH with_skill and without_skill. The baseline-first flow should eliminate these by construction, but if any slip through (e.g., baseline behavior changed between Step 2 and Step 3), flag them for removal.
 - **High-variance evals**: Evals where pass rates swing wildly across configs or across runs within the same config. These may be flaky or non-deterministic.
 - **Time/token tradeoffs**: If the skill significantly increases execution time or token usage, note the cost-benefit ratio. A skill that doubles token usage for a 5% improvement may not be worth it.
 - **Skill-hurting patterns**: Assertions that consistently pass WITHOUT skill but fail WITH skill. The skill may be introducing confusion or unnecessary constraints.
@@ -716,20 +759,23 @@ Skill is ready to ship.
 
 **NEVER:**
 - Skip the baseline (without_skill) runs — comparison against a no-skill baseline is the entire point. Without it you cannot distinguish "the skill helped" from "the model would have done this anyway."
-- Spawn with-skill and baseline runs in separate turns — launch ALL tasks in one message. Sequential spawning wastes time and introduces ordering bias.
-- Write assertions before the user approves the eval prompts — prompts first, assertions second.
+- Draft assertions BEFORE reading baseline outputs — assertions must target gaps observed in the baseline. Writing assertions first leads to non-discriminating assertions that waste compute and dilute signal.
+- Spawn with-skill runs before baselines complete — the entire point of baseline-first is to read baseline outputs before drafting assertions.
 - Apply skill improvements without running another iteration to verify they helped — every change must be validated empirically.
 - Skip the viewer — the human MUST see actual outputs before you iterate. Aggregate metrics lie; outputs don't.
 - Grade your own work — always use the grader subagent for objective evaluation.
 - Overfit improvements to specific test cases — generalize from feedback.
 
 **ALWAYS:**
+- Run baselines FIRST, read their outputs, THEN draft assertions — this is the baseline-first principle. Every assertion must target a gap observed in the baseline output.
+- Reuse baselines from previous iterations when eval prompts haven't changed — check evals.json checksums before re-running.
+- Show baseline evidence alongside each assertion — the user should see WHY each assertion was drafted (what the baseline missed).
 - Read EVAL_GUIDE.md before drafting eval prompts — it contains discipline-specific patterns.
 - Capture `timing.json` when task notifications arrive — this data is not persisted elsewhere and is lost if you miss it.
 - Use descriptive names for eval directories (e.g., `eval-1-form-submission`, not `eval-0` or `test-a`).
 - Use `text`, `passed`, `evidence` field names in grading.json — the viewer depends on these exact names.
 - Save the workspace as a sibling to the skill directory, never inside it.
-- Spawn all runs for a given iteration in a single turn with multiple Task calls.
+- Spawn all baseline runs in a single turn, and all with-skill runs in a single turn.
 - Run scripted assertions before grader subagents when check scripts exist — feed script results to the grader as additional evidence.
 - Kill the viewer process before starting a new iteration.
 - Present benchmark summaries as markdown before directing the user to the viewer — give them context for what they are about to see.
