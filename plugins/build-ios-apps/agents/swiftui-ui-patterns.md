@@ -29,7 +29,7 @@ description: Use this agent to design or refactor SwiftUI UI with best-practice 
   </commentary>
   </example>
 
-model: inherit
+model: sonnet
 color: blue
 tools: ["Read", "Write", "Edit", "Grep", "Glob"]
 ---

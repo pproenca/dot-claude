@@ -21,6 +21,11 @@
       "description": "Development workflow with TDD, debugging, and collaboration skills"
     },
     {
+      "name": "build-ios-apps",
+      "source": "./plugins/build-ios-apps",
+      "description": "Build iOS apps with workflows for SwiftUI UI work, refactors, performance audits, and simulator debugging"
+    },
+    {
       "name": "dev-debug-cpp",
       "source": "./domain_plugins/dev-debug-cpp",
       "description": "C++ debugging for segfaults, memory corruption, threading issues, and linker/ABI problems"

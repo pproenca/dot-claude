@@ -29,7 +29,7 @@ description: Use this agent to audit and improve SwiftUI runtime performance. Ex
   </commentary>
   </example>
 
-model: inherit
+model: sonnet
 color: yellow
 tools: ["Read", "Grep", "Glob"]
 ---

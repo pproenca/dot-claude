@@ -29,8 +29,9 @@ description: Use this agent to build, run, launch, and debug an iOS project on a
   </commentary>
   </example>
 
-model: inherit
+model: sonnet
 color: green
+tools: ["Read", "Glob", "Grep", "Bash", "mcp__XcodeBuildMCP__list_sims", "mcp__XcodeBuildMCP__session-set-defaults", "mcp__XcodeBuildMCP__build_run_sim", "mcp__XcodeBuildMCP__launch_app_sim", "mcp__XcodeBuildMCP__describe_ui", "mcp__XcodeBuildMCP__screenshot", "mcp__XcodeBuildMCP__tap", "mcp__XcodeBuildMCP__type_text", "mcp__XcodeBuildMCP__gesture", "mcp__XcodeBuildMCP__start_sim_log_cap", "mcp__XcodeBuildMCP__stop_sim_log_cap", "mcp__XcodeBuildMCP__get_sim_app_path", "mcp__XcodeBuildMCP__get_app_bundle_id"]
 ---
 
 You are an iOS simulator debugging agent. You use XcodeBuildMCP tools to build, run, and debug iOS apps on a booted simulator.

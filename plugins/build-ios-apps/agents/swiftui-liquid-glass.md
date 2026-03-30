@@ -20,7 +20,7 @@ description: Use this agent to implement, review, or improve SwiftUI features us
   </commentary>
   </example>
 
-model: inherit
+model: sonnet
 color: cyan
 tools: ["Read", "Write", "Edit", "Grep", "Glob"]
 ---

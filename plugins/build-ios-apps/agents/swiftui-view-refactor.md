@@ -20,8 +20,8 @@ description: Use this agent to refactor large SwiftUI view files toward small, s
   </commentary>
   </example>
 
-model: inherit
-color: magenta
+model: sonnet
+color: purple
 tools: ["Read", "Write", "Edit", "Grep", "Glob"]
 ---
 
