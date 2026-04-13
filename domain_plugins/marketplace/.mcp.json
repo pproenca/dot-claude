@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "amplitude": {
+      "type": "http",
+      "url": "https://mcp.amplitude.com/mcp"
+    },
+    "amplitude-eu": {
+      "type": "http",
+      "url": "https://mcp.eu.amplitude.com/mcp"
+    },
+    "aws-docs": {
+      "type": "http",
+      "url": ""
+    },
+    "datadog": {
+      "type": "http",
+      "url": ""
+    },
+    "databricks": {
+      "type": "http",
+      "url": ""
+    }
+  }
+}

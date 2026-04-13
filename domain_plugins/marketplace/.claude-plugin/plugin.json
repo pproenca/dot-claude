@@ -1,0 +1,34 @@
+{
+  "name": "marketplace",
+  "version": "0.2.0",
+  "description": "Action toolkit for planning, diagnosing, improving, and operating search, recommender, and pre-member personalisation systems in two-sided trust marketplaces. Seven user-invokable commands plus a context-extractor meta-skill that captures your specific stack, composed over three research-grounded knowledge libraries. Canonical stack examples: OpenSearch, AWS Personalize, Twilio Segment, Amplitude, Databricks, Datadog — any compatible alternative works via the MCP connector abstraction.",
+  "author": {
+    "name": "Pedro Proenca",
+    "email": "pedro@pproenca.dev"
+  },
+  "homepage": "https://github.com/pproenca/dot-claude",
+  "repository": "https://github.com/pproenca/dot-claude",
+  "license": "MIT",
+  "keywords": [
+    "marketplace",
+    "two-sided",
+    "search",
+    "recommendations",
+    "personalisation",
+    "recsys",
+    "ranking",
+    "ltr",
+    "opensearch",
+    "elasticsearch",
+    "aws-personalize",
+    "datadog",
+    "databricks",
+    "amplitude",
+    "segment",
+    "observability",
+    "cold-start",
+    "conversion",
+    "diagnose",
+    "expand"
+  ]
+}

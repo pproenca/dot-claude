@@ -2,7 +2,7 @@
 
 > Ported from the [OpenAI Codex plugin](https://github.com/openai/codex) to Claude Code.
 
-This plugin packages iOS and Swift workflows in `plugins/build-ios-apps`.
+This plugin packages iOS and Swift workflows in `domain_plugins/build-ios-apps`.
 
 It currently includes these skills:
 
@@ -24,7 +24,7 @@ It currently includes these skills:
 
 The plugin lives at:
 
-- `plugins/build-ios-apps/`
+- `domain_plugins/build-ios-apps/`
 
 with this shape:
 

@@ -22,8 +22,13 @@
     },
     {
       "name": "build-ios-apps",
-      "source": "./plugins/build-ios-apps",
+      "source": "./domain_plugins/build-ios-apps",
       "description": "Build iOS apps with workflows for SwiftUI UI work, refactors, performance audits, and simulator debugging"
+    },
+    {
+      "name": "marketplace",
+      "source": "./domain_plugins/marketplace",
+      "description": "Action toolkit for planning, diagnosing, improving, and operating search, recommender, and pre-member personalisation systems in two-sided trust marketplaces. 7 commands plus a context-extractor meta-skill, over 3 research-grounded knowledge libraries. Canonical stack examples: OpenSearch, AWS Personalize, Twilio Segment, Amplitude, Databricks, Datadog."
     },
     {
       "name": "dev-debug-cpp",
