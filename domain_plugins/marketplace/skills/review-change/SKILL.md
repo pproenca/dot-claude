@@ -168,6 +168,24 @@ Apply these checks (from `marketplace-personalisation`):
 | `track-capture-negative-signals` | event change | Are negative signals captured? |
 | `obs-slice-metrics-by-segment` | observability | Are metrics decomposed by segment? |
 
+**If the change introduces or modifies a feature** (text, vision, wizard-sourced, structured, or derived), also apply these rules from `marketplace-recsys-feature-engineering`:
+
+| Rule | Applies when | Check |
+|------|-------------|-------|
+| `firstp-start-from-the-decision-not-the-algorithm` | any new feature | Is the feature tied to a specific decision, not "nice to have"? |
+| `firstp-tie-every-feature-to-a-specific-solution` | any new feature | Does it have at least one named consuming solution? |
+| `firstp-reject-features-you-cannot-serve-at-inference` | any new feature | Is training-serving parity guaranteed from design time? |
+| `firstp-kill-features-a-popularity-baseline-already-captures` | any new feature | Does it beat a popularity-baseline ablation? |
+| `audit-measure-coverage-before-modelling` | any new feature | Is the source asset ≥ 80% coverage? |
+| `quality-version-feature-definitions-in-one-registry` | any new feature | Is the definition registered, versioned, and owned? |
+| `quality-serve-training-and-inference-from-one-store` | any new feature | Is the feature served from the same store used for training? |
+| `quality-gate-features-on-coverage-and-drift` | any new feature | Are coverage-floor and PSI-drift alarms configured? |
+| `quality-scrub-pii-before-features-leave-secure-zone` | face / text feature | Is PII scrubbing in place before encoding? |
+| `prove-ship-one-feature-at-a-time` | rollout | Is the change isolated to a single feature? |
+| `prove-measure-lift-against-feature-ablated-variant` | rollout | Is the A/B against a feature-ablated variant (not just control)? |
+| `prove-dedicate-random-exploration-slice-to-new-features` | rollout | Is a 3-5% exploration slice reserved? |
+| `prove-kill-features-that-dont-earn-maintenance` | any existing feature being modified | Is it on the quarterly kill-review list? |
+
 #### 4c. Check observability
 
 Same as Search branch — which monitors catch the regression, what's SLO budget, blind spots.

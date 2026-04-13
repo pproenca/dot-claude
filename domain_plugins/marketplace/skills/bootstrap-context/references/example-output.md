@@ -15,6 +15,7 @@ pawmates-marketplace-context/
 ├── surfaces.md
 ├── events.md
 ├── indexes.md
+├── features.md
 ├── recipes.md
 ├── observability.md
 ├── liquidity.md
@@ -57,6 +58,7 @@ description: >
 | [surfaces.md](surfaces.md) | 14 surfaces (7 personalised, 7 not) |
 | [events.md](events.md) | Event taxonomy and 4 known gaps |
 | [indexes.md](indexes.md) | 3 production indexes (sitter_profiles, owner_listings, saved_searches) |
+| [features.md](features.md) | 34 production features across 3 entity types, 2 extraction pipelines (CLIP + sentence-transformer), 4 kill candidates |
 | [recipes.md](recipes.md) | 2 production solutions, 3 filters, cold-start strategy |
 | [observability.md](observability.md) | 5 dashboards, 12 monitors, 3 SLOs |
 | [liquidity.md](liquidity.md) | Liquidity state per 30 geos, seasonal pattern |

@@ -1,7 +1,7 @@
 {
   "name": "marketplace",
-  "version": "0.2.0",
-  "description": "Action toolkit for planning, diagnosing, improving, and operating search, recommender, and pre-member personalisation systems in two-sided trust marketplaces. Seven user-invokable commands plus a context-extractor meta-skill that captures your specific stack, composed over three research-grounded knowledge libraries. Canonical stack examples: OpenSearch, AWS Personalize, Twilio Segment, Amplitude, Databricks, Datadog — any compatible alternative works via the MCP connector abstraction.",
+  "version": "0.3.0",
+  "description": "Action toolkit for planning, diagnosing, improving, and operating search, recommender, and pre-member personalisation systems in two-sided trust marketplaces. Seven user-invokable commands plus a context-extractor meta-skill that captures your specific stack, composed over four research-grounded knowledge libraries spanning feature engineering, retrieval planning, pre-member conversion, and personalisation lifecycle. Canonical stack examples: OpenSearch, AWS Personalize, Twilio Segment, Amplitude, Databricks, Datadog — any compatible alternative works via the MCP connector abstraction.",
   "author": {
     "name": "Pedro Proenca",
     "email": "pedro@pproenca.dev"
@@ -29,6 +29,14 @@
     "cold-start",
     "conversion",
     "diagnose",
-    "expand"
+    "expand",
+    "feature-engineering",
+    "feature-store",
+    "embeddings",
+    "clip",
+    "two-tower",
+    "i2i",
+    "u2i",
+    "u2u"
   ]
 }

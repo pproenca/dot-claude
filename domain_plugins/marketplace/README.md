@@ -13,6 +13,7 @@ claude plugins add pproenca/dot-claude marketplace
 This plugin transforms Claude into a marketplace relevance + personalisation collaborator. It helps you:
 
 - Find new places to personalise beyond the obvious listing feed
+- Design features from raw assets (listing photos, owner metadata, sitter wizard responses) for item-to-item, user-to-item, and user-to-user scoring
 - Diagnose cold-start, conversion-funnel, feed-staleness, relevance-regression, and liquidity-imbalance problems against live data
 - Review search and personalisation changes before shipping against golden sets and monitor thresholds
 - Design Datadog observability and golden evaluation sets for every surface
@@ -22,7 +23,7 @@ The plugin composes **three layers**:
 
 1. **Action commands** — what you type when you want Claude to do something. Structured workflows, connector-aware, always announce read queries before executing.
 2. **Context extractor** (`/marketplace:bootstrap-context`) — interrogates your stack and generates a company-specific marketplace-context skill with your surfaces, events, indexes, recipes, observability, KPIs, liquidity state, gotchas, and golden set. Mirrors the `data` plugin's `data-context-extractor` pattern.
-3. **Knowledge libraries** — three distilled rule libraries grounded in published research and engineering literature. Auto-loaded when relevant. They cover the pre-member journey, search and retrieval on OpenSearch, and the AWS Personalize lifecycle.
+3. **Knowledge libraries** — four distilled rule libraries grounded in published research and engineering literature. Auto-loaded when relevant. They cover feature engineering from raw assets, search and retrieval planning, the pre-member conversion journey, and the personalisation lifecycle.
 
 ### With your stack connected (example)
 
@@ -53,11 +54,12 @@ You can still use every command. Action skills will ask for data you paste or up
 
 | Skill | Rules | Role |
 |-------|-------|------|
+| `marketplace-recsys-feature-engineering` | 44 in 8 categories | **Upstream foundation.** First-principles guide for deriving recsys features from raw marketplace assets — listing photos, owner metadata, sitter wizard responses — for item-to-item, user-to-item, and user-to-user scoring. Covers asset auditing, decision-first decomposition, vision extraction (CLIP, room/amenity detection, aesthetic scoring), listing text and geo encoding (H3, sentence transformers, structured pet triples), wizard design (information-gain ordering), derived composition (two-tower, ANN shelves, symmetric mutual-fit, interpretable subscores), feature-store governance (training-serving parity, coverage gates, PSI drift), and incremental value proof. Grounded in Airbnb / Pinterest / DoorDash / Uber / Netflix / Google engineering literature and foundational recsys papers. |
 | `marketplace-pre-member-personalisation` | 53 in 10 categories | Anonymous landing through onboarding, registration, and the paywall. Anonymous signal inference, side-specific validation, information-asymmetry closure, social proof, conversion psychology, identity stitching. Grounded in Cialdini, Kahneman, Roth, Fogg, Bandura, Slovic, NN/g, and the Airbnb/DoorDash engineering literature. |
 | `marketplace-search-recsys-planning` | 57 in 10 categories | Planning and design for search and recommender systems. User-intent framing, surface taxonomy, index design, query understanding, retrieval strategy, ranking, search-plus-recs blending, measurement, dashboard and alerting. Canonical example: OpenSearch. |
 | `marketplace-personalisation` | 49 in 9 categories | Designing, building, and improving the personalisation lifecycle. Event tracking, dataset and schema design, two-sided matching, cold start, feedback loops, bias control, recipe selection, serving-time re-ranking, observability. Canonical example: AWS Personalize. |
 
-Each library ships with a `SKILL.md` entry point, an `AGENTS.md` long-form table of contents, one `references/` file per rule (with primary-source citations), planning and improving playbooks, living gotchas logs, and authoring templates. The action commands above invoke these libraries as their research backbone.
+Each library ships with a `SKILL.md` entry point, an `AGENTS.md` long-form table of contents, one `references/` file per rule (with primary-source citations), playbooks, living gotchas logs, and authoring templates. The action commands above invoke these libraries as their research backbone. `marketplace-recsys-feature-engineering` sits **upstream** of the other three — it decides what to extract from raw assets *before* the other libraries treat those features as inputs.
 
 ## Example Workflows
 
@@ -154,8 +156,17 @@ anonymous visitor  ─►  registered  ─►  paid member  ─►  booked  ─�
   pre-member-personalisation   search-recsys-planning       personalisation
                                       │                           │
                                       └───────── shared ──────────┘
+                                               ▲
+                                               │
+                              ┌────────────────┴────────────────┐
+                              │ marketplace-recsys-              │
+                              │ feature-engineering              │
+                              │ (upstream foundation — what to   │
+                              │  extract from raw assets before  │
+                              │  the other three can use it)     │
+                              └──────────────────────────────────┘
 
-          All three are invoked by the action commands above
+          All four libraries are invoked by the action commands above
                              │
                              ▼
               bootstrap-context captures your stack

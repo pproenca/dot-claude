@@ -38,6 +38,7 @@ Company-specific record for {{company}}'s two-sided marketplace between {{side-a
 | [surfaces.md](surfaces.md) | Surface inventory with current personalisation state |
 | [events.md](events.md) | Event taxonomy and known gaps |
 | [indexes.md](indexes.md) | ~~search engine indexes, mappings, analyzers |
+| [features.md](features.md) | ~~feature store registry: per-feature coverage, freshness, owner, consuming solutions |
 | [recipes.md](recipes.md) | ~~personalisation engine datasets, solutions, filters |
 | [observability.md](observability.md) | ~~observability dashboards, monitors, SLOs |
 | [liquidity.md](liquidity.md) | Supply-demand state per geo / season / side |

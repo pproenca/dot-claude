@@ -28,7 +28,7 @@
     {
       "name": "marketplace",
       "source": "./domain_plugins/marketplace",
-      "description": "Action toolkit for planning, diagnosing, improving, and operating search, recommender, and pre-member personalisation systems in two-sided trust marketplaces. 7 commands plus a context-extractor meta-skill, over 3 research-grounded knowledge libraries. Canonical stack examples: OpenSearch, AWS Personalize, Twilio Segment, Amplitude, Databricks, Datadog."
+      "description": "Action toolkit for planning, diagnosing, improving, and operating search, recommender, and pre-member personalisation systems in two-sided trust marketplaces. 7 commands plus a context-extractor meta-skill, over 4 research-grounded knowledge libraries (feature engineering, search planning, pre-member conversion, personalisation lifecycle). Canonical stack examples: OpenSearch, AWS Personalize, Twilio Segment, Amplitude, Databricks, Datadog."
     },
     {
       "name": "dev-debug-cpp",

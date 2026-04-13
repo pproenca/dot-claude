@@ -51,6 +51,7 @@ Check for these categories (see [CONNECTORS.md](../../CONNECTORS.md)):
 - `~~product analytics` — Amplitude, Twilio Segment, Mixpanel, ...
 - `~~observability` — Datadog, Grafana, New Relic, ...
 - `~~data warehouse` — Databricks, Snowflake, BigQuery, ...
+- `~~feature store` — Databricks Feature Store, SageMaker Feature Store, Feast, Tecton, ...
 
 **Announce what was detected** before running any query, then proceed with targeted discovery. Examples:
 
@@ -75,6 +76,12 @@ Check for these categories (see [CONNECTORS.md](../../CONNECTORS.md)):
 **If `~~data warehouse` is connected:**
 1. List tables / views matching marketplace patterns: `events`, `impressions`, `clicks`, `bookings`, `listings`, `users`, `sessions`, `searches`
 2. Sample a few rows from each to understand grain and key columns
+
+**If `~~feature store` is connected:**
+1. List feature views / feature groups / registered features
+2. For each production feature: pull definition, owner, coverage, freshness, training-serving parity status
+3. Cross-reference against the `~~personalisation engine` solutions to see which features feed which recipe
+4. Ask: "Which features are in production? Which are experimental? Any suspected kill candidates (features not earning their maintenance)?"
 
 Every query is **announced before running** and **read-only**. Do not write to any data source.
 
@@ -164,6 +171,7 @@ Structure:
 ├── surfaces.md           # Surface inventory with current personalisation state
 ├── events.md             # Event taxonomy, known gaps
 ├── indexes.md            # ~~search engine indexes, mappings, analyzers
+├── features.md           # ~~feature store registry, per-feature coverage / freshness / owner / solution mapping
 ├── recipes.md            # ~~personalisation engine datasets, solutions, filters
 ├── observability.md      # ~~observability dashboards, monitors, SLOs
 ├── liquidity.md          # Supply-demand state per geo / season / side
@@ -243,6 +251,7 @@ Before presenting a generated skill, verify:
 - [ ] At least one surface per broad category (search, feed, email/push, onboarding, paywall) in `surfaces.md`
 - [ ] Impression event in `events.md` documents whether `rank_position` and `model_version` are logged
 - [ ] At least one production index in `indexes.md` (if `~~search engine` connected)
+- [ ] At least one production feature in `features.md` with owner, coverage, and consuming-solution mapping (if `~~feature store` connected)
 - [ ] At least one production solution in `recipes.md` (if `~~personalisation engine` connected)
 - [ ] At least one dashboard and one SLO in `observability.md` (if `~~observability` connected)
 - [ ] `gotchas.md` has at least one entry (the user will add more over time)

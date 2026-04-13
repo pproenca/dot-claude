@@ -89,6 +89,7 @@ Check for a marketplace-context skill (in `./.claude/skills/*-marketplace-contex
    - `anonymous` or `registered pre-paid` → `marketplace-pre-member-personalisation`
    - `paid pre-active` / `active` / `retained` → `marketplace-personalisation`
    - Mixed or unclear → load both
+   - **If the proposal requires building new features** (vision, text, wizard-sourced, or derived) → also load `marketplace-recsys-feature-engineering`. The first-principles rules (`firstp-start-from-the-decision-not-the-algorithm`, `firstp-reject-features-you-cannot-serve-at-inference`, `firstp-kill-features-a-popularity-baseline-already-captures`) are the gate before any new-feature proposal can ship.
 
 3. **Determine the personalisation approach**:
 

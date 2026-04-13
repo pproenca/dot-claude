@@ -17,6 +17,7 @@ The three background knowledge libraries (`marketplace-pre-member-personalisatio
 | Product analytics | `~~product analytics` | Amplitude, Twilio Segment (CDP)\* | Mixpanel, Heap, PostHog |
 | Observability | `~~observability` | Datadog\* | Grafana, New Relic, Honeycomb, CloudWatch |
 | Data warehouse | `~~data warehouse` | Databricks\* | Snowflake, BigQuery, Redshift, Athena |
+| Feature store | `~~feature store` | Databricks Feature Store\*, SageMaker Feature Store\* | Feast, Tecton, Hopsworks, Vertex AI Feature Store |
 
 \* Placeholder — MCP URL not yet configured. Edit `.mcp.json` to point at your own server.
 

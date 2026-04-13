@@ -274,6 +274,119 @@ All MCP queries are **read-only** and must be **announced before execution**.
 
 ---
 
+## `features.md`
+
+**Purpose**: Record the state of the `~~feature store` (or feature catalogue) — every feature in production, its owner, coverage, freshness, training-serving-parity status, and which `~~personalisation engine` solutions consume it. Grounds `/marketplace:review-change` for feature-level changes and `/marketplace:expand-personalisation` for proposals that require new features. Pairs with the `marketplace-recsys-feature-engineering` knowledge library — that library has the principles; this file has the state.
+
+### Structure
+
+```markdown
+# Feature Store
+
+## Registry
+
+### `{{feature_name}}`
+
+- **Type**: {{categorical | numeric | multi-hot | embedding | derived-score}}
+- **Source**: {{raw listing metadata | listing photo | sitter wizard | event stream | derived from other features}}
+- **Extraction**: {{pipeline path, model (if learned), batch or streaming}}
+- **Entity**: {{user | item | pair | context}}
+- **Consuming solutions**: {{list of ~~personalisation engine solutions}}
+- **Consuming indexes**: {{list of ~~search engine indexes if the feature is indexed}}
+- **Coverage**: {{% non-null in live data over 7d}}
+- **Freshness**: {{max age at serving time — SLA + observed p95}}
+- **Training-serving parity**: {{served from same store? | offline-only? | online-only?}}
+- **Owner**: {{team or person}}
+- **Registered at**: {{date}}
+- **Known drift**: {{notes}}
+- **Notes**: {{anything else}}
+
+## Per-entity index
+
+### Listing features
+
+| Feature | Type | Coverage | Freshness | Owner | Consumers |
+|---------|------|---------|-----------|-------|-----------|
+| ... | ... | ... | ... | ... | ... |
+
+### User features
+
+| Feature | Type | Coverage | Freshness | Owner | Consumers |
+|---------|------|---------|-----------|-------|-----------|
+| ... | ... | ... | ... | ... | ... |
+
+### Pair features (u2u, u2i at scoring time)
+
+| Feature | Type | Coverage | Freshness | Owner | Consumers |
+|---------|------|---------|-----------|-------|-----------|
+| ... | ... | ... | ... | ... | ... |
+
+## Feature pipelines
+
+- **Vision extraction**: {{pipeline: CLIP / fine-tuned model / vendor API, frequency, cost}}
+- **Text extraction**: {{pipeline: sentence-transformer, topic model, etc.}}
+- **Structured transforms**: {{H3 geo-hashing, stay-duration binning, pet triple parsing}}
+- **Derived composition**: {{two-tower, ANN shelf, subscore blends}}
+
+## Known gaps
+
+1. {{feature we know we need but haven't built}}
+2. {{feature that exists but doesn't clear the maintenance bar}}
+
+## Kill candidates
+
+{{features under review for deprecation, with attributed lift measurement}}
+
+## Training-serving skew log
+
+{{append-only log of observed skew incidents and their root cause}}
+```
+
+### Questions
+
+1. "What's in your feature store today? Which features are in production?"
+2. "For each production feature: what entity, what type, what pipeline, what coverage, what freshness?"
+3. "Which features power which `~~personalisation engine` solution? Any features with no consumer?"
+4. "Any features you suspect are redundant with a popularity baseline — i.e., they don't beat a feature-ablated variant?"
+5. "Any features you can't actually serve at inference at the required latency?"
+6. "What's your governance model — who can write, who reviews, how are schemas versioned, is there a single registry?"
+7. "What's the extraction pipeline for vision, text, and derived scores? Any batch vs streaming split worth knowing?"
+8. "Any known training-serving skew incidents?"
+9. "Any feature gaps you know about — signals humans use that your model can't see?"
+
+### MCP queries
+
+- **`~~feature store`**:
+  - `list_feature_views` / `list_features` / `list_entities`
+  - `get_feature_view({{name}})` to pull definition, schema, owner
+  - `describe_feature({{name}})` for lineage
+
+- **`~~data warehouse`**: profile coverage for the top-used features
+  ```sql
+  SELECT
+    feature_name,
+    COUNT(*) AS total,
+    COUNT(feature_value) * 1.0 / COUNT(*) AS coverage,
+    MAX(feature_asof_ts) AS freshest,
+    MIN(feature_asof_ts) AS oldest
+  FROM feature_values
+  WHERE snapshot_date = CURRENT_DATE - 1
+  GROUP BY 1
+  ORDER BY coverage DESC
+  ```
+
+- **`~~observability`**: list monitors matching `feature` / `drift` / `coverage` / `psi` to see what's already watched
+
+### Quality checks
+
+- [ ] At least one production feature per entity type (user, item, pair)
+- [ ] Every feature has an owner and at least one consuming solution (or is flagged as orphan)
+- [ ] Training-serving parity is explicit per feature (same store, offline-only, or online-only)
+- [ ] Known gaps section has at least one entry (every system has them)
+- [ ] Kill candidates section exists, even if empty (per `prove-kill-features-that-dont-earn-maintenance`)
+
+---
+
 ## `recipes.md`
 
 **Purpose**: Document every production `~~personalisation engine` dataset, solution / campaign / recommender, and filter. Grounds `/marketplace:review-change` for personalisation changes.

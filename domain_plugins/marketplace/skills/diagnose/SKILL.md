@@ -116,6 +116,8 @@ Announce the chosen branch before proceeding, and ask the user to confirm or cor
 3. **Are impressions concentrating faster than clicks?** → feedback loop is in training data. Inverse-propensity weight the training data.
 4. **Is recency the problem?** → check freshness weighting in the ranker (`rank-use-function-score-for-business-signals` with a decay term).
 5. **Is there a content-side collapse?** → new listing volume may have dropped. Check `indexes.md` for update pattern and volume trend.
+6. **Is there feature drift?** → check `features.md` for coverage gaps, PSI alarms, training-serving skew. If a feature has drifted, the model's effective input distribution has shifted even though no code changed. Load `marketplace-recsys-feature-engineering` rules (`quality-gate-features-on-coverage-and-drift`, `quality-serve-training-and-inference-from-one-store`) to frame the fix.
+7. **Has a feature been silently killed?** → check whether any feature the solution depends on is in a kill-review or has lost its upstream pipeline. A ranker silently degrades when a feature becomes null but the serving path doesn't re-score. Cross-reference `features.md` consumer mapping with the current solution definition.
 
 **Prescribed rules**:
 - `loop-detect-death-spirals` — the monitor that should have caught this
