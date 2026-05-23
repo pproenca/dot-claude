@@ -1,312 +1,171 @@
 # Distillation Recipe
 
-Distillation takes authoritative knowledge sources and produces progressive-disclosure reference rules. This is the production method for **Library/API Reference** and **Code Quality/Review** skills.
+Distillation turns authoritative sources into a **distilled reference**: the smallest set of decisions a capable model gets wrong by default, each explained so the model can generalize from it. It is the method for **Library/API Reference** and **Code Quality/Review** skills.
 
-## What Distillation Produces
+Start from this premise: **the model is already competent.** It knows the language. Your job is not to re-teach it — it is to correct the specific points where its default behavior is wrong, outdated, or misaligned with this library/codebase. Everything else is noise that buries the signal.
+
+## What distillation produces
 
 ```
 {skill-name}/
-├── SKILL.md              # Entry point with category table + quick reference
-├── AGENTS.md             # Auto-built TOC (via build-agents-md.js)
-├── metadata.json         # discipline: "distillation"
+├── SKILL.md              # Entry point: when to apply + quick reference
+├── AGENTS.md             # Auto-built TOC (build-agents-md.js) — never hand-written
+├── metadata.json
 ├── references/
-│   ├── _sections.md      # Category definitions ordered by impact
-│   └── {prefix}-{slug}.md # Individual rules (40+ total)
-└── assets/
-    └── templates/
-        └── _template.md  # Rule authoring guide for extensions
+│   ├── _sections.md      # Category definitions, ordered by importance
+│   └── {prefix}-{slug}.md # Individual rules
+└── assets/templates/_template.md
 ```
 
-## Core Principle: The Cascade Effect
+## The one test that matters: does the rule change behavior?
 
-Performance problems earlier in the execution lifecycle have multiplicative impact on all downstream operations. Optimize from the top of the waterfall.
+A rule earns its place only if you can name the **wrong default it corrects** — the thing a competent model (or engineer) would otherwise do, that this rule prevents. Apply this to every candidate rule:
 
-This principle drives everything: category ordering, impact levels, and rule priority.
+1. **What does the model do here without the rule?** State it plainly.
+2. **Is that actually wrong — or just not how you'd phrase it?** If the default is already correct, **cut the rule.** Restating what the model already does is hand-holding; it dilutes the rules that matter.
+3. **Will the WHY generalize?** A rule that explains the underlying reason covers a dozen situations you never enumerated. A rule that lists scenarios covers only those scenarios.
 
-## Execution Lifecycle Mapping
+> Brevity is the soul of wit. Prefer one principle that generalizes over ten rules that enumerate. If you cannot articulate the wrong default a rule corrects, it is not a rule — it is filler. Delete it.
 
-For any technology, identify the stages from input to output. Problems at earlier stages cascade:
+**Proof, not word count.** There is no rule-count target. Completeness is proven *behaviorally*: run `/dev-skill:eval`. If the skill makes the model handle the target tasks correctly, it is complete — whether that took 6 rules or 26. Under-coverage shows up as a failed eval, not as a low number. Padding to hit a count is the exact failure mode this recipe exists to prevent.
 
-**Web Applications (React/Next.js):**
+## Explain WHY, never just WHAT
+
+The single highest-leverage habit. The model generalizes from understood reasoning, not from dictation. When it knows *why*, it applies the principle to cases you didn't foresee. When you only dictate, it follows mechanically and breaks at the first edge case.
+
+| Effective — generalizes | Ineffective — brittle |
+|-------------------------|-----------------------|
+| "Thread a context through every outbound call so a cancelled request also cancels the goroutines it spawned" | "ALWAYS pass `context.Context`" |
+| "Return early on the error so the happy path stays unindented and a missing check is visible" | "Handle errors properly" |
+| "Mark the dependency array exhaustively; a missing dep captures a stale value from the render it closed over" | "Use `useEffect` correctly" |
+
+If you catch yourself writing ALWAYS / NEVER / MUST in caps, stop and write the consequence instead.
+
+## Examples: one canonical, a foil only when the trap is real
+
+Default to a **single correct, copy-pasteable example** — the canonical way to do the thing. That is usually all the model needs.
+
+Add an **Incorrect / Correct** pair *only* when the wrong way is a genuine, common trap the reader would otherwise fall into. A manufactured "incorrect" example — a strawman nobody would actually write — is worse than none: it costs tokens and teaches nothing. When you do use a foil, keep the diff minimal (same names, only the key line changes) so the contrast is the lesson.
+
+```markdown
+## {The decision this rule settles}
+
+{1–3 sentences of WHY — what the default does and why it's wrong, in concrete terms.}
+
+```{language}
+{the canonical way — production-realistic names, never foo/bar}
 ```
-request → network → build → server → serialize → client → hydrate → render → runtime
+
+Reference: [{source title}]({url})
 ```
 
-**Systems Programming (C++/Rust/Go):**
-```
-preprocess → compile → link → load → execute → allocate → compute → I/O
-```
+## Categories and ordering
 
-**Database Operations:**
-```
-connect → parse → plan → optimize → execute → fetch → serialize → return
-```
+Group rules into 4–8 categories so the reader can navigate. Order by **importance × frequency** — the decisions that come up most and cost most when wrong go first.
 
-**Mobile Applications:**
-```
-launch → load → layout → render → interact → background → persist
-```
+**Impact tiers and quantified metrics are optional and apply only to genuinely performance-shaped skills.** For a perf skill, importance often follows the execution lifecycle (earlier stages cascade downstream), and tagging rules with an `impact` level and a quantified `impactDescription` ("2–10× improvement", "O(n)→O(1)") is meaningful. For correctness, idiom, or API-usage skills, **skip the tiers** — ordering by importance is enough. Never invent a "2–10× improvement" for a rule about API correctness; a plain consequence ("prevents silent truncation") is the honest description.
 
-**Backend Services (Node.js, Python, Java):**
-```
-request → route → validate → process → I/O → serialize → respond
-```
+### Category starting points (a performance lens — adapt, don't obey)
 
-## Impact Level Framework
+These are useful when the skill *is* about performance. They are starting points, not a required taxonomy.
 
-| Level | Criteria | Cascade Effect |
-|-------|----------|----------------|
-| CRITICAL | Affects ALL downstream operations | Everything waits |
-| HIGH | Affects MOST downstream operations | Major path blocked |
-| MEDIUM-HIGH | Affects specific downstream paths | Partial blocking |
-| MEDIUM | Local impact, high frequency | Common but contained |
-| LOW-MEDIUM | Micro-optimization, hot paths | Measurable in loops |
-| LOW | Edge cases, expert patterns | Specific scenarios |
+| Domain | Typical high-impact categories (prefixes) |
+|--------|-------------------------------------------|
+| Web frameworks (React, Vue) | network waterfalls (`async`), bundle size (`bundle`), server work (`server`), rendering (`render`) |
+| Systems (C++, Rust, Go) | memory (`mem`), cache locality (`cache`), algorithms (`algo`), concurrency (`conc`) |
+| Backend services | I/O patterns (`io`), concurrency (`conc`), serialization (`serial`), caching (`cache`) |
+| Databases | query plans (`query`), indexing (`index`), connections (`conn`), transactions (`tx`) |
 
-## Category Derivation Algorithm
+For non-performance skills, derive categories from the **kinds of decisions** the domain forces: e.g. for an API reference — auth, pagination, error handling, idempotency, rate limits.
 
-1. **Map the execution lifecycle** of the target technology
-2. **Identify where mistakes occur** at each stage
-3. **Rank by cascade effect** (how much downstream is blocked)
-4. **Rank by frequency** (how often developers make this mistake)
-5. **Combine into priority ordering**: Impact x Frequency
-6. **Name categories** by the problem domain, not the solution
-
-Target: 6-8 categories. Higher-impact categories get more rules (5-8 for CRITICAL, 3-5 for HIGH, 2-4 for MEDIUM/LOW). Total: 40-60 rules.
-
-## Rule Anatomy
-
-### Required Structure
+## Rule anatomy
 
 ```markdown
 ---
-title: {Action-Oriented Title}
-impact: CRITICAL|HIGH|MEDIUM-HIGH|MEDIUM|LOW-MEDIUM|LOW
-impactDescription: {quantified impact}
-tags: {prefix}, {technique1}, {technique2}
+title: {Decision-oriented title}
+tags: {prefix}, {concept}, {concept}
+# optional — performance skills only:
+# impact: CRITICAL|HIGH|MEDIUM|LOW
+# impactDescription: 2-10× improvement
 ---
 
-## {Title}
+## {title}
 
-{1-3 sentences explaining WHY this matters — what goes wrong without this pattern and what
-the cascade effect is. This is the highest-signal part of the rule. The model generalizes
-from understood reasoning, not from dictation. Don't just say "use X" — explain what
-happens when you don't, in concrete terms the model can internalize.}
-
-**Incorrect ({problem label}):**
+{WHY: the wrong default and its concrete consequence.}
 
 ```{language}
-{Bad code — production-realistic, not strawman}
-{// Comments explaining the cost}
+{canonical example}
 ```
 
-**Correct ({solution label}):**
-
-```{language}
-{Good code — minimal diff from incorrect}
-{// Comments explaining the benefit}
+Reference: [{source title}]({url})
 ```
 
-Reference: [{title}]({url})
-```
+**Required:** `title`; `tags` with the first tag = the category prefix; an H2 matching the title; a WHY; at least one fenced code block with a language; a source link.
+**Optional:** `impact`, `impactDescription`; an Incorrect/Correct foil; `**When NOT to use this pattern:**`; `**Alternative ({context}):**`.
 
-### Optional Sections
-
-| Section | When to Include |
-|---------|-----------------|
-| `**Alternative ({context}):**` | Multiple valid approaches |
-| `**When NOT to use this pattern:**` | Important exceptions exist |
-| `**Implementation:**` | Reusable code snippet worth providing |
-| `**Benefits:**` | Enumerable advantages |
-| `**Common use cases:**` | When listing typical scenarios |
-| `**Warning ({context}):**` | Highlighting gotchas |
-| `**With {tool}:**` | Tool-specific variation |
-
-### Title Patterns
+### Title patterns
 
 | Pattern | When | Example |
 |---------|------|---------|
-| `Avoid {Anti-pattern}` | Prohibiting | Avoid Barrel File Imports |
-| `Use {X} for {Y}` | Recommending | Use SWR for Automatic Deduplication |
-| `{Verb} {Object} in {Context}` | Contextual | Cache Property Access in Loops |
-| `{X} for {Y}` | Tool + use case | Promise.all() for Independent Operations |
+| `{Verb} {object} {context}` | Recommending an action | `Thread context through outbound calls` |
+| `Avoid {anti-pattern}` | Prohibiting a real trap | `Avoid barrel-file imports` |
+| `Use {X} for {Y}` | A specific tool/API | `Use errgroup for fan-out` |
+| `{X} for {Y}` | API + use case | `Promise.all() for independent work` |
 
-### Impact Description Patterns
+### Tag rules
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| Multiplier | `N-Mx improvement` | `2-10x improvement` |
-| Time | `Nms reduction` | `200-800ms import cost` |
-| Complexity | `O(x) to O(y)` | `O(n) to O(1)` |
-| Prevention | `prevents {problem}` | `prevents stale closures` |
-| Reduction | `reduces {thing} by N%` | `reduces reflows by 80%` |
+1. First tag = the category prefix (this is what files are grouped by).
+2. Add 2–4 more for concepts/tools. Lowercase, hyphenated.
 
-### Tag Rules
+## Sources: authoritative or nothing
 
-1. First tag MUST be the category prefix
-2. Add 2-5 additional tags for techniques, tools, concepts
-3. Lowercase, hyphenated for multi-word tags
+The strength of distillation is that it draws only from sources that are actually right. Hold the line — this is where SEO sludge gets in if you let it.
 
-## Reference Hierarchies
+### Accept
+- Primary maintainers' docs (react.dev, go.dev, the library's own README / API reference)
+- The library's own source code and type definitions
+- Specs and standards (TC39, RFCs, PEPs, ISO, the database's reference manual)
+- Named engineering writing with first-hand authority or real data (a maintainer's post; a benchmark that states its methodology)
 
-Starting points for category derivation by technology domain.
+### Reject on sight — the SEO layer
+- Content farms and listicles (geeksforgeeks, w3schools-style pages, "Top 10 …" posts)
+- AI-generated SEO filler: no named author, no date, generic phrasing that just restates the docs
+- Stack Overflow / Reddit answers *as a primary citation* — fine as a lead, but then cite the doc or code they point to
+- Undated blogs, marketing pages, course-seller "ultimate guide" content
 
-### Systems Languages (C++, Rust, Go)
+### Verify every source you keep
+1. **Authority** — written by a maintainer, spec author, or named expert? Or anonymous?
+2. **Currency** — does it match the library's current major version? Stale advice is wrong advice.
+3. **Support** — does the page actually back the claim, or did the title just sound right?
+4. **Traceability** — can you reproduce the claim from a primary source (docs/spec/code)? If you can't trace it, drop it.
 
-| Priority | Category | Prefix | Rationale |
-|----------|----------|--------|-----------|
-| 1 | Memory Allocation | mem- | Heap vs stack affects everything |
-| 2 | Cache Efficiency | cache- | Data locality determines real-world speed |
-| 3 | Algorithm Complexity | algo- | O(n) considerations for scalability |
-| 4 | Data Structure Selection | ds- | Right container for the job |
-| 5 | I/O and Syscall Patterns | io- | Minimize kernel crossings |
-| 6 | Concurrency/Threading | conc- | Synchronization overhead |
-| 7 | Micro-optimizations | micro- | Branch prediction, vectorization |
+When sources conflict, the primary one wins. When in doubt, cite the docs or the code, not a blog.
 
-### Web Frameworks (React, Vue, Angular)
+## Generation workflow
 
-| Priority | Category | Prefix | Rationale |
-|----------|----------|--------|-----------|
-| 1 | Network Waterfalls | async- | Sequential requests multiply latency |
-| 2 | Bundle/Payload Size | bundle- | Directly affects TTI and LCP |
-| 3 | Server-Side Processing | server- | SSR/SSG optimization |
-| 4 | Client-Side Data | client- | Caching, deduplication |
-| 5 | Rendering Optimization | render- | Virtual DOM, reconciliation |
-| 6 | DOM Efficiency | dom- | Batching, layout thrashing |
-| 7 | JavaScript Runtime | js- | Micro-optimizations in hot paths |
+1. **Research** — gather authoritative sources; list the *wrong defaults* worth correcting (this list, not a count, scopes the skill).
+2. **Planning checkpoint** — show categories, the wrong-default each rule corrects, and the vetted sources; get approval. Optionally run the `preflight-validator` agent.
+3. **Generate** — `references/_sections.md` → rules (apply the earn-its-place test to each; cut anything that restates a correct default) → `SKILL.md`, `metadata.json`, `assets/templates/_template.md`.
+4. **Build AGENTS.md** — `node ${CLAUDE_PLUGIN_ROOT}/scripts/build-agents-md.js {skill-dir}`. Never hand-write it.
+5. **Validate** — `node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-skill.js {skill-dir}`, then the `skill-reviewer` agent with this discipline's `RUBRIC.md`.
+6. **Prove** — `/dev-skill:eval`. Failed evals reveal genuine gaps; fill those. Do not add rules the evals don't demand.
 
-### Database/Query Systems
-
-| Priority | Category | Prefix | Rationale |
-|----------|----------|--------|-----------|
-| 1 | Query Plan Optimization | query- | Wrong plan = orders of magnitude slower |
-| 2 | Index Utilization | index- | Full scans catastrophic at scale |
-| 3 | Connection Management | conn- | Pooling, connection overhead |
-| 4 | Transaction Patterns | tx- | Lock contention, isolation |
-| 5 | Caching Strategies | cache- | Reduce database load |
-| 6 | Data Modeling | model- | Normalization vs denormalization |
-
-### Mobile Development (iOS, Android)
-
-| Priority | Category | Prefix | Rationale |
-|----------|----------|--------|-----------|
-| 1 | Launch Time | launch- | First impression, retention |
-| 2 | Memory Management | mem- | Limited resources, OOM kills |
-| 3 | UI Thread | ui- | Janky UI, ANRs |
-| 4 | Network Efficiency | net- | Latency, bandwidth constraints |
-| 5 | Battery Consumption | battery- | User expectation of all-day |
-| 6 | Storage I/O | storage- | Flash wear, read/write |
-| 7 | Animation | anim- | 60fps requirement |
-
-### Backend Services (Node.js, Python, Java)
-
-| Priority | Category | Prefix | Rationale |
-|----------|----------|--------|-----------|
-| 1 | I/O Patterns | io- | Async vs sync, pooling |
-| 2 | Memory Management | mem- | GC pressure, heap sizing |
-| 3 | Concurrency Model | conc- | Event loop, threads |
-| 4 | Serialization | serial- | JSON parsing, protobuf |
-| 5 | Caching | cache- | Redis, memoization |
-| 6 | Algorithm Efficiency | algo- | O(n) in hot paths |
-| 7 | Runtime Tuning | runtime- | JIT, inline caching |
-
-## Source Authority
-
-### Acceptable Sources
-
-| Type | Purpose | Example |
-|------|---------|---------|
-| Official docs | Authoritative API reference | react.dev, golang.org |
-| Tool docs | Library usage | swr.vercel.app |
-| GitHub repos | Implementation reference | github.com/... |
-| Engineering blogs | Benchmark data + rationale | vercel.com/blog/... |
-
-### Source Criteria
-
-1. **Primary maintainers** — React team for React, Vercel for Next.js
-2. **Well-maintained OSS** — Active GitHub, npm downloads
-3. **Benchmark-backed claims** — Engineering blogs with data
-4. **Production-proven** — Used at scale
-
-### NOT Referenced
-
-- Tutorial sites, Stack Overflow, personal blogs without data, outdated docs
-
-## Generation Workflow
-
-### Full Workflow (recommended)
-
-```
-1. Research & Analysis
-   - Map execution lifecycle
-   - Derive categories
-   - Search authoritative sources
-
-2. Planning Checkpoint (user reviews)
-   - Display: lifecycle, categories, sources, rule distribution
-   - Ask approval via AskUserQuestion
-   - Optionally run preflight-validator agent
-
-3. Incremental Generation
-   a. Generate references/_sections.md → validate with --sections-only
-   b. Generate CRITICAL rules → validate batch
-   c. Generate HIGH rules → validate batch
-   d. Generate MEDIUM rules → validate batch
-   e. Generate LOW rules → validate batch
-
-4. Generate SKILL.md, metadata.json, assets/templates/_template.md
-
-5. Build AGENTS.md
-   node ${CLAUDE_PLUGIN_ROOT}/scripts/build-agents-md.js {skill-dir}
-
-6. Validate
-   node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-skill.js {skill-dir}
-   + skill-reviewer agent with distillation RUBRIC.md
-```
-
-### Quick Mode
-
-For experienced users who already know the categories:
-
-```
-1. Use Reference Hierarchy → generate _sections.md → validate --sections-only
-2. Generate all rules in parallel
-3. Generate SKILL.md, metadata.json, _template.md
-4. Build AGENTS.md
-5. Full validation + skill-reviewer
-```
-
-Quick mode triggers: "quick generate", "use standard categories", "skip planning", or user provides categories directly.
-
-## Build System
-
-AGENTS.md is BUILT by `build-agents-md.js`, never manually written. It produces a TOC-only navigation document with file links and impact levels (~65 lines vs ~600 with embedded content).
-
-```bash
-node ${CLAUDE_PLUGIN_ROOT}/scripts/build-agents-md.js {skill-dir}
-```
-
-Use `--verify-generated` flag in validate-skill.js to detect manual edits.
-
-## Sections File Format
+## Sections file format
 
 ```markdown
 # Sections
 
-This file defines all sections, their ordering, impact levels, and descriptions.
-The section ID (in parentheses) is the filename prefix used to group rules.
-
----
-
 ## 1. {Category Name} ({prefix})
 
-**Impact:** CRITICAL
-**Description:** {One sentence why this category matters and its cascade effect}
+**Description:** {One sentence: what decisions this category covers and why they matter.}
 
 ## 2. {Category Name} ({prefix})
 
-**Impact:** HIGH
-**Description:** {One sentence explanation}
+**Description:** {…}
 ```
 
-**IMPORTANT**: Use two trailing spaces after `**Impact:** CRITICAL` for proper markdown line breaks.
+`**Impact:** {LEVEL}` is optional — include it (with two trailing spaces for the line break) only for performance skills that use tiers. Sections must stay in importance order; if you use impact tiers, that order must be non-increasing (CRITICAL before HIGH, etc.).
+
+## Build system
+
+`AGENTS.md` is a slim, auto-generated table of contents (~60 lines), never the place to put content. Build it with `build-agents-md.js`; use `--verify-generated` in `validate-skill.js` to detect manual edits.

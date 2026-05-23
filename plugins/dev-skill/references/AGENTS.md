@@ -4,16 +4,11 @@
 Vercel Engineering
 January 2026
 
-> **Note:**
-> This document is mainly for agents and LLMs to follow when maintaining,
-> generating, or refactoring codebases. Humans may also find it useful,
-> but guidance here is optimized for automation and consistency by AI-assisted workflows.
-
 ---
 
 ## Abstract
 
-Comprehensive performance optimization guide for React and Next.js applications, designed for AI agents and LLMs. Contains 40+ rules across 8 categories, prioritized by impact from critical (eliminating waterfalls, reducing bundle size) to incremental (advanced patterns). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
+The performance decisions that most affect React and Next.js apps — eliminating request waterfalls, reducing bundle size, server vs. client work, and rendering — each rule correcting a specific wrong default. A performance-shaped skill, so rules carry impact tiers.
 
 ---
 

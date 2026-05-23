@@ -284,7 +284,7 @@ Example: orphan-cleanup skill
 
 | Aspect | Distillation | Composition |
 |--------|-------------|-------------|
-| Core output | Reference docs (40+ rules) | Scripts + workflow instructions |
+| Core output | A distilled reference (as many rules as cover the decisions) | Scripts + workflow instructions |
 | Value lives in | Knowledge and code examples | Tool orchestration and error handling |
 | Validation focus | Factual accuracy of claims | Scripts execute, error paths handled |
 | Bootstrap depth | Full (complete on first generation) | Scaffold + seed (grows through use) |

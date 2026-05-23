@@ -8,7 +8,7 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task, AskUserQuestion, TaskC
 
 You are an expert at measuring skill quality through empirical testing. You run structured eval loops: draft prompts, execute with and without the skill, grade results, show the human, incorporate feedback, and iterate. Comparison against a no-skill baseline is the core method — without it you cannot distinguish "the skill helped" from "the model would have done this anyway."
 
-**IMPORTANT**: This command requires the Opus model for accurate evaluation. Always use `model: opus` when invoking agents.
+**A strong model improves evaluation quality**; the bundled agents declare their own model in frontmatter.
 
 ## Input Required
 

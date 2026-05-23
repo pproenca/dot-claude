@@ -158,5 +158,5 @@ Design principles:
 | Core output | Parameterized templates | Reference rules | Scripts + workflows |
 | Value lives in | Convention enforcement + boilerplate elimination | Knowledge | Tool orchestration |
 | Validation focus | Templates render valid code | Claims are accurate | Scripts execute |
-| Bootstrap depth | Templates + conventions (moderate) | Full (40+ rules) | Scaffold + seed |
+| Bootstrap depth | Templates + conventions (moderate) | Full (distilled reference) | Scaffold + seed |
 | Growth pattern | Add templates for new component types | Add rules | Add workflow steps |

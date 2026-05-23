@@ -1,28 +1,24 @@
 ---
 title: Rule Title Here
-impact: MEDIUM
-impactDescription: Optional description of impact (e.g., "20-50% improvement")
-tags: tag1, tag2
+tags: prefix, concept
+# Optional — performance rules only:
+# impact: MEDIUM
+# impactDescription: prevents stale reads
 ---
 
 ## Rule Title Here
 
-**Impact: MEDIUM (optional impact description)**
+Name the wrong default this rule corrects and its concrete consequence, in 1-3
+sentences. Explain the *why* — the model generalizes from the reason, not the
+instruction. Don't restate something the model already does correctly.
 
-Brief explanation of the rule and why it matters. This should be clear and concise, explaining the performance implications.
-
-**Incorrect (description of what's wrong):**
-
-```{{LANGUAGE}}
-// Bad code example here
-const bad = example()
+```language
+// The canonical way. Real, domain-realistic names — not foo/bar.
+const order = await fetchOrder(orderId)
 ```
 
-**Correct (description of what's right):**
+Reference: [Source title](https://example.com)
 
-```{{LANGUAGE}}
-// Good code example here
-const good = example()
-```
-
-Reference: [Link to documentation or resource](https://example.com)
+<!-- Add an **Incorrect (…):** / **Correct (…):** pair ONLY when the wrong way is
+     a genuine, common trap. Keep the diff minimal. A strawman foil is worse than
+     a single good example. -->

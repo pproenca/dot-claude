@@ -19,10 +19,19 @@ const MIN_SECTION_DESCRIPTION_LENGTH = 20;
 const MIN_ABSTRACT_LENGTH = 100;
 const MIN_SKILL_DESCRIPTION_LENGTH = 50;
 const MAX_SKILL_MD_LINES = 500;
-const MIN_SKILL_MD_LINES = 50;
+// A SKILL.md is a navigation doc, not an essay — a tight one can be short. Only
+// warn when it's so short it's likely missing required sections.
+const MIN_SKILL_MD_LINES = 25;
+// No minimum rule count is enforced. A distilled skill is complete when it
+// changes behavior on its target tasks (proven by functional evals), not when
+// it reaches a count. Padding to a target dilutes signal — the opposite of the
+// goal. MIN_RULE_COUNT is retained only so legacy callers keep importing.
 const MIN_RULE_COUNT = 10;
 const MAX_RULE_COUNT = 100;
 const MAX_RULES_PER_CATEGORY = 15;
+// Quantified-impact metrics are optional and apply only to genuinely
+// performance-shaped rules. No percentage is enforced (forcing it manufactures
+// fake numbers). Retained for reference only.
 const TARGET_QUANTIFIED_PERCENT = 40;
 const MIN_CODE_BLOCKS_PER_RULE = 4;
 const MIN_PREFIX_LENGTH = 2;
@@ -308,7 +317,7 @@ const REQUIRED_FILES = ['SKILL.md', 'metadata.json'];
 
 // Discipline-specific required sections
 const REQUIRED_SKILL_SECTIONS_BY_DISCIPLINE = {
-  distillation: ['When to Apply', 'Rule Categories', 'Quick Reference'],
+  distillation: ['When to Apply', 'Quick Reference'],
   composition: ['When to Apply', 'Workflow Overview'],
   investigation: ['When to Apply', 'Common Symptoms'],
   extraction: ['When to Apply', 'Available Templates'],

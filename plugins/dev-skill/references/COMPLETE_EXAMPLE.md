@@ -1,6 +1,11 @@
 # Complete Example: React Best Practices Reference
 
-The following is a complete reference showing the expected output structure and quality level. Use this as your template for generating new skills.
+A worked example of the output structure and quality level. React is a
+**performance-shaped** skill, so it uses impact tiers and Incorrect/Correct
+foils — both are *optional* features (see RECIPE.md); correctness/idiom/API
+skills usually omit them. Treat this as a shape to follow, **not a rule-count
+target**: it has the rules it has because each corrects a real wrong default,
+not to hit a number.
 
 ## Reference: _sections.md
 
@@ -522,7 +527,7 @@ for (let i = 0; i < length; i++) {
   "version": "0.1.0",
   "organization": "Vercel Engineering",
   "date": "January 2026",
-  "abstract": "Comprehensive performance optimization guide for React and Next.js applications, designed for AI agents and LLMs. Contains 45+ rules across 8 categories, prioritized by impact from critical (eliminating waterfalls, reducing bundle size) to incremental (advanced patterns). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.",
+  "abstract": "The performance decisions that most affect React and Next.js apps — eliminating request waterfalls, reducing bundle size, server vs. client work, and rendering — each rule correcting a specific wrong default. A performance-shaped skill, so rules carry impact tiers.",
   "references": [
     "https://react.dev",
     "https://nextjs.org",

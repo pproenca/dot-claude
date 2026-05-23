@@ -147,9 +147,9 @@ class SkillValidator {
 
     // Discipline-specific checks
     if (discipline === 'distillation') {
-      // Full distillation validation pipeline (existing behavior)
-      issues.push(...this.validateReadmeMd(skillDir));
-
+      // README.md is optional. A skill is a context bundle, not a standalone
+      // repo — it does not need an Overview/Getting-Started/Contributing README
+      // with build commands. If one exists it is left untouched.
       const sections = this.parseSectionsFile(skillDir);
       issues.push(...this.validateSectionsFile(skillDir, sections));
       const ruleStats = this.validateRulesDir(skillDir, sections, issues);
@@ -448,7 +448,7 @@ class SkillValidator {
     // Validate frontmatter (universal)
     issues.push(...validateSkillFrontmatter(frontmatter, 'SKILL.md'));
 
-    // H1 "Best Practices" format check is distillation-only
+    // H1 presence check is distillation-only (the title text itself is free-form)
     if (discipline === 'distillation') {
       const organization = metadata?.organization || null;
       issues.push(...validateSkillH1Format(content, organization, 'SKILL.md'));
@@ -666,16 +666,13 @@ class SkillValidator {
       issues.push(createError('AGENTS.md', VALIDATION_MESSAGES.AGENTS_MISSING_REFERENCES));
     }
 
-    if (!content.includes('> **Note:**')) {
-      issues.push(createWarning('AGENTS.md', VALIDATION_MESSAGES.AGENTS_MISSING_NOTE));
-    }
+    // No "> **Note:** this document is for agents/LLMs" block is required.
+    // Telling the reader the reader is an AI is dead weight — the build script
+    // no longer emits it.
 
     if (sections.length > 0) {
       issues.push(...validateAgentsTocCompleteness(content, sections, 'AGENTS.md'));
     }
-
-    const technology = metadata?.technology || null;
-    issues.push(...validateAgentsNoteSpecific(content, technology, 'AGENTS.md'));
 
     return issues;
   }
@@ -708,27 +705,17 @@ class SkillValidator {
   }
 
   /**
-   * Validate overall statistics
-   * @param {{totalRules: number, quantifiedRules: number}} stats
+   * Overall statistics no longer produce warnings.
+   *
+   * Two checks used to live here and both fought against conciseness:
+   *   - a rule-count floor ("only N rules found") that rewarded padding, and
+   *   - a quantified-impact percentage that rewarded fake metrics.
+   * Completeness is now proven by functional evals (/dev-skill:eval), not by
+   * counts. Kept as a no-op so the call site and any consumers stay stable.
    * @returns {import('./types.js').ValidationIssue[]}
    */
-  validateStatistics(stats) {
-    const issues = [];
-
-    if (stats.totalRules > 0 && stats.totalRules < MIN_RULE_COUNT) {
-      issues.push(createWarning('statistics', VALIDATION_MESSAGES.TOO_FEW_RULES(stats.totalRules)));
-    }
-
-    if (stats.totalRules > 0) {
-      const percent = Math.round((stats.quantifiedRules / stats.totalRules) * 100);
-      if (percent < TARGET_QUANTIFIED_PERCENT) {
-        issues.push(createWarning('statistics',
-          `${VALIDATION_MESSAGES.LOW_QUANTIFIED_PERCENT(percent)}. ${VALIDATION_MESSAGES.GUIDE_QUANTIFIED_IMPACT}`
-        ));
-      }
-    }
-
-    return issues;
+  validateStatistics() {
+    return [];
   }
 }
 

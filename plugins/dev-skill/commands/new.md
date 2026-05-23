@@ -8,7 +8,7 @@ allowed-tools: Read, Write, Bash, Glob, Grep, Task, AskUserQuestion, WebFetch, W
 
 You are an expert at creating high-quality skills for AI agents and LLMs. This command routes through four disciplines — Distillation, Composition, Investigation, and Extraction — each with a proven generation pipeline.
 
-**IMPORTANT**: This skill requires the Opus model for high-quality generation. Always use `model: opus` when invoking agents for this task.
+**Generation quality benefits from a strong model**, but don't hard-pin one here — the bundled review agents (`skill-reviewer`, `preflight-validator`) declare their own model in frontmatter.
 
 ## Input Required
 
@@ -81,7 +81,14 @@ Map the selected type to a discipline and follow its pipeline:
 
 ## Distillation Path (Types 1, 5)
 
-This is the proven pipeline for Library/API Reference and Code Quality/Review skills. It produces 40+ progressive-disclosure reference rules organized by execution lifecycle impact.
+The pipeline for Library/API Reference and Code Quality/Review skills. It produces a **distilled reference** — the smallest set of decisions a capable model gets wrong by default, each explaining the wrong default it corrects and why.
+
+**Read `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/distillation/RECIPE.md` — it is the authority on this discipline.** The doctrine in brief:
+- **Provable conciseness, no rule count.** A rule earns its place only if you can name the wrong default it corrects. If the model already does the right thing, cut the rule — restating it is hand-holding. Completeness is proven by `/dev-skill:eval`, never by hitting a count. *Brevity is the soul of wit.*
+- **Explain WHY, not just WHAT** — the model generalizes from a reason, not from dictation.
+- **One canonical example by default.** Add an Incorrect/Correct foil only when the wrong way is a real, common trap (never a strawman).
+- **Impact tiers and quantified metrics are optional — performance skills only.** Don't force "2-10×" onto a correctness rule.
+- **Sources: authoritative or nothing.** Primary docs/specs/code/named experts; reject content farms, listicles, undated blogs, and AI SEO filler.
 
 ### Output Structure
 
@@ -91,8 +98,8 @@ This is the proven pipeline for Library/API Reference and Code Quality/Review sk
 ├── AGENTS.md             # Compiled TOC navigation doc (built by script)
 ├── metadata.json         # discipline: "distillation", type: "{type-slug}"
 ├── references/
-│   ├── _sections.md      # Category definitions ordered by impact
-│   └── {prefix}-{slug}.md # Individual rules (40+ total)
+│   ├── _sections.md      # Category definitions ordered by importance
+│   └── {prefix}-{slug}.md # Individual rules (as few as cover the wrong defaults)
 └── assets/
     └── templates/
         └── _template.md  # Rule template for extensions
@@ -102,22 +109,14 @@ This is the proven pipeline for Library/API Reference and Code Quality/Review sk
 
 Perform all analysis work upfront:
 
-1. **Execution Lifecycle Analysis**
-   - Map stages from input to output: `[Stage 1] → [Stage 2] → ... → [Final Stage]`
-   - For each stage, identify: performance problems, cascade effects, multiplicative vs additive impact
+1. **Identify the wrong defaults.** List what a capable model does *wrong* by default for this technology — outdated APIs, footguns, library-specific conventions, decisions it gets subtly wrong. This list is the skill's scope. Do not list things the model already handles correctly.
 
-2. **Category Derivation**
-   - Group related problems into 6-8 categories
-   - Order by: lifecycle position x impact radius x frequency
-   - Assign prefixes (3-8 chars) and impact levels (CRITICAL → LOW)
+2. **Category derivation.** Group the wrong defaults into 4–8 categories by decision area (e.g. for an API: auth, pagination, errors, idempotency). Order by importance (frequency × cost). Assign prefixes (2–10 chars). *Performance skills only:* you may add impact tiers (CRITICAL → LOW) and order by lifecycle position, since earlier stages cascade downstream.
 
-3. **Source Research**
-   Search for authoritative sources in these categories:
-   - **Official documentation** — Language/framework maintainers (react.dev, golang.org, docs.python.org)
-   - **Style guides** — Google, Airbnb, community-maintained standards
-   - **Performance guides** — Optimization documentation, profiling tutorials
-   - **Anti-pattern documentation** — Known pitfalls, common mistakes
-   - **Engineering blogs** — Benchmark data with real-world measurements
+3. **Source research.** Gather authoritative sources for each claim (see RECIPE.md "Sources"):
+   - **Primary docs / specs / the library's own code** — the default citation
+   - **Named-expert writing** — a maintainer's post, a benchmark that states its method
+   - **Reject on sight:** content farms, listicles, undated blogs, AI-generated SEO filler, and SO/Reddit answers used as a primary citation
 
    **Technology-Specific Focus Areas:**
 
@@ -132,11 +131,11 @@ Perform all analysis work upfront:
    | **Databases** | Query optimization, indexing, connection management | Official DB docs, Use The Index Luke, High Performance MySQL |
    | **Mobile (iOS/Android)** | Launch time, memory, UI thread, battery | Apple/Google performance guides, WWDC/Google I/O sessions |
 
-   **Source Verification Checklist:**
-   - [ ] Sources are from primary maintainers or recognized experts
-   - [ ] Documentation is current (within last 2 years for fast-moving tech)
-   - [ ] Claims are backed by benchmarks or production data
-   - [ ] No tutorial sites, Stack Overflow answers, or outdated blogs
+   **Source verification (each source):**
+   - [ ] Authored by a maintainer, spec author, or named expert — not anonymous SEO content
+   - [ ] Current with the library's present major version
+   - [ ] Actually supports the claim, and the claim traces back to a primary source (docs/spec/code)
+   - [ ] Not a content farm, listicle, undated blog, or AI-generated filler
 
 ### Step D2: Single Planning Checkpoint
 
@@ -161,10 +160,11 @@ Perform all analysis work upfront:
 2. [Source 2] - Engineering blog
 ...
 
-### Rule Distribution
-- Category 1: ~X rules
-- Category 2: ~Y rules
-- Total: ~40-50 rules
+### Rules to Write (the wrong defaults to correct)
+- Category 1: {the specific wrong defaults this category corrects}
+- Category 2: {…}
+
+No rule-count target — the list of wrong defaults worth correcting *is* the scope.
 ```
 
 **Step D2b — Ask for approval** (use `AskUserQuestion` with `multiSelect: false`):
@@ -183,7 +183,7 @@ Options:
 
 **Only proceed after user approval.**
 
-After approval, optionally run the `preflight-validator` agent to catch issues early before generating 40+ rules.
+After approval, optionally run the `preflight-validator` agent to catch issues early before generating the rules.
 
 ### Step D3: Incremental Generation with Early Validation
 
@@ -196,12 +196,11 @@ Generate files in dependency order with validation at each step:
 │    Validate: impact ordering, prefix format     │
 │    (Fail fast if categories are wrong)          │
 ├─────────────────────────────────────────────────┤
-│ 2. Generate rules in parallel batches           │
-│    - Batch 1: CRITICAL rules (highest priority) │
-│    - Batch 2: HIGH rules                        │
-│    - Batch 3: MEDIUM rules                      │
-│    - Batch 4: LOW rules                         │
-│    Validate each batch before next              │
+│ 2. Generate rules in parallel, by category      │
+│    Each rule must name the wrong default it      │
+│    corrects; cut any that restate a default      │
+│    the model already gets right.                 │
+│    Validate each batch before the next.          │
 ├─────────────────────────────────────────────────┤
 │ 3. Generate SKILL.md, metadata.json             │
 │    Generate assets/templates/_template.md       │
@@ -375,226 +374,38 @@ User: "Create a Go best practices skill using standard categories"
 
 ### Distillation File Templates
 
-#### SKILL.md Structure
+The authoritative formats live in `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/distillation/` — read and fill them rather than reproducing structures inline:
 
-```markdown
----
-name: {org-slug}-{tech-slug}-best-practices
-description: {Technology} performance optimization guidelines from {Organization}. This skill should be used when writing, reviewing, or refactoring {Technology} code to ensure optimal performance patterns. Triggers on tasks involving {trigger keywords}.
----
+| Template | Produces |
+|----------|----------|
+| `SKILL.md.template` | Entry point: `When to Apply`, a category table, `Quick Reference` |
+| `_sections.md.template` | Category definitions (impact tier optional — performance skills only) |
+| `RULE.md.template` | A rule: `title` + `tags` (first tag = category prefix), a WHY, one canonical example. Foil, impact, and exceptions are all optional |
+| `_template.md.template` | The rule template copied into the skill so it can be extended later |
 
-# {Organization} {Technology} Best Practices
-
-Comprehensive performance optimization guide for {Technology} applications, maintained by {Organization}. Contains {N} rules across {M} categories, prioritized by impact to guide automated refactoring and code generation.
-
-## When to Apply
-
-Reference these guidelines when:
-- Writing new {Technology} code
-- {Category 1 specific activity}
-- {Category 2 specific activity}
-- Reviewing code for performance issues
-- Refactoring existing {Technology} code
-
-## Rule Categories by Priority
-
-| Priority | Category | Impact | Prefix |
-|----------|----------|--------|--------|
-| 1 | {Category Name} | CRITICAL | `{prefix}-` |
-| 2 | {Category Name} | CRITICAL | `{prefix}-` |
-| ... | ... | ... | ... |
-
-## Quick Reference
-
-### 1. {Category Name} (CRITICAL)
-
-- [`{prefix}-{slug}`](references/{prefix}-{slug}.md) - {One-line description}
-- [`{prefix}-{slug}`](references/{prefix}-{slug}.md) - {One-line description}
-...
-
-## How to Use
-
-Read individual reference files for detailed explanations and code examples:
-
-- [Section definitions](references/_sections.md) - Category structure and impact levels
-- [Rule template](assets/templates/_template.md) - Template for adding new rules
-
-## Reference Files
-
-| File | Description |
-|------|-------------|
-| [references/_sections.md](references/_sections.md) | Category definitions and ordering |
-| [assets/templates/_template.md](assets/templates/_template.md) | Template for new rules |
-| [metadata.json](metadata.json) | Version and reference information |
-```
-
-#### references/_sections.md Structure
-
-```markdown
-# Sections
-
-This file defines all sections, their ordering, impact levels, and descriptions.
-The section ID (in parentheses) is the filename prefix used to group rules.
-
----
-
-## 1. {Category Name} ({prefix})
-
-**Impact:** CRITICAL
-**Description:** {One sentence explaining why this category matters and its cascade effect}
-
-## 2. {Category Name} ({prefix})
-
-**Impact:** CRITICAL
-**Description:** {One sentence explanation}
-
-...continue for all categories...
-```
-
-**IMPORTANT**: Use two trailing spaces after `**Impact:** CRITICAL` for proper line breaks.
-
-#### Individual Rule Structure
-
-```markdown
----
-title: {Rule Title}
-impact: {CRITICAL|HIGH|MEDIUM-HIGH|MEDIUM|LOW-MEDIUM|LOW}
-impactDescription: {Quantified impact, e.g., "2-10x improvement", "200ms savings"}
-tags: {prefix}, {technique}, {tool-if-mentioned}, {related-concepts}
----
-
-## {Rule Title}
-
-{1-3 sentences explaining WHY this matters. Focus on performance implications.}
-
-**Incorrect ({what's wrong}):**
-
-```{language}
-{Bad code example - production-realistic, not strawman}
-{// Comments explaining the cost}
-```
-
-**Correct ({what's right}):**
-
-```{language}
-{Good code example - minimal diff from incorrect}
-{// Comments explaining the benefit}
-```
-
-{Optional sections as needed:}
-
-**Alternative ({context}):**
-{Alternative approach when applicable}
-
-**When NOT to use this pattern:**
-- {Exception 1}
-- {Exception 2}
-
-**Benefits:**
-- {Benefit 1}
-- {Benefit 2}
-
-Reference: [{Reference Title}]({Reference URL})
-```
-
-#### metadata.json Structure
-
-```json
-{
-  "version": "0.1.0",
-  "organization": "{Organization Name}",
-  "technology": "{Technology Name}",
-  "discipline": "distillation",
-  "type": "{library-reference|code-quality}",
-  "date": "{Month Year}",
-  "abstract": "Comprehensive performance optimization guide for {Technology} applications, designed for AI agents and LLMs. Contains {N}+ rules across {M} categories, prioritized by impact from critical ({critical categories}) to incremental ({low categories}). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.",
-  "references": [
-    "{url1}",
-    "{url2}"
-  ]
-}
-```
+`metadata.json` (shared format: `${CLAUDE_PLUGIN_ROOT}/templates/anatomy/metadata.json.template`) must include `discipline: "distillation"` and the `type`. Keep `abstract` to one or two honest sentences describing scope — not a performance sales pitch.
 
 ### Rule Writing Guidelines
 
-#### Title Patterns
+**Titles** are decision-oriented: `{Verb} {object} {context}` ("Thread context through outbound calls"), `Avoid {real anti-pattern}`, `Use {X} for {Y}`.
 
-| Pattern | When to Use | Example |
-|---------|-------------|---------|
-| Avoid + Anti-pattern | Prohibiting a practice | Avoid Barrel File Imports |
-| Use X for Y | Recommending a tool/pattern | Use SWR for Deduplication |
-| Verb + Object + Context | Contextual action | Cache Property Access in Loops |
-| X for Y | Tool + use case | Promise.all() for Independent Operations |
+**Tags:** first tag = the category prefix; add 2–4 more for concepts/tools, lowercase and hyphenated.
 
-#### Impact Description Patterns
+**Impact / impactDescription** are optional and for performance skills only. When used, the description must be honest and traceable — a real number (`O(n)→O(1)`, `2-10× improvement`) or a real consequence (`prevents stale reads`). Never fabricate a metric for a correctness rule.
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| Multiplier | N-Mx improvement | 2-10x improvement |
-| Time | Nms reduction/cost | 200-800ms import cost |
-| Complexity | O(x) to O(y) | O(n) to O(1) |
-| Prevention | prevents {problem} | prevents stale closures |
-| Reduction | reduces {thing} by N% | reduces reflows by 80% |
-
-#### Tag Assignment Rules
-
-1. **First tag MUST be the category prefix**
-2. Add 2-5 additional tags for techniques, tools, concepts
-3. Use lowercase, hyphenated for multi-word tags
-
-Example: `tags: async, parallelization, promises, waterfalls`
-
-### Distillation Core Principles
-
-1. **Lifecycle-Driven Priority**: Earlier stages = higher impact (cascade effect)
-2. **Multiplicative Problems First**: Waterfalls and NxM issues are CRITICAL
-3. **Actionable Over Theoretical**: Show exact code transformation
-4. **Minimal Diff Philosophy**: Correct differs minimally from incorrect
-5. **Quantify Where Possible**: Use metrics, not vague claims
-6. **Progressive Detail**: Quick reference → detailed rules → compiled doc
-
-### Language Patterns (Distillation)
-
-**DO use:**
-- Imperative verbs: Use, Avoid, Cache, Extract, Defer
-- Quantified claims: "2-10x improvement"
-- Definitive statements: "is the #1 performance killer"
-
-**DON'T use:**
-- Hedging: "consider", "might", "perhaps"
-- Marketing: "amazing", "revolutionary"
-- Vague: "faster" without quantification
+Full detail (title patterns, sources, sections format) lives in `RECIPE.md`.
 
 ### Quality Checklist (Distillation)
 
-Before finalizing, verify:
+Before finalizing, verify against the doctrine:
 
-**Structure:**
-- [ ] All categories derived from execution lifecycle analysis
-- [ ] Categories ordered by impact (CRITICAL → LOW)
-- [ ] File prefixes are consistent (3-8 chars)
-- [ ] SKILL.md provides quick reference navigation
-- [ ] Individual rules have full detail
-
-**Content:**
-- [ ] Each rule has incorrect AND correct examples
-- [ ] Examples are production-realistic (not strawman)
-- [ ] Impact is quantified where possible
-- [ ] References are authoritative
-- [ ] No vague guidance ("consider", "might want to")
-- [ ] First tag is always category prefix
-
-**Language:**
-- [ ] Imperative mood ("Use", "Avoid", "Cache")
-- [ ] Consistent terminology
-- [ ] No marketing fluff
-- [ ] Annotations in parenthetical style
-
-**Completeness:**
-- [ ] Major performance issues covered
-- [ ] 3-7 rules per major category, 1-3 for minor
-- [ ] 40+ rules total
-- [ ] External tools referenced where helpful
+- [ ] **Every rule names the wrong default it corrects.** Cut any rule that restates what the model already does right (hand-holding).
+- [ ] Every rule explains WHY, not just WHAT (no bare ALWAYS/NEVER).
+- [ ] One canonical example per rule; an Incorrect/Correct foil only where the wrong way is a real, common trap (no strawmen).
+- [ ] Categories ordered by importance; first tag = category prefix; H2 matches `title`.
+- [ ] Sources are primary/authoritative; no content farms, listicles, or undated/AI-SEO pages. Each claim traces to a primary source.
+- [ ] No vague hedging or marketing language.
+- [ ] **Coverage proven by `/dev-skill:eval`, not by a rule count.** There is no minimum or target.
 
 ---
 
@@ -1281,11 +1092,11 @@ ${CLAUDE_PLUGIN_ROOT}/references/
 - Display planning summaries as regular text BEFORE calling AskUserQuestion
 
 **Every rule (distillation) MUST include:**
-- YAML frontmatter: `title`, `impact`, `impactDescription`, `tags` (first tag = category prefix)
-- 1-3 sentence explanation of WHY it matters (performance implications)
-- **Incorrect** code example with parenthetical annotation explaining what's wrong
-- **Correct** code example with parenthetical annotation explaining what's right
-- Code blocks with language specifier
+- YAML frontmatter: `title` and `tags` (first tag = category prefix). `impact`/`impactDescription` are optional (performance skills only).
+- A 1-3 sentence WHY that names the wrong default it corrects and the consequence.
+- At least one code example (a single canonical example by default), with a language specifier and realistic names.
+
+An Incorrect/Correct foil is **optional** — include it only when the wrong way is a real, common trap, and never as a strawman. A rule that restates what the model already does right should not exist at all.
 
 ---
 

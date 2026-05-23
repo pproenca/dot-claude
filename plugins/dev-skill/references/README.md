@@ -1,6 +1,6 @@
 # Skill Creator Reference Files
 
-This directory contains reference files from the `react-best-practices` skill that serve as templates and examples for creating new performance skills.
+This directory contains reference files from the `react-best-practices` skill that serve as worked examples for distilled-reference skills. (React is a performance-shaped example, so these samples use impact tiers and Incorrect/Correct foils — both are optional. Correctness/idiom/API skills typically omit them; see RECIPE.md.)
 
 ## Directory Structure
 
@@ -29,30 +29,25 @@ Use this as a template for organizing your skill into categories. Key elements:
 
 ### 2. Rule Template ([examples/_template.md](examples/_template.md))
 
-Every rule file must follow this structure:
+Every rule file follows this structure. `impact`/`impactDescription` are
+optional (performance skills only), and the default is a single canonical
+example — add an Incorrect/Correct foil only when the wrong way is a real trap:
 
 ```markdown
 ---
 title: Rule Title Here
-impact: MEDIUM
-impactDescription: Optional (e.g., "20-50% improvement")
-tags: tag1, tag2
+tags: prefix, concept
+# optional, performance skills only:
+# impact: MEDIUM
+# impactDescription: prevents stale reads
 ---
 
 ## Rule Title Here
 
-Explanation of the rule.
-
-**Incorrect (description):**
+The wrong default this rule corrects, and why it's wrong (the WHY).
 
 \`\`\`language
-// Bad code
-\`\`\`
-
-**Correct (description):**
-
-\`\`\`language
-// Good code
+// the canonical way — realistic names
 \`\`\`
 ```
 
@@ -92,14 +87,14 @@ The [examples/](examples/) directory contains 12 sample rules covering all impac
 
 When creating new rules:
 
-- [ ] Frontmatter includes all required fields (title, impact, tags)
-- [ ] Title is concise and actionable
-- [ ] Explanation is brief but complete
-- [ ] Incorrect example shows common anti-pattern
-- [ ] Correct example is minimal and clear
-- [ ] Code examples use proper syntax highlighting
-- [ ] Impact level matches lifecycle position and cascade effect
-- [ ] Tags include category prefix and relevant keywords
+- [ ] The rule names a real wrong default it corrects (not a restatement of what the model already does)
+- [ ] Frontmatter has `title` and `tags` (first tag = category prefix); `impact` only for performance rules
+- [ ] Title is concise and decision-oriented
+- [ ] The WHY is brief but complete
+- [ ] One canonical example by default; a foil only when the wrong way is a common trap
+- [ ] Code examples use realistic names and a language specifier
+
+See [QUALITY_CHECKLIST.md](QUALITY_CHECKLIST.md) for the full bar.
 
 ## Building AGENTS.md
 

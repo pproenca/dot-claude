@@ -1,54 +1,37 @@
 ---
 title: {{RULE_TITLE}}
-impact: {{IMPACT_LEVEL}}
-impactDescription: {{QUANTIFIED_IMPACT}}
-tags: {{CATEGORY_PREFIX}}, {{TECHNIQUE}}, {{TOOLS}}, {{RELATED_CONCEPTS}}
+tags: {{CATEGORY_PREFIX}}, {{CONCEPT}}, {{CONCEPT}}
+# Optional — performance skills only. Omit both for correctness/idiom/API rules.
+# impact: {{CRITICAL|HIGH|MEDIUM|LOW}}
+# impactDescription: {{honest consequence, e.g. "2-10× improvement" or "prevents stale reads"}}
 ---
 
 ## {{RULE_TITLE}}
 
-{{EXPLANATION_1_TO_3_SENTENCES}}
-
-**Incorrect ({{WHAT_IS_WRONG}}):**
-
-```{{LANGUAGE}}
-{{BAD_CODE_EXAMPLE}}
-```
-
-{{OPTIONAL_BAD_EXPLANATION}}
-
-**Correct ({{WHAT_IS_RIGHT}}):**
+{{WHY — 1-3 sentences. Name the wrong default (what the model/engineer does here
+without this rule) and its concrete consequence. This is the highest-signal part:
+the model generalizes from the reason, not from the instruction.}}
 
 ```{{LANGUAGE}}
-{{GOOD_CODE_EXAMPLE}}
+{{The canonical way. Production-realistic names — never foo/bar. This single
+example is usually all that's needed.}}
 ```
 
-{{OPTIONAL_GOOD_EXPLANATION}}
+Reference: [{{SOURCE_TITLE}}]({{SOURCE_URL}})
 
-{{#IF ALTERNATIVE_APPROACHES}}
-**Alternative ({{CONTEXT}}):**
+<!-- ───────────────────────────────────────────────────────────────────────
+USE A FOIL ONLY WHEN THE WRONG WAY IS A REAL, COMMON TRAP.
+A strawman "incorrect" example nobody would write is worse than none. When the
+contrast genuinely teaches, replace the single example above with a minimal-diff
+pair (same names, only the key line changes):
 
-```{{LANGUAGE}}
-{{ALTERNATIVE_CODE}}
-```
+  **Incorrect ({{what's wrong}}):**
+  fenced code block
 
-{{ALTERNATIVE_EXPLANATION}}
-{{/IF}}
+  **Correct ({{what's right}}):**
+  fenced code block
 
-{{#IF EXCEPTIONS}}
-**When NOT to use this pattern:**
-
-{{FOR_EACH EXCEPTION}}
-- {{EXCEPTION}}
-{{END_FOR_EACH}}
-{{/IF}}
-
-{{#IF WARNINGS}}
-**Warning ({{WARNING_CONTEXT}}):**
-
-{{WARNING_CONTENT}}
-{{/IF}}
-
-{{#IF REFERENCE}}
-Reference: [{{REFERENCE_TITLE}}]({{REFERENCE_URL}})
-{{/IF}}
+OPTIONAL SECTIONS (include only when they carry weight):
+  **When NOT to use this pattern:** — real exceptions
+  **Alternative ({{context}}):** — a second valid approach
+─────────────────────────────────────────────────────────────────────── -->

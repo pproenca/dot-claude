@@ -43,7 +43,7 @@ You will receive:
 
 1. Read `{skill-path}/metadata.json` and extract the `discipline` field
 2. If no `discipline` field, infer from structure:
-   - Has `references/` with rule files containing `impact` in frontmatter → `distillation`
+   - Has `references/` with `_sections.md` and prefixed rule files (`{prefix}-*.md`) → `distillation`
    - Has `scripts/` directory → `composition`
    - Has `references/` with `*-tree.md` files or `references/queries/` → `investigation`
    - Has `assets/templates/*.template` files → `extraction`

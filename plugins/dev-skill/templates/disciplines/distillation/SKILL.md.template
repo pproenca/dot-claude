@@ -1,56 +1,52 @@
 ---
-name: {{ORGANIZATION_SLUG}}-{{TECHNOLOGY_SLUG}}-best-practices
-description: {{TECHNOLOGY_NAME}} performance optimization guidelines from {{ORGANIZATION_NAME}}. This skill should be used when writing, reviewing, or refactoring {{TECHNOLOGY_NAME}} code to ensure optimal performance patterns. Triggers on tasks involving {{TRIGGER_KEYWORDS}}.
+name: {{SKILL_SLUG}}
+description: {{SKILL_DESCRIPTION}}
 ---
 
-# {{ORGANIZATION_NAME}} {{TECHNOLOGY_NAME}} Best Practices
+# {{SKILL_TITLE}}
 
-Comprehensive performance optimization guide for {{TECHNOLOGY_NAME}} applications, maintained by {{ORGANIZATION_NAME}}. Contains {{RULE_COUNT}} rules across {{CATEGORY_COUNT}} categories, prioritized by impact to guide automated refactoring and code generation.
+{{ONE_LINE_PURPOSE}} — the decisions {{TECHNOLOGY_NAME}} forces and how {{ORGANIZATION_NAME}} settles them, written so an agent applies them while writing or reviewing code. Each rule corrects a specific wrong default; there is no rule for things the model already gets right.
 
 ## When to Apply
 
-Reference these guidelines when:
 {{FOR_EACH USE_CASE in WHEN_TO_APPLY}}
 - {{USE_CASE}}
 {{END_FOR_EACH}}
 
-## Rule Categories by Priority
+## Rule Categories
 
-| Priority | Category | Impact | Prefix |
-|----------|----------|--------|--------|
-{{FOR_EACH CATEGORY in PERFORMANCE_CATEGORIES}}
-| {{INDEX}} | {{CATEGORY.name}} | {{CATEGORY.impact}} | `{{CATEGORY.prefix}}-` |
+| # | Category | Prefix | Covers |
+|---|----------|--------|--------|
+{{FOR_EACH CATEGORY in CATEGORIES}}
+| {{INDEX}} | {{CATEGORY.name}} | `{{CATEGORY.prefix}}-` | {{CATEGORY.summary}} |
 {{END_FOR_EACH}}
+
+<!-- Performance skills may add an Impact column. For correctness/idiom/API
+     skills, leave it out — the table order already conveys importance. -->
 
 ## Quick Reference
 
-{{FOR_EACH CATEGORY in PERFORMANCE_CATEGORIES}}
-### {{INDEX}}. {{CATEGORY.name}} ({{CATEGORY.impact}})
+{{FOR_EACH CATEGORY in CATEGORIES}}
+### {{INDEX}}. {{CATEGORY.name}}
 
 {{FOR_EACH RULE in CATEGORY.rules}}
-- [`{{CATEGORY.prefix}}-{{RULE.slug}}`](references/{{CATEGORY.prefix}}-{{RULE.slug}}.md) - {{RULE.one_line}}
+- [`{{CATEGORY.prefix}}-{{RULE.slug}}`](references/{{CATEGORY.prefix}}-{{RULE.slug}}.md) — {{RULE.one_line}}
 {{END_FOR_EACH}}
 
 {{END_FOR_EACH}}
 
 ## How to Use
 
-Read individual reference files for detailed explanations and code examples:
+Read a reference file when its decision comes up. Each rule names the wrong default it corrects, then shows the canonical way (with an incorrect/correct contrast only where the wrong way is a real trap).
 
-- [Section definitions](references/_sections.md) - Category structure and impact levels
-- [Rule template](assets/templates/_template.md) - Template for adding new rules
-
-Each rule file contains:
-- Brief explanation of why it matters
-- Incorrect code example with explanation
-- Correct code example with explanation
-- Additional context and references
+- [Section definitions](references/_sections.md) — category structure
+- [Rule template](assets/templates/_template.md) — for adding new rules
+- [AGENTS.md](AGENTS.md) — auto-built table of contents across all rules
 
 ## Reference Files
 
 | File | Description |
 |------|-------------|
-| [AGENTS.md](AGENTS.md) | Complete compiled guide with all rules |
 | [references/_sections.md](references/_sections.md) | Category definitions and ordering |
 | [assets/templates/_template.md](assets/templates/_template.md) | Template for new rules |
-| [metadata.json](metadata.json) | Version and reference information |
+| [metadata.json](metadata.json) | Version and source references |

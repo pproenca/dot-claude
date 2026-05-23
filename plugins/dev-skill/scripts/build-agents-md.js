@@ -84,7 +84,8 @@ function getReferencesForSection(referencesDir, prefix, files) {
       references.push({
         filename: file,
         title: frontmatter.title || file,
-        impact: frontmatter.impact || 'MEDIUM',
+        // impact is optional — do not fabricate a tier when the rule omits one.
+        impact: frontmatter.impact || '',
         impactDescription: frontmatter.impactDescription || '',
         tags: frontmatter.tags || '',
         body: body.trim()
@@ -129,7 +130,7 @@ function buildAgentsMD(skillDir) {
   }
 
   const sections = parseSections(fs.readFileSync(sectionsPath, 'utf-8'));
-  const techName = metadata.technology || 'Best Practices';
+  const techName = metadata.technology || metadata.organization || 'Reference';
 
   const output = [
     `# ${techName}`,
@@ -137,11 +138,6 @@ function buildAgentsMD(skillDir) {
     `**Version ${metadata.version}**  `,
     `${metadata.organization}  `,
     metadata.date,
-    '',
-    '> **Note:**  ',
-    '> This document is mainly for agents and LLMs to follow when maintaining,  ',
-    '> generating, or refactoring codebases. Humans may also find it useful,  ',
-    '> but guidance here is optimized for automation and consistency by AI-assisted workflows.',
     '',
     '---',
     '',
@@ -163,17 +159,20 @@ function buildAgentsMD(skillDir) {
 
   let totalRules = 0;
   for (const section of sections) {
-    output.push(`${section.index}. [${section.name}](${refDirName}/_sections.md#${section.index}-${section.name.toLowerCase().replace(/\s+/g, '-')}) — **${section.impact}**`);
+    const sectionImpact = section.impact ? ` — **${section.impact}**` : '';
+    output.push(`${section.index}. [${section.name}](${refDirName}/_sections.md#${section.index}-${section.name.toLowerCase().replace(/\s+/g, '-')})${sectionImpact}`);
 
     const references = referencesCache.get(section.prefix);
     totalRules += references.length;
     for (let i = 0; i < references.length; i++) {
       const ref = references[i];
       const ruleNum = `${section.index}.${i + 1}`;
-      const impactInfo = ref.impactDescription
-        ? `— ${ref.impact} (${ref.impactDescription})`
-        : `— ${ref.impact}`;
-      output.push(`   - ${ruleNum} [${ref.title}](${refDirName}/${ref.filename}) ${impactInfo}`);
+      // impact and impactDescription are both optional — render whichever exist.
+      let impactInfo = '';
+      if (ref.impact && ref.impactDescription) impactInfo = ` — ${ref.impact} (${ref.impactDescription})`;
+      else if (ref.impact) impactInfo = ` — ${ref.impact}`;
+      else if (ref.impactDescription) impactInfo = ` — ${ref.impactDescription}`;
+      output.push(`   - ${ruleNum} [${ref.title}](${refDirName}/${ref.filename})${impactInfo}`);
     }
   }
 
@@ -192,7 +191,7 @@ function buildAgentsMD(skillDir) {
   output.push('This document was compiled from individual reference files. For detailed editing or extension:', '');
   output.push('| File | Description |');
   output.push('|------|-------------|');
-  output.push(`| [${refDirName}/_sections.md](${refDirName}/_sections.md) | Category definitions and impact ordering |`);
+  output.push(`| [${refDirName}/_sections.md](${refDirName}/_sections.md) | Category definitions and ordering |`);
 
   // Check for assets/templates directory
   const templatesDir = path.join(skillDir, 'assets', 'templates');

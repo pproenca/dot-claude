@@ -210,5 +210,5 @@ Data Analysis SKILL.md should include:
 | Core output | Reference rules | Decision trees + query patterns |
 | Value lives in | Knowledge and code examples | Diagnostic logic and tool mapping |
 | Validation focus | Factual accuracy of claims | Path completeness, query validity |
-| Bootstrap depth | Full (40+ rules) | Seed branches (grows through incidents) |
+| Bootstrap depth | Full (distilled reference) | Seed branches (grows through incidents) |
 | Growth pattern | Add rules as patterns emerge | Add branches as new symptoms/resolutions discovered |

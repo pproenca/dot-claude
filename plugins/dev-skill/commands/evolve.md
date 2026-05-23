@@ -8,7 +8,7 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task, AskUserQuestion, TaskC
 
 You are an expert at diagnosing and fixing issues in skills across all four disciplines. You work like an investigator: you listen to user claims, gather hard evidence, and only recommend changes backed by proof. You adapt your methods to the skill's discipline — different skill types break in different ways.
 
-**IMPORTANT**: This skill requires the Opus model for accurate investigation. Always use `model: opus` when invoking agents.
+**A strong model improves investigation quality**; the bundled agents declare their own model in frontmatter.
 
 ## Input Required
 
@@ -269,13 +269,16 @@ Run a broader investigation using discipline-appropriate checks:
    - Check if the technology has deprecated or superseded the pattern
    - **Verdict:** CONFIRMED (with source URL) or UNCONFIRMED (rule is actually correct)
 
-#### "Missing important patterns"
+#### "Missing important decisions" (coverage gaps)
 
-1. Use `WebSearch` to find "{technology} performance best practices {current year}"
-2. Use `WebSearch` to find "{technology} common mistakes {current year}"
-3. Compare search results against existing rule coverage
-4. Identify patterns that appear in 3+ authoritative sources but are missing from the skill
-5. **Verdict:** List missing patterns with authoritative sources proving they matter
+1. Reason about the wrong defaults a capable model has for this technology; confirm with `WebSearch` for "{technology} common mistakes" and the library's changelog/deprecations.
+2. A gap is a *wrong default the model would hit on a target task* that no rule corrects — judge against the eval prompts, not against a count.
+3. **Verdict:** List the missing wrong-defaults, each with a primary source proving it matters.
+
+#### "Filler rules" (the opposite, more common problem)
+
+1. For each rule, ask: what does the model do here *without* it? If the answer is "the right thing already," the rule is hand-holding.
+2. **Verdict:** List rules that merely restate a correct default — these should be deleted. Fewer, sharper rules *is* the improvement.
 
 #### "Code examples are unrealistic"
 
@@ -483,23 +486,22 @@ For each approved fix, apply changes using discipline-appropriate strategies.
 ### Distillation Fixes
 
 **Content Fixes (wrong/outdated advice):**
-1. Research the correct current advice using `WebSearch`
-2. Rewrite the rule following the template in `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/distillation/RULE.md.template`
-3. Update: title, impact, impactDescription, tags, explanation, code examples, references
-4. Preserve the same filename and category placement unless the fix requires moving it
+1. Research the correct current advice using `WebSearch` (primary sources — see RECIPE.md "Sources").
+2. Rewrite the rule following `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/distillation/RULE.md.template`.
+3. Update title, tags, the WHY, the example, and the reference. (`impact`/`impactDescription` only if it's a performance skill.)
+4. Preserve the filename and category placement unless the fix requires moving it.
 
 **Coverage Gaps (missing rules):**
-1. Generate new rules following the distillation rule template
-2. Use the correct prefix from `_sections.md`
-3. If a new category is needed, update `_sections.md` first
-4. Verify impact level calibration against existing rules
+1. Add a rule only for a genuine wrong default the model would hit — not to raise a count.
+2. Use the correct prefix from `_sections.md`; add a category there first if one is needed.
+
+**Filler Removal (often the biggest win):**
+1. Delete rules that restate what the model already does right. Cutting them *is* the improvement.
 
 **Example Quality Fixes:**
-1. Rewrite code examples to be production-realistic
-2. Ensure minimal diff between incorrect and correct
-3. Use realistic domain names and variable names
-4. Add quantified impact claims where possible
-5. Keep comments to 1-2 per code block, explaining consequences not syntax
+1. Default to one canonical, production-realistic example with realistic names.
+2. Use an Incorrect/Correct foil only where the wrong way is a real trap; replace any strawman foil with a single canonical example.
+3. Keep comments to 1-2 per block, explaining consequences not syntax.
 
 ### Composition Fixes
 

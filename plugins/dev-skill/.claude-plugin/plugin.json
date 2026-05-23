@@ -1,5 +1,6 @@
 {
   "name": "dev-skill",
+  "version": "1.1.0",
   "description": "Create, evolve, and validate skills across 9 types — from API references to runbooks to CI/CD workflows",
   "author": {
     "name": "Pedro Proenca",

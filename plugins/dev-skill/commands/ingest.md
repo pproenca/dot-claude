@@ -10,7 +10,7 @@ Transform existing source material — GitHub repos, local directories, document
 
 This is the **curation** path. Unlike `/dev-skill:new` (which creates from scratch), ingest starts from source material that already exists and restructures it into a validated skill.
 
-**IMPORTANT**: This command requires the Opus model for high-quality analysis. Always use `model: opus` when invoking agents.
+**A strong model improves analysis quality**; the bundled agents declare their own model in frontmatter.
 
 ## Input
 
@@ -110,7 +110,7 @@ Read all included files and analyze their content to infer the skill's natural s
 | Signal | Inferred Structure | Discipline |
 |---|---|---|
 | Phased workflow (Phase 1, Phase 2...) | Guided decision workflow | composition |
-| 40+ rule files with impact/tags frontmatter | Progressive-disclosure reference | distillation |
+| Prefixed rule files (`{prefix}-*.md`) plus a `_sections.md` | Progressive-disclosure reference | distillation |
 | Template files with parameter placeholders | Scaffolding templates | extraction |
 | Decision trees, symptom catalogs, queries | Investigation runbook | investigation |
 | Scripts with verification/assertion logic | Verification workflow | composition |

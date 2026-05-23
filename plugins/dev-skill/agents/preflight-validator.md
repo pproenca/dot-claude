@@ -6,7 +6,7 @@ description: |
   <example>
   Context: User has approved the planning checkpoint for a new React distillation skill.
   user: "The categories and sources look good, let's proceed."
-  assistant: "Let me use the preflight-validator agent to sanity-check the plan before we generate 40+ rules."
+  assistant: "Let me use the preflight-validator agent to sanity-check the plan before we generate the rules."
   <commentary>
   The planning checkpoint was approved, so invoke the preflight-validator to catch issues before expensive generation.
   </commentary>
@@ -41,19 +41,17 @@ You will receive:
 ### For Distillation Plans
 
 You will receive:
-- Proposed categories with prefixes and impact levels
-- Authoritative sources list
-- Rule distribution estimates
+- The list of **wrong defaults** the skill intends to correct (its scope)
+- Proposed categories with prefixes (impact tiers only if it's a performance skill)
+- The vetted source list
 
 **Check:**
-1. **Category sanity.** Do the categories follow the technology's execution lifecycle? Would a senior engineer recognize them? Are there obvious gaps?
-2. **Category ordering.** Is the highest-impact category genuinely the most damaging when done wrong? Use WebSearch to verify if uncertain.
-3. **Overlaps.** Do any categories cover the same ground? (Will produce duplicate rules)
-4. **Prefix conflicts.** Are prefixes distinct? (`mem-` and `memo-` will confuse)
-5. **Impact inflation.** If everything is CRITICAL, nothing is. Expect 1-2 CRITICAL, 2-3 HIGH, rest MEDIUM/LOW.
-6. **Source authority.** For each source: is it from maintainers or recognized experts? Is it current? Use WebFetch to spot-check 3-5 URLs.
-7. **Rule distribution.** Total 40-60. Higher-impact categories get more rules. No category has 0 rules.
-8. **Technology coverage.** Are the problems that actually matter for this tech covered? Not generic "best practices."
+1. **Wrong-default validity.** For each planned rule, is the stated "wrong default" something a capable model actually gets wrong? Flag any that just restate a default the model already handles correctly — those are hand-holding and should be cut, not generated.
+2. **Category sanity.** Would a senior engineer recognize these categories for this technology? Any obvious gaps in the decision space?
+3. **Ordering.** Are categories in importance order? (Performance skills: is the top category genuinely the most damaging when wrong? WebSearch if unsure.)
+4. **Overlaps & prefixes.** Do categories cover the same ground (→ duplicate rules)? Are prefixes distinct (`mem-` vs `memo-` will confuse)?
+5. **Source authority.** For each source: maintainer / spec / named expert, and current? Use WebFetch to spot-check 3-5. Flag content farms, listicles, undated blogs, and AI-SEO filler for replacement.
+6. **Coverage, not count.** Do the planned rules cover the wrong defaults that matter for this tech? Judge by the decision space and the eval prompts — **not** by a target number. There is no minimum or maximum rule count; padding to a number is a defect.
 
 ### For Composition Plans
 

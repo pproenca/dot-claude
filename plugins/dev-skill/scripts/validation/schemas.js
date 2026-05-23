@@ -152,7 +152,9 @@ function validateSection(section, expectedIndex, prevSection, filepath) {
     ));
   }
 
-  if (!IMPACT_LEVELS_SET.has(section.impact)) {
+  // Impact is optional (only performance skills use tiers). Validate the value
+  // only when a section declares one — a section with no **Impact:** line is fine.
+  if (section.impact && !IMPACT_LEVELS_SET.has(section.impact)) {
     issues.push(createError(filepath,
       `${VALIDATION_MESSAGES.SECTION_INVALID_IMPACT(section.name, section.impact)}. ${VALIDATION_MESSAGES.GUIDE_IMPACT_LEVELS}`
     ));
@@ -223,9 +225,9 @@ function validateRuleFrontmatter(frontmatter, expectedPrefix, filepath) {
     issues.push(createError(filepath, VALIDATION_MESSAGES.RULE_MISSING_TITLE));
   }
 
-  if (!frontmatter.impact) {
-    issues.push(createError(filepath, VALIDATION_MESSAGES.RULE_MISSING_IMPACT));
-  } else if (!IMPACT_LEVELS_SET.has(frontmatter.impact)) {
+  // impact is optional — only performance-shaped rules need a tier. Validate
+  // the value only when the author chose to provide one; never require it.
+  if (frontmatter.impact && !IMPACT_LEVELS_SET.has(frontmatter.impact)) {
     issues.push(createError(filepath,
       `${VALIDATION_MESSAGES.RULE_INVALID_IMPACT(frontmatter.impact)}. ${VALIDATION_MESSAGES.GUIDE_IMPACT_LEVELS}`
     ));
@@ -250,15 +252,9 @@ function validateRuleFrontmatter(frontmatter, expectedPrefix, filepath) {
     }
   }
 
-  // Optional but recommended: impactDescription (should be quantified)
-  if (frontmatter.impactDescription) {
-    const isQuantified = QUANTIFIED_PATTERNS.some(p => p.test(frontmatter.impactDescription));
-    if (!isQuantified) {
-      issues.push(createWarning(filepath,
-        `${VALIDATION_MESSAGES.RULE_UNQUANTIFIED_IMPACT}. ${VALIDATION_MESSAGES.GUIDE_QUANTIFIED_IMPACT}`
-      ));
-    }
-  }
+  // impactDescription is free-form and optional. It is NOT required to be
+  // quantified — a plain consequence ("prevents silent data loss") is fine, and
+  // demanding a number where none exists only invites fabricated metrics.
 
   return issues;
 }
@@ -272,20 +268,15 @@ function validateRuleFrontmatter(frontmatter, expectedPrefix, filepath) {
 function validateRuleContent(body, filepath) {
   const issues = [];
 
-  // Check for example patterns - rules can use:
-  // 1. **Incorrect (desc):** + **Correct (desc):** pair
-  // 2. **Example (desc):** or **Usage:** for single-example rules
-  // 3. **CSS:** or **Implementation:** for implementation-only rules
+  // A rule's default shape is a single canonical example — just a fenced code
+  // block, no ceremonial label required. The "at least one code block" check
+  // below guarantees the rule is actionable. An Incorrect/Correct foil is
+  // OPTIONAL; when an author uses one, validate that the pair is complete and
+  // annotated (a half-foil or an unlabelled foil is a mistake worth flagging).
   const incorrectMatch = body.match(INCORRECT_ANNOTATION_REGEX);
   const correctMatch = body.match(CORRECT_ANNOTATION_REGEX);
-  const hasExamplePattern = /\*\*Example\s*(?:\([^)]+\))?\s*:\*\*/i.test(body);
-  const hasUsagePattern = /\*\*Usage\s*:\*\*/i.test(body);
-  const hasCSSPattern = /\*\*CSS\s*:\*\*/i.test(body);
-  const hasImplementationPattern = /\*\*Implementation\s*:\*\*/i.test(body);
   const hasAltEmoji = body.includes('**❌') || body.includes('**✓') || body.includes('**✅');
-  const hasAlternativePattern = hasExamplePattern || hasUsagePattern || hasCSSPattern || hasImplementationPattern;
 
-  // If using Incorrect/Correct pattern, validate the pair
   if (incorrectMatch || correctMatch) {
     if (!incorrectMatch && !hasAltEmoji) {
       issues.push(createError(filepath,
@@ -302,11 +293,6 @@ function validateRuleContent(body, filepath) {
     } else if (correctMatch && !correctMatch[1]) {
       issues.push(createError(filepath, VALIDATION_MESSAGES.RULE_CORRECT_NO_DESCRIPTION));
     }
-  } else if (!hasAlternativePattern && !hasAltEmoji) {
-    // No recognized example pattern found
-    issues.push(createError(filepath,
-      `${VALIDATION_MESSAGES.RULE_MISSING_INCORRECT}. ${VALIDATION_MESSAGES.GUIDE_CODE_EXAMPLES}`
-    ));
   }
 
   for (const pattern of VAGUE_ANNOTATION_PATTERNS) {
@@ -572,9 +558,14 @@ function validateNoDuplicatedWords(title, filepath) {
 }
 
 /**
- * Validate SKILL.md H1 format includes organization name
+ * Validate SKILL.md has an H1 title.
+ *
+ * The title is free-form. There is no required "{Org} {Tech} Best Practices"
+ * shape — distillation skills are no longer assumed to be performance guides,
+ * so a correctness/idiom reference titled "TypeScript Type Safety" or
+ * "Stripe API Usage" is equally valid.
  * @param {string} content - Full SKILL.md content
- * @param {string} organization - Organization name from metadata
+ * @param {string} organization - Organization name from metadata (unused; kept for call-site compatibility)
  * @param {string} filepath - Path for error reporting
  * @returns {import('./types.js').ValidationIssue[]}
  */
@@ -584,24 +575,6 @@ function validateSkillH1Format(content, organization, filepath) {
   const h1Match = content.match(H1_REGEX);
   if (!h1Match) {
     issues.push(createError(filepath, VALIDATION_MESSAGES.SKILL_H1_MISSING));
-    return issues;
-  }
-
-  const h1 = h1Match[1].trim();
-
-  // H1 should include "Best Practices" and ideally the organization name
-  if (!h1.includes('Best Practices')) {
-    issues.push(createError(filepath, VALIDATION_MESSAGES.SKILL_H1_WRONG_FORMAT(h1)));
-  } else if (organization) {
-    // Check if H1 includes org name or first word of org name (e.g., "Vercel" matches "Vercel Engineering")
-    const orgWords = organization.split(/\s+/);
-    const h1Lower = h1.toLowerCase();
-    const hasOrgReference = orgWords.some(word => h1Lower.includes(word.toLowerCase()));
-    if (!hasOrgReference) {
-      issues.push(createWarning(filepath,
-        `SKILL.md: H1 "${h1}" should include organization name "${organization}"`
-      ));
-    }
   }
 
   return issues;

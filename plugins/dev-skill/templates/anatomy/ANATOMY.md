@@ -46,22 +46,22 @@ description: {trigger description — see "Description Field" below}
 
 ## The Description Field
 
-The description is the primary triggering mechanism. Claude scans every skill's description to decide relevance — it competes with other skills for attention. Claude currently tends to **undertrigger** skills (not use them when they'd be useful), so descriptions should be slightly "pushy."
+The description is the primary triggering mechanism. Claude reads every skill's description to decide relevance, and it competes with other skills for attention. Make it **accurate and distinctive**: it should match the situations where the skill genuinely helps, and no others. A description that oversells triggers the skill on unrelated work (noise); one that undersells leaves it dormant. Aim for the true boundary, stated specifically — don't pad it to force triggering.
 
-**Good:** `Use this skill whenever writing, reviewing, or refactoring Python code for performance — covers async patterns, memory management, data structures, and import optimization. Trigger even if the user doesn't explicitly mention "performance" but is working on Python code that could benefit from optimization.`
+**Good:** `Use this skill when writing, reviewing, or refactoring Python code — covers async patterns, memory management, data structures, and import organization. Applies whenever the work touches those areas, even if the user doesn't name them.`
 
-**Bad:** `A comprehensive guide to Python best practices.`
+**Bad:** `A comprehensive guide to Python best practices.` *(vague — won't match real intent)*
 
-**Also bad:** `Python performance optimization guidelines. This skill should be used when writing Python code.` *(too passive, not distinctive)*
+**Also bad:** `Python guidelines. This skill should be used when writing Python code.` *(passive and undistinctive — matches everything or nothing)*
 
 Rules:
-- Use imperative form: "Use this skill for/whenever..." not "This skill should be used when..."
-- Focus on user **intent** (what they're trying to achieve) not implementation details (how the skill works)
-- Be specific about trigger contexts — name technologies, activities, and edge cases
-- Make it distinctive — if two skills could match a query, the description should make clear why THIS one wins
-- Be slightly pushy: "even if the user doesn't explicitly ask for X" helps with undertriggering
-- Keep under 200 words — it's injected into every query and there may be many skills
-- Descriptions can be tested and optimized with `/dev-skill:eval`'s trigger optimization
+- Use imperative form: "Use this skill when..." not "This skill should be used when..."
+- Focus on user **intent** (what they're trying to achieve), not how the skill works internally.
+- Be specific about trigger contexts — name technologies, activities, and the kinds of decisions involved.
+- Make it distinctive — if two skills could match a query, the description should make clear why THIS one wins.
+- State the boundary honestly. If there are cases the skill does NOT cover, don't imply it does.
+- Keep it tight (a sentence or two) — it's injected into every query alongside many other skills.
+- Tune trigger breadth with `/dev-skill:eval`'s trigger optimization — let the evals, not guesswork, decide how broad to go.
 
 ## Progressive Disclosure
 
@@ -218,6 +218,14 @@ The most important writing principle for skills: **explain WHY, not just WHAT.**
 
 If you find yourself writing ALWAYS or NEVER in all caps, or building super-rigid structures, that's a signal to reframe. Explain the reasoning so the model understands the tradeoff.
 
+### Earn Every Line
+
+The reader is a capable model, not a beginner — it already knows the language and the common idioms. So content earns its place only by **changing what the model does**: correcting a wrong default, supplying a fact it can't infer, or settling a decision it would otherwise get wrong. Anything that restates what the model already does right is noise, and noise buries the lines that matter.
+
+Before keeping any rule, step, or paragraph, ask: **what does the model do here without it?** If the answer is "the right thing already," cut it.
+
+This is why conciseness is *provable*, not a matter of taste. A skill is complete when it changes behavior on its target tasks — demonstrated by `/dev-skill:eval` — not when it reaches some length or rule count. Prefer one principle that generalizes over ten instructions that enumerate; the model extends a well-explained reason to cases you never listed. Brevity is the soul of wit: say the non-obvious thing once, clearly, then stop.
+
 ### Language Patterns
 
 | Do | Don't |
@@ -247,6 +255,7 @@ A skill's contents should not surprise the user in their intent if described. Sk
 Signs of a good skill regardless of discipline:
 - Description triggers correctly (agent finds it when relevant, doesn't trigger when irrelevant)
 - Progressive disclosure works (agent reads deeper content when needed, not all at once)
+- Every line earns its place — content corrects a wrong default or supplies a needed fact, never restates what the model already does
 - Instructions explain the WHY — model can generalize to novel situations
 - Setup handles missing config gracefully
 - Gotchas are specific and actionable
@@ -255,6 +264,8 @@ Signs of a good skill regardless of discipline:
 
 Red flags:
 - SKILL.md over 500 lines (too much inline, needs progressive disclosure)
+- Hand-holding: rules/steps that restate what a capable model already does correctly (filler that dilutes the real signal)
+- Padding to hit a rule or length target instead of proving coverage with evals
 - No gotchas after extended use (gotchas always exist — they haven't been captured)
 - Generic advice that could apply to any technology
 - Lots of ALWAYS/NEVER/MUST without explaining why

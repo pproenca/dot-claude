@@ -279,9 +279,8 @@ scripts/
 - Each section has at least one rule
 - Categories don't exceed maximum rules
 
-#### Statistics Validation
-- Total rules meet minimum count (10+)
-- Quantified impact percentage meets target (80%+)
+#### Statistics
+- No rule-count floor and no quantified-impact target are enforced. Completeness is proven by `/dev-skill:eval`, not by counts.
 
 ---
 

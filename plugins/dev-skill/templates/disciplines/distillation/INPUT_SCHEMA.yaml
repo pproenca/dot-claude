@@ -1,101 +1,64 @@
 # ============================================================
-# SKILL GENERATION INPUT CONFIGURATION
+# SKILL GENERATION INPUT CONFIGURATION (distillation)
 # ============================================================
-# Fill in these variables to generate a new skill.
-# Reference: output/skill-reverse-engineer-output.md
+# Fill these in to generate a distilled reference skill.
+# The scope of the skill is the WRONG_DEFAULTS list below — not a rule count.
 
 # =============================================================================
-# TECHNOLOGY DEFINITION
+# IDENTITY
 # =============================================================================
 
-TECHNOLOGY_NAME: ""           # e.g., "React and Next.js", "Go", "Rust"
-TECHNOLOGY_SLUG: ""           # e.g., "react", "go", "rust" (lowercase, no spaces)
-TECHNOLOGY_STACK: ""          # Related technologies/ecosystem
-ORGANIZATION_NAME: ""         # e.g., "Vercel Engineering", "Google"
-ORGANIZATION_SLUG: ""         # e.g., "vercel", "google" (lowercase)
-PRIMARY_LANGUAGE: ""          # Code language for examples (e.g., "typescript", "go", "rust")
+TECHNOLOGY_NAME: ""        # e.g. "React and Next.js", "Go", "the Stripe API"
+TECHNOLOGY_SLUG: ""        # e.g. "react", "go", "stripe" (lowercase, no spaces)
+ORGANIZATION_NAME: ""      # e.g. "Vercel Engineering", "Acme Platform"
+ORGANIZATION_SLUG: ""      # e.g. "vercel", "acme" (lowercase)
+PRIMARY_LANGUAGE: ""       # code language for examples (e.g. "typescript", "go")
+PERFORMANCE_SKILL: false   # true ONLY if the skill is genuinely about performance
+                           # (enables optional impact tiers + quantified metrics)
 
 # =============================================================================
-# EXECUTION LIFECYCLE
-# CRITICAL: This determines category ordering
-# List stages from input to output, noting where performance problems occur
+# WRONG DEFAULTS  ← this list IS the scope of the skill
+# Each entry becomes (at most) one rule. List what a capable model does WRONG by
+# default for this technology. If the model already gets something right, do not
+# list it. This list, not a target number, determines how many rules exist.
 # =============================================================================
 
-EXECUTION_LIFECYCLE:
-  - stage: "request"
-    description: "Initial request/invocation"
-    typical_problems: ["sequential I/O", "unnecessary requests"]
-    cascade_effect: "ALL downstream stages"
-  - stage: "parse"
-    description: "Parsing and initial processing"
-    typical_problems: ["large payloads", "slow parsing"]
-    cascade_effect: "Affects all subsequent processing"
-  - stage: "process"
-    description: "Main processing/computation"
-    typical_problems: ["algorithm inefficiency", "blocking operations"]
-    cascade_effect: "Affects output generation"
-  - stage: "output"
-    description: "Output generation/rendering"
-    typical_problems: ["excessive rendering", "large responses"]
-    cascade_effect: "Affects client/consumer"
-  - stage: "runtime"
-    description: "Ongoing runtime operations"
-    typical_problems: ["memory leaks", "hot path inefficiency"]
-    cascade_effect: "Affects sustained performance"
+WRONG_DEFAULTS:
+  - default: "What the model/engineer does here without guidance"
+    why_wrong: "The concrete consequence"
+    category: "cat"            # category prefix this belongs to
+    foil_needed: false         # true only if the wrong way is a common trap
+                               # worth showing as an Incorrect/Correct contrast
 
 # =============================================================================
-# PERFORMANCE CATEGORIES
-# Derived from lifecycle analysis, ordered by cascade effect (CRITICAL → LOW)
-# Order by: lifecycle position × impact radius × frequency
+# CATEGORIES
+# Group the wrong defaults. Order by importance (most frequent / most costly
+# first). 4-8 categories is typical.
 # =============================================================================
 
-PERFORMANCE_CATEGORIES:
+CATEGORIES:
   - name: "Category Name"
-    prefix: "cat"                    # 3-8 char prefix for filenames
-    impact: "CRITICAL"               # CRITICAL|HIGH|MEDIUM-HIGH|MEDIUM|LOW-MEDIUM|LOW
-    description: "One sentence describing what this category covers"
-    lifecycle_stage: "request"       # Which lifecycle stage this affects
-    cascade_effect: "How it affects downstream operations"
-    rule_count_target: 5             # Target 3-7 rules per major category
+    prefix: "cat"              # 2-10 char filename prefix
+    description: "One sentence: what decisions this category covers"
+    # impact: "CRITICAL"       # optional; performance skills only
 
 # =============================================================================
-# WHEN TO APPLY
-# 5 scenarios that trigger this skill
+# WHEN TO APPLY  — 3-5 concrete trigger scenarios
 # =============================================================================
 
 WHEN_TO_APPLY:
   - "Writing new {{TECHNOLOGY_NAME}} code"
   - "{{Category 1 specific activity}}"
-  - "{{Category 2 specific activity}}"
-  - "Reviewing code for performance issues"
-  - "Refactoring existing {{TECHNOLOGY_NAME}} code"
+  - "Reviewing {{TECHNOLOGY_NAME}} code"
+
+TRIGGER_KEYWORDS: "keyword1, keyword2, keyword3"
 
 # =============================================================================
-# TRIGGER KEYWORDS
-# For skill description frontmatter
+# AUTHORITATIVE SOURCES  (primary only — see RECIPE.md "Sources")
+# Reject content farms, listicles, undated blogs, and AI SEO filler.
 # =============================================================================
 
-TRIGGER_KEYWORDS: "keyword1, keyword2, keyword3, performance improvements"
-
-# =============================================================================
-# AUTHORITATIVE SOURCES
-# For metadata.json and rule references
-# =============================================================================
-
-AUTHORITATIVE_DOCUMENTATION:
+SOURCES:
   - url: "https://..."
-    purpose: "Official language/framework documentation"
-  - url: "https://..."
-    purpose: "API reference"
-
-TOOL_REPOSITORIES:
-  - url: "https://github.com/..."
-    purpose: "Recommended tool for X"
-
-BENCHMARK_DATA_SOURCES:
-  - url: "https://..."
-    purpose: "Performance data supporting impact claims"
-
-CODE_REPOSITORIES:
-  - url: "https://github.com/..."
-    purpose: "Reference implementation of best practices"
+    purpose: "Official docs / spec / library source / named-expert writing"
+    verified: false           # set true once authority + currency + support checked

@@ -1,14 +1,22 @@
 # Sections
 
-This file defines all sections, their ordering, impact levels, and descriptions.
-The section ID (in parentheses) is the filename prefix used to group rules.
+This file defines the categories and their order. The prefix in parentheses is
+the filename prefix that groups rules. Order categories by **importance** — the
+decisions that come up most often and cost most when wrong go first.
 
 ---
 
-{{FOR_EACH CATEGORY in PERFORMANCE_CATEGORIES}}
+{{FOR_EACH CATEGORY in CATEGORIES}}
 ## {{INDEX}}. {{CATEGORY.name}} ({{CATEGORY.prefix}})
 
-**Impact:** {{CATEGORY.impact}}
 **Description:** {{CATEGORY.description}}
 
 {{END_FOR_EACH}}
+
+<!-- Performance skills may add an impact tier under each category, on its own
+     line with two trailing spaces so it renders as a line break:
+
+     **Impact:** CRITICAL␣␣
+
+     If you use tiers, keep categories in non-increasing order (CRITICAL before
+     HIGH, etc.). For correctness/idiom/API skills, omit Impact entirely. -->
