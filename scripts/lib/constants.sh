@@ -10,17 +10,39 @@
 # Valid Tools Whitelist
 # ============================================================================
 
-# Built-in Claude Code tools
+# Built-in Claude Code tools.
+# Synced to the official Tools reference
+# (https://code.claude.com/docs/en/tools-reference.md, v2.1.145+, 2026-05).
+# Note: the subagent-dispatch tool is "Agent"; bare "Task" is the legacy
+# pre-rename name still used by older command frontmatter, kept for backward
+# compatibility. The Task* tools (TaskCreate/Get/List/Output/Stop/Update) are
+# the separate background-task tools.
 VALID_BUILTIN_TOOLS=(
+  "Agent"
   "AskUserQuestion"
   "Bash"
+  "CronCreate"
+  "CronDelete"
+  "CronList"
   "Edit"
   "EnterPlanMode"
+  "EnterWorktree"
   "ExitPlanMode"
+  "ExitWorktree"
   "Glob"
   "Grep"
+  "ListMcpResourcesTool"
+  "LSP"
+  "Monitor"
   "NotebookEdit"
+  "PowerShell"
+  "PushNotification"
   "Read"
+  "ReadMcpResourceTool"
+  "RemoteTrigger"
+  "ScheduleWakeup"
+  "SendMessage"
+  "ShareOnboardingGuide"
   "Skill"
   "Task"
   "TaskCreate"
@@ -29,6 +51,11 @@ VALID_BUILTIN_TOOLS=(
   "TaskOutput"
   "TaskStop"
   "TaskUpdate"
+  "TeamCreate"
+  "TeamDelete"
+  "TodoWrite"
+  "ToolSearch"
+  "WaitForMcpServers"
   "WebFetch"
   "WebSearch"
   "Write"
