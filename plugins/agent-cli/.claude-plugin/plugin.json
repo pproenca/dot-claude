@@ -1,0 +1,8 @@
+{
+  "name": "agent-cli",
+  "description": "Bootstrap, evolve, audit, and maintain CLI tools built for AI agents — the spec to scaffold to harden lifecycle distilled from openclaw/clawpatch, crabbox, and clawsweeper",
+  "author": {
+    "name": "Pedro Proenca",
+    "email": "pedro@pproenca.dev"
+  }
+}

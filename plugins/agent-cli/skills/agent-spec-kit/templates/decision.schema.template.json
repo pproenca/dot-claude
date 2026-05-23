@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "<tool> decision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "decision", "confidence", "reasoning", "evidence", "security"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "decision": { "enum": ["act", "no_action"] },
+    "action": {
+      "enum": ["close_duplicate", "comment_only", "route_security", "needs_human", "none"]
+    },
+    "confidence": { "enum": ["high", "medium", "low"] },
+    "reasoning": { "type": "string", "minLength": 1 },
+
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "detail", "file", "line", "sha"],
+        "comment": "Provenance is structurally mandatory: a claim with no file/sha is invalid.",
+        "properties": {
+          "label": { "type": "string" },
+          "detail": { "type": "string" },
+          "file": { "type": "string" },
+          "line": { "type": ["integer", "null"] },
+          "command": { "type": ["string", "null"] },
+          "sha": { "type": "string" }
+        }
+      }
+    },
+
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["cleared", "needs_attention", "not_applicable"] }
+      }
+    },
+
+    "mutation_preflight": {
+      "type": "object",
+      "additionalProperties": false,
+      "comment": "Required for any mutating action. Safety-critical fields are const-locked so a non-cleared item structurally cannot mutate.",
+      "required": ["security_status", "target_updated_at", "checks_passed", "findings_addressed"],
+      "properties": {
+        "security_status": { "const": "cleared" },
+        "target_updated_at": { "type": "string" },
+        "checks_passed": { "const": true },
+        "findings_addressed": { "const": true }
+      }
+    }
+  }
+}
