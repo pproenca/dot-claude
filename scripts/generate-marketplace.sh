@@ -57,7 +57,7 @@ collect_plugins() {
     echo -n ", \"source\": \"./$relative_prefix/$dir_name\""
     if [[ -n "$plugin_desc" ]]; then
       # Escape quotes in description
-      plugin_desc=$(echo "$plugin_desc" | sed 's/"/\\"/g')
+      plugin_desc=${plugin_desc//\"/\\\"}
       echo -n ", \"description\": \"$plugin_desc\""
     fi
     echo -n "}"
