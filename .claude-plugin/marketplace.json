@@ -16,6 +16,11 @@
       "description": "Bootstrap, evolve, audit, and maintain CLI tools built for AI agents — the spec to scaffold to harden lifecycle distilled from openclaw/clawpatch, crabbox, and clawsweeper"
     },
     {
+      "name": "cairn",
+      "source": "./plugins/cairn",
+      "description": "Boundary-discipline harness so the marginal cost of each feature slopes down. Composable skills built around a six-stage plan -> skeleton -> build -> verify -> record -> ratchet loop with a human spec parse-point, the four boundary kinds (trust, effect, consistency, containment), library-knowledge as an ecosystem trust boundary, and a knowledge-ratchet that promotes recurring friction leftward toward unrepresentable-illegal."
+    },
+    {
       "name": "dev-skill",
       "source": "./plugins/dev-skill",
       "description": "Create, evolve, and validate skills across 9 types — from API references to runbooks to CI/CD workflows"

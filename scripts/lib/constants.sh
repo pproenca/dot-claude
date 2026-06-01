@@ -91,9 +91,10 @@ SKILL_REQUIRED_FIELDS=(
 )
 
 # Commands (commands/*.md files)
+# Note: allowed-tools is OPTIONAL for commands (omitting it grants all tools),
+# matching Claude Code's command frontmatter spec.
 COMMAND_REQUIRED_FIELDS=(
   "description"
-  "allowed-tools"
 )
 
 # Agents (agents/*.md files)

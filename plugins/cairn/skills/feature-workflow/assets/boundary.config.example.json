@@ -1,0 +1,71 @@
+{
+  "_comment": "Copy to your repo root as boundary.config.json and edit the globs to match your conventions. All keys are optional; scripts fall back to sensible defaults. include_ext/exclude_globs are used by scan.py and shelf_index.py; layers by shelf_index.py; feature_roots by promote.py; verify by verify.py.",
+  "include_ext": [
+    ".ts",
+    ".tsx"
+  ],
+  "exclude_globs": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.git/**",
+    "**/*.test.*",
+    "**/*.spec.*",
+    "**/*.d.ts"
+  ],
+  "layers": {
+    "atomic": [
+      "src/ui/tokens/**/*",
+      "src/domain/value-objects/**/*"
+    ],
+    "primitive": [
+      "src/ui/components/**/*"
+    ],
+    "seam": [
+      "src/ports/**/*",
+      "src/hooks/**/*",
+      "src/providers/**/*"
+    ],
+    "pattern": [
+      "src/ui/patterns/**/*"
+    ],
+    "pipeline": [
+      "src/usecases/**/*",
+      "src/application/**/*"
+    ],
+    "scaffold": [
+      "src/layouts/**/*",
+      "src/app/**/layout.*"
+    ]
+  },
+  "feature_roots": [
+    "src/features/**"
+  ],
+  "verify": [
+    {
+      "name": "typecheck",
+      "cmd": "npx --no-install tsc --noEmit",
+      "must_pass": true
+    },
+    {
+      "name": "tests",
+      "cmd": "npm test --silent",
+      "must_pass": true
+    },
+    {
+      "name": "lint",
+      "cmd": "npx --no-install eslint . --max-warnings 0",
+      "must_pass": true
+    },
+    {
+      "name": "boundary-scan",
+      "cmd": "python3 /ABSOLUTE/PATH/TO/boundary-discipline/scripts/scan.py src --json",
+      "must_pass": false
+    },
+    {
+      "name": "lib-freshness",
+      "cmd": "python3 /ABSOLUTE/PATH/TO/library-knowledge/scripts/lib_refresh.py --check",
+      "must_pass": false
+    }
+  ]
+}

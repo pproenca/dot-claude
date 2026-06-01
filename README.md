@@ -21,6 +21,7 @@ A collection of Claude Code plugins for structured development workflows, Python
 | Plugin | Description |
 |--------|-------------|
 | [dev-workflow](plugins/dev-workflow) | TDD, systematic debugging, and code review workflows |
+| [cairn](plugins/cairn) | Boundary-discipline harness that makes feature N+1 cheaper than feature N |
 | [dev-python](domain_plugins/dev-python) | Python 3.12+ with uv, ruff, pydantic, FastAPI, Django |
 | [dev-ts](domain_plugins/dev-ts) | TypeScript/JavaScript with Google Style Guide patterns |
 | [dev-cpp](domain_plugins/dev-cpp) | C++ development with clangd LSP integration |
@@ -44,6 +45,7 @@ Then install individual plugins:
 
 ```
 /plugin install dev-workflow@dot-claude
+/plugin install cairn@dot-claude
 /plugin install dev-python@dot-claude
 /plugin install dev-ts@dot-claude
 /plugin install dev-cpp@dot-claude
@@ -82,6 +84,15 @@ Development methodology plugin enforcing discipline through architecture:
 - **Skills**: TDD, systematic debugging, verification, code review
 - **Commands**: `/brainstorm`, `/write-plan`, `/execute-plan`, `/resume`
 - **Agents**: code-explorer, code-architect, code-reviewer
+
+### [cairn](plugins/cairn)
+
+Boundary-discipline harness so the marginal cost of each feature slopes down:
+
+- **Commands**: `/feature`, `/fix`, `/refactor`, `/spike`, `/setup`
+- **Skills**: boundary discipline, feature/fix/refactor/spike workflows, verify-and-diagnose, knowledge ratchet, capability ledger, mental models
+- Six-stage `plan → skeleton → build → verify → record → ratchet` loop with a human spec parse-point
+- Stack-agnostic: the four boundary kinds (trust, effect, consistency, containment) place frontend, API, database, and event-driven code
 
 ### [dev-python](domain_plugins/dev-python)
 

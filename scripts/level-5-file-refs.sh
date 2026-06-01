@@ -40,8 +40,8 @@ for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plug
       # shellcheck disable=SC2001
       ref_path=$(echo "$ref_path" | sed 's/[)}\]>\\]$//')
 
-      # Skip paths with template variables like {discipline}, {name}, etc.
-      if echo "$ref_path" | grep -qE '\{[a-z_]+\}'; then
+      # Skip paths with template variables like {discipline}, {name}, <skill>, etc.
+      if echo "$ref_path" | grep -qE '\{[a-z_]+\}|<[a-z_]+>'; then
         refs_checked=$((refs_checked + 1))
       else
         # Resolve to actual path
