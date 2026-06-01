@@ -81,10 +81,17 @@ BODIES = {
 - **Chosen class + why:** ((...))
 - **Gap that exposed a MISSING mental model -> record in mental-models:** ((none / model + trigger))
 
-## 4. Collapse
-- **This spike collapses into a:** ((feature / refactor / perf-refactor)) — run that kind next.
+## 4. Open decisions handed forward (the floor could NOT adjudicate these)
+- ((list each decision the floor leaves open — UX, intent, architecture — one per line.
+  These are NOT the spike's to settle; they are carried into the collapse target's
+  spec parse-point (STAGE 0.5) and driven to closure there, codebase-explored first.
+  "none" if the floor settled everything.))
 
-## 5. Verify obligation
+## 5. Collapse
+- **This spike collapses into a:** ((feature / refactor / perf-refactor)) — run that kind
+  next, carrying the open decisions above into its spec parse-point.
+
+## 6. Verify obligation
 - a FLOOR is declared and the result is reported AS A RATIO TO THE FLOOR (not to the starting point);
   for a perf change, both a characterization test (output identical) AND a benchmark-vs-floor gate.
 """,

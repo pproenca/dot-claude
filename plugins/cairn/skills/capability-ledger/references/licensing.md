@@ -29,6 +29,17 @@ prizes horizontal reframings.
   beat, and the boundaries to respect — the sub-agent's result is itself
   benchmarked and flows back as a solve or a miss.
 
+## What no rung ever licenses
+
+No maturity licenses skipping the spec parse-point (feature-workflow STAGE 0.5).
+Auto-pass covers the PLAN gate — planning *shape* — because that is what
+benchmarked solves demonstrate. Intent is not a problem class and is never
+demonstrated, so the human's confirmation of the proposed-invariant delta is
+required at novice, practiced, and proven alike. License shrinks the delta (via
+inherited invariants); it never removes the act of confirming it. A loop that let
+proven-ness silence the spec interview would be declaring competence at the one
+thing — knowing what the human wants — that cannot be earned against a floor.
+
 ## Demotion (instant, asymmetric)
 A `--miss` (a result that failed to reach near-floor, or a shipped regression in
 the class) drops the class ONE rung immediately and records `last_demotion`. This

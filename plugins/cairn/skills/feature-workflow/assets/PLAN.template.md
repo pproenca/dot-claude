@@ -11,6 +11,7 @@
 - **Name:** ((fill: short name))
 - **Customer pain / outcome:** ((fill: the pain this removes, in one sentence))
 - **Adoption signal:** ((fill: how we'll know it's adopted — the observable that proves it solved the pain))
+- **Open decisions carried in (from a spike, if any):** ((fill: the spike's open-decisions list, or "none". Each is resolved at the STAGE 0.5 spec interview — recommended answer first, codebase-explored before asking, human only for intent/taste.))
 
 ## 1. Boundary decomposition
 

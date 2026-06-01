@@ -53,6 +53,10 @@ the agent itself.
   class to a sub-agent under the recorded playbook, and to attempt larger blast
   radius — because the playbook is demonstrated, not guessed.
 
+No rung auto-passes the spec parse-point (feature-workflow STAGE 0.5): the PLAN
+gate is planning *shape*, but intent is not a demonstrated problem class. See
+`references/licensing.md`.
+
 "Near-floor" = within the class's agreed ratio of the floor (default <=2x),
 proven by a recorded benchmark. No benchmark -> not a solve -> no credit.
 

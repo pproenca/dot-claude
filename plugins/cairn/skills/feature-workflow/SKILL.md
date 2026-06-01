@@ -82,6 +82,14 @@ blast radius: license is READ here, never written here (the loop cannot
 self-license), it is earned only by measured near-floor outcomes, and it is
 revoked instantly on a miss. A novice class always gets full gates.
 
+**Earned autonomy never reaches the spec parse-point.** A practiced/proven class
+may auto-pass the PLAN gate — autonomy over planning *shape* (boundary
+decomposition, shelf-check), which the class has demonstrably done before. It is
+never autonomy over *intent*: no measured competence at a problem class derives
+what *this* feature is meant to do. The STAGE 0.5 spec interview runs at every
+maturity; license only shrinks the delta (through inherited invariants), never the
+human's confirmation of it. See `capability-ledger/references/licensing.md`.
+
 ## STAGE 0 — The gate (do this BEFORE writing any code)
 
 This is the most important step and the one momentum will try to skip.
@@ -146,6 +154,33 @@ accumulates — the cost curve bending your attention, not just the code. When a
 proposed invariant recurs or a near-miss proves it load-bearing, the
 knowledge-ratchet promotes it left: annotation → enforced refinement → typed
 contract.
+
+#### The spec interview — drive the proposed delta to closure
+
+The proposed invariants plus any `open-decisions` carried in from a spike form a
+**decision tree**, not a flat list, and this is where it is resolved *with* you.
+Walk it one branch at a time, in dependency order — settle a decision before the
+ones that hang off it, because the answer to one branch usually prunes the next.
+
+1. **Answer it yourself first — this is `inquiry`.** For each open decision, state
+   your *recommended* answer and a confidence, then make the cheapest observation
+   that would settle it. If the codebase can answer it — an existing convention, a
+   boundary already placed, a fact in `library-knowledge` — it is not a question
+   for the human: resolve it, and record what you observed. Escalate to the human
+   ONLY what code cannot settle, because it is intent, taste, or a tradeoff with no
+   ground truth in the repo.
+2. **Ask one question at a time, each with your recommended answer**, so the human
+   confirms or corrects a proposal rather than authoring from a blank page.
+3. **Stop at the delta, never the whole tree.** Established and inherited
+   invariants are confirmed by inheritance, not re-litigated. Only the proposed
+   delta and the carried open-decisions earn the interview. As the domain's
+   spec-of-record accumulates the delta shrinks and the interview shrinks with it
+   — that is the cost curve bending your attention, and it is what keeps
+   "relentless" from hardening into ceremony.
+
+A spike collapses into a feature carrying its `open-decisions` (the calls its floor
+could not adjudicate — UX, intent, architecture). Those are *inputs* to this
+interview; the parse-point is where they reach closure, never the spike.
 
 This is "enforcement moves left" applied to the one stage that lacked a gate.
 Fixing a wrong boundary here costs a signature edit; fixing it after the bodies
