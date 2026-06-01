@@ -56,7 +56,17 @@ def _strip_comment(line: str) -> str:
 
 
 # boundary kind -> list of (label, compiled pattern). Mirrors references/audit.md.
-PATTERNS: dict[str, list[tuple[str, re.Pattern]]] = {
+# The boundary KINDS (trust/effect/consistency/containment) are universal and
+# constitutional. How each kind MANIFESTS in source — the fingerprints below — is
+# NOT universal: it is per-substrate craft that Cairn should derive and own, the same
+# way it derives substrate conventions (see harness-setup/investigating-substrate.md).
+#
+# So these are not law. They are a LABELED SEED for one ecosystem (TS/JS), provided
+# only so a fresh TS repo is not blind on day one. Cairn loads its OWN derived
+# patterns from boundary-patterns.jsonl (per substrate) and they take precedence;
+# what it derives for Go, Rust, Python, or anything else, it writes there and owns.
+# A pattern Cairn did not derive is a guess it cannot defend or maintain.
+_SEED_PATTERNS_TS: dict[str, list[tuple[str, re.Pattern]]] = {
     "trust": [
         ("cast (as)", re.compile(r"\bas\s+(?!const\b)[A-Za-z_]")),
         ("any", re.compile(r":\s*any\b|<any>|\bany\[\]")),
@@ -80,6 +90,35 @@ PATTERNS: dict[str, list[tuple[str, re.Pattern]]] = {
     ],
 }
 
+BOUNDARY_KINDS = ["trust", "effect", "consistency", "containment"]
+PATTERN_STORE = "boundary-patterns.jsonl"
+
+
+def load_patterns(repo: Path, substrate: str | None) -> tuple[dict[str, list[tuple[str, re.Pattern]]], str]:
+    """Cairn's OWN derived fingerprints for this substrate, if it has any; else the
+    labeled TS seed (with an honest note that they may not fit a non-TS stack).
+    Returns (patterns, provenance)."""
+    store = repo / PATTERN_STORE
+    derived: dict[str, list[tuple[str, re.Pattern]]] = {}
+    if store.exists():
+        for line in store.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                r = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if substrate and r.get("substrate") not in (substrate, None):
+                continue
+            try:
+                derived.setdefault(r["boundary"], []).append((r["label"], re.compile(r["regex"])))
+            except (KeyError, re.error):
+                pass
+    if derived:
+        return derived, f"derived (Cairn's own findings for substrate '{substrate or 'any'}')"
+    return _SEED_PATTERNS_TS, "TS/JS seed (NOT derived — only valid for TS/JS; derive + record for other substrates)"
+
 
 def load_config(repo: Path, path: str | None) -> dict:
     cfg = dict(DEFAULTS)
@@ -90,6 +129,8 @@ def load_config(repo: Path, path: str | None) -> dict:
             for k in ("include_ext", "exclude_globs"):
                 if k in data:
                     cfg[k] = data[k]
+            if "_substrate" in data:
+                cfg["_substrate"] = data["_substrate"]
         except (json.JSONDecodeError, OSError) as e:
             print(f"warning: ignoring unreadable config {cfg_path}: {e}", file=sys.stderr)
     return cfg
@@ -100,10 +141,12 @@ def excluded(rel: Path, globs: list[str]) -> bool:
     return any(fnmatch.fnmatch(s, g) for g in globs)
 
 
-def scan(root: Path, cfg: dict) -> list[dict]:
+def scan(root: Path, cfg: dict, repo: Path | None = None) -> tuple[list[dict], str]:
     findings: list[dict] = []
     exts = set(cfg["include_ext"])
     globs = cfg["exclude_globs"]
+    substrate = cfg.get("_substrate")
+    patterns, provenance = load_patterns(repo or (root if root.is_dir() else root.parent), substrate)
     base = root if root.is_dir() else root.parent
     files = [root] if root.is_file() else list(root.rglob("*"))
     for f in files:
@@ -121,7 +164,7 @@ def scan(root: Path, cfg: dict) -> list[dict]:
             if not code.strip():
                 continue  # whole-line comment — not code
             import_as = _IMPORT_AS.search(code) is not None
-            for boundary, pats in PATTERNS.items():
+            for boundary, pats in patterns.items():
                 for label, pat in pats:
                     if pat.search(code):
                         if label == "cast (as)" and import_as:
@@ -131,7 +174,7 @@ def scan(root: Path, cfg: dict) -> list[dict]:
                             "file": str(rel), "line": n,
                             "snippet": line.strip()[:100],
                         })
-    return findings
+    return findings, provenance
 
 
 def summarize(findings: list[dict], full: bool) -> str:
@@ -172,6 +215,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--config", default=None, help="Path to boundary.config.json.")
     p.add_argument("--full", action="store_true", help="List every hit, not a capped sample.")
     p.add_argument("--json", action="store_true", help="Emit findings as JSON.")
+    p.add_argument("--record-pattern", nargs=4, metavar=("SUBSTRATE", "BOUNDARY", "LABEL", "REGEX"),
+                   help="Record a fingerprint Cairn DERIVED for a substrate, so it owns it. "
+                        "e.g. --record-pattern go effect 'http call' 'http\\.(Get|Post)'")
     args = p.parse_args(argv)
 
     root = Path(args.path).resolve()
@@ -179,12 +225,33 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: {root} not found", file=sys.stderr)
         return 2
     repo = root if root.is_dir() else root.parent
+
+    # recording mode: Cairn writes a fingerprint it derived (a pattern it can defend),
+    # keyed by substrate, into its own boundary-patterns.jsonl. This is how the smell
+    # library grows for Go/Rust/Python/anything — derived and owned, never handed down.
+    if args.record_pattern:
+        substrate, boundary, label, regex = args.record_pattern
+        if boundary not in BOUNDARY_KINDS:
+            print(f"error: boundary must be one of {BOUNDARY_KINDS} (the kinds are universal).", file=sys.stderr)
+            return 2
+        try:
+            re.compile(regex)
+        except re.error as e:
+            print(f"error: invalid regex: {e}", file=sys.stderr); return 2
+        store = repo / PATTERN_STORE
+        with store.open("a", encoding="utf-8") as f:
+            f.write(json.dumps({"substrate": substrate, "boundary": boundary,
+                                "label": label, "regex": regex}, ensure_ascii=False) + "\n")
+        print(f"recorded {boundary} fingerprint '{label}' for substrate '{substrate}' — Cairn owns it now.")
+        return 0
+
     cfg = load_config(repo, args.config)
-    findings = scan(root, cfg)
+    findings, provenance = scan(root, cfg, repo)
 
     if args.json:
-        print(json.dumps({"findings": findings, "count": len(findings)}, indent=2))
+        print(json.dumps({"findings": findings, "count": len(findings), "patterns": provenance}, indent=2))
     else:
+        print(f"(patterns: {provenance})")
         print(summarize(findings, args.full))
     return 0
 

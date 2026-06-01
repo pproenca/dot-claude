@@ -21,7 +21,12 @@ hardening notes drive the design below:
 from __future__ import annotations
 import datetime as _dt
 
-NEAR_FLOOR_DEFAULT = 2.0
+# A SEED, not law. "Near-floor" within 2x is a starting parameter Cairn can evolve
+# from its own history (like inquiry's calibration thresholds): a problem class may
+# carry its own `near_floor` once Cairn has enough solves to know what "near" means
+# for that class. The mechanism (judge against floor, not baseline) is fixed; the
+# threshold value is Cairn's to tune, per class, from evidence — never my constant.
+NEAR_FLOOR_SEED = 2.0
 
 
 def _parse_date(s) -> _dt.date | None:
@@ -48,11 +53,11 @@ def _is_credited_solve(s: dict, threshold: float) -> bool:
     return False  # unknown floor kind -> no credit (no silent inflation)
 
 
-def credited(solves: list[dict], threshold: float = NEAR_FLOOR_DEFAULT) -> list[dict]:
+def credited(solves: list[dict], threshold: float = NEAR_FLOOR_SEED) -> list[dict]:
     return [s for s in solves if _is_credited_solve(s, threshold)]
 
 
-def compute_maturity(solves: list[dict], threshold: float = NEAR_FLOOR_DEFAULT) -> str:
+def compute_maturity(solves: list[dict], threshold: float = NEAR_FLOOR_SEED) -> str:
     c = credited(solves, threshold)
     domains = {s.get("domain") for s in c if s.get("domain")}
     if len(c) >= 3 and len(domains) >= 2:
@@ -62,10 +67,13 @@ def compute_maturity(solves: list[dict], threshold: float = NEAR_FLOOR_DEFAULT) 
     return "novice"
 
 
-def effective_maturity(entry: dict, threshold: float = NEAR_FLOOR_DEFAULT) -> str:
+def effective_maturity(entry: dict, threshold: float = NEAR_FLOOR_SEED) -> str:
     """The maturity actually in force — demotion is STICKY. A recorded miss caps the
     rung until NEW credited solves arrive AFTER the demotion. Dates are compared as
     real dates; an unparseable solve date fails SAFE (does not lift the cap)."""
+    # a class may carry its OWN near_floor, tuned from its history — Cairn's value,
+    # not the seed. Falls back to the seed only until Cairn has evolved one.
+    threshold = entry.get("near_floor", threshold)
     computed = compute_maturity(entry.get("solves", []), threshold)
     dem = entry.get("last_demotion")
     if not dem:
