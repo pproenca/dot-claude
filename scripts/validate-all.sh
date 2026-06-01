@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Master orchestrator for marketplace validation
+# Master orchestrator for plugin validation
 # Usage: ./validate-all.sh [options]
 #
 # Options:
@@ -113,7 +113,7 @@ run_level() {
 # ============================================================================
 
 echo "========================================"
-echo "Claude Code Plugin Marketplace Validator"
+echo "Claude Code Plugin Validator"
 echo "========================================"
 
 TOTAL_ERRORS=0

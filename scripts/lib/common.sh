@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Common functions for marketplace validation scripts
+# Common functions for plugin validation scripts
 # Source this file at the start of each validation script
 
 # Disable shellcheck warnings for:
