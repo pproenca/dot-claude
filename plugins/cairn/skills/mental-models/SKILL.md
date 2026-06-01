@@ -1,19 +1,7 @@
 ---
 name: mental-models
 description: >-
-  The learning loop for problem-solving technique. Caches transferable
-  REFRAMINGS that reveal solution classes you would not otherwise search for,
-  keyed by a SMELL (the symptom that should trigger them) and learned from
-  observed GAPS rather than looked up by name. Use this on a novel or hard
-  problem (especially from spike-workflow), when a result seems good but you lack
-  the systems understanding to know if it truly is, or when a gap against a
-  floor/reference exposes that a whole class of approach was missed. It keeps a
-  repo-local store (mental-models.jsonl): per model, the triggering smell, the
-  reframing question, the solution classes it opens, an example, and the gap that
-  taught it. The HORIZONTAL twin of library-knowledge (facts) and
-  specialist-knowledge (domain craft): domain-GENERAL systems insight whose
-  authority is the measured gap, not docs. The antidote to "you don't look for
-  what you don't know" and to false victory against a weak baseline.
+  When a problem FEELS LIKE one you have met before — a smell you half-recognize, a shape that rhymes with an earlier surprise — that recognition is the signal for this. It is the learning loop for problem-solving technique. Caches transferable REFRAMINGS that reveal solution classes you would not otherwise search for, keyed by a SMELL (the symptom that should trigger them) and learned from observed GAPS rather than looked up by name. Use this on a novel or hard problem (especially from spike-workflow), when a result seems good but you lack the systems understanding to know if it truly is, or when a gap against a floor/reference exposes that a whole class of approach was missed. It keeps a repo-local store (mental-models.jsonl): per model, the triggering smell, the reframing question, the solution classes it opens, an example, and the gap that taught it. The horizontal twin of library facts and specialist craft: insight whose authority is the measured gap, not docs.
 ---
 
 # Mental Models

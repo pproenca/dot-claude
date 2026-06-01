@@ -42,9 +42,11 @@ def _find_models_record(repo: Path) -> Path | None:
     for c in candidates:
         if c.exists():
             return c
-    # last resort: glob the repo for it
+    # last resort: glob the repo, preferring a copy under .harness so a stray
+    # vendored/backup copy cannot capture the cross-skill write.
     hits = list(repo.rglob("models_record.py"))
-    return hits[0] if hits else None
+    harnessed = [h for h in hits if ".harness" in h.parts]
+    return (harnessed or hits or [None])[0]
 
 
 def _run(args):

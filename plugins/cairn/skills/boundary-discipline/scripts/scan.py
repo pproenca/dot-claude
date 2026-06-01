@@ -31,6 +31,9 @@ import sys
 from pathlib import Path
 
 DEFAULTS = {
+    # DEFAULTS assume a TS/JS repo. With a boundary.config.json present, the
+    # configured include_ext (any substrate) overrides these. Without one, scan
+    # only sees TS/JS — run config_init.py first for Go/Rust/Python/etc.
     "include_ext": [".ts", ".tsx", ".js", ".jsx"],
     "exclude_globs": [
         "**/node_modules/**", "**/dist/**", "**/build/**", "**/.git/**",
@@ -133,7 +136,7 @@ def scan(root: Path, cfg: dict) -> list[dict]:
 
 def summarize(findings: list[dict], full: bool) -> str:
     if not findings:
-        return "No boundary fingerprints found. (Either very clean, or the scan path/config is too narrow.)"
+        return "No boundary fingerprints found. NOTE: scan's pattern library is TS/JS-shaped; on a non-TS substrate a clean result may just mean my fingerprints do not cover this language yet (the boundary CONCEPTS are universal; these regexes are not). Reason about boundaries from references/audit.md directly for this stack."
     out: list[str] = []
     by_boundary: dict[str, list[dict]] = {}
     for f in findings:

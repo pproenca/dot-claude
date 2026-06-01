@@ -1,21 +1,27 @@
 #!/usr/bin/env python3
-"""Detect the repo's stack and layout, then scaffold a DRAFT boundary.config.json.
+"""Investigate the repo's substrate and scaffold a DRAFT boundary.config.json.
 
-This handles the mechanical half of setup: read package.json scripts, detect the
-package manager, find which conventional directories actually exist, and resolve
-the sibling-skill script paths. It writes a best-effort draft and prints a
-confidence report flagging what was detected vs guessed vs needs a human.
+This tool does NOT carry a table of substrates. A table would be inherited
+knowledge Cairn does not own — frozen, unmaintainable when conventions shift, blind
+to ecosystems no one listed. Instead it runs the METHOD in
+references/investigating-substrate.md: look for the manifest that identifies the
+ecosystem, derive the conventions from what is actually found, and CACHE the finding
+to library-knowledge so Cairn owns it and recalls its OWN derivation next time.
 
-The JUDGMENT half — confirming the layer->directory mapping encodes the repo's
-real architecture — is the harness-setup skill's job (a human/agent ratifies the
-draft). Always finish by running config_check.py to prove the result resolves.
+The first time Cairn meets an ecosystem, it investigates and records what it learned.
+The second time, it recalls its own finding (and may re-validate it). The substrate
+catalogue builds itself, one owned entry at a time, from real encounters — never
+handed down. An unrecognized substrate is reported honestly ("investigated, here is
+what I observed, here is what I could not determine"), never defaulted to a familiar
+stack.
 
-Mirrors plan_new.py: it scaffolds; the doctor validates.
+This composes existing faculties: inquiry (predict→observe→update) is the method,
+library-knowledge is where the derived fact lives. Always finish with config_check.py.
 
 Usage:
     python config_init.py --repo .
     python config_init.py --repo ../app --skills-root ~/.claude/skills
-    python config_init.py --force            # overwrite an existing config
+    python config_init.py --force
 """
 from __future__ import annotations
 
@@ -24,154 +30,209 @@ import json
 import sys
 from pathlib import Path
 
-# Conventional directories to probe per layer, in priority order.
-LAYER_PROBES = {
-    "atomic":    ["src/ui/tokens", "src/tokens", "src/design-tokens",
-                  "src/domain/value-objects", "src/domain/values"],
-    "primitive": ["src/ui/components", "src/components", "components", "src/ui/primitives"],
-    "seam":      ["src/ports", "src/hooks", "src/providers", "src/adapters"],
-    "pattern":   ["src/ui/patterns", "src/patterns", "src/features/_shared"],
-    "pipeline":  ["src/usecases", "src/application", "src/use-cases", "src/services"],
-    "scaffold":  ["src/layouts", "app", "src/app"],
-}
-FEATURE_PROBES = ["src/features", "src/modules", "src/domains", "features"]
-LOCKFILES = {"pnpm-lock.yaml": "pnpm", "yarn.lock": "yarn", "bun.lockb": "bun",
-             "package-lock.json": "npm"}
+# The substrate store: Cairn's OWN derived findings, keyed by substrate name. This is
+# library-knowledge (facts confirmed against authority, cached, re-validated). It
+# starts EMPTY. Nothing here is authored by the tool's maker; every entry is written
+# by Cairn after investigating a real repo.
+SUBSTRATE_STORE = "substrate-knowledge.jsonl"
 
 
-def detect_pm(repo: Path) -> str:
-    for lock, pm in LOCKFILES.items():
-        if (repo / lock).exists():
-            return pm
-    return "npm"
+def _store_path(repo: Path) -> Path:
+    return repo / SUBSTRATE_STORE
 
 
-def detect_exts(repo: Path) -> list[str]:
-    found = set()
-    for ext in (".ts", ".tsx", ".js", ".jsx"):
-        if next(repo.rglob(f"*{ext}"), None):
-            found.add(ext)
-    # prefer ts/tsx if present
-    if ".ts" in found or ".tsx" in found:
-        return [e for e in (".ts", ".tsx") if e in found]
-    return sorted(found) or [".ts", ".tsx"]
+def _load_findings(repo: Path) -> dict:
+    """Cairn's previously-derived substrate findings (its own, not the maker's)."""
+    p = _store_path(repo)
+    out = {}
+    if p.exists():
+        for line in p.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line:
+                try:
+                    r = json.loads(line); out[r["substrate"]] = r
+                except (json.JSONDecodeError, KeyError):
+                    pass
+    return out
 
 
-def detect_scripts(repo: Path) -> dict:
-    pkg = repo / "package.json"
-    if not pkg.exists():
-        return {}
-    try:
-        return json.loads(pkg.read_text(encoding="utf-8")).get("scripts", {})
-    except (json.JSONDecodeError, OSError):
-        return {}
+def _record_finding(repo: Path, finding: dict) -> None:
+    """Cache a derived finding so Cairn owns and recalls it. Library-knowledge home."""
+    p = _store_path(repo)
+    findings = _load_findings(repo)
+    findings[finding["substrate"]] = finding
+    p.write_text("".join(json.dumps(findings[k], ensure_ascii=False) + "\n"
+                          for k in sorted(findings)), encoding="utf-8")
 
 
-def run_cmd(pm: str, script: str) -> str:
-    return f"{pm} run {script}" if pm != "npm" else f"npm run {script}"
-
-
-def build_verify(pm: str, scripts: dict, scan_path: str | None) -> tuple[list[dict], list[str]]:
-    checks, notes = [], []
-    # typecheck
-    if "typecheck" in scripts:
-        checks.append({"name": "typecheck", "cmd": run_cmd(pm, "typecheck"), "must_pass": True})
-    else:
-        checks.append({"name": "typecheck", "cmd": "npx --no-install tsc --noEmit", "must_pass": True})
-        notes.append("typecheck: no 'typecheck' script found — defaulted to `tsc --noEmit` (verify it exists).")
-    # tests
-    if "test" in scripts:
-        checks.append({"name": "tests", "cmd": run_cmd(pm, "test"), "must_pass": True})
-    else:
-        notes.append("tests: no 'test' script found — add a tests check manually.")
-    # lint
-    if "lint" in scripts:
-        checks.append({"name": "lint", "cmd": run_cmd(pm, "lint"), "must_pass": True})
-    # boundary scan (report-only)
-    if scan_path:
-        checks.append({"name": "boundary-scan", "cmd": f"python3 {scan_path} src --json", "must_pass": False})
-    else:
-        checks.append({"name": "boundary-scan",
-                       "cmd": "python3 /ABSOLUTE/PATH/TO/boundary-discipline/scripts/scan.py src --json",
-                       "must_pass": False})
-        notes.append("boundary-scan: pass --skills-root so I can resolve scan.py, or edit the path. "
-                     "(placeholder path will fail the doctor until fixed.)")
-    return checks, notes
-
-
-def find_scan(skills_root: str | None) -> str | None:
-    if not skills_root:
-        return None
-    root = Path(skills_root).expanduser()
-    hit = next(root.rglob("boundary-discipline/scripts/scan.py"), None)
-    return str(hit) if hit else None
-
-
-def build_config(repo: Path, skills_root: str | None) -> tuple[dict, list[str]]:
-    notes: list[str] = []
-    pm = detect_pm(repo)
-    exts = detect_exts(repo)
-    scripts = detect_scripts(repo)
-
-    layers: dict[str, list[str]] = {}
-    for layer, probes in LAYER_PROBES.items():
-        hits = [p for p in probes if (repo / p).is_dir()]
-        if hits:
-            layers[layer] = [f"{h}/**/*" for h in hits]
+def find_manifests(repo: Path) -> list[tuple[str, str]]:
+    """Step 2 of the method: the cheapest discriminating observation. Find root
+    build/manifest files that declare an ecosystem. The tool does not know what each
+    MEANS — it surfaces the evidence; the ecosystem is inferred from the manifest's
+    name/contents, and that inference becomes an owned finding. This list is the
+    SHAPE of evidence to look for (a manifest is a manifest in any ecosystem), not a
+    map of which manifest is which language."""
+    common_manifest_names = [
+        "package.json", "go.mod", "Cargo.toml", "pyproject.toml", "setup.py",
+        "pom.xml", "build.gradle", "build.gradle.kts", "Gemfile", "composer.json",
+        "mix.exs", "pubspec.yaml", "deno.json", "*.csproj", "*.fsproj", "Package.swift",
+        "CMakeLists.txt", "Makefile", "build.sbt", "rebar.config", "dub.json",
+    ]
+    found = []
+    for name in common_manifest_names:
+        if "*" in name:
+            for hit in repo.glob(name):
+                found.append((hit.name, hit.read_text(encoding="utf-8", errors="ignore")[:400]))
         else:
-            layers[layer] = [f"{probes[0]}/**/*"]
-            notes.append(f"layer '{layer}': no conventional dir found — guessed {probes[0]} (REVIEW).")
+            p = repo / name
+            if p.exists():
+                found.append((name, p.read_text(encoding="utf-8", errors="ignore")[:400]))
+    return found
 
-    froots = [f"{p}/**" for p in FEATURE_PROBES if (repo / p).is_dir()]
-    if not froots:
-        froots = ["src/features/**"]
-        notes.append("feature_roots: none found — guessed src/features (REVIEW).")
 
-    scan_path = find_scan(skills_root)
-    if skills_root and not scan_path:
-        notes.append(f"could not find boundary-discipline/scripts/scan.py under {skills_root}.")
-    verify, vnotes = build_verify(pm, scripts, scan_path)
-    notes += vnotes
+def observe_layout(repo: Path) -> list[str]:
+    """Step 3 evidence: the actual top-level directory layout, so conventions are
+    CONFIRMED against the real tree rather than assumed."""
+    dirs = []
+    for p in sorted(repo.iterdir()):
+        if p.is_dir() and not p.name.startswith(".") and p.name not in (
+                "node_modules", "vendor", "target", "dist", "build", "__pycache__"):
+            dirs.append(p.name)
+            # one level deeper for the common "src/<...>" and "internal/<...>" shapes
+            for q in sorted(p.iterdir()):
+                if q.is_dir() and not q.name.startswith("."):
+                    dirs.append(f"{p.name}/{q.name}")
+    return dirs[:60]
 
-    cfg = {
-        "include_ext": exts,
-        "exclude_globs": ["**/node_modules/**", "**/dist/**", "**/build/**",
-                          "**/.git/**", "**/*.test.*", "**/*.spec.*", "**/*.d.ts"],
-        "layers": layers,
-        "feature_roots": froots,
-        "verify": verify,
+
+def build_investigation(repo: Path) -> tuple[dict, list[str]]:
+    """Run the method and produce a DRAFT config plus an investigation report. Where
+    Cairn has a prior OWN finding for the detected substrate, recall it; otherwise
+    present the raw evidence for Cairn to derive from and then record."""
+    notes: list[str] = []
+    manifests = find_manifests(repo)
+    layout = observe_layout(repo)
+    findings = _load_findings(repo)
+
+    notes.append("METHOD: investigating substrate (see references/investigating-substrate.md). "
+                 "This is a derivation, not a table lookup.")
+
+    if not manifests:
+        notes.append("OBSERVED: no recognized root manifest. SUBSTRATE UNKNOWN — refusing to "
+                     "assume a stack. Recording what was observed; you derive and fill the rest.")
+        notes.append(f"OBSERVED layout (top dirs): {', '.join(layout) or '(none)'}")
+        skeleton = {
+            "_substrate": "UNKNOWN — investigated, not yet identified",
+            "_investigation": {"manifests": [], "layout": layout},
+            "include_ext": ["FILL: source extensions you observe in this repo"],
+            "exclude_globs": ["**/.git/**", "FILL: this stack's build/vendor dirs"],
+            "layers": {k: ["FILL: dir(s) holding this layer, confirmed against the tree"]
+                       for k in ["atomic", "primitive", "seam", "pattern", "pipeline", "scaffold"]},
+            "feature_roots": ["FILL: where features/modules live"],
+            "verify": [{"name": "FILL", "cmd": "FILL: how THIS repo builds/tests", "must_pass": True}],
+        }
+        return skeleton, notes
+
+    # Surface the manifest evidence. The ecosystem NAME is Cairn's to infer — the tool
+    # reports the evidence and, if Cairn has investigated this manifest-shape before,
+    # recalls the owned finding.
+    mnames = [m[0] for m in manifests]
+    notes.append(f"OBSERVED manifest(s): {', '.join(mnames)}")
+    if len(manifests) > 1:
+        notes.append("MULTIPLE manifests => likely polyglot/monorepo. Investigate per workspace; "
+                     "this draft covers the repo root only.")
+    notes.append(f"OBSERVED layout: {', '.join(layout) or '(none)'}")
+
+    # Does Cairn already own a finding that matches this evidence? (recall, not lookup)
+    primary_manifest = mnames[0]
+    recalled = None
+    for sub, f in findings.items():
+        if f.get("marker") in mnames:
+            recalled = f; break
+
+    if recalled:
+        notes.append(f"RECALLED own prior finding for substrate '{recalled['substrate']}' "
+                     f"(derived {recalled.get('derived_on','?')}). Re-validate it against this repo's "
+                     f"actual layout before trusting — conventions drift.")
+        cfg = dict(recalled.get("config_template", {}))
+        cfg["_substrate"] = recalled["substrate"]
+        cfg["_investigation"] = {"manifests": mnames, "layout": layout, "source": "recalled own finding"}
+        return cfg, notes
+
+    # No prior finding: present the evidence as a DERIVATION TASK. The tool writes a
+    # scaffold with the observed evidence and explicit DERIVE markers; Cairn fills the
+    # conventions from the evidence (that is the act of owning it), then records the
+    # finding so next time it is recalled.
+    notes.append(f"NO prior finding for manifest '{primary_manifest}'. This is a NEW substrate to "
+                 f"investigate: derive its conventions from the manifest contents + observed layout "
+                 f"above, fill the DERIVE fields, then record the finding so you own and recall it.")
+    notes.append("manifest contents (first 400 chars each):")
+    for name, content in manifests:
+        notes.append(f"  [{name}] {content.strip()[:200].replace(chr(10),' ')}")
+
+    scaffold = {
+        "_substrate": f"DERIVE: name the ecosystem from manifest '{primary_manifest}'",
+        "_investigation": {"manifests": mnames, "layout": layout, "source": "new — derive then record"},
+        "_record_hint": "after deriving, write this finding to substrate-knowledge.jsonl via "
+                        "_record_finding so you recall your OWN derivation next time",
+        "include_ext": ["DERIVE: source extensions for this ecosystem, confirmed in the tree"],
+        "exclude_globs": ["**/.git/**", "DERIVE: build/vendor/cache dirs for this ecosystem"],
+        "layers": {
+            "atomic":    ["DERIVE: where domain types/value-objects live (confirm in layout above)"],
+            "primitive": ["DERIVE: where basic reusable units live"],
+            "seam":      ["DERIVE: where ports/adapters/boundaries live"],
+            "pattern":   ["DERIVE: where recurring compositions live"],
+            "pipeline":  ["DERIVE: where use-cases/services live"],
+            "scaffold":  ["DERIVE: entry points / app shell"],
+        },
+        "feature_roots": ["DERIVE: where features/modules live"],
+        "verify": [{"name": "DERIVE", "cmd": "DERIVE: this repo's build/test command (from the manifest)",
+                    "must_pass": True}],
     }
-    notes.insert(0, f"package manager: {pm} | extensions: {', '.join(exts)} | "
-                    f"package.json scripts: {', '.join(scripts) or 'none'}")
-    return cfg, notes
+    return scaffold, notes
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description="Detect stack + layout and scaffold a draft boundary.config.json.")
-    p.add_argument("--repo", default=".", help="Repo root (default: .).")
-    p.add_argument("--out", default=None, help="Output path (default: <repo>/boundary.config.json).")
-    p.add_argument("--skills-root", default=None, help="Where skills are installed (to resolve scan.py).")
-    p.add_argument("--force", action="store_true", help="Overwrite an existing config.")
+    p = argparse.ArgumentParser(description="Investigate substrate (method, not table) + scaffold a draft config.")
+    p.add_argument("--repo", default=".")
+    p.add_argument("--out", default=None)
+    p.add_argument("--skills-root", default=None)
+    p.add_argument("--force", action="store_true")
+    p.add_argument("--record", default=None,
+                   help="Path to a JSON finding to record into substrate-knowledge.jsonl (after deriving).")
     args = p.parse_args(argv)
 
     repo = Path(args.repo).resolve()
     if not repo.is_dir():
-        print(f"error: repo {repo} not found", file=sys.stderr)
-        return 2
+        print(f"error: repo {repo} not found", file=sys.stderr); return 2
+
+    # recording mode: Cairn writes a finding it derived, so it owns + recalls it
+    if args.record:
+        finding = json.loads(Path(args.record).read_text(encoding="utf-8"))
+        if "substrate" not in finding:
+            print("error: a finding must have a 'substrate' name", file=sys.stderr); return 2
+        finding.setdefault("derived_on", __import__("datetime").date.today().isoformat())
+        _record_finding(repo, finding)
+        print(f"recorded finding for substrate '{finding['substrate']}' — Cairn now owns and will recall it.")
+        return 0
+
     out = Path(args.out).resolve() if args.out else repo / "boundary.config.json"
     if out.exists() and not args.force:
-        print(f"error: {out} exists. Use --force to overwrite, or edit it directly.", file=sys.stderr)
-        return 1
+        print(f"error: {out} exists. Use --force to overwrite, or edit it directly.", file=sys.stderr); return 1
 
-    cfg, notes = build_config(repo, args.skills_root)
+    cfg, notes = build_investigation(repo)
     out.write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
 
-    print(f"drafted {out}\n")
-    print("confidence report (review the REVIEW items — they encode your architecture):")
+    sub = cfg.get("_substrate", "")
+    flag = ""
+    if sub.startswith("UNKNOWN"): flag = "  [UNKNOWN — investigated, not identified]"
+    elif sub.startswith("DERIVE"): flag = "  [NEW substrate — derive the DERIVE fields, then record]"
+    print(f"drafted {out}{flag}\n")
+    print("investigation report (this is a derivation — confirm/derive against the real repo):")
     for n in notes:
         print(f"  - {n}")
-    print(f"\nnext: review/edit the draft, then validate it resolves:")
-    print(f"      python {Path(__file__).with_name('config_check.py')} --repo {repo}")
+    print(f"\nnext: derive/confirm the fields, (if new) record your finding with --record,")
+    print(f"      then validate it resolves: python {Path(__file__).with_name('config_check.py')} --repo {repo}")
     return 0
 
 

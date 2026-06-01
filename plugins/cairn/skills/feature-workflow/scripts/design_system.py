@@ -25,6 +25,13 @@ import json
 import re
 from pathlib import Path
 
+
+def _src_exts(cfg):
+    exts = cfg.get('include_ext') if isinstance(cfg, dict) else None
+    if exts and not any(str(e).startswith('FILL') for e in exts):
+        return [e if e.startswith('.') else '.'+e for e in exts]
+    return []
+
 CAT_START = "<!-- design-system:catalog:start — generated; do not edit by hand -->"
 CAT_END = "<!-- design-system:catalog:end -->"
 
@@ -61,7 +68,7 @@ def consumer_files(repo: Path, cfg: dict) -> list[Path]:
     for r in roots:
         d = repo / r
         if d.exists():
-            out += [p for p in d.rglob("*.ts*") if p.is_file()]
+            out += [p for p in d.rglob("*") if p.is_file() and p.suffix in _src_exts(cfg)] if _src_exts(cfg) else []
     return out
 
 

@@ -39,17 +39,30 @@ scripts; no same-named module can collide.
 
 ## The setup workflow
 
-### 1. Detect (mechanical)
+### 1. Detect (a PREDICTION, never an assumption)
 Run `python scripts/config_init.py --repo <path> --skills-root <where skills are
-installed>`. It detects the package manager, file extensions, the
-`package.json` scripts (typecheck/test/lint), which conventional directories
-exist, and resolves the sibling-skill script paths (e.g. boundary-discipline's
-scan.py for the report-only verify check). It writes a **draft**
-`boundary.config.json` and prints a confidence report.
+installed>`. It identifies the **substrate** from an unambiguous marker file
+(`go.mod` → Go, `Cargo.toml` → Rust, `pyproject.toml` → Python, `package.json` →
+Node/TS, …), then proposes that substrate's conventional layer directories, verify
+commands, and exclude globs. It writes a **draft** `boundary.config.json` with a
+`_substrate` field and a confidence report.
+
+The discipline that matters here: **detection is a prediction shaped by the tool's
+defaults, not a fact about the repo.** The boundary model (trust, effect,
+consistency, containment) is universal, but conventions are not, and the failure to
+avoid is assuming one ecosystem's layout is the universe — guessing TypeScript on a
+Go repo and writing a confident config for a project that does not exist. So the
+tool does two honest things: it reports a *confidence*, and when it cannot recognize
+the substrate it **refuses to default** — it writes an explicit `UNKNOWN` skeleton
+with `FILL` markers rather than a disguised guess. If you see `SUBSTRATE UNKNOWN` or
+a low confidence, treat the whole draft as a hypothesis to falsify (this is the
+`inquiry` faculty: predict the layout, then make the cheapest observation — what
+marker files and directories actually exist? — that would prove the prediction
+wrong, *before* ratifying).
 
 ### 2. Propose & confirm (judgment — the important step)
 The draft's layer→directory mapping encodes the repo's *architecture*, which a
-detector can only guess. Read the confidence report's REVIEW items and the
+detector can only predict. Read the confidence report's REVIEW items and the
 draft, and reason over the actual repo: does each layer glob point at the
 directories that really hold that layer (atomic tokens/value-objects,
 primitives, seams/ports, patterns, pipelines, scaffolds)? Where the repo's
@@ -77,14 +90,6 @@ The harness-owned content sits in a managed block that re-runs regenerate; the
 "Repo conventions & learnings" section below it is never touched — it is the
 durable home for the outer-loop ratchet's output.
 
-Then install the harness's canonical docs:
-`python scripts/docs_init.py --repo <path>` copies `CONSTITUTION.md` (the
-principles) and `HARNESS.md` (the mechanics) into `<repo>/.harness/`, so the repo
-carries a self-contained copy of the foundations the charter points at. Unlike
-the config and charter, these are repo-INDEPENDENT and harness-OWNED — copied
-verbatim and refreshed on every re-run to track the installed harness version.
-Edit the harness source, never the `.harness/` copy.
-
 Optionally wire the gates as hooks for L3 enforcement (the maturity ladder
 applied to the workflow): `config_check` and `feature-workflow`'s `plan_check` as
 pre-commit, `verify` as pre-push. Re-run the doctor (step 3) periodically, or in
@@ -106,8 +111,6 @@ the same dialect-drift failure the workflow warns about, one level up.
   the repo. Fails closed, gate-able. (Validates, like plan_check.) Exit 0 = pass.
 - `scripts/agents_init.py` — write `AGENTS.md` from the config and link `CLAUDE.md`
   to it (the RECORD step's charter). Idempotent; preserves edits outside the managed block.
-- `scripts/docs_init.py` — install the harness's canonical docs (`CONSTITUTION.md`,
-  `HARNESS.md`) into `<repo>/.harness/`. Harness-owned; refreshed verbatim on each run.
 
 ## What this configures
 

@@ -75,3 +75,9 @@ need search, that's itself a ripe friction to promote.
 
 - `scripts/ratchet.py` — observe friction, list what's ripe, promote a fix. Store: `ratchet.jsonl`.
 - `references/promoting.md` — defect vs abstraction, and the sink-choice ladder.
+
+## Sibling: motions, not just code
+This ratchet promotes a fix when a defect recurs and a shelf item when an
+abstraction recurs. A third recurrence — a repeated manual MOTION — is
+`toolsmith`'s domain: the third time a hand-motion repeats, forge a tool. Same
+Rule of Three, pointed at Cairn's own working rather than at the product.

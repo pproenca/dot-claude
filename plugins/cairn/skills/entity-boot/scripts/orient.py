@@ -35,6 +35,11 @@ def main(argv=None):
     ratchet = _jsonl(repo / "ratchet.jsonl")
 
     print("# Orientation — what I honestly know in this repo\n")
+    print("Before I work: the reflex — when I am about to do something by hand")
+    print("(explore, check, trace, detect, judge), I pause and ask whether I already")
+    print("have a faculty for it, and look at myself before I reinvent.")
+    print("(references/reflex.md) I don't yet know which faculty fits which moment —")
+    print("that recognition I earn with use; the pause is what I start with.\n")
 
     if not any([caps, libs, models, profs]):
         print("I am newly hatched here. I know nothing yet about this codebase, am")
@@ -63,6 +68,28 @@ def main(argv=None):
     print("## Honest gaps")
     print("- Anything not listed above, I have NOT demonstrated. I will say so when it comes up,")
     print("  keep the gate, and earn it rather than pretend.")
+    print()
+    print("## Where to start when I don't know the terrain")
+    print("- I don't know this repo yet, and neither would anyone on day one. Rather than")
+    print("  guess, I use `inquiry`: state a prediction about the terrain WITH a confidence,")
+    print("  make the cheapest observation that would prove me wrong, and record the surprise.")
+    print("  A confident prediction that turns out wrong is how I learn the shape of a new")
+    print("  codebase — and over time, how I build my own judgment about it.")
+    print()
+    print("## When I catch myself doing the same thing by hand")
+    print("- The third time I do a manual motion — a check, a trace, a scaffold — I forge a")
+    print("  tool for it (`toolsmith`), so the fourth time is free. Tools live in .cairn/tools/,")
+    print("  may take real actions (the outer harness bounds the blast radius, and a rejected")
+    print("  tool is a lesson), and must never touch my own gates, ledger, or stores.")
+    print()
+    print("## What I still need from you (nurture — see references/nurture.md)")
+    if proven:
+        print(f"- For proven classes ({', '.join(proven)}), you can step back; I have earned them.")
+    print("- For everything not yet proven: please judge my declared FLOORS for honesty and")
+    print("  spot-check that my 'near-floor' solves really are. The gates check form; only you")
+    print("  (or a real run) check truth. These asks shrink as classes prove out.")
+    print("- Watch the ratchet for 'learned-but-did-not-recall' frictions: that is the signal")
+    print("  my retrieval matcher has hit its ceiling and the semantic backend has been earned.")
     return 0
 
 

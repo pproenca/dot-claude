@@ -13,7 +13,8 @@ description: >-
   proven), and the proven playbook for delegation. Authority is the MEASURED
   outcome against the floor, never self-assessment: license is earned by
   demonstrated results, climbs slowly across solves and domains, and is demoted
-  instantly on a near-miss.
+  instantly on a near-miss. This is how the harness turns learning-from-failure
+  into growing capability and delegation.
 ---
 
 # Capability Ledger

@@ -27,6 +27,15 @@ import json
 import re
 from pathlib import Path
 
+
+def _src_exts(cfg: dict) -> list[str]:
+    """Source extensions from the config's substrate, not hardcoded TS. Falls
+    back to a broad set with a visible signal if absent."""
+    exts = cfg.get("include_ext") if isinstance(cfg, dict) else None
+    if exts and not any(str(e).startswith("FILL") for e in exts):
+        return [e if e.startswith(".") else "." + e for e in exts]
+    return []  # unknown: caller must signal it cannot read this substrate
+
 _FUNC = re.compile(r"export\s+(?:async\s+)?function\s+([A-Za-z]\w*)\s*(\([^)]*\))(\s*:\s*[^\{]+)?")
 _ARROW = re.compile(r"export\s+const\s+([A-Za-z]\w*)\s*=\s*(async\s+)?(\([^)]*\))(\s*:\s*[^=]+?)?\s*=>")
 _IFACE = re.compile(r"export\s+interface\s+(\w+)\s*\{([^}]*)\}", re.DOTALL)
@@ -116,12 +125,17 @@ def is_port_interface(body: str) -> bool:
 
 def feature_files(repo: Path, feature: str) -> list[Path]:
     d = repo / feature
-    files = [p for p in d.rglob("*.ts*") if p.is_file() and not p.name.endswith(".d.ts")] if d.exists() else []
+    exts = _src_exts(cfg)
+    if not exts:
+        print("WARNING: boundary.config.json has no known include_ext (substrate unknown?) — "
+              "cannot enumerate source files for this stack. Fill include_ext first.", file=sys.stderr)
+    files = [p for p in d.rglob("*") if p.is_file() and p.suffix in exts and not p.name.endswith(".d.ts")] if (d.exists() and exts) else []
     # include any app/** route that imports from this feature
     app = repo / "app"
     feat_token = Path(feature).name
     if app.exists():
-        for p in app.rglob("*.ts*"):
+        for p in (app.rglob("*") if app.exists() else []):
+            if p.suffix not in _src_exts(cfg): continue
             try:
                 if feat_token in p.read_text(encoding="utf-8") or feature in p.read_text(encoding="utf-8"):
                     files.append(p)

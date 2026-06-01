@@ -37,28 +37,12 @@ def read_all(repo: Path, store: str | None) -> list[dict]:
 
 
 def search(repo: Path, store: str | None, smell: str) -> list[dict]:
-    """Rank models by token overlap AND substring overlap between the query and
-    stored smells/reframes. Substring matching is essential: distinctive smells
-    like 'O(n^2)' normalize to tokens too short to survive a length filter, so
-    token-only matching would miss the very smell that should match best."""
-    qn = _norm(smell)
-    q = {w for w in qn.split() if len(w) > 2}
-    qshort = {w for w in qn.split() if w}  # all tokens incl. short (n, 2, o)
-    scored = []
-    for rec in _records(repo, store):
-        hay = _norm(rec.get("smell", "") + " " + rec.get("reframe", ""))
-        toks = {w for w in hay.split() if w}
-        score = len(q & {w for w in toks if len(w) > 2}) * 2  # weighted token overlap
-        # substring: does the stored smell appear in the query or vice-versa?
-        sm = _norm(rec.get("smell", ""))
-        if sm and (sm in qn or qn in sm):
-            score += 3
-        # short-token overlap (catches n, 2 from O(n^2)) at low weight
-        score += len(qshort & toks)
-        if score:
-            scored.append((score, rec))
-    scored.sort(key=lambda x: x[0], reverse=True)
-    return [r for _, r in scored]
+    """Recall models by the smell, via the retrieval PORT (seam for a future
+    semantic backend). Returns records ranked by relevance, best first."""
+    import retrieval
+    records = list(_records(repo, store))
+    ranked = retrieval.rank(smell, records, ["smell", "reframe"])
+    return [rec for _score, rec in ranked]
 
 
 def _locked(p, fn):

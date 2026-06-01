@@ -60,10 +60,6 @@ marginal cost of feature N+1 slopes *down*. You do that by reusing the substrate
 and keeping boundaries in their right place — not by moving fast and duplicating.
 Run the loop; don't freelance.
 
-**Foundations:** [`.harness/CONSTITUTION.md`](./.harness/CONSTITUTION.md) (the
-principles) and [`.harness/HARNESS.md`](./.harness/HARNESS.md) (the mechanics) —
-installed by harness-setup; read them once to know why the loop is shaped this way.
-
 ## The loop (per feature)
 
 1. **Plan** — scaffold and fill `PLAN.md` (`feature-workflow` → `plan_new.py`),
