@@ -1,4 +1,6 @@
-# HARNESS.md — The Constitution of the Durable Harness
+# HARNESS
+
+## The Constitution of the Durable Harness
 
 > **Cairn.** A pile of stones a traveler builds one at a time to mark a path
 > through hard country — so the next who passes can find the way. This entity is
