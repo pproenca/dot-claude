@@ -9,14 +9,29 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/common.sh"
 
 MARKETPLACE_ROOT=$(get_marketplace_root)
+MARKETPLACE_JSON="$MARKETPLACE_ROOT/.claude-plugin/marketplace.json"
 
 echo "=== Level 1: Syntax & Structure Validation ==="
 
 # ============================================================================
-# Repository Structure
+# Marketplace Structure
 # ============================================================================
 
-section "Repository Structure"
+section "Marketplace Structure"
+
+# Check marketplace.json exists
+if [[ -f "$MARKETPLACE_JSON" ]]; then
+  ok "marketplace.json exists"
+
+  # Validate JSON syntax
+  if validate_json "$MARKETPLACE_JSON"; then
+    ok "marketplace.json: valid JSON"
+  else
+    err "marketplace.json: invalid JSON syntax"
+  fi
+else
+  err "marketplace.json not found at $MARKETPLACE_JSON"
+fi
 
 # Check plugin directories exist
 if [[ -d "$MARKETPLACE_ROOT/plugins" ]]; then
@@ -200,21 +215,38 @@ for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plug
 done
 
 # ============================================================================
-# Plugin Discovery
+# Marketplace Integrity
 # ============================================================================
 
-section "Plugin Discovery"
+section "Marketplace Integrity"
 
-plugin_count=0
-for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
-  [[ -d "$plugin_dir" ]] || continue
-  plugin_count=$((plugin_count + 1))
-done
+if has_jq && [[ -f "$MARKETPLACE_JSON" ]]; then
+  # Check all plugins in marketplace.json exist (using source paths)
+  while IFS= read -r line; do
+    plugin_name=$(echo "$line" | cut -d'|' -f1)
+    plugin_source=$(echo "$line" | cut -d'|' -f2)
+    plugin_path="$MARKETPLACE_ROOT/${plugin_source#./}"
 
-if [[ $plugin_count -gt 0 ]]; then
-  ok "$plugin_count plugin directories discoverable from plugins/ and domain_plugins/"
+    if [[ -d "$plugin_path" ]]; then
+      ok "marketplace: $plugin_name directory exists"
+    else
+      err "marketplace: $plugin_name listed but directory not found at $plugin_source"
+    fi
+  done < <(jq -r '.plugins[] | "\(.name)|\(.source)"' "$MARKETPLACE_JSON")
+
+  # Check for plugins not in marketplace
+  for plugin_dir in "$MARKETPLACE_ROOT"/plugins/*/ "$MARKETPLACE_ROOT"/domain_plugins/*/; do
+    [[ -d "$plugin_dir" ]] || continue
+    plugin_name=$(get_plugin_name "$plugin_dir")
+
+    if jq -e ".plugins[] | select(.name==\"$plugin_name\")" "$MARKETPLACE_JSON" &>/dev/null; then
+      : # ok, in marketplace
+    else
+      warn "$plugin_name: exists but not listed in marketplace.json"
+    fi
+  done
 else
-  err "No plugin directories found in plugins/ or domain_plugins/"
+  warn "Skipping marketplace integrity check (jq not available)"
 fi
 
 exit_with_summary

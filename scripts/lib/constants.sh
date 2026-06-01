@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Constants for plugin validation
+# Constants for marketplace validation
 # Sourced by common.sh - do not source directly
 
 # Disable shellcheck warnings for:
@@ -113,6 +113,13 @@ AGENT_TOOLS_FIELDS=(
 PLUGIN_JSON_REQUIRED=(
   "name"
   "description"
+)
+
+# Marketplace manifest (marketplace.json)
+MARKETPLACE_JSON_REQUIRED=(
+  "name"
+  "description"
+  "plugins"
 )
 
 # ============================================================================

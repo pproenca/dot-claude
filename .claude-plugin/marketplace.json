@@ -1,0 +1,69 @@
+{
+  "name": "dot-claude",
+  "owner": {
+    "name": "Pedro Proenca",
+    "email": "pedro@pproenca.dev"
+  },
+  "metadata": {
+    "description": "Claude Code plugins for productivity workflows - skills, agents, commands, and hooks",
+    "version": "1.1.1"
+  },
+  "repository": "https://github.com/pproenca/dot-claude",
+  "plugins": [
+    {
+      "name": "agent-cli",
+      "source": "./plugins/agent-cli",
+      "description": "Bootstrap, evolve, audit, and maintain CLI tools built for AI agents — the spec to scaffold to harden lifecycle distilled from openclaw/clawpatch, crabbox, and clawsweeper"
+    },
+    {
+      "name": "cairn",
+      "source": "./plugins/cairn",
+      "description": "Boundary-discipline harness so the marginal cost of each feature slopes down. Composable skills built around a six-stage plan -> skeleton -> build -> verify -> record -> ratchet loop with a human spec parse-point, the four boundary kinds (trust, effect, consistency, containment), library-knowledge as an ecosystem trust boundary, and a knowledge-ratchet that promotes recurring friction leftward toward unrepresentable-illegal."
+    },
+    {
+      "name": "dev-skill",
+      "source": "./plugins/dev-skill",
+      "description": "Create, evolve, and validate skills across 9 types — from API references to runbooks to CI/CD workflows"
+    },
+    {
+      "name": "dev-workflow",
+      "source": "./plugins/dev-workflow",
+      "description": "Development workflow with TDD, debugging, and collaboration skills"
+    },
+    {
+      "name": "app-design",
+      "source": "./domain_plugins/app-design",
+      "description": "Guided iOS/iPadOS/macOS screen design workflow using Apple Human Interface Guidelines"
+    },
+    {
+      "name": "app-development",
+      "source": "./domain_plugins/app-development",
+      "description": "Guided iOS/iPadOS data modeling, performance optimization, and debugging workflow using Apple documentation"
+    },
+    {
+      "name": "build-ios-apps",
+      "source": "./domain_plugins/build-ios-apps",
+      "description": "Build iOS apps with workflows for SwiftUI UI work, refactors, performance audits, and simulator debugging."
+    },
+    {
+      "name": "dev-debug-cpp",
+      "source": "./domain_plugins/dev-debug-cpp",
+      "description": "C++ debugging for segfaults, memory corruption, threading issues, and linker/ABI problems"
+    },
+    {
+      "name": "dev-python",
+      "source": "./domain_plugins/dev-python",
+      "description": "Modern Python 3.12+ development with uv, ruff, pydantic, FastAPI, Django and production-ready practices"
+    },
+    {
+      "name": "dev-shell",
+      "source": "./domain_plugins/dev-shell",
+      "description": "Shell scripting toolkit with Google Style Guide expertise and refactoring capabilities"
+    },
+    {
+      "name": "marketplace",
+      "source": "./domain_plugins/marketplace",
+      "description": "Action toolkit for planning, diagnosing, improving, and operating search, recommender, and pre-member personalisation systems in two-sided trust marketplaces. Seven user-invokable commands plus a context-extractor meta-skill that captures your specific stack, composed over four research-grounded knowledge libraries spanning feature engineering, retrieval planning, pre-member conversion, and personalisation lifecycle. Canonical stack examples: OpenSearch, AWS Personalize, Twilio Segment, Amplitude, Databricks, Datadog — any compatible alternative works via the MCP connector abstraction."
+    }
+  ]
+}
