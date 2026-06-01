@@ -46,7 +46,8 @@ def load_config(repo: Path, path: str | None) -> dict:
     cfg_path = Path(path) if path else repo / "boundary.config.json"
     if cfg_path.exists():
         try:
-            return json.loads(cfg_path.read_text(encoding="utf-8"))
+            cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+            return cfg if isinstance(cfg, dict) else {}
         except (json.JSONDecodeError, OSError):
             pass
     return {}

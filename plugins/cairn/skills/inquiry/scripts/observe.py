@@ -10,7 +10,7 @@ surprise = confidence * wrongness, where wrongness = {right:0, partial:0.5, wron
 A surprise >= --threshold (default 0.5) is significant and teaches a model.
 """
 from __future__ import annotations
-import argparse, subprocess, sys, tempfile, json
+import argparse, datetime as dt, subprocess, sys, tempfile, json
 from pathlib import Path
 import store
 
@@ -50,6 +50,7 @@ def main(argv=None):
         print(f"prediction {args.id} already observed (outcome cannot be rewritten).", file=sys.stderr); return 2
     surprise = rec["confidence"] * WRONGNESS[args.outcome]
     rec.update({"observation": args.observation, "outcome": args.outcome,
+                "observed_at": dt.datetime.now().isoformat(timespec="seconds"),
                 "surprise": round(surprise, 3), "reframe": args.reframe or None})
     store.upsert(repo, args.store, rec)
     sig = surprise >= args.threshold

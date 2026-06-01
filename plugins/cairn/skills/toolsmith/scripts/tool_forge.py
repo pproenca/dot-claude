@@ -33,8 +33,9 @@ def main(argv=None):
               f"A tool may help Cairn work; it may never rewrite Cairn's own spine.", file=sys.stderr)
         return 2
     if ".cairn/tools/" not in tgt:
-        print(f"WARNING: tools belong in .cairn/tools/ (the sandboxed workshop); '{args.path}' is outside it.",
+        print(f"REFUSED: tools belong in .cairn/tools/ (the sandboxed workshop); '{args.path}' is outside it.",
               file=sys.stderr)
+        return 2
 
     motion = store.read_one(repo, args.store, args.motion_key)
     if not motion:

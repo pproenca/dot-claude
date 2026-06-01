@@ -47,17 +47,21 @@ DEFAULT_TIMEOUT = 300
 MAX_OUTPUT_LINES = 40  # truncation for the failure report the agent reads
 
 
-def load_checks(repo: Path, path: str | None) -> tuple[list[dict], bool]:
+def load_checks(repo: Path, path: str | None) -> tuple[list[dict], bool, str | None]:
     cfg_path = Path(path) if path else repo / "boundary.config.json"
     if cfg_path.exists():
         try:
             data = json.loads(cfg_path.read_text(encoding="utf-8"))
+            if not isinstance(data, dict):
+                return [], False, f"config {cfg_path} must be a JSON object"
             checks = data.get("verify")
             if checks:
-                return checks, False
+                if not isinstance(checks, list):
+                    return [], False, f"config {cfg_path} verify must be a list"
+                return checks, False, None
         except (json.JSONDecodeError, OSError) as e:
-            print(f"warning: ignoring unreadable config {cfg_path}: {e}", file=sys.stderr)
-    return list(DEFAULT_CHECKS), True
+            return [], False, f"cannot read config {cfg_path}: {e}"
+    return list(DEFAULT_CHECKS), True, None
 
 
 def run_check(check: dict, repo: Path) -> dict:
@@ -159,7 +163,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: repo {repo} not found", file=sys.stderr)
         return 2
 
-    checks, used_defaults = load_checks(repo, args.config)
+    checks, used_defaults, cfg_error = load_checks(repo, args.config)
+    if cfg_error:
+        if args.json:
+            print(json.dumps({"passed": False, "error": cfg_error, "results": []}, indent=2))
+        else:
+            print(f"error: {cfg_error}", file=sys.stderr)
+        return 2
     if args.only:
         wanted = set(args.only)
         checks = [c for c in checks if c.get("name") in wanted]

@@ -25,6 +25,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 
 
@@ -49,9 +50,10 @@ _INVARIANT = re.compile(r"@invariant:?\s*(.+)")
 def load_cfg(repo: Path) -> dict:
     p = repo / "boundary.config.json"
     try:
-        return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+        cfg = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
     except (json.JSONDecodeError, OSError):
         return {}
+    return cfg if isinstance(cfg, dict) else {}
 
 
 def _glob_re(glob: str) -> re.Pattern:
@@ -123,7 +125,7 @@ def is_port_interface(body: str) -> bool:
     return fnlike >= max(1, len(fields) // 2)
 
 
-def feature_files(repo: Path, feature: str) -> list[Path]:
+def feature_files(repo: Path, feature: str, cfg: dict) -> list[Path]:
     d = repo / feature
     exts = _src_exts(cfg)
     if not exts:
@@ -268,7 +270,7 @@ def _extract_ts(path: Path) -> dict:
 
 
 def render(repo: Path, feature: str, cfg: dict) -> str:
-    files = feature_files(repo, feature)
+    files = feature_files(repo, feature, cfg)
     if not files:
         return f"no files found under {feature}"
     neighbors = boundary_neighbors(repo, files, cfg)

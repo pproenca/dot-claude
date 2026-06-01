@@ -62,6 +62,8 @@ def read_one(repo: Path, store: str | None, name: str) -> dict | None:
                     rec = json.loads(line)
                 except json.JSONDecodeError:
                     continue
+                if not isinstance(rec, dict):
+                    continue
                 if rec.get("name") == name:
                     return rec
         return None
@@ -81,9 +83,11 @@ def iter_records(repo: Path, store: str | None) -> Iterator[dict]:
                 if not line:
                     continue
                 try:
-                    yield json.loads(line)
+                    rec = json.loads(line)
                 except json.JSONDecodeError:
                     continue
+                if isinstance(rec, dict):
+                    yield rec
         return
     yield from _legacy_records(repo)
 
@@ -102,9 +106,10 @@ def _locked(p, fn):
     import os, time
     lock = p.with_suffix(p.suffix + ".lock")
     p.parent.mkdir(parents=True, exist_ok=True)
+    acquired = False
     for _ in range(500):
         try:
-            os.close(os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)); break
+            os.close(os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)); acquired = True; break
         except FileExistsError:
             try:
                 if time.time() - os.path.getmtime(lock) > 10:
@@ -112,11 +117,14 @@ def _locked(p, fn):
             except OSError:
                 pass
             time.sleep(0.01)
+    if not acquired:
+        raise TimeoutError(f"timed out waiting for lock {lock}")
     try:
         return fn()
     finally:
-        try: os.unlink(lock)
-        except OSError: pass
+        if acquired:
+            try: os.unlink(lock)
+            except OSError: pass
 
 
 def _atomic_write_lines(p, lines):

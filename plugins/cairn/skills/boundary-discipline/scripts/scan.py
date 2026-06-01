@@ -90,11 +90,34 @@ _SEED_PATTERNS_TS: dict[str, list[tuple[str, re.Pattern]]] = {
     ],
 }
 
+_SEED_PATTERNS_PY: dict[str, list[tuple[str, re.Pattern]]] = {
+    "trust": [
+        ("Any", re.compile(r"\bAny\b")),
+        ("cast", re.compile(r"\bcast\(")),
+        ("json loads", re.compile(r"\bjson\.loads\(")),
+        ("raw env read", re.compile(r"\bos\.environ\b|\bos\.getenv\(")),
+        ("raw request field", re.compile(r"\brequest\.(args|form|json|data)\b")),
+    ],
+    "effect": [
+        ("async/await", re.compile(r"\bawait\b|\basync\s+def\b")),
+        ("filesystem", re.compile(r"\bopen\(|\bPath\([^)]*\)\.(read|write)_text\(")),
+        ("subprocess", re.compile(r"\bsubprocess\.")),
+        ("clock", re.compile(r"\bdatetime\.now\(|\btime\.time\(")),
+        ("randomness", re.compile(r"\brandom\.")),
+    ],
+    "consistency": [
+        ("read-before-write", re.compile(r"\bget\([^)]*\).*\n.*\b(set|update|append)\(")),
+    ],
+    "containment": [
+        ("external call", re.compile(r"\brequests\.|\bhttpx\.|\burllib\.request")),
+    ],
+}
+
 BOUNDARY_KINDS = ["trust", "effect", "consistency", "containment"]
 PATTERN_STORE = "boundary-patterns.jsonl"
 
 
-def load_patterns(repo: Path, substrate: str | None) -> tuple[dict[str, list[tuple[str, re.Pattern]]], str]:
+def load_patterns(repo: Path, substrate: str | None, source_exts: set[str] | None = None) -> tuple[dict[str, list[tuple[str, re.Pattern]]], str]:
     """Cairn's OWN derived fingerprints for this substrate, if it has any; else the
     labeled TS seed (with an honest note that they may not fit a non-TS stack).
     Returns (patterns, provenance)."""
@@ -117,6 +140,9 @@ def load_patterns(repo: Path, substrate: str | None) -> tuple[dict[str, list[tup
                 pass
     if derived:
         return derived, f"derived (Cairn's own findings for substrate '{substrate or 'any'}')"
+    sub = (substrate or "").lower()
+    if "python" in sub or (source_exts and ".py" in source_exts and not source_exts.intersection({".ts", ".tsx", ".js", ".jsx"})):
+        return _SEED_PATTERNS_PY, "basic Python seed (NOT derived — triage aid; derive + record better patterns for this repo)"
     return _SEED_PATTERNS_TS, "TS/JS seed (NOT derived — only valid for TS/JS; derive + record for other substrates)"
 
 
@@ -126,6 +152,9 @@ def load_config(repo: Path, path: str | None) -> dict:
     if cfg_path.exists():
         try:
             data = json.loads(cfg_path.read_text(encoding="utf-8"))
+            if not isinstance(data, dict):
+                print(f"warning: ignoring config {cfg_path}: expected a JSON object", file=sys.stderr)
+                return cfg
             for k in ("include_ext", "exclude_globs"):
                 if k in data:
                     cfg[k] = data[k]
@@ -146,7 +175,7 @@ def scan(root: Path, cfg: dict, repo: Path | None = None) -> tuple[list[dict], s
     exts = set(cfg["include_ext"])
     globs = cfg["exclude_globs"]
     substrate = cfg.get("_substrate")
-    patterns, provenance = load_patterns(repo or (root if root.is_dir() else root.parent), substrate)
+    patterns, provenance = load_patterns(repo or (root if root.is_dir() else root.parent), substrate, exts)
     base = root if root.is_dir() else root.parent
     files = [root] if root.is_file() else list(root.rglob("*"))
     for f in files:

@@ -23,6 +23,10 @@ def main(argv=None):
     ap.add_argument("--miss", action="store_true", help="a failure: demote one rung now")
     ap.add_argument("--playbook", default=None, help="proven approach (for delegation)")
     args = ap.parse_args(argv)
+    if args.floor_ratio <= 0:
+        print("REFUSED: --floor-ratio must be positive. Ratios are measured against a positive floor.",
+              file=sys.stderr)
+        return 2
     repo = Path(args.repo).resolve()
     entry = store.read_one(repo, args.store, args.cls) or {
         "problem_class": args.cls, "solves": [], "maturity": "novice", "playbook": None, "last_demotion": None}

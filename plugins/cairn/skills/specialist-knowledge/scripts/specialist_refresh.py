@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import sys
 from pathlib import Path
 
 import store
@@ -55,7 +56,14 @@ def _libk_versions(repo: Path) -> dict:
 
 
 def do_set(repo: Path, store_path: str | None, domain: str, from_json: str) -> int:
-    profile = json.loads(Path(from_json).read_text(encoding="utf-8"))
+    try:
+        profile = json.loads(Path(from_json).read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as e:
+        print(f"error: cannot read profile json {from_json}: {e}", file=sys.stderr)
+        return 2
+    if not isinstance(profile, dict):
+        print("error: profile json must be an object.", file=sys.stderr)
+        return 2
     profile["domain"] = domain
     profile["confirmed_on"] = dt.date.today().isoformat()
     store.upsert(repo, store_path, profile)

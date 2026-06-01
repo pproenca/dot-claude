@@ -20,8 +20,11 @@ def _records(repo: Path, store: str | None) -> Iterator[dict]:
         for line in f:
             line = line.strip()
             if line:
-                try: yield json.loads(line)
+                try: rec = json.loads(line)
                 except json.JSONDecodeError: pass
+                else:
+                    if isinstance(rec, dict):
+                        yield rec
 
 
 def read_all(repo, store): return list(_records(repo, store))
@@ -34,17 +37,21 @@ def read_one(repo, store, key):
 def _locked(p, fn):
     import os, time
     lock = p.with_suffix(p.suffix + ".lock"); p.parent.mkdir(parents=True, exist_ok=True)
+    acquired = False
     for _ in range(500):
-        try: os.close(os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)); break
+        try: os.close(os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)); acquired = True; break
         except FileExistsError:
             try:
                 if time.time() - os.path.getmtime(lock) > 10: os.unlink(lock); continue
             except OSError: pass
             time.sleep(0.01)
+    if not acquired:
+        raise TimeoutError(f"timed out waiting for lock {lock}")
     try: return fn()
     finally:
-        try: os.unlink(lock)
-        except OSError: pass
+        if acquired:
+            try: os.unlink(lock)
+            except OSError: pass
 
 
 def _atomic_write_lines(p, lines):

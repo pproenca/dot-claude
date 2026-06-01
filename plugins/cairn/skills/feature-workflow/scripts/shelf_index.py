@@ -46,10 +46,14 @@ def load_config(repo: Path, path: str | None) -> dict | None:
     if not cfg_path.exists():
         return None
     try:
-        return json.loads(cfg_path.read_text(encoding="utf-8"))
+        cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError) as e:
         print(f"error: cannot read config {cfg_path}: {e}", file=sys.stderr)
         return None
+    if not isinstance(cfg, dict):
+        print(f"error: config {cfg_path} must be a JSON object", file=sys.stderr)
+        return None
+    return cfg
 
 
 def exports_in(f: Path) -> list[str]:

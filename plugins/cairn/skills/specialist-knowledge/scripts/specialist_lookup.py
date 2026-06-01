@@ -11,12 +11,31 @@ Missing/stale -> distill via specialist_refresh.py first.
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 
 import store
 
+LIBK_JSONL = "lib-knowledge.jsonl"
 
-def _fmt(profile: dict) -> str:
+
+def _libk_versions(repo: Path) -> dict[str, str]:
+    p = repo / LIBK_JSONL
+    out: dict[str, str] = {}
+    if not p.exists():
+        return out
+    with p.open(encoding="utf-8") as f:
+        for line in f:
+            try:
+                rec = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(rec, dict) and rec.get("name") and rec.get("confirmed_version"):
+                out[rec["name"]] = str(rec["confirmed_version"])
+    return out
+
+
+def _fmt(profile: dict, lib_versions: dict[str, str] | None = None) -> str:
     out = [f"# Specialist profile: {profile['domain']}",
            f"_confirmed {profile.get('confirmed_on', '?')}_  ·  "
            f"pinned: {', '.join(f'{k}@{v}' for k, v in profile.get('pinned_libs', {}).items()) or 'none'}",
@@ -39,6 +58,20 @@ def _fmt(profile: dict) -> str:
         out.append("")
     if profile.get("authorities"):
         out.append("_authorities: " + "; ".join(profile["authorities"]) + "_")
+    if lib_versions is not None:
+        stale = []
+        unknown = []
+        for lib, pinned in profile.get("pinned_libs", {}).items():
+            current = lib_versions.get(lib)
+            if current is None:
+                unknown.append(f"{lib}@{pinned}")
+            elif str(pinned) != current:
+                stale.append(f"{lib}: pinned {pinned}, library-knowledge {current}")
+        if stale or unknown:
+            out.append("")
+            out.append("## Refresh needed")
+            out += [f"- stale: {s}" for s in stale]
+            out += [f"- unverifiable pin: {u}" for u in unknown]
     return "\n".join(out)
 
 
@@ -67,7 +100,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"no profile for '{args.domain}' — distill it (see references/distilling.md), "
               f"then record with specialist_refresh.py --set {args.domain} --from-json <file>")
         return 1
-    print(_fmt(profile))
+    print(_fmt(profile, _libk_versions(repo)))
     return 0
 
 

@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -63,6 +64,26 @@ def _record_finding(repo: Path, finding: dict) -> None:
     findings[finding["substrate"]] = finding
     p.write_text("".join(json.dumps(findings[k], ensure_ascii=False) + "\n"
                           for k in sorted(findings)), encoding="utf-8")
+
+
+def mirror_scripts(repo: Path, skills_root: str | None) -> str | None:
+    """Copy each skill's scripts into .harness/<skill>/ without flattening names."""
+    if not skills_root:
+        return None
+    root = Path(skills_root).expanduser().resolve()
+    if not root.is_dir():
+        raise FileNotFoundError(f"skills root {root} not found")
+    count = 0
+    for skill in sorted(p for p in root.iterdir() if p.is_dir()):
+        scripts = skill / "scripts"
+        if not scripts.is_dir():
+            continue
+        out = repo / ".harness" / skill.name
+        out.mkdir(parents=True, exist_ok=True)
+        for src in sorted(scripts.glob("*.py")):
+            shutil.copy2(src, out / src.name)
+            count += 1
+    return f"mirrored {count} script(s) into {repo / '.harness'}"
 
 
 def find_manifests(repo: Path) -> list[tuple[str, str]]:
@@ -208,7 +229,12 @@ def main(argv: list[str] | None = None) -> int:
 
     # recording mode: Cairn writes a finding it derived, so it owns + recalls it
     if args.record:
-        finding = json.loads(Path(args.record).read_text(encoding="utf-8"))
+        try:
+            finding = json.loads(Path(args.record).read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError) as e:
+            print(f"error: cannot read finding json {args.record}: {e}", file=sys.stderr); return 2
+        if not isinstance(finding, dict):
+            print("error: finding json must be an object", file=sys.stderr); return 2
         if "substrate" not in finding:
             print("error: a finding must have a 'substrate' name", file=sys.stderr); return 2
         finding.setdefault("derived_on", __import__("datetime").date.today().isoformat())
@@ -222,12 +248,19 @@ def main(argv: list[str] | None = None) -> int:
 
     cfg, notes = build_investigation(repo)
     out.write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
+    try:
+        mirror_msg = mirror_scripts(repo, args.skills_root)
+    except OSError as e:
+        print(f"error: cannot mirror harness scripts: {e}", file=sys.stderr); return 2
 
     sub = cfg.get("_substrate", "")
     flag = ""
     if sub.startswith("UNKNOWN"): flag = "  [UNKNOWN — investigated, not identified]"
     elif sub.startswith("DERIVE"): flag = "  [NEW substrate — derive the DERIVE fields, then record]"
     print(f"drafted {out}{flag}\n")
+    if mirror_msg:
+        print(mirror_msg)
+        print("")
     print("investigation report (this is a derivation — confirm/derive against the real repo):")
     for n in notes:
         print(f"  - {n}")

@@ -53,6 +53,9 @@ def check(repo: Path, cfg_path: Path) -> tuple[list[tuple[str, str]], dict | Non
     except (json.JSONDecodeError, OSError) as e:
         add(problems, "ERROR", f"config is not valid JSON: {e}")
         return problems, None
+    if not isinstance(cfg, dict):
+        add(problems, "ERROR", "config must be a JSON object.")
+        return problems, None
 
     # 2. include_ext
     exts = cfg.get("include_ext")

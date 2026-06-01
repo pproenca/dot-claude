@@ -32,9 +32,10 @@ def load_config(repo: Path) -> dict:
     if not p.exists():
         return {}
     try:
-        return json.loads(p.read_text(encoding="utf-8"))
+        cfg = json.loads(p.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
         return {}
+    return cfg if isinstance(cfg, dict) else {}
 
 
 def managed_block(cfg: dict) -> str:

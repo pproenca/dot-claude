@@ -78,6 +78,7 @@ def main(argv=None):
         if args.playbook: cap += ["--playbook", args.playbook]
     rc, out = _run(cap)
     print("  [ledger] " + out.splitlines()[-1] if out else "  [ledger] (no output)")
+    failed = rc != 0
 
     # 2) mental-models (only if a gap was actually observed)
     if args.gap_smell and args.gap_json:
@@ -86,17 +87,20 @@ def main(argv=None):
             rc2, out2 = _run([str(mm), "--repo", args.repo, "--smell", args.gap_smell,
                               "--from-json", args.gap_json])
             print("  [insight] " + (out2.splitlines()[-1] if out2 else "(recorded)"))
+            failed = failed or rc2 != 0
         else:
             print("  [insight] mental-models not found in any known layout — gap NOT recorded "
                   "(run from the harness, or pass an explicit path)")
+            failed = True
     else:
         print("  [insight] no gap supplied — nothing to learn (a clean near-floor solve teaches no new model)")
 
     # 3) report for the consent layer to surface
     rc3, out3 = _run([str(HERE / "cap_check.py"), "--repo", args.repo, "--class", args.cls])
     print("  [now] " + (out3.splitlines()[0] if out3 else "?"))
-    print("== circuit closed ==")
-    return 0
+    failed = failed or rc3 != 0
+    print("== circuit closed ==" if not failed else "== circuit incomplete ==")
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":

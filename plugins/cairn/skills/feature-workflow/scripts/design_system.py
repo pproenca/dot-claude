@@ -44,9 +44,10 @@ _TOKEN = re.compile(r"\b(?:clinic|status)-[\w-]+|\b(?:rounded|font)-(?:card|pane
 def load_cfg(repo: Path) -> dict:
     p = repo / "boundary.config.json"
     try:
-        return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+        cfg = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
     except (json.JSONDecodeError, OSError):
         return {}
+    return cfg if isinstance(cfg, dict) else {}
 
 
 def layer_dir(cfg: dict, layer: str, default: str) -> Path:

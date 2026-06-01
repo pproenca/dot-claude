@@ -49,10 +49,10 @@ OBLIGATION = {
 def _cited_files_exist(text: str, manifest: Path) -> list[str]:
     """A declared test artifact that cites a path must EXIST. Declared-but-absent
     is a lie the gate CAN catch (unlike whether the test is honest, which it can't).
-    Looks for tokens ending in .ts/.tsx/.js/.test.* and checks them relative to the
-    manifest dir and repo root."""
+    Looks for common test/source tokens and checks them relative to the manifest
+    dir and repo root."""
     missing = []
-    for tok in re.findall(r"[\w./-]+\.(?:test\.)?(?:ts|tsx|js|jsx)\b", text):
+    for tok in re.findall(r"[\w./-]+\.(?:(?:test|spec)\.)?(?:ts|tsx|js|jsx|py|go|rs)\b", text):
         cand = (manifest.parent / tok)
         if not cand.exists() and not (manifest.parent / "../" / tok).exists():
             missing.append(tok)

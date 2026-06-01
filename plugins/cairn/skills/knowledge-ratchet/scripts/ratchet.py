@@ -125,6 +125,9 @@ def do_promote(repo: Path, key: str, sink: str, landed: str) -> int:
     if sink not in SINKS:
         print(f"sink must be one of: {', '.join(SINKS)}")
         return 2
+    if not is_ripe(r):
+        print(f"friction '{key}' is not ripe yet; promotion is owed only for defects or abstractions at the Rule of Three.")
+        return 2
     r["status"] = "promoted"
     r["resolution_sink"] = sink
     r["landed_in"] = landed

@@ -26,7 +26,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--from-json", required=True)
     args = ap.parse_args(argv)
     repo = Path(args.repo).resolve()
-    model = json.loads(Path(args.from_json).read_text(encoding="utf-8"))
+    try:
+        model = json.loads(Path(args.from_json).read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as e:
+        print(f"error: cannot read model json {args.from_json}: {e}", file=sys.stderr)
+        return 2
+    if not isinstance(model, dict):
+        print("error: model json must be an object.", file=sys.stderr)
+        return 2
     model["smell"] = args.smell
     if not model.get("taught_by_gap"):
         print("WARNING: no taught_by_gap recorded. A mental model's authority IS the measured "
