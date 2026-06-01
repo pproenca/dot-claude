@@ -1,7 +1,7 @@
-# durable-harness
+# cairn
 
 A Claude plugin that makes the marginal cost of feature N+1 slope *down*. It is a
-federation of six composable skills built on one idea: **place every boundary as a
+federation of fifteen composable skills built on one idea: **place every boundary as a
 function with a known in/out signature, and push enforcement as far left as the
 evidence allows** — from production check, to runtime guard, to compile-time type,
 to unrepresentable-illegal.
@@ -48,7 +48,7 @@ parse-then-proceed; the test is the trust boundary of the change loop. The four
 skills share one loop spine (the gate-runners in `feature-workflow`); only the
 planning shape and the parse artifact differ.
 
-## The eleven skills
+## The fifteen skills
 
 | Skill | Role |
 |---|---|
@@ -59,10 +59,14 @@ planning shape and the parse artifact differ.
 | `spike-workflow` | Unknown approach. Establish the FLOOR first, enumerate solution classes, benchmark vs floor. The anti-psychosis gate. |
 | `verify-and-diagnose` | Runtime feedback — VERIFY vs DIAGNOSE. |
 | `harness-setup` | Boot/config. Detects layout, writes `boundary.config.json`, the namespaced `.harness/<skill>/` mirror, `AGENTS.md`. |
+| `inquiry` | Prediction and observation loop for learning repo terrain from calibrated surprises. |
 | `library-knowledge` | Ecosystem **facts** by name — confirm, cache, re-confirm on drift. |
 | `specialist-knowledge` | Domain **craft** (vertical) — distill a specialist's soul, pinned to library versions, taste adjudicated with you. |
 | `mental-models` | **Horizontal** systems insight — transferable reframings that reveal solution classes, keyed by a smell, learned from gaps. The antidote to "you don't look for what you don't know." |
 | `knowledge-ratchet` | The design-time outer loop. Promotes recurring friction leftward (defect at 1, abstraction at 3). |
+| `capability-ledger` | Earned autonomy ledger: benchmarked near-floor solves grant maturity, misses demote immediately. |
+| `toolsmith` | Rule-of-Three workshop for turning recurring manual motions into repo-local tools. |
+| `entity-boot` | Orientation, consent, and purpose reflection so autonomy stays honest and surfaced. |
 
 ## The entity layer — learning from failure into earned autonomy
 
@@ -112,21 +116,21 @@ inherited by future features, so your spec-elicitation cost falls over time, too
 
 ```sh
 # add this folder as a marketplace, then install the plugin
-/plugin marketplace add /path/to/durable-harness
-/plugin install durable-harness@durable-harness
+/plugin marketplace add /path/to/cairn
+/plugin install cairn@cairn
 ```
 
 (Or push the folder to a git repo and `/plugin marketplace add <owner>/<repo>`.)
 
 Once installed, the skills auto-trigger by task context, and the command surface is just the kinds of change you make:
-`/durable-harness:feature`, `:refactor`, `:fix`, `:spike`, plus `:setup` once per repo. The internal stages (skeleton, verify, ratchet, specialist lookup, mental-models) auto-trigger inside the loops — no command to remember.
+`/cairn:feature`, `:refactor`, `:fix`, `:spike`, plus `:setup` once per repo. The internal stages (skeleton, verify, ratchet, specialist lookup, mental-models) auto-trigger inside the loops — no command to remember.
 
 ## Use it in any codebase
 
 The plugin is generic; per-repo state is bootstrapped once:
 
 ```sh
-/durable-harness:setup
+/cairn:setup
 ```
 
 This detects your project's layer layout, proposes and writes a

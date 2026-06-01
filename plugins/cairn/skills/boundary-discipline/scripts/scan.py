@@ -36,7 +36,10 @@ DEFAULTS = {
     # only sees TS/JS — run config_init.py first for Go/Rust/Python/etc.
     "include_ext": [".ts", ".tsx", ".js", ".jsx"],
     "exclude_globs": [
-        "**/node_modules/**", "**/dist/**", "**/build/**", "**/.git/**",
+        "node_modules/**", "**/node_modules/**",
+        "dist/**", "**/dist/**",
+        "build/**", "**/build/**",
+        ".git/**", "**/.git/**",
         "**/*.test.*", "**/*.spec.*", "**/*.d.ts",
     ],
 }
@@ -117,6 +120,10 @@ BOUNDARY_KINDS = ["trust", "effect", "consistency", "containment"]
 PATTERN_STORE = "boundary-patterns.jsonl"
 
 
+def _multi_line(pat: re.Pattern) -> bool:
+    return "\n" in pat.pattern or r"\n" in pat.pattern
+
+
 def load_patterns(repo: Path, substrate: str | None, source_exts: set[str] | None = None) -> tuple[dict[str, list[tuple[str, re.Pattern]]], str]:
     """Cairn's OWN derived fingerprints for this substrate, if it has any; else the
     labeled TS seed (with an honest note that they may not fit a non-TS stack).
@@ -166,8 +173,43 @@ def load_config(repo: Path, path: str | None) -> dict:
 
 
 def excluded(rel: Path, globs: list[str]) -> bool:
-    s = str(rel)
-    return any(fnmatch.fnmatch(s, g) for g in globs)
+    s = str(rel).rstrip("/")
+    candidates = [s, f"{s}/"]
+    return any(fnmatch.fnmatch(candidate, g) for candidate in candidates for g in globs)
+
+
+def iter_scan_files(root: Path, repo_root: Path, globs: list[str]) -> list[Path]:
+    if root.is_file():
+        return [root]
+    out: list[Path] = []
+    stack = [root]
+    while stack:
+        current = stack.pop()
+        try:
+            children = sorted(current.iterdir())
+        except OSError:
+            continue
+        for child in children:
+            try:
+                rel = child.relative_to(repo_root)
+            except ValueError:
+                rel = child.relative_to(root)
+            if child.is_dir():
+                if not excluded(Path(str(rel) + "/"), globs) and not excluded(rel, globs):
+                    stack.append(child)
+            elif child.is_file() and not excluded(rel, globs):
+                out.append(child)
+    return out
+
+
+def resolve_repo(scan_path: Path, config_path: str | None) -> Path:
+    if config_path:
+        return Path(config_path).resolve().parent
+    start = scan_path if scan_path.is_dir() else scan_path.parent
+    for current in [start, *start.parents]:
+        if (current / "boundary.config.json").exists() or (current / ".git").exists():
+            return current
+    return start
 
 
 def scan(root: Path, cfg: dict, repo: Path | None = None) -> tuple[list[dict], str]:
@@ -175,19 +217,33 @@ def scan(root: Path, cfg: dict, repo: Path | None = None) -> tuple[list[dict], s
     exts = set(cfg["include_ext"])
     globs = cfg["exclude_globs"]
     substrate = cfg.get("_substrate")
-    patterns, provenance = load_patterns(repo or (root if root.is_dir() else root.parent), substrate, exts)
-    base = root if root.is_dir() else root.parent
-    files = [root] if root.is_file() else list(root.rglob("*"))
+    repo_root = repo or (root if root.is_dir() else root.parent)
+    patterns, provenance = load_patterns(repo_root, substrate, exts)
+    files = iter_scan_files(root, repo_root, globs)
     for f in files:
         if not f.is_file() or f.suffix not in exts:
             continue
-        rel = f.relative_to(base) if root.is_dir() else f
-        if excluded(rel, globs):
-            continue
         try:
-            lines = f.read_text(encoding="utf-8", errors="replace").splitlines()
+            rel = f.relative_to(repo_root)
+        except ValueError:
+            rel = f.relative_to(root if root.is_dir() else root.parent) if root.is_dir() else f
+        try:
+            text = f.read_text(encoding="utf-8", errors="replace")
         except OSError:
             continue
+        lines = text.splitlines()
+        for boundary, pats in patterns.items():
+            for label, pat in pats:
+                if not _multi_line(pat):
+                    continue
+                for m in pat.finditer(text):
+                    line = text.count("\n", 0, m.start()) + 1
+                    snippet = " ".join(text[m.start():m.end()].split())[:100]
+                    findings.append({
+                        "boundary": boundary, "label": label,
+                        "file": str(rel), "line": line,
+                        "snippet": snippet,
+                    })
         for n, line in enumerate(lines, 1):
             code = _strip_comment(line)
             if not code.strip():
@@ -195,7 +251,7 @@ def scan(root: Path, cfg: dict, repo: Path | None = None) -> tuple[list[dict], s
             import_as = _IMPORT_AS.search(code) is not None
             for boundary, pats in patterns.items():
                 for label, pat in pats:
-                    if pat.search(code):
+                    if not _multi_line(pat) and pat.search(code):
                         if label == "cast (as)" and import_as:
                             continue  # `import * as x` / `import { y as z }` is not a trust cast
                         findings.append({
@@ -253,7 +309,7 @@ def main(argv: list[str] | None = None) -> int:
     if not root.exists():
         print(f"error: {root} not found", file=sys.stderr)
         return 2
-    repo = root if root.is_dir() else root.parent
+    repo = resolve_repo(root, args.config)
 
     # recording mode: Cairn writes a fingerprint it derived (a pattern it can defend),
     # keyed by substrate, into its own boundary-patterns.jsonl. This is how the smell

@@ -15,8 +15,12 @@ def _jsonl(p: Path):
     for line in p.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if line:
-            try: out.append(json.loads(line))
+            try:
+                rec = json.loads(line)
             except json.JSONDecodeError: pass
+            else:
+                if isinstance(rec, dict):
+                    out.append(rec)
     return out
 
 
@@ -26,7 +30,8 @@ def main(argv=None):
     args = ap.parse_args(argv)
     repo = Path(args.repo).resolve()
     caps = _jsonl(repo / "capability-ledger.jsonl")
-    proven = [c["problem_class"] for c in caps if c.get("maturity") == "proven"]
+    proven = [c["problem_class"] for c in caps
+              if isinstance(c.get("problem_class"), str) and c.get("maturity") == "proven"]
 
     print("# Purpose reflection — is the builder better off?\n")
     print("The metric is yours, not mine. I ask, honestly:")

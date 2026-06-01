@@ -40,6 +40,30 @@ CLASSIFY = re.compile(r"\b(REUSE|EXTEND|VENDOR|BUILD)\b")
 CONTACT = re.compile(r"\b(COMPOSITION|COUPLING)\b")
 
 
+def table_rows(body: str) -> list[list[str]]:
+    rows: list[list[str]] = []
+    for line in body.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            continue
+        cells = [c.strip() for c in stripped.strip("|").split("|")]
+        if cells and all(set(c) <= {"-", ":", " "} for c in cells):
+            continue
+        rows.append(cells)
+    return rows
+
+
+def data_rows(body: str) -> list[list[str]]:
+    rows = table_rows(body)
+    if rows and any("item" in c.lower() or "touched code" in c.lower() for c in rows[0]):
+        return rows[1:]
+    return rows
+
+
+def filled(value: str) -> bool:
+    return bool(value.strip()) and not SENTINEL.search(value)
+
+
 def split_sections(text: str) -> dict[int, tuple[str, str]]:
     """Return {section_number: (title, body)}."""
     matches = list(HEADING.finditer(text))
@@ -80,17 +104,26 @@ def check(path: Path, stage: str) -> int:
     # 3. shelf-check actually classifies something
     if 3 in sections and 3 in required:
         _, body = sections[3]
-        if not CLASSIFY.search(body):
+        classified = False
+        for row in data_rows(body):
+            if len(row) < 4:
+                continue
+            item, layer, exists, decision = row[:4]
+            if filled(item) and filled(layer) and filled(exists) and CLASSIFY.fullmatch(decision):
+                classified = True
+                break
+        if not classified:
             problems.append("section 3 (Shelf check): no item classified REUSE/EXTEND/BUILD")
 
     # 4. seam-check labels each contact
     if 6 in sections and 6 in required:
         _, body = sections[6]
-        # only enforce if there is a real touched-code row (a table data row)
-        data_rows = [r for r in body.splitlines() if r.strip().startswith("|") and "---" not in r]
-        # drop the header row (first |...| with column names)
-        if len(data_rows) >= 2 and not CONTACT.search(body):
-            problems.append("section 6 (Seam check): contacts not labelled COMPOSITION/COUPLING")
+        rows = [row for row in data_rows(body) if any(filled(c) for c in row)]
+        for row in rows:
+            contact = row[1] if len(row) > 1 else ""
+            if not CONTACT.fullmatch(contact):
+                problems.append("section 6 (Seam check): every touched-code row needs COMPOSITION/COUPLING")
+                break
 
     if problems:
         print(f"GATE FAILED ({stage}): {path} is not ready.\n")

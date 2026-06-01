@@ -10,7 +10,7 @@ surprise = confidence * wrongness, where wrongness = {right:0, partial:0.5, wron
 A surprise >= --threshold (default 0.5) is significant and teaches a model.
 """
 from __future__ import annotations
-import argparse, datetime as dt, subprocess, sys, tempfile, json
+import argparse, datetime as dt, os, subprocess, sys, tempfile, json
 from pathlib import Path
 import store
 
@@ -23,14 +23,12 @@ def _find_models_record(repo: Path):
     candidates first; rglob only as last resort, and then preferring a copy under
     .harness so a stray vendored/backup copy can't capture the teach."""
     here = Path(__file__).resolve().parent
-    for c in [here.parent / "mental-models" / "scripts" / "models_record.py",  # dev sibling
+    for c in [repo / ".harness" / "mental-models" / "models_record.py",  # install by repo
+              here.parent / "mental-models" / "scripts" / "models_record.py",  # dev sibling
               here.parent.parent / "mental-models" / "scripts" / "models_record.py",  # dev
-              here.parent / "mental-models" / "models_record.py",  # install sibling (.harness)
-              repo / ".harness" / "mental-models" / "models_record.py"]:  # install by repo
+              here.parent / "mental-models" / "models_record.py"]:  # install sibling (.harness)
         if c.exists(): return c
-    hits = list(repo.rglob("models_record.py"))
-    harnessed = [h for h in hits if ".harness" in h.parts]
-    return (harnessed or hits or [None])[0]
+    return None
 
 
 def main(argv=None):
@@ -43,16 +41,23 @@ def main(argv=None):
     ap.add_argument("--threshold", type=float, default=0.5)
     args = ap.parse_args(argv)
     repo = Path(args.repo).resolve()
-    rec = store.read_one(repo, args.store, args.id)
-    if not rec:
+    def observe_once(existing):
+        if not existing:
+            raise KeyError(args.id)
+        if existing.get("outcome") is not None:
+            raise ValueError(args.id)
+        surprise = existing["confidence"] * WRONGNESS[args.outcome]
+        existing.update({"observation": args.observation, "outcome": args.outcome,
+                    "observed_at": dt.datetime.now().isoformat(timespec="seconds"),
+                    "surprise": round(surprise, 3), "reframe": args.reframe or None})
+        return existing
+    try:
+        rec = store.update(repo, args.store, args.id, observe_once)
+    except KeyError:
         print(f"no prediction with id {args.id}.", file=sys.stderr); return 2
-    if rec.get("outcome") is not None:
+    except ValueError:
         print(f"prediction {args.id} already observed (outcome cannot be rewritten).", file=sys.stderr); return 2
     surprise = rec["confidence"] * WRONGNESS[args.outcome]
-    rec.update({"observation": args.observation, "outcome": args.outcome,
-                "observed_at": dt.datetime.now().isoformat(timespec="seconds"),
-                "surprise": round(surprise, 3), "reframe": args.reframe or None})
-    store.upsert(repo, args.store, rec)
     sig = surprise >= args.threshold
     print(f"observed: {args.outcome}. surprise = {surprise:.2f} "
           f"({'SIGNIFICANT — a confident belief was wrong; this teaches' if sig else 'below threshold — expected, noise'}).")
@@ -60,12 +65,26 @@ def main(argv=None):
         mm = _find_models_record(repo)
         if mm:
             j = tempfile.NamedTemporaryFile("w", suffix=".json", delete=False)
-            json.dump({"reframe": args.reframe, "solution_classes": [],
-                       "taught_by_gap": f"confident prediction ({rec['confidence']}) was wrong: {rec['claim']}"}, j)
-            j.close()
-            subprocess.run([sys.executable, str(mm), "--repo", str(repo),
-                            "--smell", rec["claim"][:60], "--from-json", j.name], capture_output=True)
-            print("  -> taught mental-models (authority: a confident prediction was wrong).")
+            try:
+                json.dump({"reframe": args.reframe, "solution_classes": [],
+                           "taught_by_gap": f"confident prediction ({rec['confidence']}) was wrong: {rec['claim']}"}, j)
+                j.close()
+                proc = subprocess.run([sys.executable, str(mm), "--repo", str(repo),
+                                "--smell", rec["claim"][:60], "--from-json", j.name],
+                                      text=True, capture_output=True)
+                if proc.returncode != 0:
+                    if proc.stderr:
+                        print(proc.stderr.strip(), file=sys.stderr)
+                    if proc.stdout:
+                        print(proc.stdout.strip(), file=sys.stderr)
+                    print("  -> mental-model teaching FAILED; observation was recorded.", file=sys.stderr)
+                    return proc.returncode
+                print("  -> taught mental-models (authority: a confident prediction was wrong).")
+            finally:
+                try:
+                    os.unlink(j.name)
+                except OSError:
+                    pass
     elif sig and not args.reframe:
         print("  -> significant surprise but no --reframe given; the lesson is unrecorded. "
               "What would have predicted correctly?")

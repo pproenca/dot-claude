@@ -17,8 +17,11 @@ def _jsonl(p: Path):
     for line in p.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if not line: continue
-        try: out.append(json.loads(line))
+        try:
+            rec = json.loads(line)
         except json.JSONDecodeError: continue
+        if isinstance(rec, dict):
+            out.append(rec)
     return out
 
 
@@ -49,9 +52,10 @@ def main(argv=None):
         return 0
 
     # capability
-    proven = [c["problem_class"] for c in caps if c.get("maturity") == "proven"]
-    practiced = [c["problem_class"] for c in caps if c.get("maturity") == "practiced"]
-    novice = [c["problem_class"] for c in caps if c.get("maturity") not in ("proven", "practiced")]
+    valid_caps = [c for c in caps if isinstance(c.get("problem_class"), str)]
+    proven = [c["problem_class"] for c in valid_caps if c.get("maturity") == "proven"]
+    practiced = [c["problem_class"] for c in valid_caps if c.get("maturity") == "practiced"]
+    novice = [c["problem_class"] for c in valid_caps if c.get("maturity") not in ("proven", "practiced")]
     print("## Capability (demonstrated, not claimed)")
     print(f"- proven (may delegate / larger blast radius): {', '.join(proven) or 'none yet'}")
     print(f"- practiced (plan gate may auto-pass): {', '.join(practiced) or 'none yet'}")

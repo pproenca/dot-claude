@@ -3,15 +3,16 @@ name: entity-boot
 description: >-
   The entity's orientation, consent, and purpose layer — what makes the harness
   a machine of loving grace rather than a set of tools. Use at the START of a
-  session (orient: read accumulated state — what is known, proven, or stale),
+  session (orient: read accumulated state — what is known and proven, and point
+  to the per-skill staleness gates),
   BEFORE acting on any earned license (consent: surface that an action rests on
   demonstrated capability and which gate is being skipped, so the human can veto
   — autonomy with consent, never by stealth), and PERIODICALLY to reflect
   (purpose: ask not "what am I good at" but "is the human better off", empowered
   to recommend fewer gates, less harness, or its own reduction when that serves
-  the person). It reads the capability ledger, the knowledge stores, and the
-  staleness gates for an honest self-report, and never overstates competence or
-  certainty. This is the constitution of Claude rendered as operating character:
+  the person). It reads the capability ledger and knowledge stores for an honest
+  self-report, delegates exact staleness to the owning gates, and never overstates
+  competence or certainty. This is the constitution of Claude rendered as operating character:
   honesty about uncertainty, consent before autonomy, the human's flourishing
   over the entity's own growth.
 ---
@@ -27,8 +28,9 @@ serve the human's flourishing over its own growth.**
 Read accumulated state and report it honestly, so knowledge informs behavior
 instead of sitting in files:
 - `orient.py` summarizes: capability maturities (what is novice / practiced /
-  proven), knowledge freshness (stale library facts, stale specialist profiles,
-  un-reviewed mental models), and open friction in the ratchet.
+  proven), knowledge-store counts, and open friction in the ratchet. Exact stale
+  library facts, stale specialist profiles, and un-reviewed mental models remain
+  the responsibility of the owning per-skill `--check` / `--stale` gates.
 - The honest framing: a NEW repo is novice at everything — full gates, nothing
   proven. That is correct, not a deficiency. The entity says so plainly.
 

@@ -18,6 +18,20 @@ from pathlib import Path
 import store
 
 
+def validate_model(model: dict) -> list[str]:
+    errors: list[str] = []
+    for field in ("reframe", "taught_by_gap"):
+        if not isinstance(model.get(field), str) or not model.get(field, "").strip():
+            errors.append(f"{field} must be a non-empty string")
+    classes = model.get("solution_classes", [])
+    if not isinstance(classes, list) or not all(isinstance(x, str) for x in classes):
+        errors.append("solution_classes must be a list of strings")
+    example = model.get("example")
+    if example is not None and not isinstance(example, str):
+        errors.append("example must be a string when present")
+    return errors
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Record a mental model learned from a gap.")
     ap.add_argument("--repo", default=".")
@@ -33,6 +47,10 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     if not isinstance(model, dict):
         print("error: model json must be an object.", file=sys.stderr)
+        return 2
+    errors = validate_model(model)
+    if errors:
+        print("error: invalid model json: " + "; ".join(errors), file=sys.stderr)
         return 2
     model["smell"] = args.smell
     if not model.get("taught_by_gap"):

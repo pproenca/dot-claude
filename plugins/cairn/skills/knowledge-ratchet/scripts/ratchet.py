@@ -52,7 +52,7 @@ def load(repo: Path) -> dict[str, dict]:
             r = json.loads(line)
         except json.JSONDecodeError:
             continue
-        if r.get("key"):
+        if isinstance(r, dict) and r.get("key"):
             out[r["key"]] = r
     return out
 
@@ -76,8 +76,8 @@ def do_observe(repo: Path, friction: str, key: str, kind: str, where: str | None
                           "occurrences": [], "status": "open"}
     r["friction"] = friction or r["friction"]
     r["kind"] = kind or r.get("kind", "abstraction")
-    stamp = where or _dt.date.today().isoformat()
-    if stamp not in r["occurrences"]:
+    stamp = where or _dt.datetime.now().isoformat(timespec="microseconds")
+    if where is None or stamp not in r["occurrences"]:
         r["occurrences"].append(stamp)
     if r["status"] != "promoted":
         r["status"] = "ripe" if is_ripe(r) else "open"
@@ -124,6 +124,9 @@ def do_promote(repo: Path, key: str, sink: str, landed: str) -> int:
         return 2
     if sink not in SINKS:
         print(f"sink must be one of: {', '.join(SINKS)}")
+        return 2
+    if not landed.strip():
+        print("--landed is required when promoting a friction.")
         return 2
     if not is_ripe(r):
         print(f"friction '{key}' is not ripe yet; promotion is owed only for defects or abstractions at the Rule of Three.")

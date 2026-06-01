@@ -31,16 +31,25 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shlex
 import sys
 from pathlib import Path
 
 EXT_RE = re.compile(r"^\.[A-Za-z0-9.]+$")
 PLACEHOLDER_RE = re.compile(r"/(?:ABSOLUTE/)?PATH/TO\b|<[^>]+>|/path/to\b", re.IGNORECASE)
-SCRIPT_PATH_RE = re.compile(r"(/[^\s\"']+\.(?:py|sh|js|mjs|cjs))")
+SCRIPT_SUFFIXES = (".py", ".sh", ".js", ".mjs", ".cjs")
 
 
 def add(problems, level, msg):
     problems.append((level, msg))
+
+
+def script_tokens(cmd: str) -> list[str]:
+    try:
+        tokens = shlex.split(cmd)
+    except ValueError:
+        tokens = cmd.split()
+    return [t for t in tokens if t.endswith(SCRIPT_SUFFIXES)]
 
 
 def check(repo: Path, cfg_path: Path) -> tuple[list[tuple[str, str]], dict | None]:
@@ -104,8 +113,10 @@ def check(repo: Path, cfg_path: Path) -> tuple[list[tuple[str, str]], dict | Non
         name = chk.get("name", f"verify[{i}]")
         if PLACEHOLDER_RE.search(cmd):
             add(problems, "ERROR", f"check '{name}' has a placeholder path — fill it in: {cmd}")
-        for sp in SCRIPT_PATH_RE.findall(cmd):
-            if not Path(sp).exists():
+        for sp in script_tokens(cmd):
+            script_path = Path(sp)
+            resolved = script_path if script_path.is_absolute() else repo / script_path
+            if not resolved.exists():
                 add(problems, "ERROR", f"check '{name}' references a script that does not exist: {sp}")
 
     return problems, cfg

@@ -37,7 +37,10 @@ EXPORT = re.compile(
     re.MULTILINE,
 )
 IMPORT_FROM = re.compile(r"""import\s+[^;]*?from\s+['"]([^'"]+)['"]""")
-DEFAULT_EXCLUDES = ["**/node_modules/**", "**/dist/**", "**/build/**", "**/.git/**",
+DEFAULT_EXCLUDES = ["node_modules/**", "**/node_modules/**",
+                    "dist/**", "**/dist/**",
+                    "build/**", "**/build/**",
+                    ".git/**", "**/.git/**",
                     "**/*.d.ts"]
 CODE_EXT = {".ts", ".tsx", ".js", ".jsx"}
 
@@ -54,14 +57,34 @@ def load_config(repo: Path, path: str | None) -> dict:
 
 
 def excluded(rel: str, globs: list[str]) -> bool:
-    return any(fnmatch.fnmatch(rel, g) for g in globs)
+    s = rel.rstrip("/")
+    return any(fnmatch.fnmatch(candidate, g) for candidate in (s, f"{s}/") for g in globs)
+
+
+def iter_repo_files(repo: Path, excludes: list[str]) -> list[Path]:
+    out: list[Path] = []
+    stack = [repo]
+    while stack:
+        current = stack.pop()
+        try:
+            children = sorted(current.iterdir())
+        except OSError:
+            continue
+        for child in children:
+            rel = str(child.relative_to(repo))
+            if child.is_dir():
+                if not excluded(rel, excludes):
+                    stack.append(child)
+            elif child.is_file() and not excluded(rel, excludes):
+                out.append(child)
+    return out
 
 
 def count_uses(repo: Path, unit: Path, symbol: str | None, excludes: list[str]) -> list[str]:
     """Files (excluding unit + tests) that import the unit path or reference the symbol."""
     stem = unit.stem
     users: set[str] = set()
-    for f in repo.rglob("*"):
+    for f in iter_repo_files(repo, excludes):
         if not f.is_file() or f.suffix not in CODE_EXT or f.resolve() == unit.resolve():
             continue
         rel = str(f.relative_to(repo))

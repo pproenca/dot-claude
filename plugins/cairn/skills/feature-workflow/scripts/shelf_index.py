@@ -37,7 +37,10 @@ EXPORT = re.compile(
 )
 EXPORT_LIST = re.compile(r"^\s*export\s*\{([^}]*)\}", re.MULTILINE)
 
-DEFAULT_EXCLUDES = ["**/node_modules/**", "**/dist/**", "**/build/**", "**/.git/**",
+DEFAULT_EXCLUDES = ["node_modules/**", "**/node_modules/**",
+                    "dist/**", "**/dist/**",
+                    "build/**", "**/build/**",
+                    ".git/**", "**/.git/**",
                     "**/*.test.*", "**/*.spec.*", "**/*.d.ts"]
 
 
@@ -71,7 +74,8 @@ def exports_in(f: Path) -> list[str]:
 
 
 def excluded(rel: str, globs: list[str]) -> bool:
-    return any(fnmatch.fnmatch(rel, g) for g in globs)
+    s = rel.rstrip("/")
+    return any(fnmatch.fnmatch(candidate, g) for candidate in (s, f"{s}/") for g in globs)
 
 
 def build_index(repo: Path, layers: dict[str, list[str]], excludes: list[str]) -> dict:

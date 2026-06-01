@@ -38,6 +38,10 @@ config.local.*
 # Logs
 *.log
 
+# Local clawpatch review state
+.clawpatch/
+**/.clawpatch/
+
 # Temporary files
 tmp/
 temp/

@@ -35,6 +35,21 @@ import store
 LIBK_JSONL = "lib-knowledge.jsonl"
 
 
+LIST_FIELDS = ("principles", "anti_patterns", "checklist", "authorities", "taste_deltas")
+
+
+def validate_profile(profile: dict) -> list[str]:
+    errors: list[str] = []
+    for field in LIST_FIELDS:
+        value = profile.get(field, [])
+        if not isinstance(value, list) or not all(isinstance(x, str) for x in value):
+            errors.append(f"{field} must be a list of strings")
+    pins = profile.get("pinned_libs", {})
+    if not isinstance(pins, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in pins.items()):
+        errors.append("pinned_libs must be an object of string versions")
+    return errors
+
+
 def _libk_versions(repo: Path) -> dict:
     """Read confirmed_version per lib from library-knowledge's store, if present."""
     p = repo / LIBK_JSONL
@@ -63,6 +78,10 @@ def do_set(repo: Path, store_path: str | None, domain: str, from_json: str) -> i
         return 2
     if not isinstance(profile, dict):
         print("error: profile json must be an object.", file=sys.stderr)
+        return 2
+    errors = validate_profile(profile)
+    if errors:
+        print("error: invalid profile json: " + "; ".join(errors), file=sys.stderr)
         return 2
     profile["domain"] = domain
     profile["confirmed_on"] = dt.date.today().isoformat()

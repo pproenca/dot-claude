@@ -85,7 +85,7 @@ def effective_maturity(entry: dict, threshold: float = NEAR_FLOOR_SEED) -> str:
         # post-demotion evidence requires BOTH dates parse AND solve is strictly later
         if sd is not None and dem_date is not None and sd > dem_date:
             after.append(s)
-    if len(after) >= 1:
+    if compute_maturity(after, threshold) == computed:
         return computed
     rank = {"novice": 0, "practiced": 1, "proven": 2}
     cap = dem.get("to", "novice")

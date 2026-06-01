@@ -18,11 +18,14 @@ def main(argv=None):
     args = ap.parse_args(argv)
     repo = Path(args.repo).resolve()
     key = "motion:" + hashlib.sha1(args.motion.lower().encode()).hexdigest()[:8]
-    rec = store.read_one(repo, args.store, key) or {"key": key, "kind": "motion",
-            "motion": args.motion, "count": 0, "steps": args.steps, "tool": None}
-    rec["count"] += 1
-    if args.steps: rec["steps"] = args.steps
-    store.upsert(repo, args.store, rec)
+    def inc(existing):
+        rec = existing or {"key": key, "kind": "motion",
+                "motion": args.motion, "count": 0, "steps": args.steps, "tool": None}
+        rec["motion"] = args.motion
+        rec["count"] = int(rec.get("count", 0)) + 1
+        if args.steps: rec["steps"] = args.steps
+        return rec
+    rec = store.update(repo, args.store, key, inc)
     ripe = rec["count"] >= 3 and not rec.get("tool")
     print(f"motion logged: '{args.motion}' x{rec['count']}"
           f"{' [RIPE — forge a tool: tool_forge.py]' if ripe else ''}")

@@ -108,7 +108,9 @@ def catalog(repo: Path, cfg: dict) -> str:
     if not prim_dir.exists():
         lines += ["_(no primitive layer found)_", "", CAT_END]
         return "\n".join(lines)
-    files = sorted(p for p in prim_dir.glob("*.tsx") if p.name != "index.ts")
+    exts = set(_src_exts(cfg) or [".ts", ".tsx", ".js", ".jsx"])
+    files = sorted(p for p in prim_dir.iterdir()
+                   if p.is_file() and p.suffix in exts and p.name not in {"index.ts", "index.tsx"})
     for f in files:
         src = f.read_text(encoding="utf-8")
         comps = _FUNC.findall(src)

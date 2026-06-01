@@ -69,3 +69,14 @@ def upsert(repo: Path, store: str | None, rec: dict) -> None:
         ex[rec["key"]] = rec
         _atomic_write_lines(p, [json.dumps(r, ensure_ascii=False) for r in ex.values()])
     _locked(p, _rmw)
+
+
+def update(repo: Path, store: str | None, key: str, updater) -> dict:
+    p = jsonl_path(repo, store)
+    def _rmw():
+        ex = {r.get("key"): r for r in _records(repo, store)}
+        rec = updater(ex.get(key))
+        ex[key] = rec
+        _atomic_write_lines(p, [json.dumps(r, ensure_ascii=False) for r in ex.values()])
+        return rec
+    return _locked(p, _rmw)
