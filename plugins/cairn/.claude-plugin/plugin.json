@@ -1,6 +1,6 @@
 {
   "name": "cairn",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Boundary-discipline harness so the marginal cost of each feature slopes down. Composable skills built around a six-stage plan -> skeleton -> build -> verify -> record -> ratchet loop with a human spec parse-point, the four boundary kinds (trust, effect, consistency, containment), library-knowledge as an ecosystem trust boundary, and a knowledge-ratchet that promotes recurring friction leftward toward unrepresentable-illegal.",
   "author": {
     "name": "pproenca"
