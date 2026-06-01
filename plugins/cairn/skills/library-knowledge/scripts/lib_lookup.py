@@ -41,9 +41,20 @@ def render_index(repo: Path, st: str | None) -> str:
 
 
 def render_entry(repo: Path, name: str, e: dict) -> str:
+    import freshness
     inst = store.installed_version(repo, name)
     sv = store.staleness(e, inst)
     out = [f"{name} — confirmed {e.get('confirmed_version')} on {e.get('confirmed_on')}  [{sv}]"]
+    # the LEARNED verdict: has caching this fact actually paid off, by measured recall?
+    v = freshness.verdict(e)
+    if v["policy"] == "re-derive":
+        out.append(f"  ✗ DON'T TRUST THIS CACHE — {v['basis']}. Re-derive fresh; caching it has been "
+                   f"slower than looking. (learned from recall outcomes, not assumed.)")
+    elif v["policy"] == "verify":
+        out.append(f"  ~ VERIFY BEFORE USE — {v['basis']}. Borderline bet; confirm it still holds.")
+    elif v["policy"] == "trust":
+        out.append(f"  ✓ trustworthy cache — {v['basis']}.")
+    # (unproven: too few recalls to judge — say nothing yet, just use it and watch)
     if sv == "STALE":
         out.append(f"  ⚠ installed {inst} drifted past the confirmed version — REFRESH before trusting.")
     if sv == "UNKNOWN":
