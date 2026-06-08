@@ -1,12 +1,12 @@
 ---
 name: ios-debugger-agent
-description: Use XcodeBuildMCP to build, run, launch, and debug the current iOS project on a booted simulator. Trigger when asked to run an iOS app, interact with the simulator UI, inspect on-screen state, capture logs/console output, or diagnose runtime behavior using XcodeBuildMCP tools.
+description: Build, run, launch, and debug the current iOS project on a booted simulator with XcodeBuildMCP, and read build errors / run tests against the open Xcode workspace with XcodeBridge (xcrun mcpbridge). Trigger when asked to run an iOS app, interact with the simulator UI, inspect on-screen state, capture logs/console output, check whether the project builds, surface compiler errors, run tests, or diagnose runtime behavior.
 ---
 
 # iOS Debugger Agent
 
 ## Overview
-Use XcodeBuildMCP to build and run the current project scheme on a booted iOS simulator, interact with the UI, and capture logs. Prefer the MCP tools for simulator control, logs, and view inspection.
+Use **XcodeBuildMCP** to build and run the current project scheme on a booted iOS simulator, interact with the UI, and capture logs. Prefer its MCP tools for simulator control, logs, and view inspection. Use **XcodeBridge** (Apple's `xcrun mcpbridge`) when you only need IDE-level build status, compiler errors, or test results from the open Xcode workspace — it is faster than a full simulator cycle but cannot control simulators or automate UI.
 
 ## Core Workflow
 Follow this sequence unless the user asks for a narrower action.
@@ -44,6 +44,23 @@ Use these when asked to inspect or interact with the running app.
 - Start logs: `mcp__XcodeBuildMCP__start_sim_log_cap` with the app bundle id.
 - Stop logs: `mcp__XcodeBuildMCP__stop_sim_log_cap` and summarize important lines.
 - For console output, set `captureConsole: true` and relaunch if required.
+
+## Xcode IDE Diagnostics (XcodeBridge)
+The `XcodeBridge` server (Apple's `xcrun mcpbridge`) drives the **running Xcode
+instance** on its active workspace. Use it for compiler/build feedback that is
+faster or richer than the simulator flow — it requires Xcode to be open on the
+target project, and cannot control simulators or automate UI.
+
+- **Build the active scheme**: `mcp__XcodeBridge__BuildProject`, then read
+  `mcp__XcodeBridge__GetBuildLog` for the full log.
+- **List current issues**: `mcp__XcodeBridge__XcodeListNavigatorIssues` for the
+  errors/warnings shown in Xcode's Issue Navigator.
+- **Per-file diagnostics**: `mcp__XcodeBridge__XcodeRefreshCodeIssuesInFile`.
+- **Run tests**: `mcp__XcodeBridge__RunAllTests` or
+  `mcp__XcodeBridge__RunSomeTests` (use `mcp__XcodeBridge__GetTestList` first).
+- **Prefer this over the simulator** when the user only needs to know whether
+  the code builds, what the errors are, or whether tests pass — it avoids a full
+  simulator boot/build/run cycle.
 
 ## Troubleshooting
 - If build fails, ask whether to retry with `preferXcodebuild: true`.

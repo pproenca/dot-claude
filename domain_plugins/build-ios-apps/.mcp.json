@@ -2,5 +2,9 @@
   "XcodeBuildMCP": {
     "command": "npx",
     "args": ["-y", "xcodebuildmcp@latest", "mcp"]
+  },
+  "XcodeBridge": {
+    "command": "xcrun",
+    "args": ["mcpbridge"]
   }
 }
