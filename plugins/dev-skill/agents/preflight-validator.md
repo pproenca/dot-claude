@@ -32,7 +32,7 @@ You validate a skill plan before generation begins. Your goal is to catch concep
 ## Input
 
 You will receive:
-1. **Discipline** — distillation, composition, investigation, or extraction
+1. **Discipline** — distillation, composition, investigation, extraction, or adversarial
 2. **Technology/domain** being documented
 3. **Plan details** — varies by discipline (see below)
 
@@ -93,6 +93,20 @@ You will receive:
 2. **Parameter completeness.** Do the parameters cover the real variation points? Are there missing parameters that would force manual edits?
 3. **Convention validity.** Are the conventions current best practice for this framework? Use WebSearch to verify.
 4. **Framework idiom alignment.** Do the planned templates follow the framework's own patterns, or impose external conventions?
+
+### For Adversarial Plans
+
+You will receive:
+- Rule mode (owned rules or companion to an existing distillation skill)
+- The rules to enforce, each with the evidence that decides it
+- Excluded rules with reasons (companion mode)
+- The review targets (diffs, files, artifacts)
+
+**Check:**
+1. **Decidability.** For each rule: is the stated deciding evidence concrete enough that two blind reviewers would reach the same PASS/FAIL on the same artifact? Flag taste words ("clean", "appropriate", "prefer") without a measurable boundary.
+2. **Dead weight.** Is each rule a check a capable model's output could actually fail? Rules that always pass dilute the gate.
+3. **Exclusion honesty (companion mode).** Are the excluded rules genuinely undecidable, or were enforceable rules dropped? Is every source rule accounted for in one of the two lists?
+4. **Gate fit.** Could the whole rule set be decided by a deterministic linter/script instead? If so, recommend a composition (verification) skill — reviewer subagents are for checks that need judgment applied to evidence.
 
 ## Output
 

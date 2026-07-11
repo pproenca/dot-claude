@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Golden Set Regression Runner
 #
-# Generates a minimal skill for each of the 9 types and validates structurally.
+# Generates a minimal skill for each of the 10 types and validates structurally.
 # This is the cheap, fast tier — run on every change to commands/templates.
 #
 # Usage:
@@ -466,6 +466,131 @@ Tests live next to the code they test (e.g., `user-profile.test.tsx`).
 **Why:** Easy to find and maintain.
 CONV_EOF
       ;;
+
+    adversarial)
+      DESCRIPTION="Use this skill to run a pass/fail review gate on ${TECHNOLOGY} changes — two blind reviewer subagents independently judge the work against the gate's rules."
+      cat > "$SKILL_DIR/SKILL.md" << SKILL_EOF
+---
+name: $SKILL_NAME
+description: $DESCRIPTION
+---
+
+# Golden Test ${TECHNOLOGY} Review Gate
+
+A pass/fail gate: two blind, identical reviewer subagents independently judge ${TECHNOLOGY} changes against the rules. The work passes only if both say PASS.
+
+## When to Apply
+
+Use this skill when:
+- A ${TECHNOLOGY} change needs a pass/fail verdict before merge
+- Reviewing a diff or file set against the gate's rules
+- Re-running the gate after fixing a failed review
+
+## Review Protocol
+
+1. Identify the target (diff or files) and pin the paths.
+2. Load the rules from references/_sections.md and the rule files.
+3. Compose the reviewer prompt from [references/reviewer-prompt.md](references/reviewer-prompt.md) — fully self-contained.
+4. Dispatch two Task subagents in a single message with the identical prompt.
+5. Merge fail-closed: PASS only if both reviewers PASS; splits are CONTESTED and count as FAIL.
+6. Render the verdict from [assets/templates/verdict.md](assets/templates/verdict.md).
+
+## Verdict Format
+
+Per rule: PASS, FAIL, or N/A with evidence. Every FAIL names what is missing to reach PASS.
+
+## Reference Files
+
+| File | Description |
+|------|-------------|
+| [references/reviewer-prompt.md](references/reviewer-prompt.md) | Blind reviewer prompt |
+| [assets/templates/verdict.md](assets/templates/verdict.md) | Verdict report template |
+| [references/_sections.md](references/_sections.md) | Category definitions |
+SKILL_EOF
+
+      mkdir -p "$SKILL_DIR/references"
+      cat > "$SKILL_DIR/references/_sections.md" << 'SECTIONS_EOF'
+# Sections
+
+## 1. Gate Checks (gate)
+
+**Impact:** CRITICAL
+**Description:** Decidable checks the reviewers enforce on every change
+
+SECTIONS_EOF
+
+      for n in one two; do
+        cat > "$SKILL_DIR/references/gate-check-${n}.md" << RULE_EOF
+---
+title: Validate Input ${n^} Before Use
+impact: CRITICAL
+impactDescription: prevents silent runtime failures
+tags: gate, safety, validation
+---
+
+## Validate Input ${n^} Before Use
+
+Skipping validation lets malformed input reach processing, where it fails silently at runtime. A reviewer decides this by evidence: every exported function that accepts external input has a validation call before first use.
+
+**Incorrect (no validation before use):**
+
+\`\`\`go
+result := process(input)
+\`\`\`
+
+**Correct (validated before processing):**
+
+\`\`\`go
+if err := validate(input); err != nil {
+    return fmt.Errorf("invalid input: %w", err)
+}
+result := process(input)
+\`\`\`
+
+Reference: [Go Documentation](https://example.com)
+RULE_EOF
+      done
+
+      cat > "$SKILL_DIR/references/reviewer-prompt.md" << 'PROMPT_EOF'
+# Reviewer Prompt
+
+You are an independent adversarial reviewer. Hunt for violations of the rules below in the review target — do not confirm compliance, do not fix anything.
+
+## Review Target
+
+{target paths}
+
+## Rules
+
+{rule files}
+
+## How to Judge
+
+- Verdict per rule: PASS, FAIL, or N/A.
+- Evidence is mandatory both ways: a FAIL cites the violating file:line; a PASS cites what you checked. A PASS without evidence is not a verdict.
+- For every FAIL, state what is missing to reach PASS — the specific change and its location.
+
+## Output Format
+
+Per-rule verdict table, failures with missing-for-PASS, then an overall PASS or FAIL.
+PROMPT_EOF
+
+      mkdir -p "$SKILL_DIR/assets/templates"
+      cat > "$SKILL_DIR/assets/templates/verdict.md" << 'VERDICT_EOF'
+# Review Verdict — {target}
+
+## Overall Verdict: {PASS|FAIL}
+
+## Per-Rule Results
+
+| Rule | Reviewer A | Reviewer B | Final | Evidence |
+|------|-----------|-----------|-------|----------|
+
+## What's Missing for a PASS
+
+1. {rule} — {change and location}
+VERDICT_EOF
+      ;;
   esac
 
   # === metadata.json (all disciplines) ===
@@ -485,18 +610,16 @@ CONV_EOF
 META_EOF
 
   # === Validate ===
+  RESULT=0
+  OUTPUT=$(node "$VALIDATOR" "$SKILL_DIR" 2>&1) || RESULT=$?
   if $VERBOSE; then
-    node "$VALIDATOR" "$SKILL_DIR" 2>&1
-    RESULT=$?
-  else
-    OUTPUT=$(node "$VALIDATOR" "$SKILL_DIR" 2>&1)
-    RESULT=$?
+    echo "$OUTPUT"
   fi
 
-  ERRORS=$(echo "$OUTPUT" | grep -c "✗" 2>/dev/null || echo "0")
+  ERRORS=$(echo "$OUTPUT" | grep -c "✗" 2>/dev/null || true)
 
   if [[ $RESULT -eq 0 ]]; then
-    WARNINGS=$(echo "$OUTPUT" | grep -c "⚠" 2>/dev/null || echo "0")
+    WARNINGS=$(echo "$OUTPUT" | grep -c "⚠" 2>/dev/null || true)
     echo "  PASS ($WARNINGS warnings)"
     PASSED=$((PASSED + 1))
     RESULTS+=("PASS $TYPE ($DISCIPLINE) - $WARNINGS warnings")

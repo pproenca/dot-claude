@@ -6,10 +6,11 @@
  */
 
 // Valid disciplines and types
-const VALID_DISCIPLINES = ['distillation', 'composition', 'extraction', 'investigation'];
+const VALID_DISCIPLINES = ['distillation', 'composition', 'extraction', 'investigation', 'adversarial'];
 const VALID_TYPES = [
   'library-reference', 'verification', 'automation', 'scaffolding',
-  'code-quality', 'cicd', 'runbook', 'data-analysis', 'infra-ops'
+  'code-quality', 'cicd', 'runbook', 'data-analysis', 'infra-ops',
+  'adversarial-review'
 ];
 
 // Thresholds for content length validation
@@ -320,6 +321,7 @@ const REQUIRED_SKILL_SECTIONS_BY_DISCIPLINE = {
   composition: ['When to Apply', 'Workflow Overview'],
   investigation: ['When to Apply', 'Common Symptoms'],
   extraction: ['When to Apply', 'Available Templates'],
+  adversarial: ['When to Apply', 'Review Protocol'],
 };
 // Default for backwards compatibility
 const REQUIRED_SKILL_SECTIONS = REQUIRED_SKILL_SECTIONS_BY_DISCIPLINE.distillation;

@@ -1,0 +1,33 @@
+# Rules Source
+
+This skill is a **companion gate**: it owns no rules. It reviews against the rules of the distillation skill below, referenced by path so the gate stays in sync as the source evolves.
+
+- **Source skill:** {{SOURCE_SKILL_NAME}}
+- **Path:** {{SOURCE_SKILL_PATH}}
+- **Source version:** {{SOURCE_SKILL_VERSION}} (from its metadata.json)
+- **Recorded:** {{RECORDED_DATE}}
+
+If the source skill is missing, moved, or unreadable at review time, **stop and report the error**. Never review with partial rules and never let a missing source count as a PASS.
+
+## Imported Rules
+
+Only rules that pass the decidability test are enforced — a reviewer must be able to decide PASS/FAIL from evidence in the artifact alone.
+
+| Rule file | What evidence decides it |
+|-----------|--------------------------|
+{{FOR_EACH RULE in IMPORTED_RULES}}
+| `{{RULE.filename}}` | {{RULE.deciding_evidence}} |
+{{END_FOR_EACH}}
+
+## Excluded Rules
+
+Rules from the source skill that are teaching material, not decidable checks. They remain valuable in the source skill; they are just not enforceable as a gate.
+
+| Rule file | Why excluded |
+|-----------|--------------|
+{{FOR_EACH RULE in EXCLUDED_RULES}}
+| `{{RULE.filename}}` | {{RULE.exclusion_reason}} |
+{{END_FOR_EACH}}
+
+<!-- If the source skill gains or changes rules, re-run the decidability filter and update
+     both tables. A source rule that is neither imported nor excluded is a sync bug. -->

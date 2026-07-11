@@ -114,6 +114,7 @@ Read all included files and analyze their content to infer the skill's natural s
 | Template files with parameter placeholders | Scaffolding templates | extraction |
 | Decision trees, symptom catalogs, queries | Investigation runbook | investigation |
 | Scripts with verification/assertion logic | Verification workflow | composition |
+| Reviewer prompt + pass/fail verdict protocol | Adversarial review gate | adversarial |
 | Mixed (references + scripts + workflow) | Hybrid — use dominant pattern | infer from content ratio |
 
 ### Content Analysis

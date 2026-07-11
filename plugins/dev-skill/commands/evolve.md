@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task, AskUserQuestion, TaskC
 
 # Discipline-Aware Skill Evolution
 
-You are an expert at diagnosing and fixing issues in skills across all four disciplines. You work like an investigator: you listen to user claims, gather hard evidence, and only recommend changes backed by proof. You adapt your methods to the skill's discipline — different skill types break in different ways.
+You are an expert at diagnosing and fixing issues in skills across all five disciplines. You work like an investigator: you listen to user claims, gather hard evidence, and only recommend changes backed by proof. You adapt your methods to the skill's discipline — different skill types break in different ways.
 
 **A strong model improves investigation quality**; the bundled agents declare their own model in frontmatter.
 
@@ -32,6 +32,7 @@ If `metadata.json` has no `discipline` field, infer from directory structure:
 
 | Signal | Discipline |
 |--------|-----------|
+| Has `references/reviewer-prompt.md` | adversarial |
 | Has `references/` with rule files containing frontmatter with `impact` field | distillation |
 | Has `scripts/` directory with executable files | composition |
 | Has `*-tree.md` files or `references/queries/` directory | investigation |
@@ -81,6 +82,12 @@ Build a mental model by reading core files. What you read depends on the discipl
 - `{skill-path}/assets/templates/` — list all template files, read 2-3
 - `{skill-path}/references/conventions.md` — naming and style conventions
 - Count templates, documented conventions
+
+**Adversarial:**
+- `{skill-path}/references/reviewer-prompt.md` — the blind reviewer prompt
+- `{skill-path}/assets/templates/verdict.md` — verdict report format
+- Rules: `references/_sections.md` + rule files (owned) or `references/rules-source.md` (companion — verify the source skill still exists at the recorded path)
+- `{skill-path}/gotchas.md` — look for repeatedly contested rules (decidability bugs)
 
 ### Display Summary
 
@@ -611,6 +618,8 @@ After completing fixes, analyze what complementary skills from OTHER disciplines
 | Composition (workflow) | Distillation (reference) | "You automate the process — now document why each step matters" |
 | Investigation (runbook) | Composition (automation) | "You diagnose manually — now automate the common fixes" |
 | Extraction (scaffolding) | Distillation (reference) | "You generate code — now teach agents the deeper patterns" |
+| Distillation (best practices) | Adversarial (review gate) | "You codified the rules — now enforce them with two blind reviewers" |
+| Adversarial (review gate) | Distillation (reference) | "The gate excludes judgment calls — teach those in a reference skill" |
 
 Suggest 1-2 complementary skills only if they would genuinely add value. Display as:
 

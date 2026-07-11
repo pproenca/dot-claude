@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Bash, Glob, Grep, Task, AskUserQuestion, WebFetch, W
 
 # Skill Creator
 
-You are an expert at creating high-quality skills for AI agents and LLMs. This command routes through four disciplines — Distillation, Composition, Investigation, and Extraction — each with a proven generation pipeline.
+You are an expert at creating high-quality skills for AI agents and LLMs. This command routes through five disciplines — Distillation, Composition, Investigation, Extraction, and Adversarial — each with a proven generation pipeline.
 
 **Generation quality benefits from a strong model**, but don't hard-pin one here — the bundled review agents (`skill-reviewer`, `preflight-validator`) declare their own model in frontmatter.
 
@@ -51,6 +51,7 @@ Options:
 - "7. Runbook — Diagnose and resolve operational issues"
 - "8. Data Analysis — Connect to data sources and run queries"
 - "9. Infrastructure Ops — Operational procedures with safety guardrails"
+- "10. Adversarial Review — Pass/fail gate: two blind reviewers judge work against rules"
 ```
 
 ---
@@ -70,6 +71,7 @@ Map the selected type to a discipline and follow its pipeline:
 | 7. Runbook | **Investigation** | `runbook` |
 | 8. Data Analysis | **Investigation** | `data-analysis` |
 | 9. Infrastructure Ops | **Composition** | `infra-ops` |
+| 10. Adversarial Review | **Adversarial** | `adversarial-review` |
 
 **Before generating anything**, you MUST:
 
@@ -970,6 +972,115 @@ After user approval, generate in this order:
 
 ---
 
+## Adversarial Path (Type 10)
+
+This pipeline produces a **pass/fail review gate**: a skill that dispatches two blind, identical reviewer subagents to independently judge work against a rule set. The work passes only if both reviewers say PASS; on FAIL, the verdict names what is missing to reach PASS.
+
+**Read `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/adversarial/RECIPE.md` — it is the authority on this discipline.** The doctrine in brief:
+- **Decidability, not teaching.** A rule earns its place in a gate only if a reviewer can decide PASS/FAIL from evidence in the artifact alone. Judgment calls ("prefer clean abstractions") make the gate flaky — they belong in a distillation skill, not here.
+- **Blind independence.** Both reviewers get the identical self-contained prompt with no conversation context. Agreement between blind duplicates is what makes a verdict stable.
+- **Fail-closed.** PASS requires both reviewers to PASS. A split verdict is CONTESTED and counts as FAIL, with both rationales shown.
+- **Suggestions, not lectures.** Every FAIL names the missing change and its location.
+
+### Output Structure
+
+```
+{output-base}/{skill-slug}/
+├── SKILL.md                  # When to Apply + Review Protocol + Verdict Format
+├── metadata.json             # discipline: "adversarial", type: "adversarial-review"
+├── references/
+│   ├── _sections.md          # Category definitions        ┐ owned-rules mode only
+│   ├── {prefix}-{slug}.md    # Rules, distillation format  ┘
+│   ├── rules-source.md       # Source skill pointer — companion mode only
+│   └── reviewer-prompt.md    # Self-contained prompt for each blind reviewer
+├── assets/templates/
+│   └── verdict.md            # Verdict report template
+└── gotchas.md
+```
+
+Exactly one rule mode exists per skill: **owned rules** (derived fresh) or **companion** (references an existing distillation skill's rules by path).
+
+### Step A1: Rule Source Selection
+
+Ask the user with `AskUserQuestion`:
+
+```
+Question: "Where should this gate's rules come from?"
+Header: "Rule Source"
+Options:
+- "Derive fresh — research the domain and write new decidable rules"
+- "Companion — review against an existing distillation skill's rules"
+```
+
+If companion: ask for the source skill's path, then read its `SKILL.md`, `metadata.json`, `references/_sections.md`, and every rule file. Record the source path and version for `rules-source.md`.
+
+### Step A2: Derive or Filter Rules
+
+**Fresh mode:** follow distillation's research method (wrong defaults, authoritative sources — see the Distillation Path), with one added test per rule: **name the evidence that would prove a violation** (a file, a line, a missing test, a pattern). A rule without nameable evidence is cut or rewritten until decidable.
+
+**Companion mode:** apply the decidability test to each source rule:
+- **Import** rules where PASS/FAIL is decidable from artifact evidence alone — record what evidence decides each.
+- **Exclude** teaching-material rules (taste words, unmeasurable boundaries) — record each with its reason. Exclusions are listed, never silent.
+
+### Step A3: Planning Checkpoint
+
+**Display the plan as regular text first** (never inside AskUserQuestion):
+
+```markdown
+## Adversarial Gate Planning Review
+
+### Rule Mode
+{Owned rules | Companion to {source-skill-path} (version {v})}
+
+### Rules to Enforce
+| Rule | Category | Evidence that decides it |
+|------|----------|--------------------------|
+| ... | ... | ... |
+
+### Excluded Rules (companion mode)
+| Rule | Why excluded |
+|------|--------------|
+
+### Review Targets
+{What artifacts this gate reviews: diffs, files, PRs, generated skills, ...}
+```
+
+Then ask for approval:
+
+```
+Question: "Does this gate plan look correct? Review the rules, deciding evidence, and exclusions above."
+Header: "Plan Review"
+Options:
+- "Approve and proceed" - Start generation
+- "Adjust rules" - User provides changes
+- "Change rule source" - Switch mode or source skill
+- "Major revisions needed" - User describes changes
+```
+
+**Only proceed after user approval.**
+
+### Step A4: Generation
+
+Read the templates in `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/adversarial/` and fill them — do not reproduce the structures from memory. Generate in this order:
+
+1. **Rules** — owned mode: `references/_sections.md` + rule files (distillation format, `RULE.md.template` from the distillation discipline); companion mode: `references/rules-source.md` from `rules-source.md.template`
+2. **`references/reviewer-prompt.md`** — from `reviewer-prompt.md.template`; the composed prompt must be fully self-contained (rules, target, output format — no conversation references)
+3. **`assets/templates/verdict.md`** — from `verdict.md.template`
+4. **`SKILL.md`** — from `SKILL.md.template`, with the mode-appropriate rules-loading instruction; companion mode must instruct: *if the source skill is missing, stop and report — never silently pass*
+5. **`metadata.json`** — `discipline: "adversarial"`, `type: "adversarial-review"`; companion mode also records the source skill path in `references`
+6. **`gotchas.md`** — initialize with "No known gotchas yet"
+
+### Step A5: Validate
+
+1. **Automated validation**: `node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-skill.js {output-base}/{skill-slug}`
+2. **Agent quality review**: Launch `skill-reviewer` agent with `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/adversarial/RUBRIC.md`
+
+### Step A6: Prove the Gate
+
+A gate that has never failed anything is unproven. Dry-run the review protocol on two artifacts: one that should PASS and one that should FAIL (ask the user for candidates, or construct a minimal failing example). A contested verdict on the dry run means a rule needs sharpening before release — fix the rule, re-run, and record the pattern in `gotchas.md`.
+
+---
+
 ## Common Elements (All Paths)
 
 ### Output Location
@@ -985,8 +1096,8 @@ Every skill's metadata.json MUST include `discipline` and `type` fields:
   "version": "0.1.0",
   "organization": "{Organization}",
   "technology": "{Technology or Domain}",
-  "discipline": "{distillation|composition|extraction|investigation}",
-  "type": "{library-reference|verification|automation|scaffolding|code-quality|cicd|runbook|data-analysis|infra-ops}",
+  "discipline": "{distillation|composition|extraction|investigation|adversarial}",
+  "type": "{library-reference|verification|automation|scaffolding|code-quality|cicd|runbook|data-analysis|infra-ops|adversarial-review}",
   "date": "{Month Year}",
   "abstract": "{1-2 sentence summary}",
   "references": ["{url1}", "{url2}"]
@@ -1006,6 +1117,7 @@ Every path ends with the same two-phase validation:
    - Composition: `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/composition/RUBRIC.md`
    - Investigation: `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/investigation/RUBRIC.md`
    - Extraction: `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/extraction/RUBRIC.md`
+   - Adversarial: `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/adversarial/RUBRIC.md`
 
 ### Complementary Skill Suggestions
 
@@ -1022,6 +1134,8 @@ After completing generation, suggest related skills from other disciplines:
 | Data Analysis | "Consider creating a Runbook skill for when query results reveal problems." |
 | Infrastructure Ops | "Consider creating a Runbook skill for incident response on this infrastructure." |
 | Code Quality & Review | "Consider creating a Code Scaffolding skill to generate code that passes these reviews." |
+| Library/API Reference or Code Quality & Review | "Consider creating an Adversarial Review companion gate that enforces these rules with two blind reviewers." |
+| Adversarial Review | "Consider creating a Code Quality (Distillation) skill for the judgment-call guidance the gate had to exclude." |
 
 ---
 
@@ -1042,9 +1156,12 @@ ${CLAUDE_PLUGIN_ROOT}/templates/
     ├── investigation/
     │   ├── RECIPE.md                 # Investigation methodology
     │   └── RUBRIC.md                 # Investigation validation rubric
-    └── extraction/
-        ├── RECIPE.md                 # Extraction methodology
-        └── RUBRIC.md                 # Extraction validation rubric
+    ├── extraction/
+    │   ├── RECIPE.md                 # Extraction methodology
+    │   └── RUBRIC.md                 # Extraction validation rubric
+    └── adversarial/
+        ├── RECIPE.md                 # Adversarial methodology
+        └── RUBRIC.md                 # Adversarial validation rubric
 ```
 
 ### Automation Scripts

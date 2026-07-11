@@ -186,8 +186,8 @@ Every skill has a `metadata.json` with these fields:
   "version": "0.1.0",
   "organization": "{Organization}",
   "technology": "{Technology or Domain}",
-  "discipline": "{distillation|composition|extraction|investigation}",
-  "type": "{library-reference|verification|automation|scaffolding|code-quality|cicd|runbook|data-analysis|infra-ops}",
+  "discipline": "{distillation|composition|extraction|investigation|adversarial}",
+  "type": "{library-reference|verification|automation|scaffolding|code-quality|cicd|runbook|data-analysis|infra-ops|adversarial-review}",
   "date": "{Month Year}",
   "abstract": "{1-2 sentence summary}",
   "references": ["{url1}", "{url2}"]

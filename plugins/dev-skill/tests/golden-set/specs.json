@@ -215,6 +215,34 @@
         },
         "has_query_files": true
       }
+    },
+    {
+      "type": "adversarial-review",
+      "discipline": "adversarial",
+      "spec": {
+        "technology": "Go",
+        "organization": "golden-test",
+        "min_rules": 2,
+        "categories": 1
+      },
+      "structural_checks": {
+        "required_files": [
+          "SKILL.md",
+          "metadata.json",
+          "references/_sections.md",
+          "references/reviewer-prompt.md",
+          "assets/templates/verdict.md"
+        ],
+        "required_dirs": [
+          "references",
+          "assets/templates"
+        ],
+        "metadata_fields": {
+          "discipline": "adversarial",
+          "type": "adversarial-review"
+        },
+        "min_rule_files": 2
+      }
     }
   ]
 }

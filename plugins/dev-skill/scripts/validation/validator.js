@@ -43,6 +43,8 @@ const SECTION_HEADER_REGEX = /^## (\d+)\. (.+) \(([a-z]+)\)/;
 const IMPACT_REGEX = /^\*\*Impact:\*\* (.+)/;
 const DESCRIPTION_REGEX = /^\*\*Description:\*\* (.+)/;
 const RULE_FILE_REGEX = /^[a-z]+-.*\.md$/;
+// Adversarial protocol files live in references/ but are not rules
+const ADVERSARIAL_PROTOCOL_FILES = ['reviewer-prompt.md', 'rules-source.md'];
 
 /**
  * Parse YAML frontmatter from markdown content
@@ -163,6 +165,8 @@ class SkillValidator {
       issues.push(...this.validateInvestigationSkill(skillDir));
     } else if (discipline === 'extraction') {
       issues.push(...this.validateExtractionSkill(skillDir));
+    } else if (discipline === 'adversarial') {
+      issues.push(...this.validateAdversarialSkill(skillDir));
     }
 
     return createReport(issues, this.strictMode);
@@ -293,6 +297,69 @@ class SkillValidator {
   }
 
   /**
+   * Validate adversarial skill structure
+   * @param {string} skillDir
+   * @returns {import('./types.js').ValidationIssue[]}
+   */
+  validateAdversarialSkill(skillDir) {
+    const issues = [];
+    const refsDir = path.join(skillDir, 'references');
+
+    if (!fs.existsSync(refsDir)) {
+      issues.push(createError('structure', 'Adversarial skill missing references/ directory'));
+      return issues;
+    }
+
+    // Reviewer prompt is the heart of the gate
+    const promptPath = path.join(refsDir, 'reviewer-prompt.md');
+    if (!fs.existsSync(promptPath)) {
+      issues.push(createError('references/', 'Missing reviewer-prompt.md — the gate cannot dispatch blind reviewers without it'));
+    } else {
+      const prompt = fs.readFileSync(promptPath, 'utf-8');
+      if (!/\bPASS\b/.test(prompt) || !/\bFAIL\b/.test(prompt)) {
+        issues.push(createError('references/reviewer-prompt.md', 'Reviewer prompt must demand structured PASS/FAIL verdicts'));
+      }
+      if (!/evidence/i.test(prompt)) {
+        issues.push(createWarning('references/reviewer-prompt.md', 'Reviewer prompt should require evidence for both PASS and FAIL verdicts'));
+      }
+    }
+
+    // Verdict report template
+    const verdictPath = path.join(skillDir, 'assets', 'templates', 'verdict.md');
+    if (!fs.existsSync(verdictPath)) {
+      issues.push(createWarning('assets/templates/', 'Missing verdict.md report template'));
+    }
+
+    // Exactly one rule mode: owned rules (_sections.md + rule files) or companion (rules-source.md)
+    const hasSections = fs.existsSync(path.join(refsDir, '_sections.md'));
+    const hasRulesSource = fs.existsSync(path.join(refsDir, 'rules-source.md'));
+
+    if (hasSections && hasRulesSource) {
+      issues.push(createError('references/', 'Both _sections.md and rules-source.md present — an adversarial skill owns rules OR references a source skill, not both'));
+    } else if (hasSections) {
+      // Owned-rules mode: rules follow the distillation format
+      const sections = this.parseSectionsFile(skillDir);
+      issues.push(...this.validateSectionsFile(skillDir, sections));
+      this.validateRulesDir(skillDir, sections, issues, ADVERSARIAL_PROTOCOL_FILES);
+    } else if (hasRulesSource) {
+      const source = fs.readFileSync(path.join(refsDir, 'rules-source.md'), 'utf-8');
+      if (!/\*\*Path:\*\*/.test(source)) {
+        issues.push(createError('references/rules-source.md', 'Missing "**Path:**" line — companion mode must record where the source rules live'));
+      }
+      if (!/Source version/i.test(source)) {
+        issues.push(createWarning('references/rules-source.md', 'Missing "Source version" line — drift from the source skill is undetectable without it'));
+      }
+      if (!/Excluded Rules/i.test(source)) {
+        issues.push(createWarning('references/rules-source.md', 'Missing "Excluded Rules" section — non-decidable source rules must be listed with reasons, not silently dropped'));
+      }
+    } else {
+      issues.push(createError('references/', 'Adversarial skill needs rules: either _sections.md + rule files (owned) or rules-source.md (companion)'));
+    }
+
+    return issues;
+  }
+
+  /**
    * Validate only _sections.md for incremental generation workflow.
    * Use this to fail fast before generating individual rules.
    * @param {string} skillDir - Path to skill directory
@@ -357,6 +424,11 @@ class SkillValidator {
     }
 
     // Infer from directory structure
+    // reviewer-prompt.md is unique to adversarial gates — check before broader signals
+    if (fs.existsSync(path.join(skillDir, 'references', 'reviewer-prompt.md'))) {
+      return 'adversarial';
+    }
+
     if (fs.existsSync(path.join(skillDir, 'scripts'))) {
       return 'composition';
     }
@@ -551,9 +623,10 @@ class SkillValidator {
    * @param {string} skillDir
    * @param {import('./types.js').Section[]} sections
    * @param {import('./types.js').ValidationIssue[]} issues - Mutated in place
+   * @param {string[]} excludeFiles - Non-rule files to skip (e.g. adversarial protocol files)
    * @returns {{totalRules: number, quantifiedRules: number, rulesByPrefix: Object}}
    */
-  validateRulesDir(skillDir, sections, issues) {
+  validateRulesDir(skillDir, sections, issues, excludeFiles = []) {
     const { dir: refDir, name: refDirName } = this.getReferencesDir(skillDir);
     const stats = {
       totalRules: 0,
@@ -570,7 +643,7 @@ class SkillValidator {
     }
 
     const ruleFiles = getFiles(refDir, RULE_FILE_REGEX)
-      .filter(f => !f.startsWith('_'));
+      .filter(f => !f.startsWith('_') && !excludeFiles.includes(f));
 
     if (ruleFiles.length === 0) {
       issues.push(createError(`${refDirName}/`, VALIDATION_MESSAGES.NO_RULES_FOUND));
