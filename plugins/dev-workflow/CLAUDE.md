@@ -37,36 +37,7 @@ Tests run on commit via pre-commit hook.
 
 ## Component Frontmatter
 
-All components require YAML frontmatter.
-
-**Valid tools:** `Read`, `Write`, `Edit`, `Bash`, `Glob`, `Grep`, `Task`, `TaskCreate`, `TaskUpdate`, `TaskList`, `TaskGet`, `TaskStop`, `TaskOutput`, `AskUserQuestion`, `Skill`, `WebFetch`, `WebSearch`, `NotebookEdit`
-
-**Skills** (`skills/<name>/SKILL.md`):
-```yaml
----
-name: skill-name
-description: Trigger phrases for skill discovery
-allowed-tools: [Read, Edit, Bash]  # optional
----
-```
-
-**Commands** (`commands/<name>.md`):
-```yaml
----
-description: What the command does
-allowed-tools: [Read, Task, TaskCreate, TaskUpdate]
----
-```
-
-**Agents** (`agents/<name>.md`):
-```yaml
----
-name: agent-name
-description: When to dispatch via Task tool
-model: sonnet | opus
-tools: [Glob, Grep, Read]
----
-```
+All components require YAML frontmatter — patterns and the valid-tools list live in the repo root `CLAUDE.md` (Plugin Component Patterns).
 
 ## Skill Categories
 
@@ -77,24 +48,7 @@ tools: [Glob, Grep, Read]
 
 Skills with checklists require TaskCreate/TaskUpdate tracking.
 
-## Directory Structure
-
-```text
-hooks/           # Event handlers (SessionStart)
-scripts/         # Validation, setup, helpers
-skills/          # SKILL.md per skill with optional references/
-commands/        # Slash commands (/dev-workflow:*)
-agents/          # Subagent definitions
-references/      # Shared docs (skill-integration, planning-philosophy)
-tests/           # Bats tests for hooks and scripts
-```
-
 ## References
 
 - `references/skill-integration.md` — Decision trees, skill chains, trigger patterns
 - `references/planning-philosophy.md` — Task granularity, file organization, TDD cycles
-
-## Dependencies
-
-**Required:** `git`
-**Optional:** `jq`, `bats-core`, `shellcheck`, `pre-commit`
