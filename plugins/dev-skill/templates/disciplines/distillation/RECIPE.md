@@ -27,7 +27,7 @@ A rule earns its place only if you can name the **wrong default it corrects** �
 
 > Brevity is the soul of wit. Prefer one principle that generalizes over ten rules that enumerate. If you cannot articulate the wrong default a rule corrects, it is not a rule — it is filler. Delete it.
 
-**Proof, not word count.** There is no rule-count target. Completeness is proven *behaviorally*: run `/dev-skill:eval`. If the skill makes the model handle the target tasks correctly, it is complete — whether that took 6 rules or 26. Under-coverage shows up as a failed eval, not as a low number. Padding to hit a count is the exact failure mode this recipe exists to prevent.
+**Proof, not word count.** There is no rule-count target. Completeness is proven *behaviorally*: if the skill makes the model handle the target tasks correctly, it is complete — whether that took 6 rules or 26. Under-coverage shows up as a failed task, not as a low number. Padding to hit a count is the exact failure mode this recipe exists to prevent.
 
 ## Explain WHY, never just WHAT
 
@@ -148,7 +148,7 @@ When sources conflict, the primary one wins. When in doubt, cite the docs or the
 3. **Generate** — `references/_sections.md` → rules (apply the earn-its-place test to each; cut anything that restates a correct default) → `SKILL.md`, `metadata.json`, `assets/templates/_template.md`.
 4. **Build AGENTS.md** — `node ${CLAUDE_PLUGIN_ROOT}/scripts/build-agents-md.js {skill-dir}`. Never hand-write it.
 5. **Validate** — `node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-skill.js {skill-dir}`, then the `skill-reviewer` agent with this discipline's `RUBRIC.md`.
-6. **Prove** — `/dev-skill:eval`. Failed evals reveal genuine gaps; fill those. Do not add rules the evals don't demand.
+6. **Prove** — exercise the skill on its target tasks. Failures reveal genuine gaps; fill those. Do not add rules the tasks don't demand.
 
 ## Sections file format
 

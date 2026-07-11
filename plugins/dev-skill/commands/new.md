@@ -84,7 +84,7 @@ Map the selected type to a discipline and follow its pipeline:
 The pipeline for Library/API Reference and Code Quality/Review skills. It produces a **distilled reference** — the smallest set of decisions a capable model gets wrong by default, each explaining the wrong default it corrects and why.
 
 **Read `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/distillation/RECIPE.md` — it is the authority on this discipline.** The doctrine in brief:
-- **Provable conciseness, no rule count.** A rule earns its place only if you can name the wrong default it corrects. If the model already does the right thing, cut the rule — restating it is hand-holding. Completeness is proven by `/dev-skill:eval`, never by hitting a count. *Brevity is the soul of wit.*
+- **Provable conciseness, no rule count.** A rule earns its place only if you can name the wrong default it corrects. If the model already does the right thing, cut the rule — restating it is hand-holding. Completeness is proven by behavior on real tasks, never by hitting a count. *Brevity is the soul of wit.*
 - **Explain WHY, not just WHAT** — the model generalizes from a reason, not from dictation.
 - **One canonical example by default.** Add an Incorrect/Correct foil only when the wrong way is a real, common trap (never a strawman).
 - **Impact tiers and quantified metrics are optional — performance skills only.** Don't force "2-10×" onto a correctness rule.
@@ -405,7 +405,7 @@ Before finalizing, verify against the doctrine:
 - [ ] Categories ordered by importance; first tag = category prefix; H2 matches `title`.
 - [ ] Sources are primary/authoritative; no content farms, listicles, or undated/AI-SEO pages. Each claim traces to a primary source.
 - [ ] No vague hedging or marketing language.
-- [ ] **Coverage proven by `/dev-skill:eval`, not by a rule count.** There is no minimum or target.
+- [ ] **Coverage proven by behavior on real tasks, not by a rule count.** There is no minimum or target.
 
 ---
 
@@ -1097,23 +1097,6 @@ ${CLAUDE_PLUGIN_ROOT}/references/
 - At least one code example (a single canonical example by default), with a language specifier and realistic names.
 
 An Incorrect/Correct foil is **optional** — include it only when the wrong way is a real, common trap, and never as a strawman. A rule that restates what the model already does right should not exist at all.
-
----
-
-## After Generation: Suggest Eval
-
-After the skill passes structural validation and agent review, offer functional testing:
-
-Display as text, then ask via `AskUserQuestion`:
-
-```
-"The skill is structurally valid and passes quality review. Want to test it on real prompts before shipping? This runs the skill on realistic tasks, compares against a baseline, and lets you review actual outputs."
-Options:
-- "Yes, run evals" — Launch /dev-skill:eval
-- "No, ship as-is" — Done
-```
-
-If the user chooses evals, suggest: **`/dev-skill:eval {skill-path}`**
 
 ---
 

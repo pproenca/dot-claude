@@ -14,7 +14,7 @@ For **each** rule, answer:
 
 Then, across the set:
 
-4. **Coverage gaps.** Are there wrong defaults that *do* matter for this technology but aren't covered? Find them by reasoning about the target tasks (and the eval prompts if present), not by comparing to a target count. **There is no minimum or maximum rule count.** A tight 8-rule skill that covers the consequential decisions beats a 45-rule skill padded with restatements.
+4. **Coverage gaps.** Are there wrong defaults that *do* matter for this technology but aren't covered? Find them by reasoning about the target tasks (and any test prompts if present), not by comparing to a target count. **There is no minimum or maximum rule count.** A tight 8-rule skill that covers the consequential decisions beats a 45-rule skill padded with restatements.
 
 ## 2. Claim verification (sample 3 rules; bias toward the most consequential)
 

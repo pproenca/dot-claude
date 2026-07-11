@@ -23,8 +23,7 @@ const MAX_SKILL_MD_LINES = 500;
 // warn when it's so short it's likely missing required sections.
 const MIN_SKILL_MD_LINES = 25;
 // No minimum rule count is enforced. A distilled skill is complete when it
-// changes behavior on its target tasks (proven by functional evals), not when
-// it reaches a count. Padding to a target dilutes signal — the opposite of the
+// changes behavior on its target tasks, not when it reaches a count. Padding to a target dilutes signal — the opposite of the
 // goal. MIN_RULE_COUNT is retained only so legacy callers keep importing.
 const MIN_RULE_COUNT = 10;
 const MAX_RULE_COUNT = 100;

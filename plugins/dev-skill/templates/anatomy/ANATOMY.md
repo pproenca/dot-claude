@@ -61,7 +61,7 @@ Rules:
 - Make it distinctive — if two skills could match a query, the description should make clear why THIS one wins.
 - State the boundary honestly. If there are cases the skill does NOT cover, don't imply it does.
 - Keep it tight (a sentence or two) — it's injected into every query alongside many other skills.
-- Tune trigger breadth with `/dev-skill:eval`'s trigger optimization — let the evals, not guesswork, decide how broad to go.
+- Tune trigger breadth by testing against realistic prompts — let observed activation, not guesswork, decide how broad to go.
 
 ## Progressive Disclosure
 
@@ -224,7 +224,7 @@ The reader is a capable model, not a beginner — it already knows the language 
 
 Before keeping any rule, step, or paragraph, ask: **what does the model do here without it?** If the answer is "the right thing already," cut it.
 
-This is why conciseness is *provable*, not a matter of taste. A skill is complete when it changes behavior on its target tasks — demonstrated by `/dev-skill:eval` — not when it reaches some length or rule count. Prefer one principle that generalizes over ten instructions that enumerate; the model extends a well-explained reason to cases you never listed. Brevity is the soul of wit: say the non-obvious thing once, clearly, then stop.
+This is why conciseness is *provable*, not a matter of taste. A skill is complete when it changes behavior on its target tasks — not when it reaches some length or rule count. Prefer one principle that generalizes over ten instructions that enumerate; the model extends a well-explained reason to cases you never listed. Brevity is the soul of wit: say the non-obvious thing once, clearly, then stop.
 
 ### Language Patterns
 
@@ -265,7 +265,7 @@ Signs of a good skill regardless of discipline:
 Red flags:
 - SKILL.md over 500 lines (too much inline, needs progressive disclosure)
 - Hand-holding: rules/steps that restate what a capable model already does correctly (filler that dilutes the real signal)
-- Padding to hit a rule or length target instead of proving coverage with evals
+- Padding to hit a rule or length target instead of proving coverage on the target tasks
 - No gotchas after extended use (gotchas always exist — they haven't been captured)
 - Generic advice that could apply to any technology
 - Lots of ALWAYS/NEVER/MUST without explaining why

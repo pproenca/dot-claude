@@ -2,13 +2,13 @@
 
 The bar for a distilled skill is **provable conciseness**: every rule corrects a
 wrong default, nothing restates what the model already does, and completeness is
-proven by evals rather than by a rule count. Validate in two phases.
+proven by behavior on the target tasks rather than by a rule count. Validate in
+two phases.
 
 | Marker | Meaning | Validator |
 |--------|---------|-----------|
 | AUTO | Checked mechanically | `node scripts/validate-skill.js {skill}` |
 | REVIEW | Needs judgment | `skill-reviewer` agent against the discipline `RUBRIC.md` |
-| PROOF | Behavioral | `/dev-skill:eval` |
 
 ## The sufficiency bar (REVIEW — most important)
 
@@ -43,8 +43,7 @@ proven by evals rather than by a rule count. Validate in two phases.
 - [ ] No content farms, listicles, undated blogs, or AI-generated SEO filler.
 - [ ] Each cited claim traces to a primary source and is current with the library's major version.
 
-## Proof (PROOF)
+## Final gate
 
 - [ ] `validate-skill.js` passes with 0 errors.
 - [ ] `skill-reviewer` returns SHIP.
-- [ ] `/dev-skill:eval` passes on the target tasks. Gaps it reveals are closed with rules that close them — not with padding.

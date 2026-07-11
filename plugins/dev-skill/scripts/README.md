@@ -280,7 +280,7 @@ scripts/
 - Categories don't exceed maximum rules
 
 #### Statistics
-- No rule-count floor and no quantified-impact target are enforced. Completeness is proven by `/dev-skill:eval`, not by counts.
+- No rule-count floor and no quantified-impact target are enforced. Completeness is proven by behavior on the target tasks, not by counts.
 
 ---
 

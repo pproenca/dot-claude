@@ -312,9 +312,8 @@ After the report, suggest follow-up actions:
 
 The skill is structurally valid and passes quality review. Consider:
 
-1. **Test it:** `/dev-skill:eval {skill-path}` — run functional tests against real prompts
-2. **Optimize the description:** The trigger description was inferred from content. Test whether it activates correctly for relevant queries.
-3. **Add gotchas:** Use the skill for a few sessions and capture failure points in gotchas.md.
+1. **Optimize the description:** The trigger description was inferred from content. Test whether it activates correctly for relevant queries.
+2. **Add gotchas:** Use the skill for a few sessions and capture failure points in gotchas.md.
 ```
 
 If the source had companion skills (referenced but not ingested), mention them:
@@ -375,4 +374,3 @@ When the source has many files:
 - Read `/Users/pedroproenca/.claude/plugins/marketplaces/dot-claude/plugins/dev-skill/templates/anatomy/ANATOMY.md` before transforming
 - Preserve the source's voice and terminology — don't rewrite content, add structure
 - Show the transformation report (Step 5) — the user must see what changed vs source
-- Suggest `/dev-skill:eval` as the next step after ingest

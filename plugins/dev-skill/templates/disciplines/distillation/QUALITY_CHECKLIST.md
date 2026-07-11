@@ -2,7 +2,7 @@
 
 Run before shipping. The bar is **provable conciseness**: every rule corrects a
 wrong default, nothing restates what the model already does, and the skill's
-completeness is proven by evals rather than by a rule count.
+completeness is proven by behavior on the target tasks rather than by a rule count.
 
 ## The sufficiency bar (most important)
 
@@ -38,8 +38,7 @@ completeness is proven by evals rather than by a rule count.
 - [ ] No content farms, listicles, undated blogs, or AI-generated SEO filler.
 - [ ] Each cited claim is traceable back to a primary source and current with the library's major version.
 
-## Proof
+## Final gate
 
 - [ ] `node scripts/validate-skill.js {skill}` passes (0 errors).
 - [ ] `skill-reviewer` agent run against `RUBRIC.md` returns SHIP.
-- [ ] `/dev-skill:eval` passes on the target tasks. Gaps it reveals are filled by rules that close them — not by padding.

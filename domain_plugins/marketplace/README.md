@@ -198,6 +198,6 @@ Each knowledge library follows the [dev-skill](../../plugins/dev-skill) `distill
 
 ## Related Plugins
 
-- [`dev-skill`](../../plugins/dev-skill) — the discipline framework the knowledge libraries are built on (`/dev-skill:validate`, `/dev-skill:eval`, `/dev-skill:evolve`)
+- [`dev-skill`](../../plugins/dev-skill) — the discipline framework the knowledge libraries are built on (`/dev-skill:validate`, `/dev-skill:evolve`)
 - [`dev-workflow`](../../plugins/dev-workflow) — TDD, debugging, and verification workflows that compose with the diagnostic playbooks
 - The `data` plugin — the inspiration for this plugin's shape (action commands + knowledge skills + connector abstraction + context extractor)

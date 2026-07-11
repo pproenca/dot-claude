@@ -710,8 +710,8 @@ class SkillValidator {
    * Two checks used to live here and both fought against conciseness:
    *   - a rule-count floor ("only N rules found") that rewarded padding, and
    *   - a quantified-impact percentage that rewarded fake metrics.
-   * Completeness is now proven by functional evals (/dev-skill:eval), not by
-   * counts. Kept as a no-op so the call site and any consumers stay stable.
+   * Completeness is proven by behavior on the target tasks, not by counts.
+   * Kept as a no-op so the call site and any consumers stay stable.
    * @returns {import('./types.js').ValidationIssue[]}
    */
   validateStatistics() {

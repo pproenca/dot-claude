@@ -16,7 +16,7 @@ MARKETPLACE_NAME="${MARKETPLACE_NAME:-dot-claude}"
 OWNER_NAME="${OWNER_NAME:-Pedro Proenca}"
 OWNER_EMAIL="${OWNER_EMAIL:-pedro@pproenca.dev}"
 MARKETPLACE_DESC="${MARKETPLACE_DESC:-Claude Code plugins for productivity workflows - skills, agents, commands, and hooks}"
-MARKETPLACE_VERSION="${MARKETPLACE_VERSION:-1.1.2}"
+MARKETPLACE_VERSION="${MARKETPLACE_VERSION:-1.1.3}"
 MARKETPLACE_REPO="${MARKETPLACE_REPO:-https://github.com/pproenca/dot-claude}"
 
 DRY_RUN=false

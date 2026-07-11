@@ -681,8 +681,6 @@ If the new version loses the blind comparison, present the analysis and ask the 
 - The user explicitly says they don't want to run comparisons
 - No test prompts exist and the user doesn't want to create them
 
-For full functional eval with benchmarking and a human review viewer, suggest: **`/dev-skill:eval {skill-path}`**
-
 ---
 
 ## Mandatory Requirements
