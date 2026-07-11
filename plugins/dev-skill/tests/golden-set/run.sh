@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Golden Set Regression Runner
 #
-# Generates a minimal skill for each of the 10 types and validates structurally.
+# Generates a minimal skill for each of the 11 types and validates structurally.
 # This is the cheap, fast tier — run on every change to commands/templates.
 #
 # Usage:
@@ -590,6 +590,129 @@ PROMPT_EOF
 
 1. {rule} — {change and location}
 VERDICT_EOF
+      ;;
+
+    navigation)
+      DESCRIPTION="Use this skill when you need current, authoritative information about ${TECHNOLOGY} — API details, upgrade impacts, error causes. Routes to the right source and search strategy instead of relying on training data."
+      cat > "$SKILL_DIR/SKILL.md" << SKILL_EOF
+---
+name: $SKILL_NAME
+description: $DESCRIPTION
+---
+
+# ${TECHNOLOGY} Information Navigation
+
+Where authoritative ${TECHNOLOGY} information lives and how to find it. This skill contains no ${TECHNOLOGY} facts — it routes to current ones and says how to verify what you find.
+
+## When to Apply
+
+Use this skill when:
+- Checking a current ${TECHNOLOGY} API signature, availability, or deprecation
+- Assessing what breaks when upgrading ${TECHNOLOGY} versions
+- Diagnosing a ${TECHNOLOGY} error message or unexpected behavior
+
+## Source Map
+
+Ranked by authority — full map with URL patterns in [references/sources.md](references/sources.md).
+
+| # | Source | Authoritative for | NOT authoritative for | Access |
+|---|--------|-------------------|-----------------------|--------|
+| 1 | Official docs | Current API surface, usage | Version deltas | WebFetch deep links |
+| 2 | Source repository | Ground truth on behavior | Stability guarantees | GitHub code search |
+
+## Question Playbooks
+
+| Question | Playbook |
+|----------|----------|
+| "What are the parameters of X?" | [api-lookup](references/api-lookup-playbook.md) |
+| "What causes this error?" | [error-message](references/error-message-playbook.md) |
+
+## How to Use
+
+1. Match the question to a playbook in the table above
+2. Follow the playbook steps in order — each names the tool and query to run
+3. Verify every answer against [references/verification.md](references/verification.md) before acting on it
+SKILL_EOF
+
+      mkdir -p "$SKILL_DIR/references"
+      cat > "$SKILL_DIR/references/sources.md" << SRC_EOF
+# Source Map — ${TECHNOLOGY}
+
+Ranked by authority. Prefer the highest-ranked source that covers the question.
+
+## 1. Official documentation
+
+- **URL:** https://example.com/docs
+- **Deep-link patterns:** https://example.com/docs/{symbol}
+- **Authoritative for:** current API surface, usage guidance
+- **NOT authoritative for:** what changed between versions — use the changelog
+- **Currency signals:** version selector in the page header
+- **Access:** WebFetch the deep link; fall back to site:example.com search
+
+## 2. Source repository
+
+- **URL:** https://example.com/repo
+- **Deep-link patterns:** https://example.com/repo/blob/{tag}/src/
+- **Authoritative for:** ground truth on behavior when docs lag
+- **NOT authoritative for:** intended usage or stability guarantees
+- **Currency signals:** browse at the version tag matching the project
+- **Access:** GitHub code search restricted to the repo
+SRC_EOF
+
+      cat > "$SKILL_DIR/references/api-lookup-playbook.md" << PB_EOF
+# Playbook: API Lookup
+
+**Use when:** you need the current signature, parameters, or deprecation status of a ${TECHNOLOGY} API.
+
+**Before starting:** determine the project's ${TECHNOLOGY} version from the manifest.
+
+## Steps
+
+1. **WebFetch** https://example.com/docs/{symbol} — hit looks like a reference page with a signature block. Found → Verify. Not found → step 2.
+2. **WebSearch** "{symbol}" site:example.com — hit looks like a docs page for the symbol. Found → Verify. Not found → step 3.
+3. **Escalate:** read the source at https://example.com/repo/blob/{tag}/src/ or ask the user — the symbol may be internal or removed.
+
+## Verify
+
+Check the answer against [verification.md](verification.md): version match, source authority.
+PB_EOF
+
+      cat > "$SKILL_DIR/references/error-message-playbook.md" << PB_EOF
+# Playbook: Error Message
+
+**Use when:** diagnosing a ${TECHNOLOGY} error message or unexpected behavior.
+
+## Steps
+
+1. **WebSearch** "{error text}" site:example.com/repo/issues — hit looks like an issue describing the same error. Found → Verify. Not found → step 2.
+2. **WebFetch** https://example.com/docs/errors — hit looks like an error-reference entry. Found → Verify. Not found → step 3.
+3. **Escalate:** ask the user for a minimal reproduction — the error may be project-specific.
+
+## Verify
+
+Check the answer against [verification.md](verification.md): version match, source authority.
+PB_EOF
+
+      cat > "$SKILL_DIR/references/verification.md" << VER_EOF
+# Verification — ${TECHNOLOGY}
+
+Every answer found via the playbooks passes these checks before you act on it.
+
+## Currency
+
+- Determine the project's version from the manifest; determine the content's version from the page's version selector.
+- Versions must match at the major level; on mismatch, re-run pinned to the project's version or surface the mismatch.
+
+## Authority
+
+- The answer's source is rank 1-2 in [sources.md](sources.md), used within its scope.
+- Claims found in community content were traced to a primary source before acceptance.
+
+## Reject on sight
+
+- No named author AND no date AND no version stated.
+- Listicle/SEO framing, content farms, or content describing a different major version without saying so.
+VER_EOF
       ;;
   esac
 

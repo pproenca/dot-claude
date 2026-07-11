@@ -43,6 +43,7 @@ You will receive:
 
 1. Read `{skill-path}/metadata.json` and extract the `discipline` field
 2. If no `discipline` field, infer from structure:
+   - Has `references/sources.md` plus `*-playbook.md` files → `navigation`
    - Has `references/` with `_sections.md` and prefixed rule files (`{prefix}-*.md`) → `distillation`
    - Has `scripts/` directory → `composition`
    - Has `references/` with `*-tree.md` files or `references/queries/` → `investigation`
@@ -63,6 +64,7 @@ Then read discipline-specific files:
 - **Composition:** `scripts/` directory, `hooks/hooks.json`, `references/workflow.md`
 - **Investigation:** `references/symptoms.md`, decision tree files, `references/queries/`
 - **Extraction:** `assets/templates/`, `references/conventions.md`
+- **Navigation:** `references/sources.md`, playbook files (`*-playbook.md`), `references/verification.md`
 
 ### Step 3: Execute the Rubric
 

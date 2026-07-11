@@ -167,6 +167,8 @@ class SkillValidator {
       issues.push(...this.validateExtractionSkill(skillDir));
     } else if (discipline === 'adversarial') {
       issues.push(...this.validateAdversarialSkill(skillDir));
+    } else if (discipline === 'navigation') {
+      issues.push(...this.validateNavigationSkill(skillDir));
     }
 
     return createReport(issues, this.strictMode);
@@ -360,6 +362,56 @@ class SkillValidator {
   }
 
   /**
+   * Validate navigation skill structure
+   * @param {string} skillDir
+   * @returns {import('./types.js').ValidationIssue[]}
+   */
+  validateNavigationSkill(skillDir) {
+    const issues = [];
+    const refsDir = path.join(skillDir, 'references');
+
+    if (!fs.existsSync(refsDir)) {
+      issues.push(createError('structure', 'Navigation skill missing references/ directory'));
+      return issues;
+    }
+
+    // The source map is the heart of a navigation skill
+    const sourcesPath = path.join(refsDir, 'sources.md');
+    if (!fs.existsSync(sourcesPath)) {
+      issues.push(createError('references/', 'Missing sources.md — a navigation skill cannot route without its source map'));
+    } else {
+      const sources = fs.readFileSync(sourcesPath, 'utf-8');
+      if (!/https?:\/\//.test(sources)) {
+        issues.push(createError('references/sources.md', 'Source map contains no URLs — each source needs a resolvable location'));
+      }
+      if (!/not authoritative/i.test(sources)) {
+        issues.push(createWarning('references/sources.md', 'No "NOT authoritative for" scoping found — sources should state both what they cover and what they do not'));
+      }
+    }
+
+    // Search playbooks
+    const refFiles = fs.readdirSync(refsDir);
+    const playbookFiles = refFiles.filter(f => f.endsWith('-playbook.md'));
+    if (playbookFiles.length === 0) {
+      issues.push(createWarning('references/', 'No playbook files found (*-playbook.md)'));
+    }
+    for (const playbook of playbookFiles) {
+      const content = fs.readFileSync(path.join(refsDir, playbook), 'utf-8');
+      if (!/escalat|ask the user/i.test(content)) {
+        issues.push(createWarning(`references/${playbook}`, 'Playbook has no explicit escalation step — every search path must terminate'));
+      }
+    }
+
+    // Verification rules
+    const verificationPath = path.join(refsDir, 'verification.md');
+    if (!fs.existsSync(verificationPath)) {
+      issues.push(createWarning('references/', 'Missing verification.md — found answers need currency and authority checks'));
+    }
+
+    return issues;
+  }
+
+  /**
    * Validate only _sections.md for incremental generation workflow.
    * Use this to fail fast before generating individual rules.
    * @param {string} skillDir - Path to skill directory
@@ -427,6 +479,16 @@ class SkillValidator {
     // reviewer-prompt.md is unique to adversarial gates — check before broader signals
     if (fs.existsSync(path.join(skillDir, 'references', 'reviewer-prompt.md'))) {
       return 'adversarial';
+    }
+
+    // sources.md + playbooks are unique to navigation — check before the broader
+    // scripts/ signal, since a navigation skill may bundle a local doc-search script
+    const navRefsDir = path.join(skillDir, 'references');
+    if (fs.existsSync(navRefsDir)) {
+      const navFiles = fs.readdirSync(navRefsDir);
+      if (fs.existsSync(path.join(navRefsDir, 'sources.md')) && navFiles.some(f => f.endsWith('-playbook.md'))) {
+        return 'navigation';
+      }
     }
 
     if (fs.existsSync(path.join(skillDir, 'scripts'))) {

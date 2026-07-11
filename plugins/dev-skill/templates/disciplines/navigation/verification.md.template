@@ -1,0 +1,24 @@
+# Verification — {Technology}
+
+Every answer found via the playbooks passes these checks before you act on it. An unverified answer is a lead, not an answer.
+
+## Currency
+
+- **Project version:** determine it via {lockfile / manifest / CLI command}.
+- **Content version:** determine it via the source's currency signals in [sources.md](sources.md) ({URL segment, banner, release tag, page date}).
+- **Rule:** versions must match at the {major/minor — pick what matters for this technology} level. On mismatch, either re-run the playbook pinned to the project's version or surface the mismatch to the user — never silently apply guidance from a different version.
+
+## Authority
+
+- The answer's source is rank 1–3 in [sources.md](sources.md), used within its "authoritative for" scope.
+- Claims found in community content (Stack Overflow, Reddit, blogs) were traced to a primary source before acceptance.
+
+## Reject on sight
+
+- No named author AND no date AND no version stated.
+- Listicle/SEO framing ("Top 10 {Technology} tricks"), content farms, AI-generated filler.
+- Content describing a different major version without saying so.
+
+## Cross-check (high stakes)
+
+When the answer drives a destructive or hard-to-reverse action ({e.g., a migration, a data-touching command}), require two independent rank 1–3 sources to agree before proceeding.

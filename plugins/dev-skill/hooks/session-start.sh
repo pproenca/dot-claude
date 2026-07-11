@@ -36,7 +36,7 @@ cat << 'EOF'
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "<system-context>\ndev-skill plugin active. Commands available:\n- /dev-skill:new <name> - Create a skill (10 types: API reference, verification, automation, scaffolding, quality, CI/CD, runbook, data analysis, infra ops, adversarial review)\n- /dev-skill:ingest <source> - Ingest an existing skill, plugin, or docs into a quality-gated skill\n- /dev-skill:evolve <path> - Discipline-aware improvement of an existing skill\n- /dev-skill:validate <path> - Run structural + substance validation\n- /dev-skill:migrate <path> - Migrate skill to new structure\n- /dev-skill:shrink <path> - Regenerate AGENTS.md as slim TOC-only doc\n</system-context>"
+    "additionalContext": "<system-context>\ndev-skill plugin active. Commands available:\n- /dev-skill:new <name> - Create a skill (11 types: API reference, verification, automation, scaffolding, quality, CI/CD, runbook, data analysis, infra ops, adversarial review, doc navigation)\n- /dev-skill:ingest <source> - Ingest an existing skill, plugin, or docs into a quality-gated skill\n- /dev-skill:evolve <path> - Discipline-aware improvement of an existing skill\n- /dev-skill:validate <path> - Run structural + substance validation\n- /dev-skill:migrate <path> - Migrate skill to new structure\n- /dev-skill:shrink <path> - Regenerate AGENTS.md as slim TOC-only doc\n</system-context>"
   }
 }
 EOF

@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task, AskUserQuestion, TaskC
 
 # Discipline-Aware Skill Evolution
 
-You are an expert at diagnosing and fixing issues in skills across all five disciplines. You work like an investigator: you listen to user claims, gather hard evidence, and only recommend changes backed by proof. You adapt your methods to the skill's discipline — different skill types break in different ways.
+You are an expert at diagnosing and fixing issues in skills across all six disciplines. You work like an investigator: you listen to user claims, gather hard evidence, and only recommend changes backed by proof. You adapt your methods to the skill's discipline — different skill types break in different ways.
 
 **A strong model improves investigation quality**; the bundled agents declare their own model in frontmatter.
 
@@ -33,6 +33,7 @@ If `metadata.json` has no `discipline` field, infer from directory structure:
 | Signal | Discipline |
 |--------|-----------|
 | Has `references/reviewer-prompt.md` | adversarial |
+| Has `references/sources.md` plus `*-playbook.md` files | navigation |
 | Has `references/` with rule files containing frontmatter with `impact` field | distillation |
 | Has `scripts/` directory with executable files | composition |
 | Has `*-tree.md` files or `references/queries/` directory | investigation |
@@ -82,6 +83,12 @@ Build a mental model by reading core files. What you read depends on the discipl
 - `{skill-path}/assets/templates/` — list all template files, read 2-3
 - `{skill-path}/references/conventions.md` — naming and style conventions
 - Count templates, documented conventions
+
+**Navigation:**
+- `{skill-path}/references/sources.md` — the ranked source map
+- Skim 2-3 playbook files (`*-playbook.md`)
+- `{skill-path}/references/verification.md` — currency/authority rules
+- Count sources, playbooks; note the question types covered
 
 **Adversarial:**
 - `{skill-path}/references/reviewer-prompt.md` — the blind reviewer prompt
@@ -147,6 +154,16 @@ Then append discipline-specific metrics:
 **Templates:** {N} | **Conventions documented:** {N}
 ```
 
+**Navigation:**
+```markdown
+### Navigation Coverage
+| Question Type | Playbook | Sources Used |
+|---------------|----------|--------------|
+| ... | {file} | N |
+...
+**Sources:** {N} | **Playbooks:** {N} | **Verification rules:** {present/absent}
+```
+
 ---
 
 ## Step 2: Interview the User
@@ -167,6 +184,7 @@ Use `AskUserQuestion` with `multiSelect: true`. Build the options list dynamical
 | Composition | "Scripts fail or have errors", "Workflow is missing steps", "Guardrails are insufficient", "Error handling is incomplete" |
 | Investigation | "Decision trees have dead ends", "Queries don't work or return wrong results", "Missing symptoms or investigation paths" |
 | Extraction | "Templates produce invalid code", "Conventions are outdated or wrong", "Missing template types" |
+| Navigation | "Sources have moved or gone dead", "Playbooks don't find the answer", "Baked-in facts have crept in", "Missing question types" |
 
 ```
 Question: "What problems are you seeing with this skill?"
@@ -247,6 +265,7 @@ Run a broader investigation using discipline-appropriate checks:
 - Composition: Trace the full workflow end-to-end, check for missing error handlers, verify guardrails match actual dangerous commands
 - Investigation: Trace every decision tree path to completion, check for orphaned queries not referenced by any tree
 - Extraction: Render each template mentally with sample parameters, check conventions against current framework idioms
+- Navigation: Spot-check source URLs live, run the staleness litmus test over every file, trace each playbook to its terminal escalation
 
 #### "Failing validation or quality checks"
 
@@ -397,6 +416,36 @@ Run a broader investigation using discipline-appropriate checks:
 2. Use `WebSearch` to find common component/file types for the target framework
 3. Compare against template coverage — identify common types that developers create frequently but have no template
 4. **Verdict:** List missing template types with frequency/importance evidence
+
+---
+
+### Navigation Investigations
+
+#### "Sources have moved or gone dead"
+
+1. Read `{skill-path}/references/sources.md`
+2. For each source: fetch the base URL and one constructed deep link (fill the URL pattern with a real symbol) via `WebFetch`
+3. Record: live, redirected (to where?), or dead
+4. **Verdict:** List dead/moved sources with the working replacement URL where one exists
+
+#### "Playbooks don't find the answer"
+
+1. Identify the failing question types (named by user, or test each playbook with a realistic question)
+2. For each failing playbook: execute the steps as written — do the queries return the expected hit? Is the hit criterion recognizable?
+3. Check ordering: are broad searches running before cheap deep-link fetches?
+4. **Verdict:** List failing steps with what actually came back and the corrected query/order
+
+#### "Baked-in facts have crept in"
+
+1. Scan every file for technical claims (API signatures, behavior statements, defaults, version-specific steps)
+2. Apply the litmus test: would this line need editing when the technology ships a new version?
+3. **Verdict:** List each embedded fact with the source-map entry the skill should route to instead — deleting facts *is* the fix
+
+#### "Missing question types"
+
+1. Ask what lookups the user performed recently that had no playbook
+2. Check `gotchas.md` for recurring ad-hoc searches
+3. **Verdict:** List missing question types, each with evidence it recurs
 
 ---
 
@@ -572,6 +621,23 @@ For each approved fix, apply changes using discipline-appropriate strategies.
 3. Verify rendered output is valid with realistic parameter values
 4. Add to SKILL.md navigation
 
+### Navigation Fixes
+
+**Source Map Fixes:**
+1. Update moved URLs and deep-link patterns; verify each replacement live before writing it
+2. Log the old pattern and what replaced it in `gotchas.md` (dated)
+3. Fill in missing "NOT authoritative for" scoping and currency signals
+
+**Playbook Fixes:**
+1. Replace vague steps with concrete tool + query invocations, each with a hit criterion
+2. Reorder: cheap high-precision steps first, broad searches later, source reading last
+3. Ensure the final step is an explicit escalation and the exit runs through `verification.md`
+4. Create playbooks for confirmed missing question types; add them to SKILL.md routing
+
+**Staleness Fixes:**
+1. Delete embedded technical facts; where the fact answered a real question, route the relevant playbook to the authoritative source instead
+2. Tighten `verification.md` if a stale answer previously passed its checks
+
 ---
 
 ## Step 7: Re-validate
@@ -620,6 +686,8 @@ After completing fixes, analyze what complementary skills from OTHER disciplines
 | Extraction (scaffolding) | Distillation (reference) | "You generate code — now teach agents the deeper patterns" |
 | Distillation (best practices) | Adversarial (review gate) | "You codified the rules — now enforce them with two blind reviewers" |
 | Adversarial (review gate) | Distillation (reference) | "The gate excludes judgment calls — teach those in a reference skill" |
+| Distillation (best practices) | Navigation (doc navigation) | "The snapshot ages — navigation answers version-sensitive questions from live sources" |
+| Navigation (doc navigation) | Distillation (best practices) | "You route to current facts — now correct the wrong defaults the model has today" |
 
 Suggest 1-2 complementary skills only if they would genuinely add value. Display as:
 
@@ -650,6 +718,7 @@ When the changes are substantial (multiple rules rewritten, workflow restructure
 - Workflow steps added or reordered (composition)
 - Decision tree branches restructured (investigation)
 - Templates significantly changed (extraction)
+- Source map restructured or multiple playbooks rewritten (navigation)
 
 ### How to run
 1. **Snapshot the old skill** before applying changes:

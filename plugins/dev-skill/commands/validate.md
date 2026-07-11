@@ -21,6 +21,7 @@ Store the skill path as `{skill-path}` for all subsequent operations.
 1. Read `{skill-path}/metadata.json` and extract the `discipline` field
 2. If no `discipline` field exists, infer from directory structure:
    - Has `references/reviewer-prompt.md` → `adversarial`
+   - Has `references/sources.md` plus `*-playbook.md` files → `navigation`
    - Has `references/` with rule files containing `impact` in frontmatter → `distillation`
    - Has `scripts/` directory → `composition`
    - Has `references/` with `*-tree.md` files or `references/queries/` → `investigation`

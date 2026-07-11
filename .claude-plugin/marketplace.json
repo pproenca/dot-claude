@@ -23,7 +23,7 @@
     {
       "name": "dev-skill",
       "source": "./plugins/dev-skill",
-      "description": "Create, evolve, and validate skills across 10 types — from API references to runbooks to adversarial review gates"
+      "description": "Create, evolve, and validate skills across 11 types — from API references to runbooks to adversarial review gates to documentation navigation"
     },
     {
       "name": "dev-workflow",

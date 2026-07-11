@@ -115,6 +115,7 @@ Read all included files and analyze their content to infer the skill's natural s
 | Decision trees, symptom catalogs, queries | Investigation runbook | investigation |
 | Scripts with verification/assertion logic | Verification workflow | composition |
 | Reviewer prompt + pass/fail verdict protocol | Adversarial review gate | adversarial |
+| Source maps, search strategies, where/how to find info | Documentation navigation | navigation |
 | Mixed (references + scripts + workflow) | Hybrid — use dominant pattern | infer from content ratio |
 
 ### Content Analysis

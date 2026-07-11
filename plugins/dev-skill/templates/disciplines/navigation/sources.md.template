@@ -1,0 +1,39 @@
+# Source Map — {Technology}
+
+Ranked by authority. Prefer the highest-ranked source that covers the question; fall back downward only when a higher source is silent. Community content (Stack Overflow, Reddit, blogs) is a lead generator, never a terminal answer — trace any claim found there back to a rank 1–3 source before acting on it.
+
+## 1. {Official documentation}
+
+- **URL:** {base URL}
+- **Deep-link patterns:** {how to construct direct links, e.g. `{base}/reference/{symbol}` — parameterized, verified live}
+- **Authoritative for:** {e.g., current API surface, usage guidance, configuration}
+- **NOT authoritative for:** {e.g., what changed between versions — use the changelog; known bugs — use the issue tracker}
+- **Currency signals:** {how to tell which version a page describes — URL segment, banner, footer date}
+- **Access:** {tool invocation — e.g., `WebFetch {pattern}`, `site:{domain}` search operator, local doc script, MCP tool name}
+
+## 2. {Source code / type definitions}
+
+- **URL:** {repo URL}
+- **Deep-link patterns:** {e.g., `{repo}/blob/{tag}/src/...`; how to pin to the project's version tag}
+- **Authoritative for:** {ground truth on behavior when docs lag or are silent}
+- **NOT authoritative for:** {intended usage or stability guarantees — undocumented internals may change}
+- **Currency signals:** {browse at the version tag matching the project, never the default branch}
+- **Access:** {e.g., GitHub code search syntax: `repo:{org}/{repo} {symbol} language:{lang}`}
+
+## 3. {Changelog / release notes / migration guides}
+
+- **URL:** {URL}
+- **Deep-link patterns:** {e.g., `{repo}/releases/tag/v{version}`}
+- **Authoritative for:** {what changed, deprecations, breaking changes between versions}
+- **NOT authoritative for:** {how to use the current API — entries describe deltas, not full usage}
+- **Currency signals:** {release dates and tags are explicit}
+- **Access:** {tool invocation}
+
+## 4. {Issue tracker / discussions}
+
+- **URL:** {URL}
+- **Authoritative for:** {known bugs, intended-vs-actual behavior, workaround status}
+- **NOT authoritative for:** {supported usage — an issue comment is not documentation}
+- **Access:** {e.g., `WebSearch: "{error text}" site:{tracker URL}`}
+
+{Additional sources: maintainer blogs/RFCs, internal mirrors or wikis — internal sources may outrank public docs for pinned versions; say so explicitly if they do.}

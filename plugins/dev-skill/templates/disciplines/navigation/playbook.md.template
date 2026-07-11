@@ -1,0 +1,29 @@
+# Playbook: {Question Type}
+
+**Use when:** {the question shapes this playbook answers, e.g. "you need the current signature, parameters, availability, or deprecation status of a {Technology} API"}
+
+**Before starting:** determine the project's {Technology} version ({how — e.g., lockfile, manifest, CLI command}). Every step below is version-sensitive.
+
+## Steps
+
+Run in order; stop at the first verified hit.
+
+1. **{Tool}: {concrete query template}** — {e.g., `WebFetch https://{docs}/reference/{symbol}`}
+   - **Hit looks like:** {e.g., a reference page with a signature block for the symbol}
+   - Found → go to **Verify**. Not found → step 2.
+
+2. **{Tool}: {concrete query template}** — {e.g., `WebSearch: "{symbol}" site:{docs domain}`}
+   - **Hit looks like:** {...}
+   - Found → go to **Verify**. Not found → step 3.
+
+3. **{Tool}: {concrete query template}** — {e.g., GitHub code search `repo:{org}/{repo} "{symbol}" path:src/`}
+   - **Hit looks like:** {the definition site — read the signature and doc comment at the version tag}
+   - Found → go to **Verify**. Not found → step 4.
+
+4. **Escalate:** {explicit terminal action — e.g., "read the source at `{repo}/src/{area}` at tag `v{version}`" or "ask the user — this may be internal, renamed, or removed"}
+
+## Verify
+
+An answer is not done until it passes [references/verification.md](verification.md):
+- The content's version matches the project's version (or the mismatch is surfaced to the user).
+- The source is rank 1–3 in [sources.md](sources.md); community leads were traced to a primary source.

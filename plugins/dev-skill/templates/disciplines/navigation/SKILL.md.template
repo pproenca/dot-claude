@@ -1,0 +1,51 @@
+---
+name: {skill-name}
+description: {trigger-description — name the technology and the lookup intents, e.g. "Use when you need current, authoritative information about {Technology} — API details, upgrade/breaking changes, error causes, configuration. Routes to the right source and search strategy instead of relying on training data."}
+---
+
+# {Technology} Information Navigation
+
+Where authoritative {Technology} information lives and how to find it. This skill contains no {Technology} facts — it routes you to current ones and tells you how to verify what you find.
+
+## When to Apply
+
+Use this skill when:
+- {Lookup scenario 1 — e.g., checking a current API signature, availability, or deprecation}
+- {Lookup scenario 2 — e.g., assessing what breaks when upgrading versions}
+- {Lookup scenario 3 — e.g., diagnosing an error message or unexpected behavior}
+- Answering any {Technology} question where training data may be stale or version-sensitive
+
+## Source Map
+
+Ranked by authority — prefer the highest source that covers the question. Full map with URL patterns and currency signals: [references/sources.md](references/sources.md).
+
+| # | Source | Authoritative for | NOT authoritative for | Access |
+|---|--------|-------------------|-----------------------|--------|
+| 1 | {Official docs} | {scope} | {non-scope} | {tool + pattern} |
+| 2 | {Source code / types} | {scope} | {non-scope} | {tool + pattern} |
+| 3 | {Changelog / release notes} | {scope} | {non-scope} | {tool + pattern} |
+
+## Question Playbooks
+
+Identify the question type, then follow its playbook:
+
+| Question | Playbook |
+|----------|----------|
+| {e.g., "What are the parameters of X? Is it deprecated?"} | [api-lookup](references/api-lookup-playbook.md) |
+| {e.g., "What breaks upgrading from vN to vN+1?"} | [version-changes](references/version-changes-playbook.md) |
+| {e.g., "What causes this error?"} | [error-message](references/error-message-playbook.md) |
+
+## How to Use
+
+1. Match the question to a playbook in the table above.
+2. Follow the playbook's steps in order — each names the tool and query to run.
+3. Verify every answer against [references/verification.md](references/verification.md) before acting on it: version match, source authority, currency.
+4. If a source has moved or a pattern stopped matching, update [references/sources.md](references/sources.md) and log the dead-end in `gotchas.md`.
+
+## Gotchas
+
+{Known search dead-ends, or pointer to gotchas.md.}
+
+## Related Skills
+
+{Complementary skills — e.g., a distillation skill correcting the model's wrong defaults for {Technology}.}

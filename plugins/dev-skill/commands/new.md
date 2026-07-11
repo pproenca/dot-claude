@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Bash, Glob, Grep, Task, AskUserQuestion, WebFetch, W
 
 # Skill Creator
 
-You are an expert at creating high-quality skills for AI agents and LLMs. This command routes through five disciplines — Distillation, Composition, Investigation, Extraction, and Adversarial — each with a proven generation pipeline.
+You are an expert at creating high-quality skills for AI agents and LLMs. This command routes through six disciplines — Distillation, Composition, Investigation, Extraction, Adversarial, and Navigation — each with a proven generation pipeline.
 
 **Generation quality benefits from a strong model**, but don't hard-pin one here — the bundled review agents (`skill-reviewer`, `preflight-validator`) declare their own model in frontmatter.
 
@@ -52,6 +52,7 @@ Options:
 - "8. Data Analysis — Connect to data sources and run queries"
 - "9. Infrastructure Ops — Operational procedures with safety guardrails"
 - "10. Adversarial Review — Pass/fail gate: two blind reviewers judge work against rules"
+- "11. Documentation Navigation — Teach agents where and how to find current, authoritative information about a technology"
 ```
 
 ---
@@ -72,6 +73,7 @@ Map the selected type to a discipline and follow its pipeline:
 | 8. Data Analysis | **Investigation** | `data-analysis` |
 | 9. Infrastructure Ops | **Composition** | `infra-ops` |
 | 10. Adversarial Review | **Adversarial** | `adversarial-review` |
+| 11. Documentation Navigation | **Navigation** | `doc-navigation` |
 
 **Before generating anything**, you MUST:
 
@@ -1081,6 +1083,122 @@ A gate that has never failed anything is unproven. Dry-run the review protocol o
 
 ---
 
+## Navigation Path (Type 11)
+
+This pipeline produces a **documentation navigation** skill: a map of where authoritative information about a technology lives, search playbooks for finding it, and verification rules for judging what comes back. It is the inverse of distillation — knowledge is fetched live at answer time, never baked in.
+
+**Read `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/navigation/RECIPE.md` — it is the authority on this discipline.** The doctrine in brief:
+- **The staleness litmus test.** A navigation skill contains zero baked-in technical facts. Before keeping any line, ask: *would this line need editing when the technology ships a new version?* URL patterns, version schemes, and search operators are navigational — keep them. API signatures, behavior claims, and defaults are facts — cut them; the skill routes to them instead.
+- **Authority is ranked and scoped both ways.** Official docs/spec > source code > changelog > issue tracker > maintainer writing. Every source states what it is authoritative for AND what it is not. Community content is a lead generator, never a terminal answer.
+- **Playbooks name tools, not intentions.** Every step is a concrete invocation ("WebFetch `{docs}/reference/{symbol}`", "WebSearch: `\"{error}\" site:github.com/{org}/{repo}/issues`") with a stated hit criterion. "Search the web" is not a step.
+- **Every path terminates, every answer verifies.** The last step is an explicit escalation (read source at a named location, or ask the user), and no answer is accepted without the currency/authority checks.
+
+### Output Structure
+
+```
+{output-base}/{skill-slug}/
+├── SKILL.md              # When to Apply + Source Map quick reference
+├── metadata.json         # discipline: "navigation", type: "doc-navigation"
+├── config.json           # Optional: local doc paths, MCP tools, internal mirrors
+├── gotchas.md            # Search dead-ends discovered over time
+└── references/
+    ├── sources.md        # Ranked authority map with access patterns
+    ├── {question}-playbook.md  # One search playbook per question type
+    └── verification.md   # Currency + authority checks for found answers
+```
+
+### Step N1: Interview
+
+Ask the user free-form:
+- "What technology (and which parts of it) should this skill cover?"
+- "What questions come up most? (API lookups, upgrade/breaking changes, error messages, configuration, examples?)"
+- "What search tools are available in your sessions? (web access, local doc directories, doc-search scripts, MCP servers)"
+- "Any internal sources — mirrors, wikis, pinned versions — that outrank public docs for your team?"
+
+### Step N2: Source Census (No User Interruption)
+
+Enumerate candidate sources in default authority order (official docs/spec, source code + types, changelog/release notes, issue tracker, maintainer writing), then **verify each live** — fetch it with WebFetch/WebSearch, confirm it is current, and record:
+- **Deep-link URL patterns** (parameterized, e.g. `https://pkg.go.dev/{module}@{version}`), not just homepages
+- **Authoritative for / NOT authoritative for** — both directions
+- **Currency signals** — how to tell which version a page describes
+- **Access pattern** — the concrete tool invocation
+
+Drop any source that is dead, redirects elsewhere, or is a content farm.
+
+### Step N3: Derive Question Types & Playbooks
+
+Group the user's real lookups into 3–7 question types (common set: `api-lookup`, `version-changes`, `error-message`, `configuration`, `examples-idioms` — derive, don't force). For each, design an ordered playbook per the RECIPE rules: concrete tool + query per step, hit criterion per step, cheap high-precision steps first, terminal escalation last, verification as the exit.
+
+### Step N4: Planning Checkpoint
+
+**Display the plan as regular text first** (never inside AskUserQuestion):
+
+```markdown
+## Navigation Skill Planning Review
+
+### Source Map
+| # | Source | Authoritative for | NOT authoritative for | Access | Verified live |
+|---|--------|-------------------|-----------------------|--------|---------------|
+
+### Question Types & Playbooks
+| Question type | Example question | Playbook steps (summary) |
+|---------------|------------------|--------------------------|
+
+### Verification Rules
+{Currency check, authority check, rejection criteria, cross-check rule}
+```
+
+Then ask for approval:
+
+```
+Question: "Does this navigation plan look correct? Review the sources, authority scopes, and playbooks above."
+Header: "Plan Review"
+Options:
+- "Approve and proceed" - Start generation
+- "Adjust sources" - User provides different sources
+- "Adjust question types" - User provides changes
+- "Major revisions needed" - User describes changes
+```
+
+**Only proceed after user approval.**
+
+### Step N5: Generation
+
+Read the templates in `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/navigation/` and fill them — do not reproduce the structures from memory:
+
+| Template | Produces |
+|----------|----------|
+| `SKILL.md.template` | Entry point: When to Apply, Source Map table, playbook routing |
+| `sources.md.template` | `references/sources.md` — full ranked source map |
+| `playbook.md.template` | `references/{question}-playbook.md` — one per question type |
+| `verification.md.template` | `references/verification.md` — currency/authority/rejection rules |
+
+Generate in this order:
+
+1. **Generate references/sources.md** — the verified source map from Step N2
+2. **Generate references/{question}-playbook.md** — one per question type
+3. **Generate references/verification.md** — currency, authority, and rejection rules
+4. **Generate SKILL.md** — Source Map quick reference + playbook routing table
+5. **Generate config.json** — only if local paths / MCP tools / internal mirrors exist
+6. **Generate metadata.json** with `discipline: "navigation"` and `type: "doc-navigation"`; put the verified source URLs in `references`
+7. **Generate gotchas.md** — initialize with "No known gotchas yet"
+
+### Step N6: Validate
+
+1. **Automated validation**: `node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-skill.js {output-base}/{skill-slug}`
+2. **Agent quality review**: Launch `skill-reviewer` agent with `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/navigation/RUBRIC.md` — its first check is the staleness audit: any baked-in technical fact fails
+
+### Quality Checklist (Navigation)
+
+- [ ] **Zero baked-in technical facts** — every line survives the "new version ships" litmus test
+- [ ] Every source URL and at least one deep-link pattern verified live during generation
+- [ ] Every source states its authority scope both ways (for / not for)
+- [ ] Every playbook step names a concrete tool + query with a hit criterion
+- [ ] Every playbook terminates in an explicit escalation and exits through verification
+- [ ] Verification rules name concrete rejection tells, not just "avoid bad sources"
+
+---
+
 ## Common Elements (All Paths)
 
 ### Output Location
@@ -1096,8 +1214,8 @@ Every skill's metadata.json MUST include `discipline` and `type` fields:
   "version": "0.1.0",
   "organization": "{Organization}",
   "technology": "{Technology or Domain}",
-  "discipline": "{distillation|composition|extraction|investigation|adversarial}",
-  "type": "{library-reference|verification|automation|scaffolding|code-quality|cicd|runbook|data-analysis|infra-ops|adversarial-review}",
+  "discipline": "{distillation|composition|extraction|investigation|adversarial|navigation}",
+  "type": "{library-reference|verification|automation|scaffolding|code-quality|cicd|runbook|data-analysis|infra-ops|adversarial-review|doc-navigation}",
   "date": "{Month Year}",
   "abstract": "{1-2 sentence summary}",
   "references": ["{url1}", "{url2}"]
@@ -1118,6 +1236,7 @@ Every path ends with the same two-phase validation:
    - Investigation: `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/investigation/RUBRIC.md`
    - Extraction: `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/extraction/RUBRIC.md`
    - Adversarial: `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/adversarial/RUBRIC.md`
+   - Navigation: `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/navigation/RUBRIC.md`
 
 ### Complementary Skill Suggestions
 
@@ -1136,6 +1255,8 @@ After completing generation, suggest related skills from other disciplines:
 | Code Quality & Review | "Consider creating a Code Scaffolding skill to generate code that passes these reviews." |
 | Library/API Reference or Code Quality & Review | "Consider creating an Adversarial Review companion gate that enforces these rules with two blind reviewers." |
 | Adversarial Review | "Consider creating a Code Quality (Distillation) skill for the judgment-call guidance the gate had to exclude." |
+| Documentation Navigation | "Consider creating a Library/API Reference (Distillation) skill for the wrong defaults the model has today — the two compose: distillation corrects, navigation keeps current." |
+| Library/API Reference | "Consider creating a Documentation Navigation skill so version-sensitive questions are answered from live sources instead of the snapshot." |
 
 ---
 
@@ -1159,9 +1280,12 @@ ${CLAUDE_PLUGIN_ROOT}/templates/
     ├── extraction/
     │   ├── RECIPE.md                 # Extraction methodology
     │   └── RUBRIC.md                 # Extraction validation rubric
-    └── adversarial/
-        ├── RECIPE.md                 # Adversarial methodology
-        └── RUBRIC.md                 # Adversarial validation rubric
+    ├── adversarial/
+    │   ├── RECIPE.md                 # Adversarial methodology
+    │   └── RUBRIC.md                 # Adversarial validation rubric
+    └── navigation/
+        ├── RECIPE.md                 # Navigation methodology
+        └── RUBRIC.md                 # Navigation validation rubric
 ```
 
 ### Automation Scripts

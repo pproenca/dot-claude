@@ -243,6 +243,31 @@
         },
         "min_rule_files": 2
       }
+    },
+    {
+      "type": "doc-navigation",
+      "discipline": "navigation",
+      "spec": {
+        "technology": "Rust",
+        "organization": "golden-test",
+        "playbook_count": 2
+      },
+      "structural_checks": {
+        "required_files": [
+          "SKILL.md",
+          "metadata.json",
+          "references/sources.md",
+          "references/verification.md"
+        ],
+        "required_dirs": [
+          "references"
+        ],
+        "metadata_fields": {
+          "discipline": "navigation",
+          "type": "doc-navigation"
+        },
+        "has_playbook_files": true
+      }
     }
   ]
 }
