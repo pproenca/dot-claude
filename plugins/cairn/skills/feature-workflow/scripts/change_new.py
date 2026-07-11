@@ -15,11 +15,13 @@ Usage:
     change_new.py --kind refactor --name "extract booking state machine"
     change_new.py --kind fix      --name "deposit rounding off-by-one"
     change_new.py --kind spike    --name "appointment render big-O"
+    change_new.py --kind spike    --name "..." --out docs/spikes/CHANGE_spike_x.md
 """
 from __future__ import annotations
 
 import argparse
 import datetime as dt
+import sys
 from pathlib import Path
 
 COMMON_HEAD = """<!-- change kind: {kind} -->
@@ -103,6 +105,33 @@ SEED = {
     "spike": ("the right approach (unknown class of solution)", "a benchmark-vs-floor that discriminates classes", "committing to the wrong approach / false victory vs a weak baseline"),
 }
 
+SPIKES_DIR = Path("docs") / "spikes"
+
+
+def slugify(value: str, fallback: str = "change") -> str:
+    slug = "".join(c if c.isalnum() else "-" for c in value.lower()).strip("-")
+    slug = "-".join(part for part in slug.split("-") if part)
+    return slug[:40] or fallback
+
+
+def is_relative_to(path: Path, parent: Path) -> bool:
+    try:
+        path.relative_to(parent)
+        return True
+    except ValueError:
+        return False
+
+
+def resolve_repo_path(path: Path, repo: Path) -> Path:
+    return path.resolve() if path.is_absolute() else (repo / path).resolve()
+
+
+def default_out(kind: str, name: str, repo: Path) -> Path:
+    filename = f"CHANGE_{kind}_{slugify(name)}.md"
+    if kind == "spike":
+        return repo / SPIKES_DIR / filename
+    return repo / filename
+
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Scaffold a CHANGE manifest for a non-feature change.")
@@ -115,10 +144,19 @@ def main(argv: list[str] | None = None) -> int:
     unknown, parse, failure = SEED[args.kind]
     head = COMMON_HEAD.format(kind=args.kind, name=args.name, unknown=unknown, parse=parse, failure=failure)
     body = BODIES[args.kind].format(floor="declare the floor")
-    slug = "".join(c if c.isalnum() else "-" for c in args.name.lower()).strip("-")[:40]
-    out = Path(args.out) if args.out else repo / f"CHANGE_{args.kind}_{slug}.md"
+    out = Path(args.out) if args.out else default_out(args.kind, args.name, repo)
+    if args.kind == "spike":
+        out = resolve_repo_path(out, repo)
+        required_dir = (repo / SPIKES_DIR).resolve()
+        if not is_relative_to(out, required_dir):
+            print(
+                f"error: spikes belong under {required_dir}. Refusing to write {out}.",
+                file=sys.stderr,
+            )
+            return 2
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(head + body + f"\n<!-- scaffolded {dt.date.today().isoformat()} -->\n", encoding="utf-8")
-    print(f"wrote {out.name} — fill the (({'(...)'} )) sentinels, then run change_check.py --kind {args.kind} {out.name}")
+    print(f"wrote {out} — fill the (({'(...)'} )) sentinels, then run change_check.py --kind {args.kind} {out}")
     return 0
 
 

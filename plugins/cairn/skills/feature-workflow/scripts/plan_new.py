@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Scaffold a PLAN.md for a new feature from the skill's template.
+"""Scaffold a feature plan under docs/plans/ from the skill's template.
 
 The plan is the workflow's trust boundary: it must exist and pass plan_check.py
 before any feature code is written. This script only creates the artifact; the
@@ -8,7 +8,7 @@ the references.
 
 Usage:
     python plan_new.py --title "Refund a paid appointment"
-    python plan_new.py --title "..." --out plans/refund.md
+    python plan_new.py --title "..." --out docs/plans/refund.md
 
 Extension point (slice 3): once scripts/shelf_index.py exists, pre-fill the
 section 3 shelf-check table with REUSE candidates matched from the index, so the
@@ -25,6 +25,29 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 TEMPLATE = HERE.parent / "assets" / "PLAN.template.md"
+PLANS_DIR = Path("docs") / "plans"
+
+
+def slugify(value: str, fallback: str = "plan") -> str:
+    slug = "".join(c if c.isalnum() else "-" for c in value.lower()).strip("-")
+    slug = "-".join(part for part in slug.split("-") if part)
+    return slug[:40] or fallback
+
+
+def is_relative_to(path: Path, parent: Path) -> bool:
+    try:
+        path.relative_to(parent)
+        return True
+    except ValueError:
+        return False
+
+
+def default_out(title: str, repo: Path) -> Path:
+    return repo / PLANS_DIR / f"{slugify(title)}.md"
+
+
+def resolve_out(out: Path, repo: Path) -> Path:
+    return out.resolve() if out.is_absolute() else (repo / out).resolve()
 
 
 def shelf_inventory_block(repo: Path) -> str | None:
@@ -67,6 +90,14 @@ def shelf_inventory_block(repo: Path) -> str | None:
 
 
 def scaffold(title: str, out: Path, repo: Path) -> int:
+    out = resolve_out(out, repo)
+    required_dir = (repo / PLANS_DIR).resolve()
+    if not is_relative_to(out, required_dir):
+        print(
+            f"error: plans belong under {required_dir}. Refusing to write {out}.",
+            file=sys.stderr,
+        )
+        return 2
     if not TEMPLATE.exists():
         print(f"error: template not found at {TEMPLATE}", file=sys.stderr)
         return 2
@@ -110,14 +141,17 @@ def scaffold(title: str, out: Path, repo: Path) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description="Scaffold a feature PLAN.md.")
+    p = argparse.ArgumentParser(description="Scaffold a feature plan under docs/plans/.")
     p.add_argument("--title", required=True, help="Feature name.")
-    p.add_argument("--out", default="PLAN.md", type=Path,
-                   help="Output path (default: ./PLAN.md).")
+    p.add_argument("--out", default=None, type=Path,
+                   help="Output path; must be under docs/plans/ "
+                        "(default: docs/plans/<title-slug>.md).")
     p.add_argument("--repo", default=".", type=Path,
                    help="Repo root for the shelf-index prefill (default: .).")
     args = p.parse_args(argv)
-    return scaffold(args.title, args.out, Path(args.repo).resolve())
+    repo = Path(args.repo).resolve()
+    out = args.out if args.out is not None else default_out(args.title, repo)
+    return scaffold(args.title, out, repo)
 
 
 if __name__ == "__main__":

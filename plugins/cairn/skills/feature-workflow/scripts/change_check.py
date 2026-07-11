@@ -16,7 +16,7 @@ the trust boundary of the change; skipping it is proceeding on unparsed input.
 
 Usage:
     change_check.py --kind refactor CHANGE_refactor_x.md
-    change_check.py --kind spike    CHANGE_spike_y.md
+    change_check.py --kind spike    docs/spikes/CHANGE_spike_y.md
 Exit: 0 = gate passed, 1 = gate failed.
 """
 from __future__ import annotations

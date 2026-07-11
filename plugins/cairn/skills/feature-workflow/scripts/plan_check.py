@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The gate. Validate that a PLAN.md is complete enough to start coding.
+"""The gate. Validate that a feature plan is complete enough to start coding.
 
 This is the forcing function that beats momentum: a non-zero exit before code
 exists is a hard stop that prose can never be. It reports *exactly* what's
@@ -16,8 +16,8 @@ Checks performed:
   4. Section 6 labels each touched-code contact COMPOSITION or COUPLING.
 
 Usage:
-    python plan_check.py PLAN.md
-    python plan_check.py PLAN.md --stage post
+    python plan_check.py docs/plans/<feature-slug>.md
+    python plan_check.py docs/plans/<feature-slug>.md --stage post
 
 Exit codes: 0 = pass, 1 = incomplete/fail, 2 = usage/IO error.
 """
@@ -143,9 +143,9 @@ def check(path: Path, stage: str) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description="Validate a feature PLAN.md (the gate).")
+    p = argparse.ArgumentParser(description="Validate a feature plan (the gate).")
     p.add_argument("plan", type=Path, nargs="?", default=Path("PLAN.md"),
-                   help="Path to the plan (default: ./PLAN.md).")
+                   help="Path to the plan (default: ./PLAN.md for backward compatibility).")
     p.add_argument("--stage", choices=("pre", "post"), default="pre",
                    help="pre = gate before code (0-6); post = record before ship (0-7).")
     args = p.parse_args(argv)

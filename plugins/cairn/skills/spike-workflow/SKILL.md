@@ -37,7 +37,8 @@ bandwidth ceiling, a hand-rolled reference. Then a result that sits far from the
 floor *forbids* declaring victory — the unknown-unknown becomes a visible anomaly.
 
 ## The loop (the feature-workflow spine, spike instance)
-1. **STEP 0 classified this as a spike.** `change_new.py --kind spike --name "..."`.
+1. **STEP 0 classified this as a spike.** `change_new.py --kind spike --name "..."`
+   creates `docs/spikes/CHANGE_spike_<slug>.md`.
 2. **Establish the FLOOR first** and write it into the manifest. (See
    `references/floor.md`.)
 3. **Enumerate solution CLASSES, not variants.** Consult the `mental-models`
@@ -45,8 +46,8 @@ floor *forbids* declaring victory — the unknown-unknown becomes a visible anom
    and it returns the reframing questions that *open classes you would not have
    searched for* (allocation-bound vs compute-bound? data-oriented layout?
    asymptotically better structure? mechanical sympathy?).
-4. **Gate:** `change_check.py --kind spike <manifest>` — blocks unless a floor is
-   declared AND results are expressed as a ratio to it.
+4. **Gate:** `change_check.py --kind spike docs/spikes/CHANGE_spike_<slug>.md`
+   — blocks unless a floor is declared AND results are expressed as a ratio to it.
 5. **Benchmark across classes**, report best-vs-floor as a ratio.
 6. **Collapse:** the chosen class turns the spike into a feature (new behavior),
    a refactor (behavior-preserving restructure), or a perf-refactor (output

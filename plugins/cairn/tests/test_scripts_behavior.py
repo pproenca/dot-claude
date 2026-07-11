@@ -246,6 +246,68 @@ class CairnScriptBehaviorTests(unittest.TestCase):
             self.assertNotIn("node_modules/pkg/bad.py", files)
             self.assertTrue(any(f["label"] == "read-before-write" for f in body["findings"]))
 
+    def test_plan_new_defaults_to_docs_plans_slug(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+
+            proc = self.run_script(
+                "skills/feature-workflow/scripts/plan_new.py",
+                "--title", "Refund a paid appointment",
+                "--repo", str(repo),
+            )
+
+            expected = repo / "docs" / "plans" / "refund-a-paid-appointment.md"
+            self.assertEqual(proc.returncode, 0, proc.stderr + proc.stdout)
+            self.assertTrue(expected.exists())
+            self.assertIn(str(expected), proc.stdout)
+
+    def test_plan_new_refuses_outside_docs_plans(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+
+            proc = self.run_script(
+                "skills/feature-workflow/scripts/plan_new.py",
+                "--title", "Refund a paid appointment",
+                "--repo", str(repo),
+                "--out", "PLAN.md",
+            )
+
+            self.assertEqual(proc.returncode, 2, proc.stderr + proc.stdout)
+            self.assertIn("plans belong under", proc.stderr)
+            self.assertFalse((repo / "PLAN.md").exists())
+
+    def test_spike_change_new_defaults_to_docs_spikes_slug(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+
+            proc = self.run_script(
+                "skills/feature-workflow/scripts/change_new.py",
+                "--kind", "spike",
+                "--name", "appointment render big-O",
+                "--repo", str(repo),
+            )
+
+            expected = repo / "docs" / "spikes" / "CHANGE_spike_appointment-render-big-o.md"
+            self.assertEqual(proc.returncode, 0, proc.stderr + proc.stdout)
+            self.assertTrue(expected.exists())
+            self.assertIn(str(expected), proc.stdout)
+
+    def test_spike_change_new_refuses_outside_docs_spikes(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+
+            proc = self.run_script(
+                "skills/feature-workflow/scripts/change_new.py",
+                "--kind", "spike",
+                "--name", "appointment render big-O",
+                "--repo", str(repo),
+                "--out", "CHANGE_spike_appointment-render-big-o.md",
+            )
+
+            self.assertEqual(proc.returncode, 2, proc.stderr + proc.stdout)
+            self.assertIn("spikes belong under", proc.stderr)
+            self.assertFalse((repo / "CHANGE_spike_appointment-render-big-o.md").exists())
+
     def test_plan_check_validates_table_data_rows_not_template_prose(self) -> None:
         plan = """# PLAN: x
 

@@ -3,7 +3,7 @@ name: feature-workflow
 description: >-
   Apply whenever the task is to build, add, implement, or extend a FEATURE,
   endpoint, screen, flow, or job in an existing application — not a one-line
-  fix. Enforces plan-before-code: a completed PLAN.md must pass the gate
+  fix. Enforces plan-before-code: a completed docs/plans plan must pass the gate
   (scripts/plan_check.py) before any implementation begins. Drives the inner
   loop (compose this feature from the existing substrate, build only what's
   missing, place it via the boundary-discipline skill) and the outer loop (grow
@@ -95,7 +95,7 @@ human's confirmation of it. See `capability-ledger/references/licensing.md`.
 This is the most important step and the one momentum will try to skip.
 
 1. Scaffold the plan: `python scripts/plan_new.py --title "<feature name>"`
-   (creates `PLAN.md` from `assets/PLAN.template.md`).
+   (creates `docs/plans/<feature-slug>.md` from `assets/PLAN.template.md`).
 2. Fill sections 0–6. These are *judgment*, not paperwork — read
    `references/loop.md` (the six planning questions and why each exists) and
    `references/shelf.md` (the substrate model and the shelf-check). If a
@@ -103,9 +103,9 @@ This is the most important step and the one momentum will try to skip.
    the real shelf inventory (via `shelf_index.py`) so the REUSE/EXTEND/BUILD
    classification is grounded in what actually exists rather than recalled. You
    still make the classification — the inventory only supplies the candidates.
-3. Run the gate: `python scripts/plan_check.py PLAN.md`. It must **exit 0**
-   before any implementation. A non-zero exit lists exactly which sections are
-   unfilled — fill them, don't bypass them.
+3. Run the gate: `python scripts/plan_check.py docs/plans/<feature-slug>.md`.
+   It must **exit 0** before any implementation. A non-zero exit lists exactly
+   which sections are unfilled — fill them, don't bypass them.
 
 The plan is the workflow's trust boundary: establish ground truth once, then the
 build phase gets to *assume* it. Code written before the gate passes is the
@@ -232,9 +232,9 @@ skill is the knowledge — they compose through `boundary.config.json`.
 ## STAGE 2 — Ship & record
 
 Fill section 7 (**Shelf deposits**): what reusable units this feature added or
-generalized, and where they live. Run `python scripts/plan_check.py PLAN.md
---stage post` to confirm the record is complete. This section is the input to
-the outer loop.
+generalized, and where they live. Run `python scripts/plan_check.py
+docs/plans/<feature-slug>.md --stage post` to confirm the record is complete.
+This section is the input to the outer loop.
 
 ## STAGE 3 — Outer loop (the ratchet — periodic, NOT per feature)
 
@@ -264,9 +264,9 @@ substrate-specific instrument; the ratchet is the general loop it feeds.
 - `assets/boundary.config.example.json` — copy to your repo root as
   `boundary.config.json`; maps substrate layers to directories. Read by the
   harness scripts (here and in boundary-discipline). All keys optional.
-- `scripts/plan_new.py` — scaffold a PLAN.md from the template; if a config
+- `scripts/plan_new.py` — scaffold a docs/plans plan from the template; if a config
   exists, pre-fills section 3 with the real shelf inventory (grounded shelf-check).
-- `scripts/plan_check.py` — the gate: validate a PLAN.md is complete. Exit 0 = pass.
+- `scripts/plan_check.py` — the gate: validate a docs/plans plan is complete. Exit 0 = pass.
 - `scripts/verify.py` — the verify gate (STAGE 1.5): run the project's configured
   checks and gate the ship. Fails closed; distinguishes gating from report-only
   checks. `python scripts/verify.py --repo <path>`.
