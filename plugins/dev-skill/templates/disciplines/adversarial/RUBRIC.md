@@ -9,6 +9,8 @@ For each rule (in `references/` for owned-rules mode, or the imported subset lis
 1. **Evidence named.** Can you state what artifact evidence would prove a violation (a file, a line, a missing test, a pattern)? If no concrete evidence is nameable, the rule is undecidable — flag it.
 2. **Verdict stability.** Would two competent reviewers given the same artifact reach the same PASS/FAIL? Flag rules that hinge on taste words ("clean", "appropriate", "reasonable", "prefer") without a measurable boundary.
 3. **Not dead weight.** Is this a check a capable model's output could actually fail? A rule that always passes is hand-holding; flag it for removal.
+4. **Materiality on cost rules.** For any rule judging performance or efficiency: does its evidence-of-violation require citing why the input is large at real data scale (unbounded collection via its loading site), with small bounded inputs N/A? A cost rule without a materiality leg drives refactor treadmills — flag it.
+5. **Rendered evidence on runtime-behavior rules.** For any rule judging motion, gestures, or interaction feel: does the rule require rendered evidence (recording/filmstrip) to FAIL, with code alone only nominating N/A candidates? A code-decidable motion rule turns the gate into an animation generator — flag it.
 
 Record each finding: rule file, check performed, result (PASS/FAIL).
 
@@ -27,12 +29,17 @@ Record each finding: rule file, check performed, result (PASS/FAIL).
 3. **Contested surfacing.** Are both rationales shown for contested rules, with guidance that recurring contests mean a decidability bug in the rule?
 4. **Actionable failure.** Does the protocol require the final report to aggregate per-FAIL "missing for PASS" suggestions with locations?
 5. **Companion-mode loud failure.** (Companion mode only) If the source skill path is missing or unreadable at review time, does the protocol stop with an error rather than pass or skip? Is the source path + version recorded in `rules-source.md`, with excluded rules listed with reasons?
+6. **Frozen-target preconditions.** Does the protocol refuse to dispatch against a moving target (fixed ref recorded as a target manifest), void the run when the target changes mid-review, and require every dispatched gate to end in a rendered verdict, GATE NOT APPLICABLE, or a recorded void — never silence?
+7. **Fix-scope contract.** Does the protocol state that the gate is a terminal check (not a cleanup driver), that fixes stay inside the declared target, that the re-gate uses the same target manifest without widening, and that out-of-target findings are reported but never fixed?
 
 ## Verdict Template (assets/templates/verdict.md)
 
 1. **Per-rule table.** Rule, reviewer A verdict, reviewer B verdict, final verdict, evidence.
 2. **Overall verdict.** A single unambiguous PASS/FAIL line.
-3. **Fix list.** A section for aggregated suggestions on FAIL, ordered by category importance.
+3. **Fix list.** A section for aggregated suggestions on FAIL, ordered by category importance, with the completeness (every FAIL/CONTESTED rule appears with an apply-as-written change) and minimality (smallest change that flips the rule, no escape hatches) requirements stated.
+4. **Status header.** Target manifest (frozen ref) and gate status (RENDERED / NOT APPLICABLE / VOID — reason) fields present.
+5. **Gotchas enforcement.** Each contested rule carries a Gotchas entry slot, with the instruction to append entries to gotchas.md before rendering.
+6. **Out-of-scope section.** A place for violations outside the target manifest, marked report-only.
 
 ## Usefulness Assessment
 

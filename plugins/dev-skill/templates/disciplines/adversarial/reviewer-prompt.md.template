@@ -28,7 +28,7 @@ Judge the target against each rule below. Every rule names the evidence that dec
 
 - **Verdict per rule:** `PASS`, `FAIL`, or `N/A` (the rule's subject does not occur in the target — say why in one clause).
 - **Evidence is mandatory in both directions.** A FAIL cites the violating location (`file:line` or a short quote). A PASS cites what you checked and where. A PASS without evidence is not a verdict — re-examine or mark FAIL.
-- **For every FAIL, state what is missing to reach PASS** — the specific change and where it goes, e.g. "add a `context.Context` parameter to `FetchInvoices` and thread it into the HTTP call (`billing/client.go:41`)". Never a lecture like "improve error handling".
+- **For every FAIL, state the fix that flips the rule to PASS once applied** — the specific change and where it goes, e.g. "add a `context.Context` parameter to `FetchInvoices` and thread it into the HTTP call (`billing/client.go:41`)". Never a lecture like "improve error handling", never a restatement of the violation. Name the minimal change: removal preferred over addition, nothing beyond the rule's named remedy, and no unsafe escape hatches to satisfy the letter of a rule.
 - Judge only against the rules listed. Other flaws you notice go in a final `Out of scope` note, and they do not affect any verdict.
 
 ## Output Format

@@ -41,6 +41,23 @@ An undecidable rule is not deleted knowledge — it belongs in a distillation sk
 
 **No rule-count target.** The set of decidable, actually-violated checks *is* the scope. In companion mode this means filtering: import only the source rules that pass the decidability test, and list the exclusions with reasons in `rules-source.md` so the gap is visible rather than silent.
 
+## The gate reviews frozen targets — never moving ones
+
+The gate family's worst field failure (July 2026, three sessions on a production iOS app) was not bad verdicts — it was gates dispatched as *cleanup drivers* on code that kept changing. Reviews were started, discarded when the target moved, and restarted; zero verdicts were rendered across ~11 hours while the diff ballooned to 33 files and commit discipline collapsed into 90–162-file opaque sweeps. Every generated SKILL.md must therefore carry two dispatch preconditions:
+
+1. **Frozen target.** Dispatch only against a fixed ref (commit SHA, stash, saved diff) recorded as a target manifest. A target change mid-review voids the run, and the void is *recorded* (`GATE VOID — target changed`) — a dispatched gate always ends in a rendered verdict, a `GATE NOT APPLICABLE`, or a recorded void, never silence. Silence is indistinguishable from "reviewed", which is how ungated work ships.
+2. **Verdicts, not cleanup.** The gate is a terminal check on finished work; "run the gate and fix everything aggressively" inverts the contract. After a FAIL, fixes stay inside the original target, and the re-gate runs a fresh blind pair against the **same manifest** — the reviewable surface never widens between rounds. An elastic surface plus fail-closed reruns never converges (the field case burned ~10 rerun cycles and ~100M tokens without reaching PASS).
+
+Two operational corollaries: reviewers read rules from an immutable snapshot (`git archive`) when other agents may be mutating the workspace, and skill directories are read-only infrastructure excluded from every cleanup scope (a parallel "cleanup" subagent once deleted the vendored gate wholesale mid-review).
+
+## Rules that judge cost need a materiality leg
+
+A performance or efficiency rule without a materiality predicate becomes a treadmill: every `.reduce` on the main actor is *individually* defensible to flag, so successive reviewer pairs keep relocating the boundary until a scoped review has driven an app-wide rearchitecture. The evidence-of-violation for any cost-based rule must include **why the input is large at the target's real data scale** (an unbounded collection cited via its loading site); small, bounded-by-construction inputs are N/A, not FAIL. Relatedly: a fix that satisfies a rule's letter through an unsafe escape hatch (`@unchecked Sendable`, `any`, suppressions) does not flip the rule — say so in the rule text.
+
+## Rules that judge runtime behavior need rendered evidence
+
+A rule about motion, gestures, or interaction feel that is decided from code alone turns the gate into a generator: "absence of `withAnimation`" FAILs once produced a fix list that sprayed 32 templated animation calls across 18 files. For gates whose subject renders (UI, motion, interaction): make evidence capture a mandatory protocol step (screenshots, recordings, filmstrips) with a **capability preflight before dispatch**; let code alone *nominate candidates reported as N/A* — never FAIL, never PASS; and for gesture-driven interactions require **repeated trials in one session** (≥3 consecutive) because recognizer arbitration fails intermittently — a single green run is not evidence. The `adversarial-ios-design` skill in dot-skills is the proven reference implementation of this pattern.
+
 ## The reviewer prompt: self-contained or worthless
 
 `references/reviewer-prompt.md` is the heart of the skill. Both reviewers receive it verbatim — same prompt, same rules, same target. Its requirements:
@@ -67,7 +84,9 @@ N/A splits: N/A vs N/A → N/A; N/A vs PASS → PASS; N/A vs FAIL → CONTESTED 
 
 ## Suggestions, not lectures
 
-Every FAIL must name **the missing change and where it goes** — "add a `context.Context` parameter to `FetchInvoices` and thread it into the HTTP call (`billing/client.go:41`)", not "improve context handling". The verdict report aggregates these into a fix list ordered by category importance, so a failed review is directly actionable. A FAIL without a suggestion is a validation error, not a style choice.
+Every FAIL must name **the fix that flips the rule to PASS once applied** — "add a `context.Context` parameter to `FetchInvoices` and thread it into the HTTP call (`billing/client.go:41`)", not "improve context handling" and never a restatement of the violation. The verdict report aggregates these into a fix list ordered by category importance, so a failed review is directly actionable. A FAIL without a flip-test fix is a validation error, not a style choice.
+
+But frame the fix list as **verification material, not a work queue** — a FAIL list that reads like a task list invites callers to use the gate as a rewrite engine. Every fix is the *minimal* change that flips its rule (removal preferred over addition, nothing beyond the rule's named remedy), it stays inside the declared target, and anything reviewers noticed outside the target lands in an out-of-scope observations section — reported, never fixed, never counted.
 
 ## Generation workflow
 
