@@ -103,7 +103,7 @@ You will receive:
 - The review targets (diffs, files, artifacts)
 
 **Check:**
-1. **Decidability.** For each rule: is the stated deciding evidence concrete enough that two blind reviewers would reach the same PASS/FAIL on the same artifact? Flag taste words ("clean", "appropriate", "prefer") without a measurable boundary.
+1. **Decidability.** For each rule: is the stated deciding evidence concrete enough that two competent reviewers would reach the same PASS/FAIL on the same artifact? (The gate runs a single blind reviewer, so this thought experiment is the only stability check the rule will ever get.) Flag taste words ("clean", "appropriate", "prefer") without a measurable boundary.
 2. **Dead weight.** Is each rule a check a capable model's output could actually fail? Rules that always pass dilute the gate.
 3. **Exclusion honesty (companion mode).** Are the excluded rules genuinely undecidable, or were enforceable rules dropped? Is every source rule accounted for in one of the two lists?
 4. **Gate fit.** Could the whole rule set be decided by a deterministic linter/script instead? If so, recommend a composition (verification) skill — reviewer subagents are for checks that need judgment applied to evidence.

@@ -315,7 +315,7 @@ class SkillValidator {
     // Reviewer prompt is the heart of the gate
     const promptPath = path.join(refsDir, 'reviewer-prompt.md');
     if (!fs.existsSync(promptPath)) {
-      issues.push(createError('references/', 'Missing reviewer-prompt.md — the gate cannot dispatch blind reviewers without it'));
+      issues.push(createError('references/', 'Missing reviewer-prompt.md — the gate cannot dispatch its blind reviewer without it'));
     } else {
       const prompt = fs.readFileSync(promptPath, 'utf-8');
       if (!/\bPASS\b/.test(prompt) || !/\bFAIL\b/.test(prompt)) {

@@ -51,7 +51,7 @@ Options:
 - "7. Runbook — Diagnose and resolve operational issues"
 - "8. Data Analysis — Connect to data sources and run queries"
 - "9. Infrastructure Ops — Operational procedures with safety guardrails"
-- "10. Adversarial Review — Pass/fail gate: two blind reviewers judge work against rules"
+- "10. Adversarial Review — Pass/fail gate: a blind adversarial reviewer judges work against decidable rules"
 - "11. Documentation Navigation — Teach agents where and how to find current, authoritative information about a technology"
 ```
 
@@ -976,12 +976,12 @@ After user approval, generate in this order:
 
 ## Adversarial Path (Type 10)
 
-This pipeline produces a **pass/fail review gate**: a skill that dispatches two blind, identical reviewer subagents to independently judge work against a rule set. The work passes only if both reviewers say PASS; on FAIL, the verdict names what is missing to reach PASS.
+This pipeline produces a **pass/fail review gate**: a skill that dispatches a single blind reviewer subagent, with an adversarial mandate, to judge work against a rule set. Any rule FAIL fails the gate; on FAIL, the verdict names what is missing to reach PASS.
 
 **Read `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/adversarial/RECIPE.md` — it is the authority on this discipline.** The doctrine in brief:
-- **Decidability, not teaching.** A rule earns its place in a gate only if a reviewer can decide PASS/FAIL from evidence in the artifact alone. Judgment calls ("prefer clean abstractions") make the gate flaky — they belong in a distillation skill, not here.
-- **Blind independence.** Both reviewers get the identical self-contained prompt with no conversation context. Agreement between blind duplicates is what makes a verdict stable.
-- **Fail-closed.** PASS requires both reviewers to PASS. A split verdict is CONTESTED and counts as FAIL, with both rationales shown.
+- **Decidability, not teaching.** A rule earns its place in a gate only if a reviewer can decide PASS/FAIL from evidence in the artifact alone. Judgment calls ("prefer clean abstractions") make the gate flaky — they belong in a distillation skill, not here. With one reviewer there is no runtime disagreement signal, so decidability carries the whole weight of verdict stability.
+- **Blindness.** The reviewer gets a self-contained prompt with no conversation context — a reviewer that watched the work being made grades on effort and passes it.
+- **Fail-closed.** PASS requires every rule to be PASS or N/A; any single FAIL fails, an evidence-free PASS is forbidden, and no rule is severity-weighed or waived.
 - **Suggestions, not lectures.** Every FAIL names the missing change and its location.
 
 ### Output Structure
@@ -994,7 +994,7 @@ This pipeline produces a **pass/fail review gate**: a skill that dispatches two 
 │   ├── _sections.md          # Category definitions        ┐ owned-rules mode only
 │   ├── {prefix}-{slug}.md    # Rules, distillation format  ┘
 │   ├── rules-source.md       # Source skill pointer — companion mode only
-│   └── reviewer-prompt.md    # Self-contained prompt for each blind reviewer
+│   └── reviewer-prompt.md    # Self-contained prompt for the blind reviewer
 ├── assets/templates/
 │   └── verdict.md            # Verdict report template
 └── gotchas.md
@@ -1066,7 +1066,7 @@ Options:
 Read the templates in `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/adversarial/` and fill them — do not reproduce the structures from memory. Generate in this order:
 
 1. **Rules** — owned mode: `references/_sections.md` + rule files (distillation format, `RULE.md.template` from the distillation discipline); companion mode: `references/rules-source.md` from `rules-source.md.template`
-2. **`references/reviewer-prompt.md`** — from `reviewer-prompt.md.template`; the composed prompt must be fully self-contained (rules, target, output format — no conversation references)
+2. **`references/reviewer-prompt.md`** — from `reviewer-prompt.md.template`; the composed prompt must be fully self-contained (rules, target, output format — no conversation references), because blindness is the gate's only defense against pass bias
 3. **`assets/templates/verdict.md`** — from `verdict.md.template`
 4. **`SKILL.md`** — from `SKILL.md.template`, with the mode-appropriate rules-loading instruction; companion mode must instruct: *if the source skill is missing, stop and report — never silently pass*
 5. **`metadata.json`** — `discipline: "adversarial"`, `type: "adversarial-review"`; companion mode also records the source skill path in `references`
@@ -1079,7 +1079,7 @@ Read the templates in `${CLAUDE_PLUGIN_ROOT}/templates/disciplines/adversarial/`
 
 ### Step A6: Prove the Gate
 
-A gate that has never failed anything is unproven. Dry-run the review protocol on two artifacts: one that should PASS and one that should FAIL (ask the user for candidates, or construct a minimal failing example). A contested verdict on the dry run means a rule needs sharpening before release — fix the rule, re-run, and record the pattern in `gotchas.md`.
+A gate that has never failed anything is unproven. Dry-run the review protocol on two artifacts: one that should PASS and one that should FAIL (ask the user for candidates, or construct a minimal failing example). A dry-run verdict that doesn't match the expected outcome, or that can't be defended from its cited evidence alone, means a rule needs sharpening before release — fix the rule, re-run, and record the pattern in `gotchas.md`.
 
 ---
 
@@ -1253,7 +1253,7 @@ After completing generation, suggest related skills from other disciplines:
 | Data Analysis | "Consider creating a Runbook skill for when query results reveal problems." |
 | Infrastructure Ops | "Consider creating a Runbook skill for incident response on this infrastructure." |
 | Code Quality & Review | "Consider creating a Code Scaffolding skill to generate code that passes these reviews." |
-| Library/API Reference or Code Quality & Review | "Consider creating an Adversarial Review companion gate that enforces these rules with two blind reviewers." |
+| Library/API Reference or Code Quality & Review | "Consider creating an Adversarial Review companion gate that enforces these rules with a blind adversarial reviewer." |
 | Adversarial Review | "Consider creating a Code Quality (Distillation) skill for the judgment-call guidance the gate had to exclude." |
 | Documentation Navigation | "Consider creating a Library/API Reference (Distillation) skill for the wrong defaults the model has today — the two compose: distillation corrects, navigation keeps current." |
 | Library/API Reference | "Consider creating a Documentation Navigation skill so version-sensitive questions are answered from live sources instead of the snapshot." |

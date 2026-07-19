@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Claude Code plugins for productivity workflows - skills, agents, commands, and hooks",
-    "version": "1.1.4"
+    "version": "1.1.5"
   },
   "repository": "https://github.com/pproenca/dot-claude",
   "plugins": [

@@ -94,7 +94,7 @@ Build a mental model by reading core files. What you read depends on the discipl
 - `{skill-path}/references/reviewer-prompt.md` — the blind reviewer prompt
 - `{skill-path}/assets/templates/verdict.md` — verdict report format
 - Rules: `references/_sections.md` + rule files (owned) or `references/rules-source.md` (companion — verify the source skill still exists at the recorded path)
-- `{skill-path}/gotchas.md` — look for repeatedly contested rules (decidability bugs)
+- `{skill-path}/gotchas.md` — look for rules with unstable or overridden verdicts (decidability bugs)
 
 ### Display Summary
 
@@ -684,7 +684,7 @@ After completing fixes, analyze what complementary skills from OTHER disciplines
 | Composition (workflow) | Distillation (reference) | "You automate the process — now document why each step matters" |
 | Investigation (runbook) | Composition (automation) | "You diagnose manually — now automate the common fixes" |
 | Extraction (scaffolding) | Distillation (reference) | "You generate code — now teach agents the deeper patterns" |
-| Distillation (best practices) | Adversarial (review gate) | "You codified the rules — now enforce them with two blind reviewers" |
+| Distillation (best practices) | Adversarial (review gate) | "You codified the rules — now enforce them with a blind review gate" |
 | Adversarial (review gate) | Distillation (reference) | "The gate excludes judgment calls — teach those in a reference skill" |
 | Distillation (best practices) | Navigation (doc navigation) | "The snapshot ages — navigation answers version-sensitive questions from live sources" |
 | Navigation (doc navigation) | Distillation (best practices) | "You route to current facts — now correct the wrong defaults the model has today" |
