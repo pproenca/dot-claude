@@ -1,0 +1,11 @@
+{
+  "name": "swarmforge",
+  "version": "0.1.0",
+  "description": "Disciplined multi-agent story pipeline: slice a backlog, then walk each story through separated quality gates with subagents that own one concern each.",
+  "author": {
+    "name": "Pedro Proenca",
+    "email": "pedro.proenca@trustedhousesitters.com"
+  },
+  "keywords": ["workflow", "agents", "tdd", "code-review", "backlog"],
+  "license": "MIT"
+}

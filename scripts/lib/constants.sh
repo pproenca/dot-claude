@@ -63,6 +63,7 @@ VALID_BUILTIN_TOOLS=(
 
 # Valid model values for agents
 VALID_MODELS=(
+  "inherit"
   "haiku"
   "sonnet"
   "opus"
