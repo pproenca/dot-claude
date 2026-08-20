@@ -11,8 +11,8 @@ Start turns one backlog item into one story and walks it through the stages its
 profile names. The main session is the squad leader for the duration: it dispatches
 each stage, holds every gate, and never writes a product artifact itself.
 
-Read `../squad-pipeline/references/pipeline.md` and `references/state.md` before
-the first dispatch.
+Read `../squad-pipeline/references/pipeline.md` and
+`../squad-pipeline/references/state.md` before the first dispatch.
 
 ## Procedure
 
@@ -43,8 +43,11 @@ Before dispatching, verify the previous stage's gate is `approved` or `auto`. If
 is `pending`, stop and hand over to `/swarmforge:squad-approve`. Never approve a
 gate while driving.
 
-Dispatch with the Agent tool, `subagent_type` set to the stage name. Pass the story
-packet as described in `references/state.md`: ids, paths, stage, completed stages,
+Dispatch with the Agent tool, `subagent_type` set to `swarmforge:<stage>` —
+plugin agents register namespaced, and a bare stage name either errors or, worse,
+resolves to an unrelated agent of the same name that happens to be installed.
+`state.json` stores the bare stage name; only the dispatch is prefixed. Pass the story
+packet as described in `../squad-pipeline/references/state.md`: ids, paths, stage, completed stages,
 artifact paths, verify commands, the constitution path, and the working tree. Pass
 paths rather than file contents — agents read for themselves.
 

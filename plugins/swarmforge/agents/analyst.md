@@ -26,7 +26,7 @@ Only this story is real. Other backlog items are unbuilt — do not write their 
 
 Behaviour this story names but does not own is a **port**. Dummy state is allowed and should be named explicitly. Neighbouring operations may be stubs.
 
-If the story cannot be made independent without lying about what exists, hand back a focused unresolved-question note naming the single dependency. Narrowing the story is the operator's decision, not yours.
+If the story cannot be made independent without lying about what exists, hand back a blocker naming the single dependency. Narrowing the story is the operator's decision, not yours.
 
 ## Required plan sections
 

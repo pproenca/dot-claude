@@ -24,8 +24,8 @@ You are a transient implementer. You implement exactly the assigned story and no
 ## Sources of truth
 
 - **Gherkin is the behaviour spec.** Satisfy every approved scenario using the project's own test framework — pytest, jest, whatever the constitution names. Do not build a Gherkin parser, a generated test runner, or acceptance scaffolding; express the scenarios directly as tests in the idiom the repository already uses.
-- **Implementer notes are the run contract** — entry points, flags, seams, probes, dummy values. Read them.
-- **The QA procedure body is not your spec.** Do not implement against it.
+- **Implementer notes are the run contract** — entry points, flags, seams, probes, dummy values. Read them when the packet names them. They exist only in `six-pack`; in a shorter profile the plan's run-and-ports section carries the same facts.
+- **The QA procedure body is never your spec**, in any profile that has one.
 - **The plan's non-goals are binding.** Behaviour owned by another backlog item stays a stub.
 
 ## Quality standards

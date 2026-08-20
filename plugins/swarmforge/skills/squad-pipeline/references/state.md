@@ -18,7 +18,8 @@ so it stays greppable and diffable.
     implementer-notes.md            # qa-procedure-writer
     review.md                       # code-reviewer
     architecture.md                 # architect
-    handoffs/<nn>-<role>.md         # what each stage returned
+    qa-result.md                    # qa-runner
+    handoffs/<nn>-<stage>.md        # what each stage returned
   approvals/<story-id>-<gate>.json
   blockers/<story-id>-<nn>.md
 ```
@@ -54,9 +55,26 @@ status: open
 story_id: null
 ---
 
-Body: the story text. What is in scope, what is explicitly not, and any
-acceptance the operator already knows.
+## Outcome
+
+One sentence naming what becomes observably true.
+
+## In scope
+
+## Not in scope
+
+Every neighbouring item by name, and the behaviour each owns.
+
+## Ports
+
+Behaviour this item names but does not build, and the dummy state that lets it
+run alone.
+
+## Acceptance
 ```
+
+`Not in scope` and `Ports` are what keep the analyst honest: without them a plan
+will assume unbuilt work exists. `squad-backlog` writes this shape.
 
 `status` is `open`, `started`, or `done`.
 

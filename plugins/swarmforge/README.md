@@ -63,7 +63,7 @@ backlog item ──Start──▶ story ──▶ analyst ──[plan gate]─�
 
 | Type | Names |
 |---|---|
-| Skills | `squad-pipeline` (the contract, auto-loaded), `squad-init`, `squad-backlog`, `squad-start`, `squad-status`, `squad-approve` |
+| Skills | `squad-pipeline` (the contract, loaded when the pipeline is the subject), `squad-init`, `squad-backlog`, `squad-start`, `squad-status`, `squad-approve` |
 | Agents | analyst, gherkin-writer, qa-procedure-writer, implementer, cleaner, code-reviewer, hardener, qa-runner, architect, senior-implementer |
 | Hooks | `SessionStart` — surfaces in-flight stories and pending gates |
 
@@ -76,7 +76,11 @@ backlog item ──Start──▶ story ──▶ analyst ──[plan gate]─�
   "profile": "four-pack",
   "gates": { "plan": true, "gherkin": true, "qa_procedure": true },
   "isolation": "parallel-only",
-  "verify": { "test": "uv run pytest", "lint": "uv run ruff check ." },
+  "verify": {
+    "test": "uv run pytest",
+    "lint": "uv run ruff check .",
+    "typecheck": "uv run pyright"
+  },
   "models": {}
 }
 ```

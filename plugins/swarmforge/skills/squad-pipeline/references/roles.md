@@ -12,7 +12,7 @@ the separation; collapsing two roles into one agent defeats it.
 | cleaner | refactors, added coverage | new behavior, new public API | commit + verify output |
 | code-reviewer | `review.md` | any source file | recommendations only |
 | hardener | code changes applying review recs, then edge-case tests | new features | commit + verify output |
-| qa-runner | QA execution results | production code | pass/fail per procedure step |
+| qa-runner | `qa-result.md` | production code | pass/fail per procedure step |
 | architect | `architecture.md` | any source file | recommendations only |
 | senior-implementer | code applying architect recs | new behavior | commit + verify output |
 

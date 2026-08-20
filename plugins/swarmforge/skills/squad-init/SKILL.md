@@ -53,8 +53,10 @@ command is the single most damaging thing this skill can record.
 }
 ```
 
-Use the profile given as an argument, else `four-pack`. See
-`squad-pipeline/references/pipeline.md` for what each profile contains.
+Record only the gates whose owning stage the chosen profile contains — a gate no
+stage owns is noise that contradicts the state contract. Use the profile given as
+an argument, else `four-pack`. See
+`../squad-pipeline/references/pipeline.md` for what each profile contains.
 
 ### 5. Write constitution.md
 

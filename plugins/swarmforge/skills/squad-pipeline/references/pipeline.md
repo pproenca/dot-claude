@@ -12,8 +12,9 @@ rewrites a story already in flight.
 | `four-pack` (default) | analyst → gherkin-writer → implementer → cleaner → architect |
 | `six-pack` | analyst → gherkin-writer → qa-procedure-writer → implementer → cleaner → code-reviewer → hardener → qa-runner → architect → senior-implementer |
 
-A `stages` array in `config.json` overrides the profile entirely. Stage names must
-match agent names exactly.
+A `stages` array in `config.json` overrides the profile entirely. Stage names are
+stored bare and must match agent names exactly; dispatch prefixes them with the
+plugin namespace, as `swarmforge:<stage>`.
 
 ## Gates
 
